@@ -42,9 +42,9 @@ class MainActivity : ComponentActivity() {
 fun BrewthingsPreview() {
     BrewthingsTheme {
         Column(
-            Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
-
+            HomeScreen()
         }
     }
 }

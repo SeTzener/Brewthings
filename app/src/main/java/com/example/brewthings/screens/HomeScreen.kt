@@ -23,7 +23,7 @@ fun HomeScreen() {
     ) {
         Box(
             Modifier
-                .background(Color.Blue)
+                .background(Color.Green)
                 .verticalScroll(rememberScrollState()),
             contentAlignment = Alignment.Center
         ) {
@@ -31,10 +31,9 @@ fun HomeScreen() {
                 modifier = Modifier
                     .height(50.dp)
                     .width(50.dp)
-                    .background(Color.Green)
             )
             Text(
-                text = "Brewthings rocks",
+                text = "Brewthings",
                 fontSize = 40.sp
             )
         }
