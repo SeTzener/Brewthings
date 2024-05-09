@@ -34,7 +34,7 @@ fun HomeScreen() {
                     .background(Color.Green)
             )
             Text(
-                text = "Brewthings",
+                text = "Brewthings rocks",
                 fontSize = 40.sp
             )
         }
