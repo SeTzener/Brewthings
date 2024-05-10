@@ -14,6 +14,7 @@ kable = "0.31.1"
 koin = "3.5.6"
 kotlin = "1.9.20"
 kotlinGradle = "1.6.21"
+kotlinUnsigned = "0.1.0"
 material = "1.12.0"
 junit = "4.13.2"
 toml4j = "0.7.2"
@@ -24,6 +25,7 @@ toml4j = "0.7.2"
 android-application = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradle" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 kotlin-android = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradle" }
+kotlin-unsigned = { group = "org.jetbrains.kotlinx", name = "kotlinx-unsigned", version.ref = "kotlinUnsigned" }
 
 # Accompanist
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }

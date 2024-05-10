@@ -50,6 +50,7 @@ dependencies {
 
     // Core Libraries
     implementation(libs.core.ktx)
+    implementation(libs.kotlin.unsigned)
 
     // Accompanist
     implementation(libs.accompanist.permissions)
