@@ -1,4 +1,4 @@
-package com.example.brewthings.ui.theme
+package com.brewthings.app.ui.theme
 
 import android.app.Activity
 import android.os.Build

@@ -1,4 +1,4 @@
-package com.example.brewthings
+package com.brewthings.app.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -14,8 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.brewthings.screens.HomeScreen
-import com.example.brewthings.ui.theme.BrewthingsTheme
+import com.brewthings.app.ui.screens.HomeScreen
+import com.brewthings.app.ui.theme.BrewthingsTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

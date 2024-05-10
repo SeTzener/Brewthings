@@ -1,4 +1,4 @@
-package com.example.brewthings.ui.theme
+package com.brewthings.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
