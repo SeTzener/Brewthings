@@ -1,17 +1,16 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     application
-    kotlin("jvm") version "1.9.20"
-    id("com.android.application") version "8.2.0" apply false
-    id("org.jetbrains.kotlin.android") version "1.9.10" apply false
+    kotlin("jvm") version libs.versions.kotlin
+    id("com.android.application") version libs.versions.androidGradle apply false
+    id("org.jetbrains.kotlin.android") version libs.versions.kotlinGradle apply false
 }
 
 buildscript{
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.9.20"))
-        classpath("com.android.tools.build:gradle:8.2.0")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21")
-        classpath("com.moandjiezana.toml:toml4j:0.7.2")
+        classpath(libs.android.application)
+        classpath(libs.kotlin.android)
+        classpath(libs.toml4j)
     }
     repositories{
         google()

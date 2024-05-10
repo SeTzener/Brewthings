@@ -2,19 +2,26 @@
 
 [versions]
 activityCompose = "1.9.0"
+androidGradle = "8.2.2"
 appCompat = "1.6.1"
 composeBom = "2024.05.00"
 composeMaterial = "1.6.7"
 composeMaterial3 = "1.2.1"
 coreKtx = "1.13.1"
 lifecycleRuntimeKtx = "2.7.0"
+kotlin = "1.9.20"
+kotlinGradle = "1.6.21"
 material = "1.12.0"
 junit = "4.13.2"
+toml4j = "0.7.2"
 
 [libraries]
 
 # Core Libraries
+android-application = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradle" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+kotlin-android = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradle" }
+
 
 # AndroidX AppCompat
 app-compat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appCompat" }
@@ -35,6 +42,9 @@ compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling
 # Material Design for Jetpack Compose
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3-android", version.ref = "composeMaterial3" }
+
+# Version Controll
+toml4j = { group = "com.moandjiezana.toml", name = "toml4j", version.ref = "toml4j" }
 
 # Test
 junit = { group = "junit", name = "junit", version.ref = "junit" }
