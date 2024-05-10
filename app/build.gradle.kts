@@ -48,24 +48,31 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.10.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    // Core Libraries
+    implementation(libs.core.ktx)
+
+    // AndroidX AppCompat
+    implementation(libs.app.compat)
+
+    // Google Material Components
+    implementation(libs.material)
+
+    // AndroidX Lifecycle
+    implementation(libs.lifecycle.runtime.ktx)
 
     // Jetpack Compose
-    implementation("androidx.activity:activity-compose:1.8.1")
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation(libs.compose.activity)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.ui.tooling.preview)
 
     // Material
-    implementation("androidx.compose.material:material:1.5.4")
-    implementation("androidx.compose.material3:material3-android:1.2.0-alpha12")
+    implementation(libs.compose.material)
+    implementation(libs.compose.material3)
 
 
-    testImplementation("junit:junit:4.13.2")
+    testImplementation(libs.junit)
 }
 
 fun generateVersionCode(versionName: String, buildVersion: Int): Int {
