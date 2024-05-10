@@ -25,7 +25,7 @@ class ScanningScreenViewModel(
     private val raptPills: MutableList<RaptPill> = mutableListOf()
 
     init {
-        startScan()
+        //startScan()
     }
 
     private fun startScan() {
@@ -58,9 +58,12 @@ class ScanningScreenViewModel(
     }
 
     private fun updateInstrumentsScreenState() {
+        val filteredInstruments = raptPills
+            .filter { it.rssi > screenState.rssiThreshold }
+
         screenState = screenState.copy(
             scannedInstrumentCount = raptPills.size,
-            scannedInstruments = raptPills
+            scannedInstruments = filteredInstruments
         )
     }
 

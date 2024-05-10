@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,24 +32,22 @@ fun ExpandableCard(
             finishedListener = { _, _ -> onAnimationFinished?.invoke(expandedState.value) }
         )
     ) {
-        Surface {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(onClick = { expandedState.value = !expandedState.value })
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(modifier = Modifier.weight(1f)) {
-                    topContent()
-                }
-                val iconId = if (expandedState.value) R.drawable.ic_arrow_drop_down else R.drawable.ic_arrow_drop_up
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = iconId),
-                    contentDescription = null,
-                    tint = Color.Blue,
-                )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = { expandedState.value = !expandedState.value })
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(modifier = Modifier.weight(1f)) {
+                topContent()
             }
+            val iconId = if (expandedState.value) R.drawable.ic_arrow_drop_down else R.drawable.ic_arrow_drop_up
+            Icon(
+                imageVector = ImageVector.vectorResource(id = iconId),
+                contentDescription = null,
+                tint = Color.Blue,
+            )
         }
         if (expandedState.value) {
             Box(

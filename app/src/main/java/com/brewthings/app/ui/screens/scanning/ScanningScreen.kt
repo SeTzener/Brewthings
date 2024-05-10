@@ -143,7 +143,7 @@ private fun TopContent() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(16.dp),
     ) {
         Text("Advanced Options", style = Typography.bodyMedium)
     }
@@ -154,7 +154,8 @@ private fun RssiThreshold(
     rssiThreshold: Int,
     onRssiThresholdChanged: (Int) -> Unit,
 ) {
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+    HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
+    Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Text(
                 modifier = Modifier.align(Alignment.CenterStart),

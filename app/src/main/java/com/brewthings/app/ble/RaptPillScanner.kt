@@ -32,7 +32,7 @@ class RaptPillScanner {
             .map { advertisement ->
                 RaptPill(
                     macAddress = advertisement.address,
-                    name = advertisement.name ?: "(Unknown)",
+                    name = advertisement.name ?: "RAPT Pill",
                     rssi = advertisement.rssi,
                     manufacturerData = advertisement.manufacturerData?.data
                 )
