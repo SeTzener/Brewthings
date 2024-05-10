@@ -33,6 +33,7 @@ class RaptPillScanner {
                 RaptPill(
                     macAddress = advertisement.address,
                     name = advertisement.name ?: "(Unknown)",
+                    rssi = advertisement.rssi,
                     manufacturerData = advertisement.manufacturerData?.data
                 )
             }
