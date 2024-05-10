@@ -71,7 +71,14 @@ dependencies {
     implementation(libs.compose.material)
     implementation(libs.compose.material3)
 
+    // Kable
+    implementation(libs.kable)
 
+    // Koin
+    implementation(libs.koin)
+    implementation(libs.koin.compose)
+
+    // Unit Testing
     testImplementation(libs.junit)
 }
 
