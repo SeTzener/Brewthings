@@ -51,6 +51,9 @@ dependencies {
     // Core Libraries
     implementation(libs.core.ktx)
 
+    // Accompanist Permissions
+    implementation(libs.accompanist.permissions)
+
     // AndroidX AppCompat
     implementation(libs.app.compat)
 

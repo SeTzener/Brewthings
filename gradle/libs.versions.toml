@@ -1,6 +1,7 @@
 # libs.versions.toml
 
 [versions]
+accompanistPermissions = "0.23.1"
 activityCompose = "1.9.0"
 androidGradle = "8.2.2"
 appCompat = "1.6.1"
@@ -23,6 +24,9 @@ toml4j = "0.7.2"
 android-application = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradle" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 kotlin-android = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradle" }
+
+# Accompanist
+accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermissions" }
 
 # AndroidX AppCompat
 app-compat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appCompat" }
