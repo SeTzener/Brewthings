@@ -3,18 +3,21 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-val applicationId = properties["app.id"] as String
+val appId = stringProperty("app.id")
+val semanticVersioning = stringProperty("app.versionName")
+val buildVersion = intProperty("app.buildVersion")
+val target = intProperty("app.targetSdk")
 
 android {
-    namespace = applicationId
-    compileSdk = 34
+    namespace = appId
+    compileSdk = target
 
     defaultConfig {
-        applicationId = applicationId
-        minSdk = 30
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        applicationId = appId
+        minSdk = intProperty("app.minSdk")
+        targetSdk = target
+        versionCode = generateVersionCode(semanticVersioning, buildVersion)
+        versionName = semanticVersioning
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -64,3 +67,15 @@ dependencies {
 
     testImplementation("junit:junit:4.13.2")
 }
+
+fun generateVersionCode(versionName: String, buildVersion: Int): Int {
+    val versionParts = versionName.split('.')
+    val major = versionParts.getOrNull(0)?.toIntOrNull() ?: 0
+    val minor = versionParts.getOrNull(1)?.toIntOrNull() ?: 0
+    val patch = versionParts.getOrNull(2)?.toIntOrNull() ?: 0
+
+    return major * 1000000 + minor * 10000 + patch * 100 + buildVersion
+}
+
+fun stringProperty(name: String) = properties[name] as String
+fun intProperty(name: String) = stringProperty(name).toInt()
