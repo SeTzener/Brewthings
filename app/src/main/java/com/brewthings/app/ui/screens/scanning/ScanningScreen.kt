@@ -2,7 +2,6 @@ package com.brewthings.app.ui.screens.scanning
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,8 +27,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -78,13 +78,16 @@ private fun ScanningScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 4.dp)
+            .padding(horizontal = 16.dp)
             .verticalScroll(rememberScrollState()),
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(modifier = Modifier.padding(start = 24.dp), text = "OPTIONS", style = Typography.bodyMedium)
+        Text(
+            modifier = Modifier.padding(16.dp),
+            text = stringResource(R.string.scanning_options).uppercase(),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = Typography.bodyMedium
+        )
         Card(
-            modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp),
             border = BorderStroke(0.dp, Color.LightGray),
             shape = RoundedCornerShape(16.dp)
         ) {
@@ -99,8 +102,6 @@ private fun ScanningScreen(
                     }
                 )
 
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
-
                 ScanningState(
                     scannedInstrumentCount = state.scannedInstrumentCount,
                     filteredInstrumentsCount = state.scannedInstruments.size,
@@ -111,8 +112,13 @@ private fun ScanningScreen(
         }
 
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
-        Text(modifier = Modifier.padding(start = 24.dp), text = "RESULTS", style = Typography.bodyMedium)
-        Spacer(modifier = Modifier.padding(vertical = 8.dp))
+
+        Text(
+            modifier = Modifier.padding(16.dp),
+            text = stringResource(R.string.scanning_results).uppercase(),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = Typography.bodyMedium
+        )
 
         ScannedInstruments(
             instruments = state.scannedInstruments,
@@ -124,11 +130,17 @@ private fun ScanningScreen(
         val context = LocalContext.current
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
         Text(
-            text = "Version: ${packageInfo?.versionName} (${packageInfo?.longVersionCode})",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             textAlign = TextAlign.Center,
+            text = stringResource(
+                id = R.string.scanning_app_version,
+                packageInfo?.versionName ?: stringResource(R.string.unknown),
+                packageInfo?.longVersionCode ?: 0
+            ),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = Typography.bodyMedium
         )
     }
 }
@@ -138,9 +150,9 @@ private fun TopContent() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(vertical = 16.dp),
     ) {
-        Text("Advanced Options", style = Typography.bodyMedium)
+        Text(stringResource(R.string.scanning_advanced_options), style = Typography.bodyMedium)
     }
 }
 
@@ -149,16 +161,17 @@ private fun RssiThreshold(
     rssiThreshold: Int,
     onRssiThresholdChanged: (Int) -> Unit,
 ) {
-    HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
     Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Text(
                 modifier = Modifier.align(Alignment.CenterStart),
-                text = "RSSI",
+                text = stringResource(R.string.scanning_rssi),
+                style = Typography.bodyMedium,
             )
             Text(
                 modifier = Modifier.align(Alignment.CenterEnd),
                 text = rssiThreshold.toString(),
+                style = Typography.bodyMedium,
             )
         }
         @Suppress("UnnecessaryParentheses") Slider(
@@ -176,32 +189,35 @@ private fun ScanningState(
     scanning: Boolean,
     onScanButtonClicked: () -> Unit,
 ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(all = 8.dp)
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 4.dp, end = 16.dp, bottom = 4.dp)
+    ) {
+        TextButton(
+            modifier = Modifier.align(Alignment.CenterStart),
+            onClick = onScanButtonClicked,
         ) {
-            TextButton(
-                modifier = Modifier.align(Alignment.CenterStart),
-                onClick = onScanButtonClicked,
-            ) {
-                Text(
-                    text = if (scanning) "Stop Scanning" else "Start Scanning",
-                    style = Typography.bodyLarge,
-                )
-            }
-            Row(
-                modifier = Modifier.align(Alignment.CenterEnd),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                if (scanning) {
-                    Box(Modifier.padding(horizontal = 16.dp)) {
-                        CircularProgressIndicator(Modifier.size(24.dp))
-                    }
-                }
-                Text("$filteredInstrumentsCount ($scannedInstrumentCount)")
-            }
+            Text(
+                text = if (scanning) stringResource(R.string.scanning_stop) else stringResource(R.string.scanning_start),
+                style = Typography.bodyMedium,
+            )
         }
+        Row(
+            modifier = Modifier.align(Alignment.CenterEnd),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (scanning) {
+                Box(Modifier.padding(horizontal = 16.dp)) {
+                    CircularProgressIndicator(Modifier.size(16.dp))
+                }
+            }
+            Text(
+                text = "$filteredInstrumentsCount ($scannedInstrumentCount)",
+                style = Typography.bodyMedium,
+            )
+        }
+    }
 }
 
 @Composable
@@ -213,12 +229,10 @@ private fun ScannedInstruments(
     Column {
         if (instruments.isNotEmpty()) {
             Card(
-                modifier = modifier.padding(horizontal = 4.dp, vertical = 8.dp),
                 border = BorderStroke(0.dp, Color.LightGray),
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(horizontal = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -229,11 +243,8 @@ private fun ScannedInstruments(
                         )
                         if (instruments.last() != instrument) {
                             HorizontalDivider(
-                                modifier = Modifier.background(
-                                    MaterialTheme.colorScheme.secondary.copy(
-                                        alpha = 0.4f
-                                    )
-                                )
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     }
@@ -259,25 +270,38 @@ private fun Instrument(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(vertical = 16.dp),
+                .padding(16.dp),
         ) {
             Text(
-                text = instrument.name,
+                text = instrument.name ?: stringResource(R.string.scanning_result),
                 overflow = TextOverflow.Ellipsis,
                 style = Typography.bodyMedium,
                 maxLines = 1
             )
+
+            Spacer(modifier = Modifier.padding(4.dp))
+
             Text(
                 text = instrument.macAddress,
                 style = Typography.bodySmall,
             )
         }
-        Box(modifier = Modifier.align(Alignment.CenterVertically)) {
+        Box(modifier = Modifier
+            .align(Alignment.CenterVertically)
+            .padding(end = 10.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(modifier = Modifier.padding(end = 8.dp)) {
-                    Text(text = "${instrument.rssi}")
+                Column {
+                    Text(
+                        text = "${instrument.rssi}",
+                        style = Typography.bodyMedium,
+                    )
                 }
-                Image(imageVector = ImageVector.vectorResource(R.drawable.ic_chevron_right), contentDescription = null)
+                Spacer(modifier = Modifier.padding(4.dp))
+                Image(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_chevron_right),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+                    contentDescription = null
+                )
             }
         }
     }

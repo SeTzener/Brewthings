@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Brewthings</string>
+    <string name="scanning_options">Options</string>
+    <string name="scanning_advanced_options">Advanced Options</string>
+    <string name="scanning_start">Start Scanning</string>
+    <string name="scanning_rssi">RSSI</string>
+    <string name="scanning_stop">Stop Scanning</string>
+    <string name="scanning_results">Results</string>
+    <string name="scanning_result">RAPT Pill</string>
+    <string name="scanning_app_version">Version: %s (%d)</string>
+    <string name="unknown">Unknown</string>
 </resources>

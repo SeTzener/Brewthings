@@ -4,7 +4,7 @@ import com.brewthings.app.util.asHexString
 
 data class RaptPill(
     val macAddress: String,
-    val name: String,
+    val name: String?,
     val rssi: Int,
     val manufacturerData: ByteArray?
 ) {
