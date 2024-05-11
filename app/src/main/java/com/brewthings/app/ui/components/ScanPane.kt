@@ -18,7 +18,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -28,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -118,65 +118,60 @@ private fun PermissionGranted(
 }
 
 @Composable
-private fun BluetoothUnavailable() {
-    Column(
-        Modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        horizontalAlignment = CenterHorizontally,
-        verticalArrangement = Center,
-    ) {
-        Text(text = "Bluetooth unavailable.")
-    }
+fun BluetoothUnavailable() {
+    ActionRequired(
+        icon = ImageVector.vectorResource(R.drawable.ic_bluetooth_disabled),
+        title = stringResource(id = R.string.bluetooth_unavailable),
+    )
 }
 
 @Composable
-private fun BluetoothDisabled(enableAction: () -> Unit) {
+fun BluetoothDisabled(enableAction: () -> Unit) {
     ActionRequired(
         icon = ImageVector.vectorResource(R.drawable.ic_bluetooth_disabled),
-        contentDescription = "Bluetooth disabled",
-        description = "Bluetooth is disabled.",
-        buttonText = "Enable",
+        title = stringResource(id = R.string.bluetooth_disabled_title),
+        description = stringResource(id = R.string.bluetooth_disabled_desc),
+        buttonText = stringResource(id = R.string.bluetooth_disabled_btn),
         onClick = enableAction,
     )
 }
 
 @Composable
-private fun LocationServicesDisabled(enableAction: () -> Unit) {
+fun LocationServicesDisabled(enableAction: () -> Unit) {
     ActionRequired(
         icon = ImageVector.vectorResource(R.drawable.ic_location_disabled),
-        contentDescription = "Location services disabled",
-        description = "Location services are disabled.",
-        buttonText = "Enable",
+        title = stringResource(id = R.string.location_services_disabled_title),
+        description = stringResource(id = R.string.location_services_disabled_desc),
+        buttonText = stringResource(id = R.string.location_services_disabled_btn),
         onClick = enableAction,
     )
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-private fun BluetoothPermissionsNotGranted(permissions: MultiplePermissionsState) {
+fun BluetoothPermissionsNotGranted(permissions: MultiplePermissionsState) {
     ActionRequired(
         icon = ImageVector.vectorResource(R.drawable.ic_bluetooth_disabled),
-        contentDescription = "Bluetooth permissions required",
-        description = "Bluetooth permissions are required for scanning. Please grant the permission.",
-        buttonText = "Continue",
+        title = stringResource(id = R.string.bluetooth_permissions_not_granted_title),
+        description = stringResource(id = R.string.bluetooth_permissions_not_granted_desc),
+        buttonText = stringResource(id = R.string.bluetooth_permissions_not_granted_btn),
         onClick = permissions::launchMultiplePermissionRequest,
     )
 }
 
 @Composable
-private fun BluetoothPermissionsNotAvailable(openSettingsAction: () -> Unit) {
+fun BluetoothPermissionsNotAvailable(openSettingsAction: () -> Unit) {
     ActionRequired(
         icon = ImageVector.vectorResource(R.drawable.ic_warning),
-        contentDescription = "Bluetooth permissions required",
-        description = "Bluetooth permission denied. Please, grant access on the Settings screen.",
-        buttonText = "Open Settings",
+        title = stringResource(id = R.string.bluetooth_permissions_not_available_title),
+        description = stringResource(id = R.string.bluetooth_permissions_not_available_desc),
+        buttonText = stringResource(id = R.string.bluetooth_permissions_not_available_btn),
         onClick = openSettingsAction,
     )
 }
 
 @Composable
-private fun Loading() {
+fun Loading() {
     Column(
         Modifier
             .fillMaxSize()
@@ -191,10 +186,10 @@ private fun Loading() {
 @Composable
 private fun ActionRequired(
     icon: ImageVector,
-    contentDescription: String?,
-    description: String,
-    buttonText: String,
-    onClick: () -> Unit,
+    title: String,
+    description: String? = null,
+    buttonText: String ?= null,
+    onClick: () -> Unit = {},
 ) {
     Column(
         Modifier
@@ -205,21 +200,37 @@ private fun ActionRequired(
     ) {
         Icon(
             modifier = Modifier.size(150.dp),
-            tint = contentColorFor(backgroundColor = MaterialTheme.colorScheme.background),
+            tint = MaterialTheme.colorScheme.primary,
             imageVector = icon,
-            contentDescription = contentDescription,
+            contentDescription = null,
         )
-        Spacer(Modifier.size(8.dp))
+        Spacer(Modifier.size(16.dp))
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(CenterHorizontally),
             textAlign = TextAlign.Center,
-            text = description,
+            text = title,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
         )
-        Spacer(Modifier.size(15.dp))
-        Button(onClick) {
-            Text(buttonText)
+        description?.let { description ->
+            Spacer(Modifier.size(16.dp))
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(CenterHorizontally),
+                textAlign = TextAlign.Center,
+                text = description,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+        }
+        buttonText?.let {
+            Spacer(Modifier.size(48.dp))
+            Button(onClick) {
+                Text(buttonText)
+            }
         }
     }
 }

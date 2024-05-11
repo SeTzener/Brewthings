@@ -9,4 +9,17 @@
     <string name="scanning_result">RAPT Pill</string>
     <string name="scanning_app_version">Version: %s (%d)</string>
     <string name="unknown">Unknown</string>
+    <string name="bluetooth_permissions_not_available_title">"Bluetooth permissions required"</string>
+    <string name="bluetooth_permissions_not_available_desc">"Please, grant access on the Settings screen."</string>
+    <string name="bluetooth_permissions_not_available_btn">"Open Settings"</string>
+    <string name="bluetooth_permissions_not_granted_title">"Bluetooth permissions required"</string>
+    <string name="bluetooth_permissions_not_granted_desc">"Bluetooth permissions are required for scanning.\nPlease, grant the permission."</string>
+    <string name="bluetooth_permissions_not_granted_btn">"Continue"</string>
+    <string name="location_services_disabled_title">"Location services disabled"</string>
+    <string name="location_services_disabled_desc">"Please, enable them on the Settings screen."</string>
+    <string name="location_services_disabled_btn">"Enable"</string>
+    <string name="bluetooth_disabled_title">"Bluetooth is disabled"</string>
+    <string name="bluetooth_disabled_desc">"Please, grant access to it."</string>
+    <string name="bluetooth_disabled_btn">"Enable"</string>
+    <string name="bluetooth_unavailable">"Bluetooth is not available"</string>
 </resources>
