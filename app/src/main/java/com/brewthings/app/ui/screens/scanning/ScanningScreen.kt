@@ -10,15 +10,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -29,10 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
@@ -75,73 +73,59 @@ private fun ScanningScreen(
     onRssiThresholdChanged: (Int) -> Unit,
     onScanButtonClicked: () -> Unit,
 ) {
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
-            .verticalScroll(rememberScrollState()),
+            .padding(horizontal = 16.dp),
     ) {
-        Text(
-            modifier = Modifier.padding(16.dp),
-            text = stringResource(R.string.scanning_options).uppercase(),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = Typography.bodyMedium
-        )
-        Card(
-            border = BorderStroke(0.dp, Color.LightGray),
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-                ExpandableCard(
-                    topContent = { TopContent() },
-                    expandedContent = {
-                        RssiThreshold(
-                            rssiThreshold = state.rssiThreshold,
-                            onRssiThresholdChanged = onRssiThresholdChanged,
-                        )
-                    }
-                )
+        item {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = stringResource(R.string.scanning_options).uppercase(),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = Typography.bodyMedium
+            )
+            Card(
+                border = BorderStroke(0.dp, Color.LightGray),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                    ExpandableCard(
+                        topContent = { TopContent() },
+                        expandedContent = {
+                            RssiThreshold(
+                                rssiThreshold = state.rssiThreshold,
+                                onRssiThresholdChanged = onRssiThresholdChanged,
+                            )
+                        }
+                    )
 
-                ScanningState(
-                    scannedInstrumentCount = state.scannedInstrumentCount,
-                    filteredInstrumentsCount = state.scannedInstruments.size,
-                    scanning = state.scanning,
-                    onScanButtonClicked = onScanButtonClicked,
-                )
+                    ScanningState(
+                        scannedInstrumentCount = state.scannedInstrumentCount,
+                        filteredInstrumentsCount = state.scannedInstruments.size,
+                        scanning = state.scanning,
+                        onScanButtonClicked = onScanButtonClicked,
+                    )
+                }
             }
+
+            Spacer(modifier = Modifier.padding(vertical = 8.dp))
+
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = stringResource(R.string.scanning_results).uppercase(),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = Typography.bodyMedium
+            )
         }
 
-        Spacer(modifier = Modifier.padding(vertical = 8.dp))
-
-        Text(
-            modifier = Modifier.padding(16.dp),
-            text = stringResource(R.string.scanning_results).uppercase(),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = Typography.bodyMedium
-        )
-
-        ScannedInstruments(
-            instruments = state.scannedInstruments,
-            navigateToInstrument = navigateToInstrument,
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        val context = LocalContext.current
-        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            textAlign = TextAlign.Center,
-            text = stringResource(
-                id = R.string.scanning_app_version,
-                packageInfo?.versionName ?: stringResource(R.string.unknown),
-                packageInfo?.longVersionCode ?: 0
-            ),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = Typography.bodyMedium
-        )
+        items(state.scannedInstruments, key = { it.macAddress }) { instrument ->
+            Instrument(
+                instrument = instrument,
+                navigateToInstrument = navigateToInstrument,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
     }
 }
 
@@ -221,88 +205,55 @@ private fun ScanningState(
 }
 
 @Composable
-private fun ScannedInstruments(
-    modifier: Modifier = Modifier,
-    instruments: List<RaptPill>,
-    navigateToInstrument: (RaptPill) -> Unit,
-) {
-    Column {
-        if (instruments.isNotEmpty()) {
-            Card(
-                border = BorderStroke(0.dp, Color.LightGray),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    instruments.forEach { instrument ->
-                        Instrument(
-                            instrument = instrument,
-                            navigateToInstrument = navigateToInstrument,
-                        )
-                        if (instruments.last() != instrument) {
-                            HorizontalDivider(
-                                modifier = Modifier.padding(horizontal = 16.dp),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
 private fun Instrument(
     instrument: RaptPill,
     navigateToInstrument: (RaptPill) -> Unit,
 ) {
-    Row(
+    Card(
         modifier = Modifier
             .clickable(onClick = { navigateToInstrument(instrument) })
-            .fillMaxWidth()
-            .heightIn(52.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            .fillMaxWidth(),
+        border = BorderStroke(0.dp, Color.LightGray),
+        shape = RoundedCornerShape(16.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(16.dp),
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .weight(1f)
+                    .padding(16.dp),
+            ) {
+                Text(
+                    text = instrument.name ?: stringResource(R.string.scanning_result),
+                    overflow = TextOverflow.Ellipsis,
+                    style = Typography.bodyMedium,
+                    maxLines = 1
+                )
+
+                Spacer(modifier = Modifier.padding(4.dp))
+
+                Text(
+                    text = instrument.macAddress,
+                    style = Typography.bodySmall,
+                )
+            }
+
             Text(
-                text = instrument.name ?: stringResource(R.string.scanning_result),
-                overflow = TextOverflow.Ellipsis,
+                text = "${instrument.rssi}",
                 style = Typography.bodyMedium,
-                maxLines = 1
             )
 
             Spacer(modifier = Modifier.padding(4.dp))
 
-            Text(
-                text = instrument.macAddress,
-                style = Typography.bodySmall,
+            Image(
+                modifier = Modifier.padding(end = 10.dp),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_chevron_right),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+                contentDescription = null
             )
-        }
-        Box(modifier = Modifier
-            .align(Alignment.CenterVertically)
-            .padding(end = 10.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Column {
-                    Text(
-                        text = "${instrument.rssi}",
-                        style = Typography.bodyMedium,
-                    )
-                }
-                Spacer(modifier = Modifier.padding(4.dp))
-                Image(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_chevron_right),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-                    contentDescription = null
-                )
-            }
         }
     }
 }
