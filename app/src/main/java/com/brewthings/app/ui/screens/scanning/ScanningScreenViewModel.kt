@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.brewthings.app.ble.RaptPill
 import com.brewthings.app.ble.RaptPillScanner
 import com.juul.kable.Bluetooth
+import com.juul.kable.Bluetooth.Availability.Available
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
@@ -76,8 +77,11 @@ class ScanningScreenViewModel(
         )
     }
 
-    fun onScanButtonClicked() {
-        if (screenState.scanning) stopScan() else startScan()
+    fun toggleScan() {
+        when {
+            screenState.bluetooth is Available && !screenState.scanning -> startScan()
+            screenState.bluetooth !is Available || screenState.scanning -> stopScan()
+        }
     }
 
     private fun MutableList<RaptPill>.addOrUpdate(instrument: RaptPill) {

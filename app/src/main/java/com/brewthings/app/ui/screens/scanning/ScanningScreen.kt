@@ -24,6 +24,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -60,7 +61,7 @@ fun ScanningScreen(
                 // TODO: navigate
             },
             onRssiThresholdChanged = viewModel::onRssiThresholdChanged,
-            onScanButtonClicked = viewModel::onScanButtonClicked,
+            toggleScan = viewModel::toggleScan,
         )
     }
 }
@@ -71,7 +72,7 @@ private fun ScanningScreen(
     state: ScanningScreenState,
     navigateToInstrument: (RaptPill) -> Unit,
     onRssiThresholdChanged: (Int) -> Unit,
-    onScanButtonClicked: () -> Unit,
+    toggleScan: () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -107,7 +108,7 @@ private fun ScanningScreen(
                         scannedInstrumentCount = state.scannedInstrumentCount,
                         filteredInstrumentsCount = state.scannedInstruments.size,
                         scanning = state.scanning,
-                        onScanButtonClicked = onScanButtonClicked,
+                        onScanButtonClicked = toggleScan,
                     )
                 }
             }
@@ -129,6 +130,10 @@ private fun ScanningScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
+    }
+
+    LaunchedEffect(key1 = state.bluetooth) {
+        toggleScan()
     }
 }
 
