@@ -1,6 +1,7 @@
 # libs.versions.toml
 
 [versions]
+accompanist = "0.34.0"
 activityCompose = "1.9.0"
 androidGradle = "8.2.2"
 appCompat = "1.6.1"
@@ -9,6 +10,8 @@ composeMaterial = "1.6.7"
 composeMaterial3 = "1.2.1"
 coreKtx = "1.13.1"
 lifecycleRuntimeKtx = "2.7.0"
+kable = "0.31.1"
+koin = "3.5.6"
 kotlin = "1.9.20"
 kotlinGradle = "1.6.21"
 material = "1.12.0"
@@ -22,6 +25,8 @@ android-application = { group = "com.android.tools.build", name = "gradle", vers
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 kotlin-android = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradle" }
 
+# Accompanist
+accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 
 # AndroidX AppCompat
 app-compat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appCompat" }
@@ -39,11 +44,18 @@ compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compos
 compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "composeMaterial" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "composeMaterial" }
 
+# Kable
+kable = { group = "com.juul.kable", name = "core-android", version = "0.31.1" }
+
+# Koin
+koin = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
+koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
+
 # Material Design for Jetpack Compose
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3-android", version.ref = "composeMaterial3" }
 
-# Version Controll
+# Version Control
 toml4j = { group = "com.moandjiezana.toml", name = "toml4j", version.ref = "toml4j" }
 
 # Test

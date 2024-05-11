@@ -51,6 +51,9 @@ dependencies {
     // Core Libraries
     implementation(libs.core.ktx)
 
+    // Accompanist
+    implementation(libs.accompanist.permissions)
+
     // AndroidX AppCompat
     implementation(libs.app.compat)
 
@@ -71,7 +74,14 @@ dependencies {
     implementation(libs.compose.material)
     implementation(libs.compose.material3)
 
+    // Kable
+    implementation(libs.kable)
 
+    // Koin
+    implementation(libs.koin)
+    implementation(libs.koin.compose)
+
+    // Unit Testing
     testImplementation(libs.junit)
 }
 
