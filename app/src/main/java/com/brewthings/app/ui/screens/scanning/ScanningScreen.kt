@@ -29,10 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
@@ -75,84 +73,62 @@ private fun ScanningScreen(
     onRssiThresholdChanged: (Int) -> Unit,
     onScanButtonClicked: () -> Unit,
 ) {
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
-            item {
-                Text(
-                    modifier = Modifier.padding(16.dp),
-                    text = stringResource(R.string.scanning_options).uppercase(),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = Typography.bodyMedium
-                )
-                Card(
-                    border = BorderStroke(0.dp, Color.LightGray),
-                    shape = RoundedCornerShape(16.dp)
+        item {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = stringResource(R.string.scanning_options).uppercase(),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = Typography.bodyMedium
+            )
+            Card(
+                border = BorderStroke(0.dp, Color.LightGray),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        ExpandableCard(
-                            topContent = { TopContent() },
-                            expandedContent = {
-                                RssiThreshold(
-                                    rssiThreshold = state.rssiThreshold,
-                                    onRssiThresholdChanged = onRssiThresholdChanged,
-                                )
-                            }
-                        )
+                    ExpandableCard(
+                        topContent = { TopContent() },
+                        expandedContent = {
+                            RssiThreshold(
+                                rssiThreshold = state.rssiThreshold,
+                                onRssiThresholdChanged = onRssiThresholdChanged,
+                            )
+                        }
+                    )
 
-                        ScanningState(
-                            scannedInstrumentCount = state.scannedInstrumentCount,
-                            filteredInstrumentsCount = state.scannedInstruments.size,
-                            scanning = state.scanning,
-                            onScanButtonClicked = onScanButtonClicked,
-                        )
-                    }
+                    ScanningState(
+                        scannedInstrumentCount = state.scannedInstrumentCount,
+                        filteredInstrumentsCount = state.scannedInstruments.size,
+                        scanning = state.scanning,
+                        onScanButtonClicked = onScanButtonClicked,
+                    )
                 }
-
-                Spacer(modifier = Modifier.padding(vertical = 8.dp))
-
-                Text(
-                    modifier = Modifier.padding(16.dp),
-                    text = stringResource(R.string.scanning_results).uppercase(),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = Typography.bodyMedium
-                )
             }
 
-            items(state.scannedInstruments, key = { it.macAddress }) { instrument ->
-                Instrument(
-                    instrument = instrument,
-                    navigateToInstrument = navigateToInstrument,
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+            Spacer(modifier = Modifier.padding(vertical = 8.dp))
+
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = stringResource(R.string.scanning_results).uppercase(),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = Typography.bodyMedium
+            )
         }
 
-        val context = LocalContext.current
-        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            textAlign = TextAlign.Center,
-            text = stringResource(
-                id = R.string.scanning_app_version,
-                packageInfo?.versionName ?: stringResource(R.string.unknown),
-                packageInfo?.longVersionCode ?: 0
-            ),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = Typography.bodyMedium
-        )
+        items(state.scannedInstruments, key = { it.macAddress }) { instrument ->
+            Instrument(
+                instrument = instrument,
+                navigateToInstrument = navigateToInstrument,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
     }
 }
 
