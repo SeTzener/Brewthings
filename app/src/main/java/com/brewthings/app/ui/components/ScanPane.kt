@@ -156,7 +156,7 @@ private fun LocationServicesDisabled(enableAction: () -> Unit) {
 @Composable
 private fun BluetoothPermissionsNotGranted(permissions: MultiplePermissionsState) {
     ActionRequired(
-        icon = ImageVector.vectorResource(R.drawable.ic_location_disabled),
+        icon = ImageVector.vectorResource(R.drawable.ic_bluetooth_disabled),
         contentDescription = "Bluetooth permissions required",
         description = "Bluetooth permissions are required for scanning. Please grant the permission.",
         buttonText = "Continue",
