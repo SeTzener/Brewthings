@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.brewthings.app.ble.RaptPill
 import com.brewthings.app.ble.RaptPillScanner
+import com.juul.kable.Bluetooth
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
@@ -25,7 +26,15 @@ class ScanningScreenViewModel(
     private val raptPills: MutableList<RaptPill> = mutableListOf()
 
     init {
-        //startScan()
+        observeBluetoothAvailability()
+    }
+
+    private fun observeBluetoothAvailability() {
+        Bluetooth.availability
+            .onEach { availability ->
+                screenState = screenState.copy(bluetooth = availability)
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun startScan() {
