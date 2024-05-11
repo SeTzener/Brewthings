@@ -26,7 +26,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,7 +40,6 @@ import com.brewthings.app.ble.RaptPill
 import com.brewthings.app.ui.components.ExpandableCard
 import com.brewthings.app.ui.components.ScanPane
 import com.brewthings.app.ui.theme.Typography
-import com.juul.kable.Bluetooth
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -51,18 +49,22 @@ fun ScanningScreen(
     showLocationSettings: () -> Unit,
     enableBluetooth: () -> Unit,
 ) {
-    ScanningScreen(
-        state = viewModel.screenState,
-        navigateToInstrument = {
-            viewModel.stopScan()
-            // TODO: navigate
-        },
-        onRssiThresholdChanged = viewModel::onRssiThresholdChanged,
-        onScanButtonClicked = viewModel::onScanButtonClicked,
+    ScanPane(
+        bluetooth = viewModel.screenState.bluetooth,
         openAppDetails = openAppDetails,
         showLocationSettings = showLocationSettings,
         enableBluetooth = enableBluetooth,
-    )
+    ) {
+        ScanningScreen(
+            state = viewModel.screenState,
+            navigateToInstrument = {
+                viewModel.stopScan()
+                // TODO: navigate
+            },
+            onRssiThresholdChanged = viewModel::onRssiThresholdChanged,
+            onScanButtonClicked = viewModel::onScanButtonClicked,
+        )
+    }
 }
 
 @Suppress("LongMethod")
@@ -72,9 +74,6 @@ private fun ScanningScreen(
     navigateToInstrument: (RaptPill) -> Unit,
     onRssiThresholdChanged: (Int) -> Unit,
     onScanButtonClicked: () -> Unit,
-    openAppDetails: () -> Unit,
-    showLocationSettings: () -> Unit,
-    enableBluetooth: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -107,10 +106,6 @@ private fun ScanningScreen(
                     filteredInstrumentsCount = state.scannedInstruments.size,
                     scanning = state.scanning,
                     onScanButtonClicked = onScanButtonClicked,
-                    openAppDetails = openAppDetails,
-                    showLocationSettings = showLocationSettings,
-                    enableBluetooth = enableBluetooth,
-                    bluetooth = Bluetooth.availability.collectAsState(initial = null).value,
                 )
             }
         }
@@ -180,17 +175,7 @@ private fun ScanningState(
     filteredInstrumentsCount: Int,
     scanning: Boolean,
     onScanButtonClicked: () -> Unit,
-    openAppDetails: () -> Unit,
-    showLocationSettings: () -> Unit,
-    enableBluetooth: () -> Unit,
-    bluetooth: Bluetooth.Availability?,
 ) {
-    ScanPane(
-        bluetooth = bluetooth,
-        openAppDetails = openAppDetails,
-        showLocationSettings = showLocationSettings,
-        enableBluetooth = enableBluetooth,
-    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -217,7 +202,6 @@ private fun ScanningState(
                 Text("$filteredInstrumentsCount ($scannedInstrumentCount)")
             }
         }
-    }
 }
 
 @Composable
