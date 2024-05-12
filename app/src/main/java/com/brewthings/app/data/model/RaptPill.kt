@@ -1,4 +1,4 @@
-package com.brewthings.app.ble
+package com.brewthings.app.data.model
 
 import com.brewthings.app.util.asHexString
 
@@ -8,6 +8,18 @@ data class RaptPill(
     val rssi: Int,
     val manufacturerData: ByteArray?
 ) {
+    val data: RaptPillData? get() {
+        // TODO: parse from manufacturerData
+        return RaptPillData(
+            temperature = 26.18f,
+            gravity = 1.01f,
+            x = 940.80f,
+            y = -150.34f,
+            z = -319.69f,
+            battery = 0.375f
+        )
+    }
+
     override fun toString(): String {
         return "BleDevice(macAddress='$macAddress', name='$name', rssi=$rssi, manufacturerData=${manufacturerData?.asHexString()})"
     }

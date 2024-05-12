@@ -1,6 +1,6 @@
 package com.brewthings.app.ui.screens.scanning
 
-import com.brewthings.app.ble.RaptPill
+import com.brewthings.app.data.model.RaptPill
 import com.juul.kable.Bluetooth
 
 const val RSSI_THRESHOLD_RANGE_START = 0f

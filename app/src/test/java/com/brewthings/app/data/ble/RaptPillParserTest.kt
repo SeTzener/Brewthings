@@ -1,9 +1,5 @@
-package com.brewthings.app.data
+package com.brewthings.app.data.ble
 
-import android.util.Log
-import android.util.Log.d
-import io.mockk.every
-import io.mockk.mockk
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
 
@@ -18,9 +14,9 @@ class RaptPillParserTest {
         with (data){
             assertTrue(temperature.toDouble() == 26.185937881469727)
             assertTrue(gravity.toDouble() == 1.4880685806274414)
-            assertTrue(x == 4040)
-            assertTrue(y == 3154)
-            assertTrue(z == 295)
+            assertTrue(x == 4040.6875f)
+            assertTrue(y == 3154.0625f)
+            assertTrue(z == 295.5625f)
             assertTrue(battery.toDouble() == 100.0)
 
         }

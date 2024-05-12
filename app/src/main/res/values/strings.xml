@@ -22,4 +22,9 @@
     <string name="bluetooth_disabled_desc">"Please, grant access to it."</string>
     <string name="bluetooth_disabled_btn">"Enable"</string>
     <string name="bluetooth_unavailable">"Bluetooth is not available"</string>
+    <string name="instrument_rssi">"%ddBm"</string>
+    <string name="instrument_gravity">"%.3f SG"</string>
+    <string name="instrument_temperature">"%.2f°C"</string>
+    <string name="instrument_battery">"%.1f\%%"</string>
+    <string name="instrument_tilt">"%.2f\%%"</string>
 </resources>
