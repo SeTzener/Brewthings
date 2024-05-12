@@ -84,6 +84,7 @@ dependencies {
 
     // Unit Testing
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
 }
 
 fun generateVersionCode(versionName: String, buildVersion: Int): Int {
