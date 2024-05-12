@@ -1,15 +1,29 @@
 package com.brewthings.app.data
 
+import android.util.Log
+import android.util.Log.d
+import io.mockk.every
+import io.mockk.mockk
+import junit.framework.TestCase.assertTrue
 import org.junit.Test
 
 class RaptPillParserTest {
     @Test
     fun parseValidPillData() {
-        val hexString = "0201061AFF524150540200000000000095AB44BA0232FC8BC52112796400"
+        // 0201061AFF52415054
+        val hexString = "0200000000000095AB44BA0232FC8BC52112796400"
         val byteArray = hexStringToByteArray(hexString)
         val parser = RaptPillParser()
         val data = parser.parse(byteArray)
-        println(data)
+        with (data){
+            assertTrue(temperature.toDouble() == 26.185937881469727)
+            assertTrue(gravity.toDouble() == 1.4880685806274414)
+            assertTrue(x == 4040)
+            assertTrue(y == 3154)
+            assertTrue(z == 295)
+            assertTrue(battery.toDouble() == 100.0)
+
+        }
     }
     private fun hexStringToByteArray(s: String): ByteArray {
         val len = s.length

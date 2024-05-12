@@ -1,7 +1,12 @@
 package com.brewthings.app.data.utils
 
-fun ByteArray.getUIntAt(idx: Int) =
-    ((this[idx].toUInt() and 0xFFu) shl 24) or
-            ((this[idx + 1].toUInt() and 0xFFu) shl 16) or
-            ((this[idx + 2].toUInt() and 0xFFu) shl 8) or
-            (this[idx + 3].toUInt() and 0xFFu)
+import java.nio.ByteBuffer
+
+fun ByteBuffer.toUShort(): UShort {
+    require(limit() >= position() + 2) { "Buffer must have at least 2 bytes for uShort conversion" }
+
+    val firstByte = get().toUInt() and 0xFFu shl 8
+    val secondByte = get().toUInt() and 0xFFu
+
+    return (firstByte or secondByte).toUShort()
+}

@@ -1,6 +1,8 @@
 package com.brewthings.app.data
 
+import android.util.Log
 import com.brewthings.app.data.model.RaptPillData
+import com.brewthings.app.data.utils.toUShort
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -42,34 +44,31 @@ typedef struct __attribute__((packed)) {
 
 class RaptPillParser {
     fun parse(data: ByteArray): RaptPillData {
-        // Find the start of the RAPT Pill data
-        val raptStartIndex = data.indexOfFirst { it == 0x5241.toByte() } + 3 // "RA" in ASCII
-        if (raptStartIndex == -1) {
-            throw IllegalArgumentException("RAPT Pill data not found in the file")
+        if (data.size < 20) {
+            throw IllegalArgumentException("Metrics data must have length 20")
         }
-
-        // Ensure the RAPT Pill data has the correct length
-        if (data.size - raptStartIndex < 20) {
-            throw IllegalArgumentException("Metrics data must have length 23")
-        }
-
-        // Extract the RAPT Pill data
-        val raptData = data.sliceArray(raptStartIndex until raptStartIndex + 21)
 
         // Convert byte array to ByteBuffer for easier manipulation
-        val buffer = ByteBuffer.wrap(raptData).order(ByteOrder.BIG_ENDIAN)
+        val buffer = ByteBuffer.wrap(data).order(ByteOrder.BIG_ENDIAN)
 
         // Extract data from ByteBuffer
         val version = buffer.get()
+//        Log.d("INFO: PillParser: version", "$version")
+
         val gravityVelocityValid = buffer.get()!= 0.toByte()
+//        Log.d("INFO: PillParser: GravityVelocityFlag", "$gravityVelocityValid")
+
         buffer.get() // for no reason at all
+
         val gravityVelocity = buffer.float
-        val temperature = buffer.short.toUInt().toFloat()
+//        Log.d("INFO: PillParser: GravityVelocity", "$gravityVelocity")
+
+        val temperature = buffer.toUShort().toFloat()
         val gravity = buffer.float / 1000
-        val x = buffer.short.toUInt().toInt() / 16
-        val y = buffer.short.toUInt().toInt() / 16
-        val z = buffer.short.toUInt().toInt() / 16
-        val battery = buffer.short.toUInt().toFloat() / 256
+        val x = buffer.toUShort().toInt() / 16
+        val y = buffer.toUShort().toInt() / 16
+        val z = buffer.toUShort().toInt() / 16
+        val battery = buffer.toUShort().toFloat() / 256
 
         return RaptPillData(
             temperature = (temperature / 128.0 - 273.15).toFloat(),
