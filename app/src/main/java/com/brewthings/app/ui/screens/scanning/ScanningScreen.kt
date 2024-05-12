@@ -268,7 +268,7 @@ private fun InstrumentExpandedContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 12.dp, top = 8.dp, bottom = 16.dp, end = 62.dp),
+                .padding(start = 16.dp, top = 8.dp, bottom = 16.dp, end = 62.dp),
         ) {
             Column {
                 TextWithIcon(

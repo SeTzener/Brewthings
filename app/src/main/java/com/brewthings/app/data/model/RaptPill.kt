@@ -12,11 +12,11 @@ data class RaptPill(
         // TODO: parse from manufacturerData
         return RaptPillData(
             temperature = 26.18f,
-            gravity = 1.488f,
+            gravity = 1.01f,
             x = 940.80f,
             y = -150.34f,
             z = -319.69f,
-            battery = 1f
+            battery = 0.375f
         )
     }
 
