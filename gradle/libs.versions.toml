@@ -43,6 +43,7 @@ compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = 
 compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "composeMaterial" }
 compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "composeMaterial" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "composeMaterial" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "composeMaterial" }
 
 # Kable
 kable = { group = "com.juul.kable", name = "core-android", version = "0.31.1" }
