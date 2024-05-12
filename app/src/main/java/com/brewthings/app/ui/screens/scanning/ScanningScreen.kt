@@ -1,8 +1,6 @@
 package com.brewthings.app.ui.screens.scanning
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,10 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
@@ -56,10 +51,6 @@ fun ScanningScreen(
     ) {
         ScanningScreen(
             state = viewModel.screenState,
-            navigateToInstrument = {
-                viewModel.stopScan()
-                // TODO: navigate
-            },
             onRssiThresholdChanged = viewModel::onRssiThresholdChanged,
             toggleScan = viewModel::toggleScan,
         )
@@ -70,7 +61,6 @@ fun ScanningScreen(
 @Composable
 private fun ScanningScreen(
     state: ScanningScreenState,
-    navigateToInstrument: (RaptPill) -> Unit,
     onRssiThresholdChanged: (Int) -> Unit,
     toggleScan: () -> Unit,
 ) {
@@ -124,10 +114,7 @@ private fun ScanningScreen(
         }
 
         items(state.scannedInstruments, key = { it.macAddress }) { instrument ->
-            Instrument(
-                instrument = instrument,
-                navigateToInstrument = navigateToInstrument,
-            )
+            Instrument(instrument = instrument)
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
@@ -215,53 +202,53 @@ private fun ScanningState(
 @Composable
 private fun Instrument(
     instrument: RaptPill,
-    navigateToInstrument: (RaptPill) -> Unit,
 ) {
     Card(
-        modifier = Modifier
-            .clickable(onClick = { navigateToInstrument(instrument) })
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         border = BorderStroke(0.dp, Color.LightGray),
         shape = RoundedCornerShape(16.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        ExpandableCard(
+            topContent = { InstrumentTopContent(instrument) },
+            expandedContent = { /*TODO*/ }
+        )
+    }
+}
+
+@Composable
+private fun InstrumentTopContent(
+    instrument: RaptPill,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(end = 20.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(vertical = 16.dp),
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .weight(1f)
-                    .padding(16.dp),
-            ) {
-                Text(
-                    text = instrument.name ?: stringResource(R.string.scanning_result),
-                    overflow = TextOverflow.Ellipsis,
-                    style = Typography.bodyMedium,
-                    maxLines = 1
-                )
-
-                Spacer(modifier = Modifier.padding(4.dp))
-
-                Text(
-                    text = instrument.macAddress,
-                    style = Typography.bodySmall,
-                )
-            }
-
             Text(
-                text = "${instrument.rssi}",
+                text = instrument.name ?: stringResource(R.string.scanning_result),
+                overflow = TextOverflow.Ellipsis,
                 style = Typography.bodyMedium,
+                maxLines = 1
             )
 
             Spacer(modifier = Modifier.padding(4.dp))
 
-            Image(
-                modifier = Modifier.padding(end = 10.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_chevron_right),
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-                contentDescription = null
+            Text(
+                text = instrument.macAddress,
+                style = Typography.bodySmall,
             )
         }
+
+        Text(
+            text = stringResource(id = R.string.instrument_rssi, instrument.rssi),
+            style = Typography.bodyMedium,
+        )
     }
 }

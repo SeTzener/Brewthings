@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.brewthings.app.ble.RaptPill
 import com.brewthings.app.ble.RaptPillScanner
 import com.juul.kable.Bluetooth
-import com.juul.kable.Bluetooth.Availability.Available
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
@@ -28,6 +27,18 @@ class ScanningScreenViewModel(
 
     init {
         observeBluetoothAvailability()
+    }
+
+    fun toggleScan() {
+        when {
+            screenState.bluetooth is Bluetooth.Availability.Available && !screenState.scanning -> startScan()
+            screenState.bluetooth !is Bluetooth.Availability.Available || screenState.scanning -> stopScan()
+        }
+    }
+
+    fun onRssiThresholdChanged(rssiThreshold: Int) {
+        screenState = screenState.copy(rssiThreshold = rssiThreshold)
+        updateInstrumentsScreenState()
     }
 
     private fun observeBluetoothAvailability() {
@@ -57,14 +68,9 @@ class ScanningScreenViewModel(
             .launchIn(viewModelScope)
     }
 
-    fun stopScan() {
+    private fun stopScan() {
         scanJob?.cancel()
         scanJob = null
-    }
-
-    fun onRssiThresholdChanged(rssiThreshold: Int) {
-        screenState = screenState.copy(rssiThreshold = rssiThreshold)
-        updateInstrumentsScreenState()
     }
 
     private fun updateInstrumentsScreenState() {
@@ -75,13 +81,6 @@ class ScanningScreenViewModel(
             scannedInstrumentCount = raptPills.size,
             scannedInstruments = filteredInstruments
         )
-    }
-
-    fun toggleScan() {
-        when {
-            screenState.bluetooth is Available && !screenState.scanning -> startScan()
-            screenState.bluetooth !is Available || screenState.scanning -> stopScan()
-        }
     }
 
     private fun MutableList<RaptPill>.addOrUpdate(instrument: RaptPill) {

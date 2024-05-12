@@ -22,4 +22,5 @@
     <string name="bluetooth_disabled_desc">"Please, grant access to it."</string>
     <string name="bluetooth_disabled_btn">"Enable"</string>
     <string name="bluetooth_unavailable">"Bluetooth is not available"</string>
+    <string name="instrument_rssi">"%ddBm"</string>
 </resources>
