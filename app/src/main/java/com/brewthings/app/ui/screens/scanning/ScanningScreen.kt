@@ -279,8 +279,8 @@ private fun InstrumentExpandedContent(
                 Spacer(modifier = Modifier.padding(8.dp))
 
                 TextWithIcon(
-                    icon = { BatteryLevelIndicator(data.battery) },
-                    text = stringResource(id = R.string.instrument_battery, data.battery * 100f)
+                    iconResId = R.drawable.ic_temperature,
+                    text = stringResource(id = R.string.instrument_temperature, data.temperature)
                 )
             }
 
@@ -288,15 +288,15 @@ private fun InstrumentExpandedContent(
 
             Column {
                 TextWithIcon(
-                    iconResId = R.drawable.ic_temperature,
-                    text = stringResource(id = R.string.instrument_temperature, data.temperature)
+                    iconResId = R.drawable.ic_tilt,
+                    text = stringResource(id = R.string.instrument_tilt, data.floatingAngle)
                 )
 
                 Spacer(modifier = Modifier.padding(8.dp))
 
                 TextWithIcon(
-                    iconResId = R.drawable.ic_tilt,
-                    text = stringResource(id = R.string.instrument_tilt, data.floatingAngle)
+                    icon = { BatteryLevelIndicator(data.battery) },
+                    text = stringResource(id = R.string.instrument_battery, data.battery * 100f)
                 )
             }
         }
