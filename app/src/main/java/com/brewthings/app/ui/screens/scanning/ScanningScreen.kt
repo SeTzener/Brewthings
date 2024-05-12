@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -30,7 +31,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
@@ -123,7 +126,8 @@ private fun ScanningScreen(
         items(scannedInstruments, key = { it.macAddress }) { instrument ->
             Instrument(
                 instrument = instrument,
-                isExpanded = scannedInstruments.size == 1
+                isExpanded = scannedInstruments.size == 1,
+                isInScannedInstruments = state.scannedInstruments.contains(instrument),
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -212,7 +216,8 @@ private fun ScanningState(
 @Composable
 private fun Instrument(
     instrument: RaptPill,
-    isExpanded: Boolean
+    isExpanded: Boolean,
+    isInScannedInstruments: Boolean,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -221,7 +226,7 @@ private fun Instrument(
     ) {
         ExpandableCard(
             isExpanded = isExpanded,
-            topContent = { InstrumentTopContent(instrument) },
+            topContent = { InstrumentTopContent(instrument, isInScannedInstruments) },
             expandedContent = { InstrumentExpandedContent(instrument) }
         )
     }
@@ -230,6 +235,7 @@ private fun Instrument(
 @Composable
 private fun InstrumentTopContent(
     instrument: RaptPill,
+    isInScannedInstruments: Boolean,
 ) {
     Row(
         modifier = Modifier
@@ -258,10 +264,18 @@ private fun InstrumentTopContent(
             )
         }
 
-        Text(
-            text = stringResource(id = R.string.instrument_rssi, instrument.rssi),
-            style = Typography.bodySmall,
-        )
+        if (isInScannedInstruments) {
+            Text(
+                text = stringResource(id = R.string.instrument_rssi, instrument.rssi),
+                style = Typography.bodySmall,
+            )
+        } else {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_bluetooth_disabled),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        }
     }
 }
 
