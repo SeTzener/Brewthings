@@ -23,6 +23,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -264,7 +268,7 @@ private fun InstrumentTopContent(
 private fun InstrumentExpandedContent(
     instrument: RaptPill,
 ) {
-    instrument.data?.let { data ->
+    newOrCached(instrument.data)?.let { data ->
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -296,9 +300,20 @@ private fun InstrumentExpandedContent(
 
                 TextWithIcon(
                     icon = { BatteryLevelIndicator(data.battery) },
-                    text = stringResource(id = R.string.instrument_battery, data.battery * 100f)
+                    text = stringResource(id = R.string.instrument_battery, data.battery)
                 )
             }
         }
+    }
+}
+
+@Composable
+fun <T> newOrCached(data: T?): T? {
+    var previousData: T? by remember { mutableStateOf(null) }
+    return if (data != null) {
+        previousData = data
+        data
+    } else {
+        previousData
     }
 }
