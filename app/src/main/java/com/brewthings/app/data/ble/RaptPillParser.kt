@@ -1,6 +1,5 @@
 package com.brewthings.app.data.ble
 
-import android.util.Log
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.utils.toUShort
 import java.nio.ByteBuffer
@@ -65,10 +64,10 @@ class RaptPillParser {
 
         val temperature = buffer.toUShort().toFloat()
         val gravity = buffer.float / 1000
-        val x = buffer.toUShort().toInt() / 16
-        val y = buffer.toUShort().toInt() / 16
-        val z = buffer.toUShort().toInt() / 16
-        val battery = buffer.toUShort().toFloat() / 256
+        val x = buffer.toUShort().toInt() / 16f
+        val y = buffer.toUShort().toInt() / 16f
+        val z = buffer.toUShort().toInt() / 16f
+        val battery = buffer.toUShort().toFloat() / 256f
 
         return RaptPillData(
             temperature = (temperature / 128.0 - 273.15).toFloat(),
