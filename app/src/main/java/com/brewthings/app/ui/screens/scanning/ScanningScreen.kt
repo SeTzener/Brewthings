@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -26,11 +27,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.model.RaptPill
+import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.ExpandableCard
 import com.brewthings.app.ui.components.ScanPane
 import com.brewthings.app.ui.theme.Typography
@@ -114,7 +118,10 @@ private fun ScanningScreen(
         }
 
         items(state.scannedInstruments, key = { it.macAddress }) { instrument ->
-            Instrument(instrument = instrument)
+            Instrument(
+                instrument = instrument,
+                isExpanded = state.scannedInstruments.size == 1
+            )
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
@@ -202,6 +209,7 @@ private fun ScanningState(
 @Composable
 private fun Instrument(
     instrument: RaptPill,
+    isExpanded: Boolean
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -209,8 +217,9 @@ private fun Instrument(
         shape = RoundedCornerShape(16.dp)
     ) {
         ExpandableCard(
+            isExpanded = isExpanded,
             topContent = { InstrumentTopContent(instrument) },
-            expandedContent = { /*TODO*/ }
+            expandedContent = { InstrumentExpandedContent(instrument) }
         )
     }
 }
@@ -248,7 +257,101 @@ private fun InstrumentTopContent(
 
         Text(
             text = stringResource(id = R.string.instrument_rssi, instrument.rssi),
-            style = Typography.bodyMedium,
+            style = Typography.bodySmall,
         )
+    }
+}
+
+@Composable
+private fun InstrumentExpandedContent(
+    instrument: RaptPill,
+) {
+    instrument.data?.let { data ->
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 12.dp, top = 8.dp, bottom = 8.dp, end = 62.dp),
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+            ) {
+                Row(
+                    modifier = Modifier.weight(1f)
+                        .align(Alignment.CenterVertically),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_gravity),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+
+                    Spacer(modifier = Modifier.padding(8.dp))
+
+                    Text(
+                        text = stringResource(id = R.string.instrument_gravity, data.gravity),
+                        style = Typography.bodyMedium,
+                    )
+                }
+                Row(
+                    modifier = Modifier.weight(1f)
+                        .align(Alignment.CenterVertically),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_temperature),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+
+                    Spacer(modifier = Modifier.padding(8.dp))
+
+                    Text(
+                        text = stringResource(id = R.string.instrument_temperature, data.temperature),
+                        style = Typography.bodyMedium,
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+            ) {
+                Row(
+                    modifier = Modifier.weight(1f)
+                        .align(Alignment.CenterVertically),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    BatteryLevelIndicator(batteryPercentage = data.battery)
+
+                    Spacer(modifier = Modifier.padding(8.dp))
+
+                    Text(
+                        text = stringResource(id = R.string.instrument_battery, data.battery * 100f),
+                        style = Typography.bodyMedium,
+                    )
+                }
+                Row(
+                    modifier = Modifier.weight(1f)
+                        .align(Alignment.CenterVertically),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_tilt),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+
+                    Spacer(modifier = Modifier.padding(8.dp))
+
+                    Text(
+                        text = stringResource(id = R.string.instrument_tilt, data.floatingAngle),
+                        style = Typography.bodyMedium,
+                    )
+                }
+            }
+        }
     }
 }

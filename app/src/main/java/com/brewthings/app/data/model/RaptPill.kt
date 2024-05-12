@@ -8,7 +8,7 @@ data class RaptPill(
     val rssi: Int,
     val manufacturerData: ByteArray?
 ) {
-    val data: RaptPillData get() {
+    val data: RaptPillData? get() {
         // TODO: parse from manufacturerData
         return RaptPillData(
             temperature = 26.18f,
