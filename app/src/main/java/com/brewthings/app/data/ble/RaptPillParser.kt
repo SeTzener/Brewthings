@@ -41,7 +41,7 @@ typedef struct __attribute__((packed)) {
 } RAPTPillMetricsV2;
 */
 
-class RaptPillParser {
+object RaptPillParser {
     fun parse(data: ByteArray): RaptPillData {
         if (data.size < 20) {
             throw IllegalArgumentException("Metrics data must have length 20")
