@@ -8,6 +8,18 @@ data class RaptPill(
     val rssi: Int,
     val manufacturerData: ByteArray?
 ) {
+    val data: RaptPillData get() {
+        // TODO: parse from manufacturerData
+        return RaptPillData(
+            temperature = 26.18f,
+            gravity = 1.488f,
+            x = 940.80f,
+            y = -150.34f,
+            z = -319.69f,
+            battery = 1f
+        )
+    }
+
     override fun toString(): String {
         return "BleDevice(macAddress='$macAddress', name='$name', rssi=$rssi, manufacturerData=${manufacturerData?.asHexString()})"
     }
