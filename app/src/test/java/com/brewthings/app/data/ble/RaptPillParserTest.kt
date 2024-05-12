@@ -1,9 +1,5 @@
-package com.brewthings.app.data
+package com.brewthings.app.data.ble
 
-import android.util.Log
-import android.util.Log.d
-import io.mockk.every
-import io.mockk.mockk
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
 

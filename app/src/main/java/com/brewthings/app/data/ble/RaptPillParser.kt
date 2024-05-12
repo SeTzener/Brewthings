@@ -1,4 +1,4 @@
-package com.brewthings.app.data
+package com.brewthings.app.data.ble
 
 import android.util.Log
 import com.brewthings.app.data.model.RaptPillData
