@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -27,9 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
@@ -37,6 +34,7 @@ import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.ExpandableCard
 import com.brewthings.app.ui.components.ScanPane
+import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.theme.Typography
 import org.koin.androidx.compose.koinViewModel
 
@@ -267,90 +265,39 @@ private fun InstrumentExpandedContent(
     instrument: RaptPill,
 ) {
     instrument.data?.let { data ->
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 12.dp, top = 8.dp, bottom = 8.dp, end = 62.dp),
+                .padding(start = 12.dp, top = 8.dp, bottom = 16.dp, end = 62.dp),
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-            ) {
-                Row(
-                    modifier = Modifier.weight(1f)
-                        .align(Alignment.CenterVertically),
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_gravity),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                    )
+            Column {
+                TextWithIcon(
+                    iconResId = R.drawable.ic_gravity,
+                    text = stringResource(id = R.string.instrument_gravity, data.gravity)
+                )
 
-                    Spacer(modifier = Modifier.padding(8.dp))
+                Spacer(modifier = Modifier.padding(8.dp))
 
-                    Text(
-                        text = stringResource(id = R.string.instrument_gravity, data.gravity),
-                        style = Typography.bodyMedium,
-                    )
-                }
-                Row(
-                    modifier = Modifier.weight(1f)
-                        .align(Alignment.CenterVertically),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_temperature),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                    )
-
-                    Spacer(modifier = Modifier.padding(8.dp))
-
-                    Text(
-                        text = stringResource(id = R.string.instrument_temperature, data.temperature),
-                        style = Typography.bodyMedium,
-                    )
-                }
+                TextWithIcon(
+                    icon = { BatteryLevelIndicator(data.battery) },
+                    text = stringResource(id = R.string.instrument_battery, data.battery * 100f)
+                )
             }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-            ) {
-                Row(
-                    modifier = Modifier.weight(1f)
-                        .align(Alignment.CenterVertically),
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    BatteryLevelIndicator(batteryPercentage = data.battery)
 
-                    Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
-                    Text(
-                        text = stringResource(id = R.string.instrument_battery, data.battery * 100f),
-                        style = Typography.bodyMedium,
-                    )
-                }
-                Row(
-                    modifier = Modifier.weight(1f)
-                        .align(Alignment.CenterVertically),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_tilt),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                    )
+            Column {
+                TextWithIcon(
+                    iconResId = R.drawable.ic_temperature,
+                    text = stringResource(id = R.string.instrument_temperature, data.temperature)
+                )
 
-                    Spacer(modifier = Modifier.padding(8.dp))
+                Spacer(modifier = Modifier.padding(8.dp))
 
-                    Text(
-                        text = stringResource(id = R.string.instrument_tilt, data.floatingAngle),
-                        style = Typography.bodyMedium,
-                    )
-                }
+                TextWithIcon(
+                    iconResId = R.drawable.ic_tilt,
+                    text = stringResource(id = R.string.instrument_tilt, data.floatingAngle)
+                )
             }
         }
     }
