@@ -70,6 +70,7 @@ private fun ScanningScreen(
     onRssiThresholdChanged: (Int) -> Unit,
     toggleScan: () -> Unit,
 ) {
+    val scannedInstruments = newOrCached(state.scannedInstruments, emptyList())
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -119,10 +120,10 @@ private fun ScanningScreen(
             )
         }
 
-        items(state.scannedInstruments, key = { it.macAddress }) { instrument ->
+        items(scannedInstruments, key = { it.macAddress }) { instrument ->
             Instrument(
                 instrument = instrument,
-                isExpanded = state.scannedInstruments.size == 1
+                isExpanded = scannedInstruments.size == 1
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -268,7 +269,7 @@ private fun InstrumentTopContent(
 private fun InstrumentExpandedContent(
     instrument: RaptPill,
 ) {
-    newOrCached(instrument.data)?.let { data ->
+    newOrCached(instrument.data, null)?.let { data ->
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -308,8 +309,11 @@ private fun InstrumentExpandedContent(
 }
 
 @Composable
-fun <T> newOrCached(data: T?): T? {
-    var previousData: T? by remember { mutableStateOf(null) }
+fun <T: Any?> newOrCached(
+    data: T,
+    initialValue: T
+): T {
+    var previousData: T by remember { mutableStateOf(initialValue) }
     return if (data != null) {
         previousData = data
         data
