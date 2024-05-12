@@ -43,17 +43,23 @@ typedef struct __attribute__((packed)) {
 
 object RaptPillParser {
     fun parse(data: ByteArray): RaptPillData {
-        if (data.size < 20) {
-            throw IllegalArgumentException("Metrics data must have length 20")
+        if (data.size != 23) {
+            throw IllegalArgumentException("Metrics data must have length 23")
+        }
+
+        if (data[0] != 'P'.code.toByte() || data[1] != 'T'.code.toByte()) {
+            throw IllegalArgumentException("Metrics data must start with `P` `T`")
+        }
+
+        val expectedVersion = 2u
+        if (data[2] != expectedVersion.toByte()) {
+            throw IllegalArgumentException("Version not supported: expected $expectedVersion, got ${data[2].toUInt()}")
         }
 
         // Convert byte array to ByteBuffer for easier manipulation
-        val buffer = ByteBuffer.wrap(data).order(ByteOrder.BIG_ENDIAN)
+        val buffer = ByteBuffer.wrap(data.copyOfRange(3, data.size)).order(ByteOrder.BIG_ENDIAN)
 
         // Extract data from ByteBuffer
-        val version = buffer.get()
-//        Log.d("INFO: PillParser: version", "$version")
-
         val gravityVelocityValid = buffer.get()!= 0.toByte()
 //        Log.d("INFO: PillParser: GravityVelocityFlag", "$gravityVelocityValid")
 

@@ -6,8 +6,7 @@ import org.junit.Test
 class RaptPillParserTest {
     @Test
     fun parseValidPillData() {
-        // 0201061AFF52415054
-        val hexString = "0200000000000095AB44BA0232FC8BC52112796400"
+        val hexString = "50540200000000000095AB44BA0232FC8BC52112796400"
         val byteArray = hexStringToByteArray(hexString)
         val data = RaptPillParser.parse(byteArray)
         with (data){
