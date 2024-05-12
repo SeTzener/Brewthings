@@ -6,8 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.brewthings.app.ble.RaptPill
-import com.brewthings.app.ble.RaptPillScanner
+import com.brewthings.app.data.model.RaptPill
+import com.brewthings.app.data.ble.RaptPillScanner
 import com.juul.kable.Bluetooth
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn

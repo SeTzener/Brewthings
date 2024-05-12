@@ -1,4 +1,4 @@
-package com.brewthings.app.ble
+package com.brewthings.app.data.model
 
 import com.brewthings.app.util.asHexString
 

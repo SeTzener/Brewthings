@@ -1,6 +1,7 @@
-package com.brewthings.app.ble
+package com.brewthings.app.data.ble
 
 import android.bluetooth.le.ScanSettings
+import com.brewthings.app.data.model.RaptPill
 import com.juul.kable.Scanner
 import com.juul.kable.logs.Logging
 import com.juul.kable.logs.SystemLogEngine
