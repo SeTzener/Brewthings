@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -23,10 +24,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
@@ -66,6 +73,7 @@ private fun ScanningScreen(
     onRssiThresholdChanged: (Int) -> Unit,
     toggleScan: () -> Unit,
 ) {
+    val scannedInstruments = newOrCached(state.scannedInstruments, emptyList())
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -115,10 +123,11 @@ private fun ScanningScreen(
             )
         }
 
-        items(state.scannedInstruments, key = { it.macAddress }) { instrument ->
+        items(scannedInstruments, key = { it.macAddress }) { instrument ->
             Instrument(
                 instrument = instrument,
-                isExpanded = state.scannedInstruments.size == 1
+                isExpanded = scannedInstruments.size == 1,
+                isInScannedInstruments = state.scannedInstruments.contains(instrument),
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -207,7 +216,8 @@ private fun ScanningState(
 @Composable
 private fun Instrument(
     instrument: RaptPill,
-    isExpanded: Boolean
+    isExpanded: Boolean,
+    isInScannedInstruments: Boolean,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -216,7 +226,7 @@ private fun Instrument(
     ) {
         ExpandableCard(
             isExpanded = isExpanded,
-            topContent = { InstrumentTopContent(instrument) },
+            topContent = { InstrumentTopContent(instrument, isInScannedInstruments) },
             expandedContent = { InstrumentExpandedContent(instrument) }
         )
     }
@@ -225,6 +235,7 @@ private fun Instrument(
 @Composable
 private fun InstrumentTopContent(
     instrument: RaptPill,
+    isInScannedInstruments: Boolean,
 ) {
     Row(
         modifier = Modifier
@@ -253,10 +264,18 @@ private fun InstrumentTopContent(
             )
         }
 
-        Text(
-            text = stringResource(id = R.string.instrument_rssi, instrument.rssi),
-            style = Typography.bodySmall,
-        )
+        if (isInScannedInstruments) {
+            Text(
+                text = stringResource(id = R.string.instrument_rssi, instrument.rssi),
+                style = Typography.bodySmall,
+            )
+        } else {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_bluetooth_disabled),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        }
     }
 }
 
@@ -264,7 +283,7 @@ private fun InstrumentTopContent(
 private fun InstrumentExpandedContent(
     instrument: RaptPill,
 ) {
-    instrument.data?.let { data ->
+    newOrCached(instrument.data, null)?.let { data ->
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -296,9 +315,23 @@ private fun InstrumentExpandedContent(
 
                 TextWithIcon(
                     icon = { BatteryLevelIndicator(data.battery) },
-                    text = stringResource(id = R.string.instrument_battery, data.battery * 100f)
+                    text = stringResource(id = R.string.instrument_battery, data.battery)
                 )
             }
         }
+    }
+}
+
+@Composable
+fun <T: Any?> newOrCached(
+    data: T,
+    initialValue: T
+): T {
+    var previousData: T by remember { mutableStateOf(initialValue) }
+    return if (data != null) {
+        previousData = data
+        data
+    } else {
+        previousData
     }
 }
