@@ -1,6 +1,7 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.gradle.android)
+    alias(libs.plugins.gradle.kotlin)
+    alias(libs.plugins.gradle.room)
 }
 
 val appId = stringProperty("app.id")
@@ -44,6 +45,10 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.4"
     }
+
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
 }
 
 dependencies {
@@ -81,6 +86,10 @@ dependencies {
     // Koin
     implementation(libs.koin)
     implementation(libs.koin.compose)
+
+    // Room
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler)
 
     // Unit Testing
     testImplementation(libs.junit)
