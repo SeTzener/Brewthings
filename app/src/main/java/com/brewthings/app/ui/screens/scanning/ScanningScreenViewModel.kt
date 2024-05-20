@@ -32,7 +32,7 @@ class ScanningScreenViewModel(
     fun observeDatabase() {
         repo.fromDatabase()
             .onEach { raptPills ->
-                screenState = screenState.copy(savedInstruments = raptPills)
+                screenState = screenState.copy(savedPills = raptPills)
             }
             .launchIn(viewModelScope)
     }
@@ -61,7 +61,7 @@ class ScanningScreenViewModel(
         stopScan()
         scannedRaptPills.clear()
         screenState = screenState.copy(
-            scannedInstruments = emptyList(),
+            scannedPills = emptyList(),
             scanning = true,
         )
         scanJob = repo
@@ -86,8 +86,8 @@ class ScanningScreenViewModel(
             .filter { it.rssi > screenState.rssiThreshold }
 
         screenState = screenState.copy(
-            scannedInstrumentCount = scannedRaptPills.size,
-            scannedInstruments = filteredInstruments
+            scannedPillsCount = scannedRaptPills.size,
+            scannedPills = filteredInstruments
         )
     }
 

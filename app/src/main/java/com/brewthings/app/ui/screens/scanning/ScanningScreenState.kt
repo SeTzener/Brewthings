@@ -12,7 +12,7 @@ data class ScanningScreenState(
     val bluetooth: Bluetooth.Availability? = null,
     val rssiThreshold: Int = INITIAL_RSSI_THRESHOLD,
     val scanning: Boolean = false,
-    val scannedInstrumentCount: Int = 0,
-    val scannedInstruments: List<ScannedRaptPill> = emptyList(),
-    val savedInstruments: List<RaptPill> = emptyList(),
+    val scannedPillsCount: Int = 0,
+    val scannedPills: List<ScannedRaptPill> = emptyList(),
+    val savedPills: List<RaptPill> = emptyList(),
 )

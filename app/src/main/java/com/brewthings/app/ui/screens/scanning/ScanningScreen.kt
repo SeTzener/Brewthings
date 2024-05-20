@@ -37,12 +37,15 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
+import com.brewthings.app.data.model.RaptPill
+import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.ExpandableCard
 import com.brewthings.app.ui.components.ScanPane
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.theme.Typography
+import java.time.Instant
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -73,7 +76,8 @@ private fun ScanningScreen(
     onRssiThresholdChanged: (Int) -> Unit,
     toggleScan: () -> Unit,
 ) {
-    val scannedInstruments = newOrCached(state.scannedInstruments, emptyList())
+    val scannedPills = newOrCached(state.scannedPills, emptyList())
+    val savedPills = newOrCached(state.savedPills, emptyList())
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -105,8 +109,8 @@ private fun ScanningScreen(
                     )
 
                     ScanningState(
-                        scannedInstrumentCount = state.scannedInstrumentCount,
-                        filteredInstrumentsCount = state.scannedInstruments.size,
+                        scannedPillCount = state.scannedPillsCount,
+                        filteredPillsCount = state.scannedPills.size,
                         scanning = state.scanning,
                         onScanButtonClicked = toggleScan,
                     )
@@ -123,11 +127,28 @@ private fun ScanningScreen(
             )
         }
 
-        items(scannedInstruments, key = { it.macAddress }) { instrument ->
-            Instrument(
-                instrument = instrument,
-                isExpanded = scannedInstruments.size == 1,
-                isInScannedInstruments = state.scannedInstruments.contains(instrument),
+        items(scannedPills, key = { it.macAddress }) { pill ->
+            ScannedPill(
+                pill = pill,
+                isExpanded = scannedPills.size == 1,
+                isInScannedPills = state.scannedPills.contains(pill),
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        item {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = stringResource(R.string.scanning_saved).uppercase(),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = Typography.bodyMedium
+            )
+        }
+
+        items(savedPills, key = { it.macAddress }) { pill ->
+            Pill(
+                pill = pill,
+                isExpanded = savedPills.size == 1,
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -177,8 +198,8 @@ private fun RssiThreshold(
 
 @Composable
 private fun ScanningState(
-    scannedInstrumentCount: Int,
-    filteredInstrumentsCount: Int,
+    scannedPillCount: Int,
+    filteredPillsCount: Int,
     scanning: Boolean,
     onScanButtonClicked: () -> Unit,
 ) {
@@ -206,7 +227,7 @@ private fun ScanningState(
                 }
             }
             Text(
-                text = "$filteredInstrumentsCount ($scannedInstrumentCount)",
+                text = "$filteredPillsCount ($scannedPillCount)",
                 style = Typography.bodyMedium,
             )
         }
@@ -214,10 +235,10 @@ private fun ScanningState(
 }
 
 @Composable
-private fun Instrument(
-    instrument: ScannedRaptPill,
+private fun ScannedPill(
+    pill: ScannedRaptPill,
     isExpanded: Boolean,
-    isInScannedInstruments: Boolean,
+    isInScannedPills: Boolean,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -226,16 +247,16 @@ private fun Instrument(
     ) {
         ExpandableCard(
             isExpanded = isExpanded,
-            topContent = { InstrumentTopContent(instrument, isInScannedInstruments) },
-            expandedContent = { InstrumentExpandedContent(instrument) }
+            topContent = { ScannedPillTopContent(pill, isInScannedPills) },
+            expandedContent = { PillData(pill.data) }
         )
     }
 }
 
 @Composable
-private fun InstrumentTopContent(
-    instrument: ScannedRaptPill,
-    isInScannedInstruments: Boolean,
+private fun ScannedPillTopContent(
+    pill: ScannedRaptPill,
+    isInScannedPills: Boolean,
 ) {
     Row(
         modifier = Modifier
@@ -250,7 +271,7 @@ private fun InstrumentTopContent(
                 .padding(vertical = 16.dp),
         ) {
             Text(
-                text = instrument.name ?: stringResource(R.string.scanning_result),
+                text = pill.name ?: stringResource(R.string.scanning_result),
                 overflow = TextOverflow.Ellipsis,
                 style = Typography.bodyMedium,
                 maxLines = 1
@@ -259,14 +280,14 @@ private fun InstrumentTopContent(
             Spacer(modifier = Modifier.padding(4.dp))
 
             Text(
-                text = instrument.macAddress,
+                text = pill.macAddress,
                 style = Typography.bodySmall,
             )
         }
 
-        if (isInScannedInstruments) {
+        if (isInScannedPills) {
             Text(
-                text = stringResource(id = R.string.instrument_rssi, instrument.rssi),
+                text = stringResource(id = R.string.pill_rssi, pill.rssi),
                 style = Typography.bodySmall,
             )
         } else {
@@ -280,10 +301,61 @@ private fun InstrumentTopContent(
 }
 
 @Composable
-private fun InstrumentExpandedContent(
-    instrument: ScannedRaptPill,
+private fun Pill(
+    pill: RaptPill,
+    isExpanded: Boolean,
 ) {
-    newOrCached(instrument.data, null)?.let { data ->
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        border = BorderStroke(0.dp, Color.LightGray),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        ExpandableCard(
+            isExpanded = isExpanded,
+            topContent = { PillTopContent(pill) },
+            expandedContent = {
+                val maxTimestamp = pill.data.maxOfOrNull { it.timestamp } ?: Instant.EPOCH
+                pill.data.find { it.timestamp == maxTimestamp }?.let { data ->
+                    PillData(data)
+                }
+            }
+        )
+    }
+}
+
+@Composable
+private fun PillTopContent(pill: RaptPill) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(end = 20.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(vertical = 16.dp),
+        ) {
+            Text(
+                text = pill.name ?: stringResource(R.string.scanning_result),
+                overflow = TextOverflow.Ellipsis,
+                style = Typography.bodyMedium,
+                maxLines = 1
+            )
+
+            Spacer(modifier = Modifier.padding(4.dp))
+
+            Text(
+                text = pill.macAddress,
+                style = Typography.bodySmall,
+            )
+        }
+    }
+}
+
+@Composable
+private fun PillData(pillData: RaptPillData?) {
+    newOrCached(pillData, null)?.let { data ->
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -292,14 +364,14 @@ private fun InstrumentExpandedContent(
             Column {
                 TextWithIcon(
                     iconResId = R.drawable.ic_gravity,
-                    text = stringResource(id = R.string.instrument_gravity, data.gravity)
+                    text = stringResource(id = R.string.pill_gravity, data.gravity)
                 )
 
                 Spacer(modifier = Modifier.padding(8.dp))
 
                 TextWithIcon(
                     iconResId = R.drawable.ic_temperature,
-                    text = stringResource(id = R.string.instrument_temperature, data.temperature)
+                    text = stringResource(id = R.string.pill_temperature, data.temperature)
                 )
             }
 
@@ -308,14 +380,14 @@ private fun InstrumentExpandedContent(
             Column {
                 TextWithIcon(
                     iconResId = R.drawable.ic_tilt,
-                    text = stringResource(id = R.string.instrument_tilt, data.floatingAngle)
+                    text = stringResource(id = R.string.pill_tilt, data.floatingAngle)
                 )
 
                 Spacer(modifier = Modifier.padding(8.dp))
 
                 TextWithIcon(
                     icon = { BatteryLevelIndicator(data.battery) },
-                    text = stringResource(id = R.string.instrument_battery, data.battery)
+                    text = stringResource(id = R.string.pill_battery, data.battery)
                 )
             }
         }
