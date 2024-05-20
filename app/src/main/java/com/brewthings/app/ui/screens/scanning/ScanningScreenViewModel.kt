@@ -13,6 +13,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 private const val TAG = "ScanningScreenViewModel"
 
@@ -31,7 +32,9 @@ class ScanningScreenViewModel(
     }
 
     fun savePill(scannedRaptPill: ScannedRaptPill) {
-        repo.save(scannedRaptPill)
+        viewModelScope.launch {
+            repo.save(scannedRaptPill)
+        }
     }
 
     fun toggleScan() {

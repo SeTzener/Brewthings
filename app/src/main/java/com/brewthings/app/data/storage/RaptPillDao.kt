@@ -21,26 +21,26 @@ interface RaptPillDao {
     fun observeData(macAddress: String): Flow<List<RaptPillData>>
 
     @Query("SELECT pillId FROM RaptPill WHERE macAddress = :macAddress")
-    fun getPillIdByMacAddress(macAddress: String): Long?
+    suspend fun getPillIdByMacAddress(macAddress: String): Long?
 
     @Query("SELECT name FROM RaptPill WHERE macAddress = :macAddress")
-    fun getPillNameByMacAddress(macAddress: String): String?
+    suspend fun getPillNameByMacAddress(macAddress: String): String?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertPill(raptPill: RaptPill)
+    suspend fun insertPill(raptPill: RaptPill)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertData(raptPillData: RaptPillData)
+    suspend fun insertData(raptPillData: RaptPillData)
 
     @Transaction
-    fun insertName(macAddress: String, name: String?) {
+    suspend fun insertName(macAddress: String, name: String?) {
         val pillId = getPillIdByMacAddress(macAddress)
             ?: throw IllegalArgumentException("No pill found with mac address $macAddress")
         insertPill(RaptPill(pillId = pillId, macAddress = macAddress, name = name))
     }
 
     @Transaction
-    fun insertReadings(raptPill: RaptPill, raptPillReadings: RaptPillReadings?) {
+    suspend fun insertReadings(raptPill: RaptPill, raptPillReadings: RaptPillReadings?) {
         insertPill(raptPill)
         raptPillReadings?.also { insertData(RaptPillData(pillId = raptPill.pillId, readings = it)) }
     }

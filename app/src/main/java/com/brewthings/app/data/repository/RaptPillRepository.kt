@@ -35,7 +35,7 @@ class RaptPillRepository(
         }
     }
 
-    fun save(scannedRaptPill: ScannedRaptPill) {
+    suspend fun save(scannedRaptPill: ScannedRaptPill) {
         val pill = com.brewthings.app.data.storage.RaptPill(
             macAddress = scannedRaptPill.macAddress,
             name = scannedRaptPill.name,
