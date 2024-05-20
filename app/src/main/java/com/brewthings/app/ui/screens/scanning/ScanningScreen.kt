@@ -268,7 +268,7 @@ private fun ScannedPillTopContent(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(end = 20.dp),
+            .padding(end = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
@@ -291,20 +291,25 @@ private fun ScannedPillTopContent(
             )
         }
 
-        if (isInScannedPills) {
-            Text(
-                text = stringResource(id = R.string.pill_rssi, pill.rssi),
-                style = Typography.bodySmall,
-            )
-        } else {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_bluetooth_disabled),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
+        Box(
+            modifier = Modifier.weight(1f),
+            contentAlignment = Alignment.Center
+        ) {
+            if (isInScannedPills) {
+                Text(
+                    text = stringResource(id = R.string.pill_rssi, pill.rssi),
+                    style = Typography.bodySmall,
+                )
+            } else {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_bluetooth_disabled),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.padding(16.dp))
+        Spacer(modifier = Modifier.padding(12.dp))
 
         IconButton(onClick = { savePill(pill) }) {
             Icon(
