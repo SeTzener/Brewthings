@@ -2,7 +2,7 @@ package com.brewthings.app.data.ble
 
 import android.bluetooth.le.ScanSettings
 import android.util.Log
-import com.brewthings.app.data.model.RaptPill
+import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.util.asHexString
 import com.juul.kable.Advertisement
@@ -31,13 +31,13 @@ class RaptPillScanner {
 
     }
 
-    fun scan(): Flow<RaptPill> =
+    fun scan(): Flow<ScannedRaptPill> =
         scanner.advertisements
             .filter { advertisement ->
                 advertisement.manufacturerData?.code == manufacturerId
             }
             .map { advertisement ->
-                RaptPill(
+                ScannedRaptPill(
                     macAddress = advertisement.address,
                     name = advertisement.name,
                     rssi = advertisement.rssi,

@@ -6,8 +6,8 @@
     <string name="scanning_rssi">RSSI</string>
     <string name="scanning_stop">Stop Scanning</string>
     <string name="scanning_results">Results</string>
-    <string name="scanning_result">RAPT Pill</string>
-    <string name="scanning_app_version">Version: %s (%d)</string>
+    <string name="scanning_result">[Unnamed]</string>
+    <string name="scanning_saved">Previous data</string>
     <string name="unknown">Unknown</string>
     <string name="bluetooth_permissions_not_available_title">"Bluetooth permissions required"</string>
     <string name="bluetooth_permissions_not_available_desc">"Please, grant access on the Settings screen."</string>
@@ -22,9 +22,9 @@
     <string name="bluetooth_disabled_desc">"Please, grant access to it."</string>
     <string name="bluetooth_disabled_btn">"Enable"</string>
     <string name="bluetooth_unavailable">"Bluetooth is not available"</string>
-    <string name="instrument_rssi">"%ddBm"</string>
-    <string name="instrument_gravity">"%.3f SG"</string>
-    <string name="instrument_temperature">"%.2f°C"</string>
-    <string name="instrument_battery">"%.1f\%%"</string>
-    <string name="instrument_tilt">"%.2f\%%"</string>
+    <string name="pill_rssi">"%ddBm"</string>
+    <string name="pill_gravity">"%.3f SG"</string>
+    <string name="pill_temperature">"%.2f°C"</string>
+    <string name="pill_battery">"%.1f\%%"</string>
+    <string name="pill_tilt">"%.2f\%%"</string>
 </resources>

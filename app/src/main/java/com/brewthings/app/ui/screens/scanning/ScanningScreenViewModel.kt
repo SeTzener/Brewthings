@@ -6,27 +6,35 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.brewthings.app.data.model.RaptPill
-import com.brewthings.app.data.ble.RaptPillScanner
+import com.brewthings.app.data.model.ScannedRaptPill
+import com.brewthings.app.data.repository.RaptPillRepository
 import com.juul.kable.Bluetooth
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 private const val TAG = "ScanningScreenViewModel"
 
 class ScanningScreenViewModel(
-    private val scanner: RaptPillScanner
+    private val repo: RaptPillRepository
 ) : ViewModel() {
     var screenState: ScanningScreenState by mutableStateOf(ScanningScreenState())
         private set
 
     private var scanJob: Job? = null
-    private val raptPills: MutableList<RaptPill> = mutableListOf()
+    private val scannedRaptPills: MutableList<ScannedRaptPill> = mutableListOf()
 
     init {
         observeBluetoothAvailability()
+        observeDatabase()
+    }
+
+    fun savePill(scannedRaptPill: ScannedRaptPill) {
+        viewModelScope.launch {
+            repo.save(scannedRaptPill)
+        }
     }
 
     fun toggleScan() {
@@ -41,6 +49,14 @@ class ScanningScreenViewModel(
         updateInstrumentsScreenState()
     }
 
+    private fun observeDatabase() {
+        repo.fromDatabase()
+            .onEach { raptPills ->
+                screenState = screenState.copy(savedPills = raptPills)
+            }
+            .launchIn(viewModelScope)
+    }
+
     private fun observeBluetoothAvailability() {
         Bluetooth.availability
             .onEach { availability ->
@@ -51,16 +67,16 @@ class ScanningScreenViewModel(
 
     private fun startScan() {
         stopScan()
-        raptPills.clear()
+        scannedRaptPills.clear()
         screenState = screenState.copy(
-            scannedInstruments = emptyList(),
+            scannedPills = emptyList(),
             scanning = true,
         )
-        scanJob = scanner
-            .scan()
+        scanJob = repo
+            .fromBluetooth()
             .onEach { result ->
                 Log.d(TAG, "Scanning result: $result")
-                raptPills.addOrUpdate(instrument = result)
+                scannedRaptPills.addOrUpdate(instrument = result)
                 updateInstrumentsScreenState()
             }.onCompletion {
                 screenState = screenState.copy(scanning = false)
@@ -74,16 +90,16 @@ class ScanningScreenViewModel(
     }
 
     private fun updateInstrumentsScreenState() {
-        val filteredInstruments = raptPills
+        val filteredInstruments = scannedRaptPills
             .filter { it.rssi > screenState.rssiThreshold }
 
         screenState = screenState.copy(
-            scannedInstrumentCount = raptPills.size,
-            scannedInstruments = filteredInstruments
+            scannedPillsCount = scannedRaptPills.size,
+            scannedPills = filteredInstruments
         )
     }
 
-    private fun MutableList<RaptPill>.addOrUpdate(instrument: RaptPill) {
+    private fun MutableList<ScannedRaptPill>.addOrUpdate(instrument: ScannedRaptPill) {
         when (val existingItemIndex = indexOfFirst { it.macAddress == instrument.macAddress }) {
             -1 -> add(instrument)
             else -> this[existingItemIndex] = instrument

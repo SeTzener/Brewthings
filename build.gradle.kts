@@ -2,8 +2,10 @@
 plugins {
     application
     kotlin("jvm") version libs.versions.kotlin
-    id("com.android.application") version libs.versions.androidGradle apply false
-    id("org.jetbrains.kotlin.android") version libs.versions.kotlinGradle apply false
+    alias(libs.plugins.gradle.android) apply false
+    alias(libs.plugins.gradle.kotlin) apply false
+    alias(libs.plugins.gradle.room) apply false
+    alias(libs.plugins.gradle.ksp) apply false
 }
 
 buildscript{
