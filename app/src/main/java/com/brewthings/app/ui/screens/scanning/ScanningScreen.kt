@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -65,6 +66,7 @@ fun ScanningScreen(
             state = viewModel.screenState,
             onRssiThresholdChanged = viewModel::onRssiThresholdChanged,
             toggleScan = viewModel::toggleScan,
+            savePill = viewModel::savePill,
         )
     }
 }
@@ -75,6 +77,7 @@ private fun ScanningScreen(
     state: ScanningScreenState,
     onRssiThresholdChanged: (Int) -> Unit,
     toggleScan: () -> Unit,
+    savePill: (ScannedRaptPill) -> Unit
 ) {
     val scannedPills = newOrCached(state.scannedPills, emptyList())
     val savedPills = newOrCached(state.savedPills, emptyList())
@@ -132,6 +135,7 @@ private fun ScanningScreen(
                 pill = pill,
                 isExpanded = scannedPills.size == 1,
                 isInScannedPills = state.scannedPills.contains(pill),
+                savePill = savePill
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -239,6 +243,7 @@ private fun ScannedPill(
     pill: ScannedRaptPill,
     isExpanded: Boolean,
     isInScannedPills: Boolean,
+    savePill: (ScannedRaptPill) -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -247,7 +252,7 @@ private fun ScannedPill(
     ) {
         ExpandableCard(
             isExpanded = isExpanded,
-            topContent = { ScannedPillTopContent(pill, isInScannedPills) },
+            topContent = { ScannedPillTopContent(pill, isInScannedPills, savePill) },
             expandedContent = { PillData(pill.data) }
         )
     }
@@ -257,6 +262,7 @@ private fun ScannedPill(
 private fun ScannedPillTopContent(
     pill: ScannedRaptPill,
     isInScannedPills: Boolean,
+    savePill: (ScannedRaptPill) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -293,6 +299,16 @@ private fun ScannedPillTopContent(
         } else {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_bluetooth_disabled),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        }
+
+        Spacer(modifier = Modifier.padding(16.dp))
+
+        IconButton(onClick = { savePill(pill) }) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_save),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
             )

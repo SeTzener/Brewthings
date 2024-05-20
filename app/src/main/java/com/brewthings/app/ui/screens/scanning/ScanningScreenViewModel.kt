@@ -27,14 +27,11 @@ class ScanningScreenViewModel(
 
     init {
         observeBluetoothAvailability()
+        observeDatabase()
     }
 
-    fun observeDatabase() {
-        repo.fromDatabase()
-            .onEach { raptPills ->
-                screenState = screenState.copy(savedPills = raptPills)
-            }
-            .launchIn(viewModelScope)
+    fun savePill(scannedRaptPill: ScannedRaptPill) {
+        repo.save(scannedRaptPill)
     }
 
     fun toggleScan() {
@@ -47,6 +44,14 @@ class ScanningScreenViewModel(
     fun onRssiThresholdChanged(rssiThreshold: Int) {
         screenState = screenState.copy(rssiThreshold = rssiThreshold)
         updateInstrumentsScreenState()
+    }
+
+    private fun observeDatabase() {
+        repo.fromDatabase()
+            .onEach { raptPills ->
+                screenState = screenState.copy(savedPills = raptPills)
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun observeBluetoothAvailability() {
