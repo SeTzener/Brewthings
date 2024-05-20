@@ -6,7 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    indices = [Index(value = ["mac_address"], unique = true)]
+    indices = [Index(value = ["macAddress"], unique = true)]
 )
 data class RaptPill(
     @PrimaryKey(autoGenerate = true) val pillId: Long = 0,

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.gradle.android)
     alias(libs.plugins.gradle.kotlin)
     alias(libs.plugins.gradle.room)
+    alias(libs.plugins.gradle.ksp)
 }
 
 val appId = stringProperty("app.id")
@@ -89,7 +90,9 @@ dependencies {
 
     // Room
     implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
     annotationProcessor(libs.room.compiler)
+    ksp(libs.room.compiler)
 
     // Unit Testing
     testImplementation(libs.junit)

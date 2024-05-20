@@ -5,6 +5,7 @@ accompanist = "0.34.0"
 activityCompose = "1.9.0"
 gradleAndroid = "8.2.2"
 gradleKotlin = "1.6.21"
+gradleKsp = "1.9.20-1.0.14"
 appCompat = "1.6.1"
 composeBom = "2024.05.00"
 composeMaterial = "1.6.7"
@@ -24,6 +25,7 @@ toml4j = "0.7.2"
 # Core Plugins
 gradle-android = { id = "com.android.application", version.ref = "gradleAndroid" }
 gradle-kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "gradleKotlin" }
+gradle-ksp = { id = "com.google.devtools.ksp", version.ref = "gradleKsp" }
 
 # Room
 gradle-room = { id = "androidx.room", version.ref = "room" }
@@ -69,6 +71,7 @@ compose-material3 = { group = "androidx.compose.material3", name = "material3-an
 # Room
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 
 # Version Control
 toml4j = { group = "com.moandjiezana.toml", name = "toml4j", version.ref = "toml4j" }

@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.gradle.android) apply false
     alias(libs.plugins.gradle.kotlin) apply false
     alias(libs.plugins.gradle.room) apply false
+    alias(libs.plugins.gradle.ksp) apply false
 }
 
 buildscript{
