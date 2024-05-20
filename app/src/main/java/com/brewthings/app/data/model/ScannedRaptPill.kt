@@ -1,7 +1,8 @@
 package com.brewthings.app.data.model
 
-data class RaptPill(
+data class ScannedRaptPill(
     val macAddress: String,
     val name: String?,
-    val data: List<RaptPillData>
+    val rssi: Int,
+    val data: RaptPillData?
 )

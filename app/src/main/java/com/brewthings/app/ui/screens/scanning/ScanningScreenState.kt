@@ -1,6 +1,7 @@
 package com.brewthings.app.ui.screens.scanning
 
 import com.brewthings.app.data.model.RaptPill
+import com.brewthings.app.data.model.ScannedRaptPill
 import com.juul.kable.Bluetooth
 
 const val RSSI_THRESHOLD_RANGE_START = 0f
@@ -12,5 +13,6 @@ data class ScanningScreenState(
     val rssiThreshold: Int = INITIAL_RSSI_THRESHOLD,
     val scanning: Boolean = false,
     val scannedInstrumentCount: Int = 0,
-    val scannedInstruments: List<RaptPill> = emptyList(),
+    val scannedInstruments: List<ScannedRaptPill> = emptyList(),
+    val savedInstruments: List<RaptPill> = emptyList(),
 )

@@ -37,7 +37,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
-import com.brewthings.app.data.model.RaptPill
+import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.ExpandableCard
 import com.brewthings.app.ui.components.ScanPane
@@ -215,7 +215,7 @@ private fun ScanningState(
 
 @Composable
 private fun Instrument(
-    instrument: RaptPill,
+    instrument: ScannedRaptPill,
     isExpanded: Boolean,
     isInScannedInstruments: Boolean,
 ) {
@@ -234,7 +234,7 @@ private fun Instrument(
 
 @Composable
 private fun InstrumentTopContent(
-    instrument: RaptPill,
+    instrument: ScannedRaptPill,
     isInScannedInstruments: Boolean,
 ) {
     Row(
@@ -281,7 +281,7 @@ private fun InstrumentTopContent(
 
 @Composable
 private fun InstrumentExpandedContent(
-    instrument: RaptPill,
+    instrument: ScannedRaptPill,
 ) {
     newOrCached(instrument.data, null)?.let { data ->
         Row(

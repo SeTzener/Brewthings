@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.brewthings.app.data.model.RaptPill
+import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.juul.kable.Bluetooth
 import kotlinx.coroutines.Job
@@ -23,10 +23,18 @@ class ScanningScreenViewModel(
         private set
 
     private var scanJob: Job? = null
-    private val raptPills: MutableList<RaptPill> = mutableListOf()
+    private val scannedRaptPills: MutableList<ScannedRaptPill> = mutableListOf()
 
     init {
         observeBluetoothAvailability()
+    }
+
+    fun observeDatabase() {
+        repo.fromDatabase()
+            .onEach { raptPills ->
+                screenState = screenState.copy(savedInstruments = raptPills)
+            }
+            .launchIn(viewModelScope)
     }
 
     fun toggleScan() {
@@ -51,7 +59,7 @@ class ScanningScreenViewModel(
 
     private fun startScan() {
         stopScan()
-        raptPills.clear()
+        scannedRaptPills.clear()
         screenState = screenState.copy(
             scannedInstruments = emptyList(),
             scanning = true,
@@ -60,7 +68,7 @@ class ScanningScreenViewModel(
             .fromBluetooth()
             .onEach { result ->
                 Log.d(TAG, "Scanning result: $result")
-                raptPills.addOrUpdate(instrument = result)
+                scannedRaptPills.addOrUpdate(instrument = result)
                 updateInstrumentsScreenState()
             }.onCompletion {
                 screenState = screenState.copy(scanning = false)
@@ -74,16 +82,16 @@ class ScanningScreenViewModel(
     }
 
     private fun updateInstrumentsScreenState() {
-        val filteredInstruments = raptPills
+        val filteredInstruments = scannedRaptPills
             .filter { it.rssi > screenState.rssiThreshold }
 
         screenState = screenState.copy(
-            scannedInstrumentCount = raptPills.size,
+            scannedInstrumentCount = scannedRaptPills.size,
             scannedInstruments = filteredInstruments
         )
     }
 
-    private fun MutableList<RaptPill>.addOrUpdate(instrument: RaptPill) {
+    private fun MutableList<ScannedRaptPill>.addOrUpdate(instrument: ScannedRaptPill) {
         when (val existingItemIndex = indexOfFirst { it.macAddress == instrument.macAddress }) {
             -1 -> add(instrument)
             else -> this[existingItemIndex] = instrument
