@@ -6,7 +6,7 @@
     <string name="scanning_rssi">RSSI</string>
     <string name="scanning_stop">Stop Scanning</string>
     <string name="scanning_results">Results</string>
-    <string name="scanning_result">RAPT Pill</string>
+    <string name="scanning_result">[Unnamed]</string>
     <string name="scanning_app_version">Version: %s (%d)</string>
     <string name="unknown">Unknown</string>
     <string name="bluetooth_permissions_not_available_title">"Bluetooth permissions required"</string>

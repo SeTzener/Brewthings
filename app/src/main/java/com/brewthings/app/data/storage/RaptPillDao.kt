@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface RaptPillDao {
     @Transaction
-    @Query("SELECT * FROM RaptPill WHERE macAddress = :macAddress")
-    fun observePillWithData(macAddress: String): Flow<RaptPillWithData?>
+    @Query("SELECT * FROM RaptPill")
+    fun observeAll(): Flow<List<RaptPillWithData>>
 
     @Query(
         "SELECT * FROM RaptPillData " +
@@ -27,7 +27,7 @@ interface RaptPillDao {
     fun getPillNameByMacAddress(macAddress: String): String?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(raptPill: RaptPill)
+    fun insertPill(raptPill: RaptPill)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertData(raptPillData: RaptPillData)
@@ -36,14 +36,12 @@ interface RaptPillDao {
     fun insertName(macAddress: String, name: String?) {
         val pillId = getPillIdByMacAddress(macAddress)
             ?: throw IllegalArgumentException("No pill found with mac address $macAddress")
-        insert(RaptPill(pillId = pillId, macAddress = macAddress, name = name))
+        insertPill(RaptPill(pillId = pillId, macAddress = macAddress, name = name))
     }
 
     @Transaction
-    fun insertReadings(macAddress: String, raptPillReadings: RaptPillReadings) {
-        val pillId = getPillIdByMacAddress(macAddress)
-            ?: throw IllegalArgumentException("No pill found with mac address $macAddress")
-        val data = RaptPillData(pillId = pillId, readings = raptPillReadings)
-        insertData(data)
+    fun insertReadings(raptPill: RaptPill, raptPillReadings: RaptPillReadings?) {
+        insertPill(raptPill)
+        raptPillReadings?.also { insertData(RaptPillData(pillId = raptPill.pillId, readings = it)) }
     }
 }
