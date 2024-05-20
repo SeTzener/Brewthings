@@ -130,7 +130,7 @@ private fun ScanningScreen(
             )
         }
 
-        items(scannedPills, key = { it.macAddress }) { pill ->
+        items(scannedPills, key = { "scanned_" + it.macAddress }) { pill ->
             ScannedPill(
                 pill = pill,
                 isExpanded = scannedPills.size == 1,
@@ -149,7 +149,7 @@ private fun ScanningScreen(
             )
         }
 
-        items(savedPills, key = { it.macAddress }) { pill ->
+        items(savedPills, key = { "saved_" + it.macAddress }) { pill ->
             Pill(
                 pill = pill,
                 isExpanded = savedPills.size == 1,
