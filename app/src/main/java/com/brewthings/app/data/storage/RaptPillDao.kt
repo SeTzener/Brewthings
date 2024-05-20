@@ -41,9 +41,11 @@ interface RaptPillDao {
 
     @Transaction
     suspend fun insertReadings(raptPill: RaptPill, raptPillReadings: RaptPillReadings?) {
-        insertPill(raptPill)
         val pillId = getPillIdByMacAddress(raptPill.macAddress)
-            ?: throw IllegalArgumentException("No pill found with mac address ${raptPill.macAddress}")
+            ?: run {
+                insertPill(raptPill)
+                getPillIdByMacAddress(raptPill.macAddress)
+            } ?: error("No pill found with mac address ${raptPill.macAddress}")
         raptPillReadings?.also { insertData(RaptPillData(pillId = pillId, readings = it)) }
     }
 }
