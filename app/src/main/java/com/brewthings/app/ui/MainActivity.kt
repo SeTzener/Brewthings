@@ -9,6 +9,8 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.brewthings.app.ui.screens.scanning.ScanningScreen
 import com.brewthings.app.ui.theme.BrewthingsTheme
 
@@ -17,14 +19,17 @@ object RequestCode {
 }
 
 class MainActivity : ComponentActivity() {
+    private lateinit var navController: NavHostController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            navController = rememberNavController()
             BrewthingsTheme {
                 ScanningScreen(
                     openAppDetails = ::openAppDetails,
                     showLocationSettings = ::showLocationSettings,
-                    enableBluetooth = ::enableBluetooth
+                    enableBluetooth = ::enableBluetooth,
+                    navController = navController
                 )
             }
         }

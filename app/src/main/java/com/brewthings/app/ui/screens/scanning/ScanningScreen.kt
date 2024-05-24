@@ -1,6 +1,7 @@
 package com.brewthings.app.ui.screens.scanning
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,8 +36,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.brewthings.app.R
 import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.RaptPillData
@@ -45,12 +49,14 @@ import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.ExpandableCard
 import com.brewthings.app.ui.components.ScanPane
 import com.brewthings.app.ui.components.TextWithIcon
+import com.brewthings.app.ui.screens.navigation.Screen
 import com.brewthings.app.ui.theme.Typography
 import java.time.Instant
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ScanningScreen(
+    navController: NavController,
     viewModel: ScanningScreenViewModel = koinViewModel(),
     openAppDetails: () -> Unit,
     showLocationSettings: () -> Unit,
@@ -67,6 +73,7 @@ fun ScanningScreen(
             onRssiThresholdChanged = viewModel::onRssiThresholdChanged,
             toggleScan = viewModel::toggleScan,
             savePill = viewModel::savePill,
+            navGraph = navController
         )
     }
 }
@@ -75,6 +82,7 @@ fun ScanningScreen(
 @Composable
 private fun ScanningScreen(
     state: ScanningScreenState,
+    navGraph: NavController,
     onRssiThresholdChanged: (Int) -> Unit,
     toggleScan: () -> Unit,
     savePill: (ScannedRaptPill) -> Unit
@@ -87,6 +95,16 @@ private fun ScanningScreen(
             .padding(horizontal = 16.dp),
     ) {
         item {
+            // TODO(): Change this Text object to a clickable icon
+            Text(
+                modifier = Modifier.clickable {
+                    navGraph.navigate(route = Screen.Scanning.route)
+                },
+                text = stringResource(R.string.scanning_options).uppercase(),
+                color = MaterialTheme.colorScheme.onBackground,
+                fontWeight = FontWeight.Bold,
+                style = Typography.bodyMedium
+            )
             Text(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(R.string.scanning_options).uppercase(),
@@ -109,6 +127,15 @@ private fun ScanningScreen(
                                 onRssiThresholdChanged = onRssiThresholdChanged,
                             )
                         }
+                    )
+                    Text(
+                        modifier = Modifier.clickable {
+                            navGraph.navigate(route = Screen.Graph.route)
+                        },
+                        text = "Click here to go to details",
+                        color = Color.DarkGray,
+                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                        fontWeight = FontWeight.Bold
                     )
 
                     ScanningState(
