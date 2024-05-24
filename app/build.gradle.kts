@@ -77,6 +77,11 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.tooling)
 
+    // Navigation Compose
+    implementation(libs.navigation.ui)
+    implementation(libs.navigation.compose)
+    implementation(libs.navigation.fragment)
+
     // Material
     implementation(libs.compose.material)
     implementation(libs.compose.material3)
