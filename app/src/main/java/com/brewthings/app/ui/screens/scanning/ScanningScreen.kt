@@ -50,6 +50,7 @@ import com.brewthings.app.ui.components.ExpandableCard
 import com.brewthings.app.ui.components.ScanPane
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.screens.navigation.Screen
+import com.brewthings.app.ui.screens.navigation.SetupNavGraph
 import com.brewthings.app.ui.theme.Typography
 import java.time.Instant
 import org.koin.androidx.compose.koinViewModel

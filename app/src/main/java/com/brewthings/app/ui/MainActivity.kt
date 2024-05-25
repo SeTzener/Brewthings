@@ -11,6 +11,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.brewthings.app.ui.screens.navigation.SetupNavGraph
 import com.brewthings.app.ui.screens.scanning.ScanningScreen
 import com.brewthings.app.ui.theme.BrewthingsTheme
 
@@ -24,6 +25,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             navController = rememberNavController()
+            SetupNavGraph(navController = navController)
             BrewthingsTheme {
                 ScanningScreen(
                     openAppDetails = ::openAppDetails,
