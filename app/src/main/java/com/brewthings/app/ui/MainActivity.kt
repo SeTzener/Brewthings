@@ -25,9 +25,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             navController = rememberNavController()
-            SetupNavGraph(navController = navController)
             BrewthingsTheme {
-                ScanningScreen(
+                SetupNavGraph(
                     openAppDetails = ::openAppDetails,
                     showLocationSettings = ::showLocationSettings,
                     enableBluetooth = ::enableBluetooth,

@@ -10,6 +10,9 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SetupNavGraph(
+    openAppDetails: () -> Unit,
+    showLocationSettings: () -> Unit,
+    enableBluetooth: () -> Unit,
     navController: NavHostController
 ) {
     NavHost(
@@ -22,9 +25,9 @@ fun SetupNavGraph(
             ScanningScreen(
                 navController = navController,
                 viewModel = koinViewModel(),
-                openAppDetails = {},
-                showLocationSettings = {},
-                enableBluetooth = {}
+                openAppDetails = openAppDetails,
+                showLocationSettings = showLocationSettings,
+                enableBluetooth = enableBluetooth,
             )
         }
         composable(
