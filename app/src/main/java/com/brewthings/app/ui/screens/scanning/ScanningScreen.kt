@@ -1,6 +1,7 @@
 package com.brewthings.app.ui.screens.scanning
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,12 +13,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +41,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.brewthings.app.R
@@ -50,7 +52,6 @@ import com.brewthings.app.ui.components.ExpandableCard
 import com.brewthings.app.ui.components.ScanPane
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.screens.navigation.Screen
-import com.brewthings.app.ui.screens.navigation.SetupNavGraph
 import com.brewthings.app.ui.theme.Typography
 import java.time.Instant
 import org.koin.androidx.compose.koinViewModel
@@ -129,15 +130,6 @@ private fun ScanningScreen(
                             )
                         }
                     )
-                    Text(
-                        modifier = Modifier.clickable {
-                            navGraph.navigate(route = Screen.Graph.route)
-                        },
-                        text = "Click here to go to details",
-                        color = Color.DarkGray,
-                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                        fontWeight = FontWeight.Bold
-                    )
 
                     ScanningState(
                         scannedPillCount = state.scannedPillsCount,
@@ -163,7 +155,8 @@ private fun ScanningScreen(
                 pill = pill,
                 isExpanded = scannedPills.size == 1,
                 isInScannedPills = state.scannedPills.contains(pill),
-                savePill = savePill
+                savePill = savePill,
+                navGraph = navGraph
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -181,6 +174,7 @@ private fun ScanningScreen(
             Pill(
                 pill = pill,
                 isExpanded = savedPills.size == 1,
+                navGraph = navGraph
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -271,6 +265,7 @@ private fun ScannedPill(
     pill: ScannedRaptPill,
     isExpanded: Boolean,
     isInScannedPills: Boolean,
+    navGraph: NavController,
     savePill: (ScannedRaptPill) -> Unit
 ) {
     Card(
@@ -281,7 +276,7 @@ private fun ScannedPill(
         ExpandableCard(
             isExpanded = isExpanded,
             topContent = { ScannedPillTopContent(pill, isInScannedPills, savePill) },
-            expandedContent = { PillData(pill.data) }
+            expandedContent = { PillData(pill.data, navGraph = navGraph) }
         )
     }
 }
@@ -353,6 +348,7 @@ private fun ScannedPillTopContent(
 private fun Pill(
     pill: RaptPill,
     isExpanded: Boolean,
+    navGraph: NavController
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -365,7 +361,7 @@ private fun Pill(
             expandedContent = {
                 val maxTimestamp = pill.data.maxOfOrNull { it.timestamp } ?: Instant.EPOCH
                 pill.data.find { it.timestamp == maxTimestamp }?.let { data ->
-                    PillData(data)
+                    PillData(data, navGraph = navGraph)
                 }
             }
         )
@@ -403,48 +399,77 @@ private fun PillTopContent(pill: RaptPill) {
 }
 
 @Composable
-private fun PillData(pillData: RaptPillData?) {
+private fun PillData(pillData: RaptPillData?, navGraph: NavController) {
     newOrCached(pillData, null)?.let { data ->
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, top = 8.dp, bottom = 16.dp, end = 62.dp),
-        ) {
-            Column {
-                TextWithIcon(
-                    iconResId = R.drawable.ic_gravity,
-                    text = stringResource(id = R.string.pill_gravity, data.gravity)
-                )
+        Box(modifier = Modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, top = 8.dp, bottom = 16.dp, end = 62.dp),
+            ) {
+                Column {
+                    TextWithIcon(
+                        iconResId = R.drawable.ic_gravity,
+                        text = stringResource(id = R.string.pill_gravity, data.gravity)
+                    )
 
-                Spacer(modifier = Modifier.padding(8.dp))
+                    Spacer(modifier = Modifier.padding(8.dp))
 
-                TextWithIcon(
-                    iconResId = R.drawable.ic_temperature,
-                    text = stringResource(id = R.string.pill_temperature, data.temperature)
-                )
+                    TextWithIcon(
+                        iconResId = R.drawable.ic_temperature,
+                        text = stringResource(id = R.string.pill_temperature, data.temperature)
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Column {
+                    TextWithIcon(
+                        iconResId = R.drawable.ic_tilt,
+                        text = stringResource(id = R.string.pill_tilt, data.floatingAngle)
+                    )
+
+                    Spacer(modifier = Modifier.padding(8.dp))
+
+                    TextWithIcon(
+                        icon = { BatteryLevelIndicator(data.battery) },
+                        text = stringResource(id = R.string.pill_battery, data.battery)
+                    )
+                }
             }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Column {
-                TextWithIcon(
-                    iconResId = R.drawable.ic_tilt,
-                    text = stringResource(id = R.string.pill_tilt, data.floatingAngle)
-                )
-
-                Spacer(modifier = Modifier.padding(8.dp))
-
-                TextWithIcon(
-                    icon = { BatteryLevelIndicator(data.battery) },
-                    text = stringResource(id = R.string.pill_battery, data.battery)
-                )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, top = 8.dp, bottom = 16.dp, end = 62.dp),
+            ) {
+                Column {
+                    Spacer(modifier = Modifier.padding(40.dp))
+                    Column {
+                    Divider(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = 50.dp),
+                        color = Color.LightGray
+                    )
+                        IconButton(
+                            onClick = {
+                                navGraph.navigate(route = Screen.Graph.route)
+                            },
+                        ) {
+                            TextWithIcon(
+                                iconResId = R.drawable.ic_pill,
+                                text = stringResource(id = R.string.pill_graph),
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 }
 
+
 @Composable
-fun <T: Any?> newOrCached(
+fun <T : Any?> newOrCached(
     data: T,
     initialValue: T
 ): T {
