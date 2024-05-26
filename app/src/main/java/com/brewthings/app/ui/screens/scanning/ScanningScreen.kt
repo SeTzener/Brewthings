@@ -97,16 +97,6 @@ private fun ScanningScreen(
             .padding(horizontal = 16.dp),
     ) {
         item {
-            // TODO(): Change this Text object to a clickable icon
-            Text(
-                modifier = Modifier.clickable {
-                    navGraph.navigate(route = Screen.Scanning.route)
-                },
-                text = stringResource(R.string.scanning_options).uppercase(),
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold,
-                style = Typography.bodyMedium
-            )
             Text(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(R.string.scanning_options).uppercase(),
