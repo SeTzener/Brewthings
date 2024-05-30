@@ -2,6 +2,7 @@ package com.brewthings.app.ui.screens.scanning
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,12 +10,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -26,11 +30,19 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -42,13 +54,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.brewthings.app.R
@@ -468,10 +483,11 @@ private fun PillData(pillData: RaptPillData?, navGraph: NavController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DropDownMenu() {
-    val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
+    var showBottomSheet by remember { mutableStateOf(false) } // State to control bottom sheet visibility
 
     Box(
         modifier = Modifier
@@ -492,12 +508,123 @@ private fun DropDownMenu() {
         ) {
             DropdownMenuItem(
                 text = { Text("Edit Name") },
-                onClick = { Toast.makeText(context, "Load", Toast.LENGTH_SHORT).show() }
+                onClick = {
+                    showBottomSheet = true
+                }
+            )
+        }
+
+        if (showBottomSheet) {
+            expanded = false
+            BottomSheet(
+                isBottomSheetVisible = showBottomSheet,
+                sheetState = SheetState(skipPartiallyExpanded = true, density = Density(0f)),
+                onDismiss = { showBottomSheet = false }
             )
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomSheet(
+    isBottomSheetVisible: Boolean,
+    sheetState: SheetState,
+    onDismiss: () -> Unit
+) {
+
+    if (isBottomSheetVisible) {
+
+        ModalBottomSheet(
+            onDismissRequest = onDismiss,
+            sheetState = sheetState,
+            containerColor = Color.Transparent,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            shape = RectangleShape,
+            dragHandle = null,
+            scrimColor = Color.Black.copy(alpha = .5f),
+            windowInsets = WindowInsets(0, 0, 0, 0)
+        ) {
+            Box(
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.3f)
+                    .padding(8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                FilledIconButton(
+                    modifier = Modifier.size(48.dp),
+                    onClick = onDismiss,
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.background
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = "Dismiss the dialog."
+                    )
+
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .padding(12.dp) // Outer padding
+                    .clip(shape = RoundedCornerShape(24.dp))
+                    .background(color = MaterialTheme.colorScheme.background)
+                    .fillMaxWidth()
+                    .padding(24.dp) // Inner padding
+            ) {
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = "10th avenue, Some, State",
+                    onValueChange = {},
+                    label = { Text(text = "Delivery Address") },
+                    readOnly = true,
+                    shape = RoundedCornerShape(12.dp)
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = "09090606000",
+                    onValueChange = {},
+                    label = { Text(text = "Number we can call") },
+                    readOnly = true,
+                    shape = RoundedCornerShape(12.dp)
+                )
+
+                Spacer(modifier = Modifier.height(48.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    OutlinedButton(
+                        onClick = {},
+                        content = { Text(text = "Pay on delivery") }
+                    )
+
+                    OutlinedButton(
+                        onClick = {},
+                        content = { Text(text = "Pay with card") }
+                    )
+
+                }
+
+            }
+        }
+
+    }
+
+}
 
 @Composable
 fun <T : Any?> newOrCached(
