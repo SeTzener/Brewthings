@@ -53,4 +53,13 @@ class RaptPillRepository(
         }
         dao.insertReadings(pill, readings)
     }
+
+    suspend fun updatePill(raptPill: RaptPill) {
+        dao.updatePillData(raptPill = raptPill.toDataItem())
+    }
 }
+
+private fun RaptPill.toDataItem() = com.brewthings.app.data.storage.RaptPill(
+    macAddress = macAddress,
+    name = name,
+)

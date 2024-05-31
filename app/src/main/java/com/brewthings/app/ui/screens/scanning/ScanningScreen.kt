@@ -1,10 +1,7 @@
 package com.brewthings.app.ui.screens.scanning
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,12 +16,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.TabRowDefaults.Divider
@@ -58,10 +55,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -95,10 +92,11 @@ fun ScanningScreen(
     ) {
         ScanningScreen(
             state = viewModel.screenState,
+            navGraph = navController,
             onRssiThresholdChanged = viewModel::onRssiThresholdChanged,
             toggleScan = viewModel::toggleScan,
             savePill = viewModel::savePill,
-            navGraph = navController
+            onPillUpdate = viewModel::onPillUpdate,
         )
     }
 }
@@ -110,7 +108,8 @@ private fun ScanningScreen(
     navGraph: NavController,
     onRssiThresholdChanged: (Int) -> Unit,
     toggleScan: () -> Unit,
-    savePill: (ScannedRaptPill) -> Unit
+    savePill: (ScannedRaptPill) -> Unit,
+    onPillUpdate: (RaptPill) -> Unit
 ) {
     val scannedPills = newOrCached(state.scannedPills, emptyList())
     val savedPills = newOrCached(state.savedPills, emptyList())
@@ -186,7 +185,8 @@ private fun ScanningScreen(
         items(savedPills, key = { "saved_" + it.macAddress }) { pill ->
             Pill(
                 pill = pill,
-                navGraph = navGraph
+                navGraph = navGraph,
+                onPillUpdate = onPillUpdate
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -359,7 +359,8 @@ private fun ScannedPillTopContent(
 @Composable
 private fun Pill(
     pill: RaptPill,
-    navGraph: NavController
+    navGraph: NavController,
+    onPillUpdate: (RaptPill) -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -368,7 +369,7 @@ private fun Pill(
     ) {
         Row {
             Column {
-                PillTopContent(pill)
+                PillTopContent(pill, onPillUpdate)
             }
         }
         Column {
@@ -381,7 +382,9 @@ private fun Pill(
 }
 
 @Composable
-private fun PillTopContent(pill: RaptPill) {
+private fun PillTopContent(
+    pill: RaptPill,
+    onPillUpdate: (RaptPill) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -408,7 +411,7 @@ private fun PillTopContent(pill: RaptPill) {
             )
         }
         Column {
-            DropDownMenu()
+            DropDownMenu(pill, onPillUpdate)
         }
     }
 }
@@ -485,7 +488,10 @@ private fun PillData(pillData: RaptPillData?, navGraph: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DropDownMenu() {
+private fun DropDownMenu(
+    raptPill: RaptPill,
+    onPillUpdate: (RaptPill) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) } // State to control bottom sheet visibility
 
@@ -516,10 +522,12 @@ private fun DropDownMenu() {
 
         if (showBottomSheet) {
             expanded = false
-            BottomSheet(
+            EditNameBottomSheet(
                 isBottomSheetVisible = showBottomSheet,
                 sheetState = SheetState(skipPartiallyExpanded = true, density = Density(0f)),
-                onDismiss = { showBottomSheet = false }
+                pill = raptPill,
+                onDismiss = { showBottomSheet = false },
+                onPillUpdate = onPillUpdate
             )
         }
     }
@@ -527,11 +535,15 @@ private fun DropDownMenu() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheet(
+fun EditNameBottomSheet(
     isBottomSheetVisible: Boolean,
     sheetState: SheetState,
-    onDismiss: () -> Unit
+    pill: RaptPill,
+    onDismiss: () -> Unit,
+    onPillUpdate: (newPill: RaptPill) -> Unit
 ) {
+    var name by remember { mutableStateOf(pill.name) }
+    val isValid = name?.trim()?.isNotEmpty() ?: false
 
     if (isBottomSheetVisible) {
 
@@ -557,14 +569,13 @@ fun BottomSheet(
                     modifier = Modifier.size(48.dp),
                     onClick = onDismiss,
                     colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.background
+                        containerColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Close,
                         contentDescription = "Dismiss the dialog."
                     )
-
                 }
             }
             Column(
@@ -581,22 +592,15 @@ fun BottomSheet(
 
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = "10th avenue, Some, State",
-                    onValueChange = {},
-                    label = { Text(text = "Delivery Address") },
-                    readOnly = true,
-                    shape = RoundedCornerShape(12.dp)
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = "09090606000",
-                    onValueChange = {},
-                    label = { Text(text = "Number we can call") },
-                    readOnly = true,
-                    shape = RoundedCornerShape(12.dp)
+                    value = name ?: "",
+                    onValueChange = { name = it },
+                    label = { Text(text = "Pill Name") },
+                    readOnly = false,
+                    shape = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(48.dp))
@@ -604,26 +608,20 @@ fun BottomSheet(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.Center
                 ) {
-
                     OutlinedButton(
-                        onClick = {},
-                        content = { Text(text = "Pay on delivery") }
+                        onClick = {
+                            onPillUpdate(pill.copy(name = name))
+                            onDismiss()
+                        },
+                        content = { Text(text = "Save") },
+                        enabled = isValid
                     )
-
-                    OutlinedButton(
-                        onClick = {},
-                        content = { Text(text = "Pay with card") }
-                    )
-
                 }
-
             }
         }
-
     }
-
 }
 
 @Composable
