@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -524,7 +526,7 @@ private fun DropDownMenu(
             expanded = false
             EditNameBottomSheet(
                 isBottomSheetVisible = showBottomSheet,
-                sheetState = SheetState(skipPartiallyExpanded = true, density = Density(0f)),
+                sheetState = SheetState(skipPartiallyExpanded = true, density = Density(1f)),
                 pill = raptPill,
                 onDismiss = { showBottomSheet = false },
                 onPillUpdate = onPillUpdate
@@ -561,12 +563,11 @@ fun EditNameBottomSheet(
                 modifier = Modifier
                     .statusBarsPadding()
                     .fillMaxWidth()
-                    .fillMaxHeight(0.3f)
                     .padding(8.dp),
                 contentAlignment = Alignment.Center
             ) {
                 FilledIconButton(
-                    modifier = Modifier.size(48.dp),
+                    modifier = Modifier.size(38.dp),
                     onClick = onDismiss,
                     colors = IconButtonDefaults.filledIconButtonColors(
                         containerColor = MaterialTheme.colorScheme.primary
@@ -574,7 +575,8 @@ fun EditNameBottomSheet(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Close,
-                        contentDescription = "Dismiss the dialog."
+                        contentDescription = "Dismiss the dialog.",
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
@@ -585,6 +587,7 @@ fun EditNameBottomSheet(
                     .clip(shape = RoundedCornerShape(24.dp))
                     .background(color = MaterialTheme.colorScheme.background)
                     .fillMaxWidth()
+                    .imePadding()
                     .padding(24.dp) // Inner padding
             ) {
 
