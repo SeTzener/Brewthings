@@ -1,8 +1,6 @@
 package com.brewthings.app.ui.screens.scanning
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,19 +9,31 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.TabRowDefaults.Divider
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -39,8 +49,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.brewthings.app.R
@@ -72,10 +84,11 @@ fun ScanningScreen(
     ) {
         ScanningScreen(
             state = viewModel.screenState,
+            navGraph = navController,
             onRssiThresholdChanged = viewModel::onRssiThresholdChanged,
             toggleScan = viewModel::toggleScan,
             savePill = viewModel::savePill,
-            navGraph = navController
+            onPillUpdate = viewModel::onPillUpdate,
         )
     }
 }
@@ -87,7 +100,8 @@ private fun ScanningScreen(
     navGraph: NavController,
     onRssiThresholdChanged: (Int) -> Unit,
     toggleScan: () -> Unit,
-    savePill: (ScannedRaptPill) -> Unit
+    savePill: (ScannedRaptPill) -> Unit,
+    onPillUpdate: (RaptPill) -> Unit
 ) {
     val scannedPills = newOrCached(state.scannedPills, emptyList())
     val savedPills = newOrCached(state.savedPills, emptyList())
@@ -163,8 +177,8 @@ private fun ScanningScreen(
         items(savedPills, key = { "saved_" + it.macAddress }) { pill ->
             Pill(
                 pill = pill,
-                isExpanded = savedPills.size == 1,
-                navGraph = navGraph
+                navGraph = navGraph,
+                onPillUpdate = onPillUpdate
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -337,34 +351,37 @@ private fun ScannedPillTopContent(
 @Composable
 private fun Pill(
     pill: RaptPill,
-    isExpanded: Boolean,
-    navGraph: NavController
+    navGraph: NavController,
+    onPillUpdate: (RaptPill) -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         border = BorderStroke(0.dp, Color.LightGray),
         shape = RoundedCornerShape(16.dp)
     ) {
-        ExpandableCard(
-            isExpanded = isExpanded,
-            topContent = { PillTopContent(pill) },
-            expandedContent = {
-                val maxTimestamp = pill.data.maxOfOrNull { it.timestamp } ?: Instant.EPOCH
-                pill.data.find { it.timestamp == maxTimestamp }?.let { data ->
-                    PillData(data, navGraph = navGraph)
-                }
+        Row {
+            Column {
+                PillTopContent(pill, onPillUpdate)
             }
-        )
+        }
+        Column {
+            val maxTimestamp = pill.data.maxOfOrNull { it.timestamp } ?: Instant.EPOCH
+            pill.data.find { it.timestamp == maxTimestamp }?.let { data ->
+                PillData(data, navGraph = navGraph)
+            }
+        }
     }
 }
 
 @Composable
-private fun PillTopContent(pill: RaptPill) {
+private fun PillTopContent(
+    pill: RaptPill,
+    onPillUpdate: (RaptPill) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(end = 20.dp),
+            .padding(start = 20.dp, end = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
@@ -384,6 +401,9 @@ private fun PillTopContent(pill: RaptPill) {
                 text = pill.macAddress,
                 style = Typography.bodySmall,
             )
+        }
+        Column {
+            DropDownMenu(pill, onPillUpdate)
         }
     }
 }
@@ -435,11 +455,12 @@ private fun PillData(pillData: RaptPillData?, navGraph: NavController) {
                 Column {
                     Spacer(modifier = Modifier.padding(40.dp))
                     Column {
-                    Divider(
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(start = 50.dp),
-                        color = Color.LightGray
-                    )
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 50.dp),
+                            color = Color.LightGray
+                        )
                         IconButton(
                             onClick = {
                                 navGraph.navigate(route = Screen.Graph.route)
@@ -457,6 +478,108 @@ private fun PillData(pillData: RaptPillData?, navGraph: NavController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DropDownMenu(
+    raptPill: RaptPill,
+    onPillUpdate: (RaptPill) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var showBottomSheet by remember { mutableStateOf(false) } // State to control bottom sheet visibility
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.TopEnd)
+    ) {
+        IconButton(onClick = { expanded = !expanded }) {
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = "More",
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text("Edit Name") },
+                onClick = {
+                    showBottomSheet = true
+                }
+            )
+        }
+
+        if (showBottomSheet) {
+            expanded = false
+            EditNameBottomSheet(
+                isBottomSheetVisible = showBottomSheet,
+                sheetState = SheetState(skipPartiallyExpanded = true, density = Density(1f)),
+                pill = raptPill,
+                onDismiss = { showBottomSheet = false },
+                onPillUpdate = onPillUpdate
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditNameBottomSheet(
+    isBottomSheetVisible: Boolean,
+    sheetState: SheetState,
+    pill: RaptPill,
+    onDismiss: () -> Unit,
+    onPillUpdate: (newPill: RaptPill) -> Unit
+) {
+    var name by remember { mutableStateOf(pill.name) }
+
+    if (isBottomSheetVisible) {
+        ModalBottomSheet(
+            onDismissRequest = onDismiss,
+            sheetState = sheetState,
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            dragHandle = null,
+            scrimColor = Color.Black.copy(alpha = .5f),
+        ) {
+            Column(
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .fillMaxWidth()
+                    .imePadding()
+                    .padding(vertical = 32.dp, horizontal = 24.dp), // Inner padding,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 32.dp),
+                    value = name ?: "",
+                    onValueChange = { name = it },
+                    label = { Text(text = stringResource(id = R.string.edit_name_tooltip)) },
+                    readOnly = false,
+                    shape = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    )
+                )
+
+                OutlinedButton(
+                    onClick = {
+                        onPillUpdate(pill.copy(name = name))
+                        onDismiss()
+                    },
+                    content = { Text(text = stringResource(id = R.string.edit_name_btn)) },
+                    enabled = isValidName(oldName = pill.name, newName = name)
+                )
+            }
+        }
+    }
+}
 
 @Composable
 fun <T : Any?> newOrCached(
@@ -471,3 +594,6 @@ fun <T : Any?> newOrCached(
         previousData
     }
 }
+
+private fun isValidName(oldName: String?, newName: String?): Boolean =
+    newName?.trim()?.let { it.isNotEmpty() && it != oldName } ?: false

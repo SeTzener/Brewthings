@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -32,11 +33,14 @@ interface RaptPillDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertData(raptPillData: RaptPillData)
 
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updatePill(raptPill: RaptPill)
+
     @Transaction
-    suspend fun insertName(macAddress: String, name: String?) {
-        val pillId = getPillIdByMacAddress(macAddress)
-            ?: throw IllegalArgumentException("No pill found with mac address $macAddress")
-        insertPill(RaptPill(pillId = pillId, macAddress = macAddress, name = name))
+    suspend fun updatePillData(raptPill: RaptPill) {
+        val pillId = getPillIdByMacAddress(raptPill.macAddress)
+            ?: error("No pill found with mac address ${raptPill.macAddress}")
+        updatePill(raptPill.copy(pillId = pillId))
     }
 
     @Transaction

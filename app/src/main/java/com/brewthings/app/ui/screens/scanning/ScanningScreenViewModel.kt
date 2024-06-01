@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.juul.kable.Bluetooth
@@ -103,6 +104,12 @@ class ScanningScreenViewModel(
         when (val existingItemIndex = indexOfFirst { it.macAddress == instrument.macAddress }) {
             -1 -> add(instrument)
             else -> this[existingItemIndex] = instrument
+        }
+    }
+
+    fun onPillUpdate(raptPill: RaptPill) {
+        viewModelScope.launch {
+            repo.updatePill(raptPill = raptPill)
         }
     }
 }
