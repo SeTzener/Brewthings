@@ -12,10 +12,10 @@ import java.time.Instant
  * @param maxValueTimeGap The maximal amount of time between two sensor values for them to be drawn in a single line.
  * @param sensorValues The sensor values. Can be null if the data for the current graph time span has not yet loaded.
  */
-data class DeviceSensorGraphState(
+data class GraphState(
     val graphTimeRange: ClosedRange<Instant>,
     val visibleTimePeriod: Long,
     val dateFormat: String,
     val maxValueTimeGap: Duration,
-    val sensorValues: SegmentSensorValues? = null,
+    val sensorValues: GraphDataSegment? = null,
 )

@@ -7,23 +7,23 @@ import android.util.AttributeSet
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
 import androidx.core.view.isVisible
-import com.brewthings.app.data.model.graph.DeviceSensorGraphState
+import com.brewthings.app.data.model.graph.GraphState
 import com.brewthings.app.data.model.graph.GraphTheme
 import com.brewthings.app.data.model.graph.GraphTimeSpan
-import com.brewthings.app.data.model.graph.SegmentSensorValue
-import com.brewthings.app.data.model.graph.SegmentSensorValues
-import com.brewthings.app.data.model.graph.SelectedGraphValue
-import com.brewthings.app.data.model.graph.SensorValuesGraphEvent
-import com.brewthings.app.ui.android.chart.ChartConstants.Color
-import com.brewthings.app.ui.android.chart.ChartConstants.Size
+import com.brewthings.app.data.model.graph.GraphDataPoint
+import com.brewthings.app.data.model.graph.GraphDataSegment
+import com.brewthings.app.data.model.graph.GraphSelection
+import com.brewthings.app.data.model.graph.GraphEvent
+import com.brewthings.app.ui.components.graph.GraphConstants.Color
+import com.brewthings.app.ui.components.graph.GraphConstants.Size
 import com.brewthings.app.ui.android.chart.datasets.LineChartDataSet
 import com.brewthings.app.ui.android.chart.datasets.TimelineDataSet
 import com.brewthings.app.ui.android.chart.renderers.RoundedLabelsXAxisRenderer
 import com.brewthings.app.ui.android.chart.renderers.SensorGraphYAxisRenderer
 import com.brewthings.app.ui.android.chart.renderers.SingleColorLineChartRenderer
-import com.brewthings.app.ui.android.isWithin
+import com.brewthings.app.util.isWithin
 import com.brewthings.app.ui.android.lifecycleCoroutineScope
-import com.brewthings.app.ui.android.roundSecToHour
+import com.brewthings.app.util.roundSecToHour
 import com.brewthings.app.ui.android.runOnceOnPreDraw
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
@@ -44,7 +44,7 @@ import kotlinx.coroutines.launch
 private const val DECELERATION_COEFFICIENT = 0.8f
 
 /**
- * This class implements a [LineChart] that is specific for showing [SegmentSensorValues]. This is achieved by
+ * This class implements a [LineChart] that is specific for showing [GraphDataSegment]. This is achieved by
  * implementing different types of [data sets][ILineDataSet]. See docs/graphs.md for more information.
  *
  * Updating the chart data is done by calling [showData].
@@ -64,17 +64,17 @@ class SensorValuesChart @JvmOverloads constructor(
     private val theme: GraphTheme,
     private val primaryColor: Int,
     private val secondaryColor: Int,
-    private var graphState: DeviceSensorGraphState,
+    private var graphState: GraphState,
     private var graphTimeSpan: GraphTimeSpan,
-    events: Flow<SensorValuesGraphEvent>,
+    events: Flow<GraphEvent>,
     private val onVisibleRangeChanged: (ClosedRange<Instant>) -> Unit,
-    private val onSelectedValueChanged: (SelectedGraphValue?) -> Unit,
+    private val onSelectedValueChanged: (GraphSelection?) -> Unit,
 ) : LineChart(context, attrs, defStyleAttr) {
     private val timelineDataSet = TimelineDataSet(timeRange = graphState.graphTimeRange)
 
     private val sensorValueSelector = object : OnChartValueSelectedListener {
         override fun onValueSelected(entry: Entry, highlight: Highlight) {
-            val sensorValue = entry.data as SegmentSensorValue
+            val sensorValue = entry.data as GraphDataPoint
             animateToCenter(sensorValue.timestamp)
         }
 
@@ -86,9 +86,9 @@ class SensorValuesChart @JvmOverloads constructor(
     private var centerGraphJob: CancelableAnimatedMoveViewJob? = null
 
     // We postpone handling some events until onDataUpdated() is called, to avoid handling them too early.
-    private var toHandleOnDataUpdated: SensorValuesGraphEvent? = SensorValuesGraphEvent.MoveToEnd
+    private var toHandleOnDataUpdated: GraphEvent? = GraphEvent.MoveToEnd
 
-    private var selectedSensorValue: SegmentSensorValue? = null
+    private var selectedSensorValue: GraphDataPoint? = null
 
     init {
         observe(events)
@@ -138,17 +138,17 @@ class SensorValuesChart @JvmOverloads constructor(
         }
     }
 
-    private fun observe(events: Flow<SensorValuesGraphEvent>) {
+    private fun observe(events: Flow<GraphEvent>) {
         // Wait for the view to draw so that it has a LifecycleOwner, before trying to collect the event Flow.
         runOnceOnPreDraw {
             lifecycleCoroutineScope()?.launch {
                 events.collect { event ->
                     when (event) {
-                        is SensorValuesGraphEvent.MoveToEnd,
-                        is SensorValuesGraphEvent.CenterOn -> toHandleOnDataUpdated = event
-                        is SensorValuesGraphEvent.TimeSpanChanged,
-                        is SensorValuesGraphEvent.CenterAnimatedOn,
-                        is SensorValuesGraphEvent.ClearSelectedValue -> handle(event)
+                        is GraphEvent.MoveToEnd,
+                        is GraphEvent.CenterOn -> toHandleOnDataUpdated = event
+                        is GraphEvent.TimeSpanChanged,
+                        is GraphEvent.CenterAnimatedOn,
+                        is GraphEvent.ClearSelectedValue -> handle(event)
                     }
                 }
             }
@@ -164,18 +164,18 @@ class SensorValuesChart @JvmOverloads constructor(
         init()
     }
 
-    private fun handle(event: SensorValuesGraphEvent) {
+    private fun handle(event: GraphEvent) {
         when (event) {
-            is SensorValuesGraphEvent.TimeSpanChanged -> onTimeSpanChanged()
-            is SensorValuesGraphEvent.MoveToEnd -> moveToEnd()
-            is SensorValuesGraphEvent.CenterOn -> centerGraphOn(instant = event.instant)
-            is SensorValuesGraphEvent.CenterAnimatedOn -> animateToEnd(instant = event.instant)
-            is SensorValuesGraphEvent.ClearSelectedValue -> sensorValueSelector.onNothingSelected()
+            is GraphEvent.TimeSpanChanged -> onTimeSpanChanged()
+            is GraphEvent.MoveToEnd -> moveToEnd()
+            is GraphEvent.CenterOn -> centerGraphOn(instant = event.instant)
+            is GraphEvent.CenterAnimatedOn -> animateToEnd(instant = event.instant)
+            is GraphEvent.ClearSelectedValue -> sensorValueSelector.onNothingSelected()
         }
     }
 
     fun showData(
-        graphState: DeviceSensorGraphState,
+        graphState: GraphState,
         graphTimeSpan: GraphTimeSpan
     ) {
         val oldScreenState = this.graphState
@@ -305,7 +305,7 @@ class SensorValuesChart @JvmOverloads constructor(
 
         if (entry != null) {
             val transformer = getTransformer(YAxis.AxisDependency.RIGHT)
-            val sensorValue = entry.data as SegmentSensorValue
+            val sensorValue = entry.data as GraphDataPoint
             val pixel = transformer.getPixelForValues(entry.x, entry.y)
 
             // while dragging, getPixelForValues returns the dY of the motion event;  we don't need it since our graph
@@ -319,7 +319,7 @@ class SensorValuesChart @JvmOverloads constructor(
             val xPos = if (isFirst || isLast) width.toFloat() / 2 else pixel.x.toFloat()
 
             onSelectedValueChanged(
-                SelectedGraphValue(
+                GraphSelection(
                     sensorValue = sensorValue,
                     xPos = xPos,
                     yPos = yPos,
@@ -428,7 +428,7 @@ class SensorValuesChart @JvmOverloads constructor(
     }
 }
 
-fun SegmentSensorValue.asChartXValue(): Float = timestamp.epochSecond.toFloat()
+fun GraphDataPoint.asChartXValue(): Float = timestamp.epochSecond.toFloat()
 
 @Suppress("MagicNumber")
 private fun GraphTimeSpan.asXAxisGranularity(): Double {
@@ -444,21 +444,21 @@ private fun GraphTimeSpan.asXAxisGranularity(): Double {
 }
 
 /**
- * Splits a list of [SegmentSensorValue] into multiple lists of [SegmentSensorValue]. Each list in the result is a group
+ * Splits a list of [GraphDataPoint] into multiple lists of [GraphDataPoint]. Each list in the result is a group
  * of values without gaps between them. The time duration of a gap is defined by [minGapDuration]. Consecutive values
  * with a time gap greater than [minGapDuration] will be returned in the result in separate lists.
  *
- * This function assumes that the [values][SegmentSensorValue] are sorted chronologically.
+ * This function assumes that the [values][GraphDataPoint] are sorted chronologically.
  *
  * @param minGapDuration The minimal amount of time that defines a gap between values. If two consecutive values have a
  * time difference between them that is greater than [minGapDuration] then the function considers that time between
  * those two values as a data gap.
  */
-private fun List<SegmentSensorValue>.splitByGaps(minGapDuration: Duration): List<List<SegmentSensorValue>> {
-    val valueGroups = mutableListOf<List<SegmentSensorValue>>()
+private fun List<GraphDataPoint>.splitByGaps(minGapDuration: Duration): List<List<GraphDataPoint>> {
+    val valueGroups = mutableListOf<List<GraphDataPoint>>()
 
     var lastValueTimestamp: Instant? = null
-    var currentGroup: MutableList<SegmentSensorValue> = mutableListOf()
+    var currentGroup: MutableList<GraphDataPoint> = mutableListOf()
     forEach { value ->
         val isNewGroup = lastValueTimestamp?.let { !value.timestamp.isWithin(it, minGapDuration) } ?: true
         if (isNewGroup) {

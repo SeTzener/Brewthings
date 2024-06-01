@@ -1,9 +1,29 @@
-package com.brewthings.app.ui.android
+package com.brewthings.app.util
 
 import java.time.Duration
 import java.time.Instant
+import java.util.TimeZone
 import kotlin.math.absoluteValue
 import kotlin.math.roundToLong
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.toJavaDuration
+
+fun startOfDay(now: Instant, timeZone: TimeZone): Instant = now
+    .atZone(timeZone.toZoneId())
+    .toLocalDate()
+    .atStartOfDay(timeZone.toZoneId())
+    .toInstant()
+
+fun Duration.getDaysHoursAndMinutes(): Triple<Long, Long, Long> =
+    Triple(toDays(), toHours() % 24, toMinutes() % 60)
+
+fun isYesterday(date: Instant, now: Instant, timeZone: TimeZone): Boolean {
+    // Adding 24 hours is problematic with daylight saving.
+    val offsetDate = date.plus(24.hours.toJavaDuration())
+    val localOffsetDate = offsetDate.atZone(timeZone.toZoneId()).toLocalDateTime()
+    val nowLocalDate = now.atZone(timeZone.toZoneId()).toLocalDateTime()
+    return localOffsetDate.dayOfYear == nowLocalDate.dayOfYear
+}
 
 fun Instant.isWithin(instant: Instant, duration: Duration): Boolean {
     val diff = (instant.epochSecond - epochSecond).absoluteValue
