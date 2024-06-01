@@ -53,7 +53,6 @@ android {
 }
 
 dependencies {
-
     // Core Libraries
     implementation(libs.core.ktx)
 
@@ -98,6 +97,9 @@ dependencies {
     implementation(libs.room.ktx)
     annotationProcessor(libs.room.compiler)
     ksp(libs.room.compiler)
+
+    // MP Android Chart
+    implementation(libs.mp.chart)
 
     // Unit Testing
     testImplementation(libs.junit)

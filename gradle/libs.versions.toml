@@ -15,6 +15,7 @@ lifecycleRuntimeKtx = "2.7.0"
 kable = "0.31.1"
 koin = "3.5.6"
 mockk = "1.12.5"
+mp-chart = "v3.1.0"
 kotlin = "1.9.20"
 material = "1.12.0"
 navigation = "2.8.0-beta01"
@@ -73,6 +74,9 @@ koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose", versi
 # Material Design for Jetpack Compose
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3-android", version.ref = "composeMaterial3" }
+
+# MP Android Chart
+mp-chart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mp-chart" }
 
 # Room
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
