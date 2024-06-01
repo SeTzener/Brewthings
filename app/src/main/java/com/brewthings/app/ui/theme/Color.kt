@@ -11,3 +11,7 @@ val Brightmode_PrimaryVariant = Color(0xFF642B73)
 val Brightmode_Secondary = Color(0xFF625b71)
 
 val Red_Alert = Color(0xFFD32F2F)
+val Light_Grey = Color(0xfff8f8f8)
+val Shark = Color(0xff21282d)
+val Congruence: Color = Color(0xff9faab1)
+val Grey_Nevada: Color = Color(0xff616f77)

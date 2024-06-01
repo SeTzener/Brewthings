@@ -4,35 +4,40 @@ import android.content.Context
 import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.util.AttributeSet
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
 import androidx.core.view.isVisible
 import com.brewthings.app.data.model.graph.DeviceSensorGraphState
 import com.brewthings.app.data.model.graph.GraphTheme
 import com.brewthings.app.data.model.graph.GraphTimeSpan
 import com.brewthings.app.data.model.graph.SegmentSensorValue
+import com.brewthings.app.data.model.graph.SegmentSensorValues
 import com.brewthings.app.data.model.graph.SelectedGraphValue
 import com.brewthings.app.data.model.graph.SensorValuesGraphEvent
+import com.brewthings.app.ui.android.chart.ChartConstants.Color
+import com.brewthings.app.ui.android.chart.ChartConstants.Size
 import com.brewthings.app.ui.android.chart.datasets.LineChartDataSet
-import com.brewthings.app.ui.android.chart.datasets.SensorValuesDataSet
 import com.brewthings.app.ui.android.chart.datasets.TimelineDataSet
+import com.brewthings.app.ui.android.chart.renderers.RoundedLabelsXAxisRenderer
+import com.brewthings.app.ui.android.chart.renderers.SensorGraphYAxisRenderer
 import com.brewthings.app.ui.android.chart.renderers.SingleColorLineChartRenderer
 import com.brewthings.app.ui.android.isWithin
 import com.brewthings.app.ui.android.lifecycleCoroutineScope
+import com.brewthings.app.ui.android.roundSecToHour
 import com.brewthings.app.ui.android.runOnceOnPreDraw
-import com.brewthings.app.ui.theme.Size
 import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.listener.BarLineChartTouchListener
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.MPPointF
-import java.time.Instant
 import java.time.Duration
+import java.time.Instant
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -45,10 +50,10 @@ private const val DECELERATION_COEFFICIENT = 0.8f
  * Updating the chart data is done by calling [showData].
  *
  * Note:
- * MPAndroidChart uses [Float] values for storing data. We convert [Instant.epochSeconds] to a [Float] for the graph 'x'
+ * MPAndroidChart uses [Float] values for storing data. We convert epoch seconds to a [Float] for the graph 'x'
  * values. When converting the [Float] back to a [Long] some data is lost and the result is not the original
- * [Instant.epochSeconds] value. This is a [known issue][https://github.com/PhilJay/MPAndroidChart/issues/4854]. We work
- * around this issue by rounding the seconds value to the nearest hour using [roundMsToHour] and [roundSecToHour].
+ * epoc seconds value. This is a [known issue][https://github.com/PhilJay/MPAndroidChart/issues/4854]. We work
+ * around this issue by rounding the seconds value to the nearest hour using  [roundSecToHour].
  */
 @Suppress("MagicNumber", "ViewConstructor")
 class SensorValuesChart @JvmOverloads constructor(
@@ -57,7 +62,6 @@ class SensorValuesChart @JvmOverloads constructor(
     defStyleAttr: Int = 0,
     private val density: Density,
     private val theme: GraphTheme,
-    private val surfaceColor: Int,
     private val primaryColor: Int,
     private val secondaryColor: Int,
     private var graphState: DeviceSensorGraphState,
@@ -98,7 +102,7 @@ class SensorValuesChart @JvmOverloads constructor(
         isAutoScaleMinMaxEnabled = true
         minOffset = 0f
         // Prevents x-axis labels from being clipped.
-        extraBottomOffset = with(density) { Size.Graph.BOTTOM_SPACING.toPx() }
+        extraBottomOffset = with(density) { Size.BOTTOM_SPACING.toPx() }
         extraTopOffset = 0f
         setDrawMarkers(false)
         description.isEnabled = false
@@ -202,22 +206,6 @@ class SensorValuesChart @JvmOverloads constructor(
         toHandleOnDataUpdated = null
     }
 
-    private fun onShowThresholdsChanged() {
-        animateToSelectedSensorValue()
-    }
-
-    private fun onShowMinMaxChanged() {
-        animateToSelectedSensorValue()
-    }
-
-    private fun animateToSelectedSensorValue() {
-        selectedSensorValue?.also {
-            // Animating to the selected value seems to fix an issue where we have either toggled the threshold or the
-            // min/max value, and the graph marker needs to be vertically adjusted
-            animateToCenter(it.timestamp)
-        }
-    }
-
     private fun onSensorValuesChanged() {
         // do nothing.
     }
@@ -302,8 +290,8 @@ class SensorValuesChart @JvmOverloads constructor(
 
     private fun onChartVisibleRangeUpdate() {
         val visibleRange = getVisibleRangeWithWorkaround()
-        val start = Instant.fromEpochSeconds(visibleRange.start.toLong().roundSecToHour())
-        val end = Instant.fromEpochSeconds(visibleRange.endInclusive.toLong().roundSecToHour())
+        val start = Instant.ofEpochSecond(visibleRange.start.toLong().roundSecToHour())
+        val end = Instant.ofEpochSecond(visibleRange.endInclusive.toLong().roundSecToHour())
         onVisibleRangeChanged(start..end)
     }
 
@@ -313,10 +301,9 @@ class SensorValuesChart @JvmOverloads constructor(
     }
 
     private fun updateSelectedValue(dragOffset: MPPointF? = null) {
-        val sensorUnit = graphState.sensorValues?.unit
         val entry = getEntryByTouchPoint(center.x, center.y)
 
-        if (sensorUnit != null && entry != null) {
+        if (entry != null) {
             val transformer = getTransformer(YAxis.AxisDependency.RIGHT)
             val sensorValue = entry.data as SegmentSensorValue
             val pixel = transformer.getPixelForValues(entry.x, entry.y)
@@ -333,7 +320,6 @@ class SensorValuesChart @JvmOverloads constructor(
 
             onSelectedValueChanged(
                 SelectedGraphValue(
-                    sensorUnit = sensorUnit,
                     sensorValue = sensorValue,
                     xPos = xPos,
                     yPos = yPos,
@@ -367,20 +353,20 @@ class SensorValuesChart @JvmOverloads constructor(
     }
 
     private fun configureAxisRenderers() {
-        val labelVerticalPadding = with(density) { Size.Graph.BOTTOM_SPACING.toPx() }
-        val labelHorizontalPadding = with(density) { Size.Graph.Y_LABEL_HORIZONTAL_PADDING.toPx() }
+        val labelVerticalPadding = with(density) { Size.BOTTOM_SPACING.toPx() }
+        val labelHorizontalPadding = with(density) { Size.Y_LABEL_HORIZONTAL_PADDING.toPx() }
         val labelBackgroundColorThemed = when (theme) {
-            Theme.LIGHT -> AirthingsColors.LIGHT_GREY
-            Theme.DARK -> AirthingsColors.SHARK
+            GraphTheme.LIGHT -> Color.bgLabelsLight
+            GraphTheme.DARK -> Color.bgLabelsDark
         }
         val labelBackgroundColor = labelBackgroundColorThemed.copy(alpha = 0.9f).toArgb()
-        val labelCornerRadius = with(density) { Size.Graph.LABEL_CORNER_RADIUS.toPx() }
+        val labelCornerRadius = with(density) { Size.LABEL_CORNER_RADIUS.toPx() }
         setXAxisRenderer(
             RoundedLabelsXAxisRenderer(
                 cornerRadius = labelCornerRadius,
                 labelVerticalPadding = labelVerticalPadding,
                 labelHorizontalPadding = labelHorizontalPadding,
-                gridLinePadding = with(density) { Size.Graph.GRID_LINE_PADDING.toPx() },
+                gridLinePadding = with(density) { Size.GRID_LINE_PADDING.toPx() },
                 backgroundColor = labelBackgroundColor,
                 viewPortHandler = viewPortHandler,
                 xAxis = xAxis,
@@ -404,10 +390,10 @@ class SensorValuesChart @JvmOverloads constructor(
             setDrawGridLines(false)
             setDrawGridLinesBehindData(false)
             setDrawAxisLine(false)
-            textColor = AirthingsColors.CONGRUENCE.toArgb()
+            textColor = Color.axisText.toArgb()
             setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART)
             labelCount = LABEL_COUNT
-            xOffset = with(density) { Size.Graph.RIGHT_AXIS_PADDING.toPx() }
+            xOffset = with(density) { Size.RIGHT_AXIS_PADDING.toPx() }
         }
     }
 
@@ -415,12 +401,12 @@ class SensorValuesChart @JvmOverloads constructor(
         with(xAxis) {
             setDrawGridLines(true)
             setDrawGridLinesBehindData(false)
-            val dashedLineLength = with(density) { Size.Graph.DASHED_LINE_LENGTH.toPx() }
+            val dashedLineLength = with(density) { Size.DASHED_LINE_LENGTH.toPx() }
             setGridDashedLine(DashPathEffect(floatArrayOf(dashedLineLength, dashedLineLength), 0f))
-            gridColor = AirthingsColors.GREY_NEVADA.toArgb()
+            gridColor = Color.axisGrid.toArgb()
             setDrawAxisLine(false)
             position = XAxis.XAxisPosition.BOTTOM
-            textColor = AirthingsColors.CONGRUENCE.toArgb()
+            textColor = Color.axisText.toArgb()
             granularity = TimeUnit.HOURS.toSeconds(X_AXIS_GRANULARITY_HOURS).toFloat()
         }
     }
@@ -433,25 +419,6 @@ class SensorValuesChart @JvmOverloads constructor(
         super.autoScale()
         // Call notifyDataSetChanged() to force scaling not only of the y Axis, but also of the data.
         notifyDataSetChanged()
-    }
-
-    private fun Threshold.asLimitLine(): LimitLine {
-        val limit = value.toFloat()
-        val label = axisRight.valueFormatter.getFormattedValue(limit)
-
-        val color = DeviceSensorsColor.forThreshold(
-            sensorType = sensorType,
-            thresholdLevel = thresholdLevel,
-        ).toArgb()
-
-        return LimitLine(limit, label).apply {
-            lineColor = color
-            lineWidth = Size.Graph.DASHED_LINE_WIDTH.value
-            labelPosition = LimitLine.LimitLabelPosition.LEFT_TOP
-            yOffset = with(density) { Size.Graph.LIMIT_LABEL_VERTICAL_PADDING.toPx() }
-            xOffset = with(density) { Size.Graph.LIMIT_LABEL_HORIZONTAL_PADDING.toPx() }
-            textColor = color
-        }
     }
 
     companion object {
@@ -469,10 +436,12 @@ private fun GraphTimeSpan.asXAxisGranularity(): Double {
 
     return when (this) {
         GraphTimeSpan.THREE_HOURS -> hours
+        GraphTimeSpan.DAY,
+        GraphTimeSpan.WEEK,
+        GraphTimeSpan.MONTH,
+        GraphTimeSpan.YEAR -> hours * 4
     }
 }
-
-private fun SensorValues.getMaxSensorValue(): Float = data
 
 /**
  * Splits a list of [SegmentSensorValue] into multiple lists of [SegmentSensorValue]. Each list in the result is a group

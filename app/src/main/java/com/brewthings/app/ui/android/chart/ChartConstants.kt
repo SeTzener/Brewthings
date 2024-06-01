@@ -1,13 +1,20 @@
-package com.brewthings.app.ui.theme
+package com.brewthings.app.ui.android.chart
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.brewthings.app.ui.theme.Congruence
+import com.brewthings.app.ui.theme.Grey_Nevada
+import com.brewthings.app.ui.theme.Light_Grey
+import com.brewthings.app.ui.theme.Shark
 
-object Size {
+/**
+ * Constants used in the chart.
+ */
+object ChartConstants {
     /**
-     * Default sizes configuration for graphs.
+     * Default sizes for the chart.
      */
-    object Graph {
+    object Size {
         val LINE_WIDTH = 6.dp
         val MIN_HEIGHT = 200.dp
         val BOTTOM_SPACING: Dp = 6.dp
@@ -23,7 +30,7 @@ object Size {
         val OVER_VIEW_CARD_BORDER = 1.6.dp
 
         /**
-         * Default sizes configuration for the graph's value marker.
+         * Default sizes configuration for the chart's value marker.
          */
         object Marker {
             val CIRCLE_RADIUS = 20.dp
@@ -33,5 +40,12 @@ object Size {
             val INDICATOR_PADDING_TOP = 10.dp
             val INDICATOR_PADDING_BOTTOM = 50.dp
         }
+    }
+
+    object Color {
+        val bgLabelsLight = Light_Grey
+        val bgLabelsDark = Shark
+        val axisText = Congruence
+        val axisGrid = Grey_Nevada
     }
 }

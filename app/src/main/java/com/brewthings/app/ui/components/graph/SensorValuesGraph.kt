@@ -36,21 +36,19 @@ fun SensorValuesGraph(
     events: Flow<SensorValuesGraphEvent>,
 ) {
     val density: Density = LocalDensity.current
-    val surfaceColor = MaterialTheme.colorScheme.surface
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val secondaryColor = MaterialTheme.colorScheme.secondary
+    val primaryColor = MaterialTheme.colorScheme.primary.toArgb()
+    val secondaryColor = MaterialTheme.colorScheme.secondary.toArgb()
     val theme = if (isSystemInDarkTheme()) GraphTheme.DARK else GraphTheme.LIGHT
     AndroidView(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = surfaceColor),
+            .background(color = MaterialTheme.colorScheme.surface),
         factory = { context ->
             SensorValuesChart(
                 context = context,
                 density = density,
-                surfaceColor = surfaceColor.toArgb(),
-                primaryColor = primaryColor.toArgb(),
-                secondaryColor = secondaryColor.toArgb(),
+                primaryColor = primaryColor,
+                secondaryColor = secondaryColor,
                 theme = theme,
                 onVisibleRangeChanged = onVisibleRangeChanged,
                 onSelectedValueChanged = onSelectedValueChanged,

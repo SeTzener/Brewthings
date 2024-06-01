@@ -16,8 +16,17 @@ fun Instant.isWithin(instant: Instant, duration: Duration): Boolean {
 fun Long.roundMsToHour(): Long =
     HOUR_IN_MS * msToHours().roundToLong()
 
+/**
+ * Rounds the given seconds since epoch [Long] to the closest hour.
+ */
+fun Long.roundSecToHour(): Long =
+    HOUR_IN_SEC * secondsToHours().roundToLong()
+
 private fun Long.msToHours(): Double =
     this / HOUR_IN_MS.toDouble()
+
+private fun Long.secondsToHours(): Double =
+    this / HOUR_IN_SEC.toDouble()
 
 internal const val SEC_IN_MS: Long = 1000L
 private const val HOUR_IN_SEC = 60 * 60

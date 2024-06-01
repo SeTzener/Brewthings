@@ -1,7 +1,7 @@
 package com.brewthings.app.ui.android.chart.datasets
 
 import com.brewthings.app.data.model.graph.SegmentSensorValue
-import com.brewthings.app.ui.theme.Size
+import com.brewthings.app.ui.android.chart.ChartConstants.Size
 
 /**
  * A [SensorValuesDataSet] that shows the values of each given [sensor value][SegmentSensorValue]. This data set
@@ -18,10 +18,10 @@ class LineChartDataSet(
         setDrawValues(false)
         setDrawCircles(sensorValues.size == 1)
         color = lineColor
-        circleRadius = Size.Graph.LINE_WIDTH.value
+        circleRadius = Size.LINE_WIDTH.value
         isHighlightEnabled = highlightEnabled
         setDrawHighlightIndicators(false)
-        lineWidth = Size.Graph.LINE_WIDTH.value
+        lineWidth = Size.LINE_WIDTH.value
         mode = Mode.HORIZONTAL_BEZIER
     }
 }
