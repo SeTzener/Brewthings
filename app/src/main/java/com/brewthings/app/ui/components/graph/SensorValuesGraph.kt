@@ -1,0 +1,65 @@
+package com.brewthings.app.ui.components.graph
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.viewinterop.AndroidView
+import com.brewthings.app.data.model.graph.DeviceSensorGraphState
+import com.brewthings.app.data.model.graph.GraphTheme
+import com.brewthings.app.data.model.graph.GraphTimeSpan
+import com.brewthings.app.data.model.graph.SelectedGraphValue
+import com.brewthings.app.data.model.graph.SensorValuesGraphEvent
+import com.brewthings.app.ui.android.chart.SensorValuesChart
+import java.time.Instant
+import kotlinx.coroutines.flow.Flow
+
+/**
+ * A composable [AndroidView] wrapper for a [SensorValuesGraph] that shows sensor values in a graph.
+ *
+ * @param onVisibleRangeChanged A function that the graph is expected to call when the graph visible time range changes.
+ * @param onSelectedValueChanged A function that the graph is expected to call when the graph selected value changes.
+ * @param graphState The graph state.
+ * @param events A [Flow] of [SensorValuesGraphEvent] events that are handled by [SensorValuesChart].
+ */
+@Composable
+fun SensorValuesGraph(
+    onVisibleRangeChanged: (ClosedRange<Instant>) -> Unit,
+    onSelectedValueChanged: (SelectedGraphValue?) -> Unit,
+    graphState: DeviceSensorGraphState,
+    graphTimeSpan: GraphTimeSpan,
+    events: Flow<SensorValuesGraphEvent>,
+) {
+    val density: Density = LocalDensity.current
+    val surfaceColor = MaterialTheme.colorScheme.surface
+    val theme = if (isSystemInDarkTheme()) GraphTheme.DARK else GraphTheme.LIGHT
+    AndroidView(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = surfaceColor),
+        factory = { context ->
+            SensorValuesChart(
+                context = context,
+                density = density,
+                surfaceColor = surfaceColor.toArgb(),
+                theme = theme,
+                onVisibleRangeChanged = onVisibleRangeChanged,
+                onSelectedValueChanged = onSelectedValueChanged,
+                graphState = graphState,
+                graphTimeSpan = graphTimeSpan,
+                events = events
+            )
+        },
+        update = {
+            it.showData(
+                graphState = graphState,
+                graphTimeSpan = graphTimeSpan
+            )
+        }
+    )
+}
