@@ -1,16 +1,42 @@
 package com.brewthings.app.ui.android.chart
 
 import android.content.Context
+import android.graphics.DashPathEffect
+import android.graphics.Paint
 import android.util.AttributeSet
 import androidx.compose.ui.unit.Density
+import androidx.core.view.isVisible
 import com.brewthings.app.data.model.graph.DeviceSensorGraphState
 import com.brewthings.app.data.model.graph.GraphTheme
 import com.brewthings.app.data.model.graph.GraphTimeSpan
+import com.brewthings.app.data.model.graph.SegmentSensorValue
 import com.brewthings.app.data.model.graph.SelectedGraphValue
 import com.brewthings.app.data.model.graph.SensorValuesGraphEvent
+import com.brewthings.app.ui.android.chart.datasets.LineChartDataSet
+import com.brewthings.app.ui.android.chart.datasets.SensorValuesDataSet
+import com.brewthings.app.ui.android.chart.datasets.TimelineDataSet
+import com.brewthings.app.ui.android.chart.renderers.SingleColorLineChartRenderer
+import com.brewthings.app.ui.android.isWithin
+import com.brewthings.app.ui.android.lifecycleCoroutineScope
+import com.brewthings.app.ui.android.runOnceOnPreDraw
+import com.brewthings.app.ui.theme.Size
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.LimitLine
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.components.YAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.BarLineChartTouchListener
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.github.mikephil.charting.utils.MPPointF
 import java.time.Instant
+import java.time.Duration
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+
+private const val DECELERATION_COEFFICIENT = 0.8f
 
 /**
  * This class implements a [LineChart] that is specific for showing [SegmentSensorValues]. This is achieved by
@@ -32,13 +58,14 @@ class SensorValuesChart @JvmOverloads constructor(
     private val density: Density,
     private val theme: GraphTheme,
     private val surfaceColor: Int,
+    private val primaryColor: Int,
+    private val secondaryColor: Int,
     private var graphState: DeviceSensorGraphState,
     private var graphTimeSpan: GraphTimeSpan,
     events: Flow<SensorValuesGraphEvent>,
     private val onVisibleRangeChanged: (ClosedRange<Instant>) -> Unit,
     private val onSelectedValueChanged: (SelectedGraphValue?) -> Unit,
 ) : LineChart(context, attrs, defStyleAttr) {
-
     private val timelineDataSet = TimelineDataSet(timeRange = graphState.graphTimeRange)
 
     private val sensorValueSelector = object : OnChartValueSelectedListener {
@@ -51,8 +78,6 @@ class SensorValuesChart @JvmOverloads constructor(
             // do nothing.
         }
     }
-
-    private val multicolorRenderer: MulticolorLineChartRenderer get() = mRenderer as MulticolorLineChartRenderer
 
     private var centerGraphJob: CancelableAnimatedMoveViewJob? = null
 
@@ -82,7 +107,8 @@ class SensorValuesChart @JvmOverloads constructor(
         configureXAxis()
         configureRightAxis()
         axisLeft.isEnabled = false
-        mRenderer = MulticolorLineChartRenderer(
+        mRenderer = SingleColorLineChartRenderer(
+            lineColor = primaryColor,
             chart = this,
             animator = mAnimator,
             viewPortHandler = mViewPortHandler,
@@ -168,13 +194,6 @@ class SensorValuesChart @JvmOverloads constructor(
         xAxis.valueFormatter = DateValueFormatter(dateFormat = graphState.dateFormat)
         xAxis.granularity = graphTimeSpan.asXAxisGranularity().toFloat()
 
-        val sensorValues = graphState.sensorValues
-        multicolorRenderer.colorThresholds = if (graphState.showColors && sensorValues != null) {
-            sensorValues.asLineDataSetThresholds()
-        } else {
-            emptyList()
-        }
-
         updateDataSets()
         updateAxisRight()
         setVisibleXRange(graphState.visibleTimePeriod.toFloat(), graphState.visibleTimePeriod.toFloat())
@@ -206,16 +225,7 @@ class SensorValuesChart @JvmOverloads constructor(
     private fun updateAxisRight() {
         with(axisRight) {
             limitLines.clear()
-            if (graphState.showThresholds) addThresholdLimitLines()
             isEnabled = graphState.sensorValues?.values?.isNotEmpty() == true
-        }
-    }
-
-    private fun YAxis.addThresholdLimitLines() {
-        graphState.sensorValues?.let { sensorValues ->
-            sensorValues.thresholds
-                .map { it.asLimitLine() }
-                .forEach { addLimitLine(it) }
         }
     }
 
@@ -229,15 +239,15 @@ class SensorValuesChart @JvmOverloads constructor(
 
     private fun centerGraphOn(instant: Instant) {
         lifecycleCoroutineScope()?.launch {
-            centerViewTo(instant.epochSeconds.toFloat(), 0f, YAxis.AxisDependency.RIGHT)
+            centerViewTo(instant.epochSecond.toFloat(), 0f, YAxis.AxisDependency.RIGHT)
         }
     }
 
     private fun animateToEnd(instant: Instant) =
-        animateTo(instant.epochSeconds - graphState.visibleTimePeriod)
+        animateTo(instant.epochSecond - graphState.visibleTimePeriod)
 
     private fun animateToCenter(instant: Instant) =
-        animateTo(instant.epochSeconds - graphState.visibleTimePeriod / 2)
+        animateTo(instant.epochSecond - graphState.visibleTimePeriod / 2)
 
     private fun animateTo(xTarget: Long) {
         centerGraphJob?.cancel()
@@ -256,19 +266,9 @@ class SensorValuesChart @JvmOverloads constructor(
         timelineDataSet.updateValues(
             timeRange = graphState.graphTimeRange,
             visibleValues = graphState.sensorValues?.values?.map {
-                Entry(it.asChartXValue(), it.value.toFloat())
+                Entry(it.asChartXValue(), it.maxValue)
             } ?: emptyList()
         )
-        if (graphState.showThresholds) {
-            graphState.sensorValues?.thresholds?.forEach { threshold ->
-                data.addDataSet(
-                    InvisibleDataSet(
-                        xValues = graphState.sensorValues?.values?.map { it.asChartXValue() } ?: emptyList(),
-                        yValue = threshold.value.toFloat(),
-                    )
-                )
-            }
-        }
         updateVisibleDataSets()
         data.notifyDataChanged()
         notifyDataSetChanged()
@@ -278,20 +278,23 @@ class SensorValuesChart @JvmOverloads constructor(
     private fun updateVisibleDataSets() {
         graphState.sensorValues?.values?.splitByGaps(minGapDuration = graphState.maxValueTimeGap)
             ?.forEach { valueGroup ->
-                if (graphState.showMinMaxValues) {
-                    val minMaxColor = when (theme) {
-                        Theme.LIGHT -> AirthingsColors.MINT
-                        Theme.DARK -> AirthingsColors.STRONGHOLD
-                    }
-                    data.addDataSet(HighValuesDataSet(sensorValues = valueGroup, minMaxColor = minMaxColor.toArgb()))
-                    data.addDataSet(LowValuesDataSet(sensorValues = valueGroup, backgroundColor = surfaceColor))
-                }
+                // Gravity chart
                 data.addDataSet(
-                    AverageValuesDataSet(
+                    LineChartDataSet(
                         sensorValues = valueGroup,
                         highlightEnabled = true,
-                        showColors = graphState.showColors,
-                        sensorType = sensorType,
+                        lineColor = primaryColor,
+                        asEntryYValue = { gravity },
+                    )
+                )
+
+                // Temperature chart
+                data.addDataSet(
+                    LineChartDataSet(
+                        sensorValues = valueGroup,
+                        highlightEnabled = true,
+                        lineColor = secondaryColor,
+                        asEntryYValue = { temperature },
                     )
                 )
             }
@@ -456,4 +459,46 @@ class SensorValuesChart @JvmOverloads constructor(
         private const val LABEL_COUNT = 4
         private const val X_AXIS_GRANULARITY_HOURS = 4L
     }
+}
+
+fun SegmentSensorValue.asChartXValue(): Float = timestamp.epochSecond.toFloat()
+
+@Suppress("MagicNumber")
+private fun GraphTimeSpan.asXAxisGranularity(): Double {
+    val hours = 60.0 * 60.0
+
+    return when (this) {
+        GraphTimeSpan.THREE_HOURS -> hours
+    }
+}
+
+private fun SensorValues.getMaxSensorValue(): Float = data
+
+/**
+ * Splits a list of [SegmentSensorValue] into multiple lists of [SegmentSensorValue]. Each list in the result is a group
+ * of values without gaps between them. The time duration of a gap is defined by [minGapDuration]. Consecutive values
+ * with a time gap greater than [minGapDuration] will be returned in the result in separate lists.
+ *
+ * This function assumes that the [values][SegmentSensorValue] are sorted chronologically.
+ *
+ * @param minGapDuration The minimal amount of time that defines a gap between values. If two consecutive values have a
+ * time difference between them that is greater than [minGapDuration] then the function considers that time between
+ * those two values as a data gap.
+ */
+private fun List<SegmentSensorValue>.splitByGaps(minGapDuration: Duration): List<List<SegmentSensorValue>> {
+    val valueGroups = mutableListOf<List<SegmentSensorValue>>()
+
+    var lastValueTimestamp: Instant? = null
+    var currentGroup: MutableList<SegmentSensorValue> = mutableListOf()
+    forEach { value ->
+        val isNewGroup = lastValueTimestamp?.let { !value.timestamp.isWithin(it, minGapDuration) } ?: true
+        if (isNewGroup) {
+            currentGroup = mutableListOf()
+            valueGroups.add(currentGroup)
+        }
+        currentGroup.add(value)
+        lastValueTimestamp = value.timestamp
+    }
+
+    return valueGroups
 }

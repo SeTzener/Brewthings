@@ -37,6 +37,8 @@ fun SensorValuesGraph(
 ) {
     val density: Density = LocalDensity.current
     val surfaceColor = MaterialTheme.colorScheme.surface
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val secondaryColor = MaterialTheme.colorScheme.secondary
     val theme = if (isSystemInDarkTheme()) GraphTheme.DARK else GraphTheme.LIGHT
     AndroidView(
         modifier = Modifier
@@ -47,6 +49,8 @@ fun SensorValuesGraph(
                 context = context,
                 density = density,
                 surfaceColor = surfaceColor.toArgb(),
+                primaryColor = primaryColor.toArgb(),
+                secondaryColor = secondaryColor.toArgb(),
                 theme = theme,
                 onVisibleRangeChanged = onVisibleRangeChanged,
                 onSelectedValueChanged = onSelectedValueChanged,

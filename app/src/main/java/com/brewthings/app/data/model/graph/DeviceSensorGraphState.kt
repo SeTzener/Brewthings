@@ -1,7 +1,7 @@
 package com.brewthings.app.data.model.graph
 
+import java.time.Duration
 import java.time.Instant
-import kotlin.time.Duration
 
 /**
  * The state of SensorValuesGraph.
