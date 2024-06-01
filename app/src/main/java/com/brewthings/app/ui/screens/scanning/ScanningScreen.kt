@@ -1,13 +1,11 @@
 package com.brewthings.app.ui.screens.scanning
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,9 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -541,32 +537,26 @@ fun EditNameBottomSheet(
     var name by remember { mutableStateOf(pill.name) }
 
     if (isBottomSheetVisible) {
-
         ModalBottomSheet(
             onDismissRequest = onDismiss,
             sheetState = sheetState,
-            containerColor = Color.Transparent,
+            containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface,
-            shape = RectangleShape,
             dragHandle = null,
             scrimColor = Color.Black.copy(alpha = .5f),
-            windowInsets = WindowInsets(0, 0, 0, 0)
         ) {
             Column(
                 modifier = Modifier
                     .navigationBarsPadding()
-                    .padding(12.dp) // Outer padding
-                    .clip(shape = RoundedCornerShape(24.dp))
-                    .background(color = MaterialTheme.colorScheme.background)
                     .fillMaxWidth()
                     .imePadding()
-                    .padding(24.dp) // Inner padding
+                    .padding(vertical = 32.dp, horizontal = 24.dp), // Inner padding,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-                Spacer(modifier = Modifier.height(16.dp))
-
                 OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 32.dp),
                     value = name ?: "",
                     onValueChange = { name = it },
                     label = { Text(text = stringResource(id = R.string.edit_name_tooltip)) },
@@ -578,22 +568,14 @@ fun EditNameBottomSheet(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(48.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    OutlinedButton(
-                        onClick = {
-                            onPillUpdate(pill.copy(name = name))
-                            onDismiss()
-                        },
-                        content = { Text(text = stringResource(id = R.string.edit_name_btn)) },
-                        enabled = isValidName(oldName = pill.name, newName = name)
-                    )
-                }
+                OutlinedButton(
+                    onClick = {
+                        onPillUpdate(pill.copy(name = name))
+                        onDismiss()
+                    },
+                    content = { Text(text = stringResource(id = R.string.edit_name_btn)) },
+                    enabled = isValidName(oldName = pill.name, newName = name)
+                )
             }
         }
     }
