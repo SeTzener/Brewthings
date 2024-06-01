@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,7 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -545,7 +543,6 @@ fun EditNameBottomSheet(
     onPillUpdate: (newPill: RaptPill) -> Unit
 ) {
     var name by remember { mutableStateOf(pill.name) }
-    val isValid = name?.trim()?.isNotEmpty() ?: false
 
     if (isBottomSheetVisible) {
 
@@ -597,7 +594,7 @@ fun EditNameBottomSheet(
                     modifier = Modifier.fillMaxWidth(),
                     value = name ?: "",
                     onValueChange = { name = it },
-                    label = { Text(text = "Pill Name") },
+                    label = { Text(text = stringResource(id = R.string.edit_name_tooltip)) },
                     readOnly = false,
                     shape = RoundedCornerShape(12.dp),
                     keyboardOptions = KeyboardOptions.Default.copy(
@@ -618,8 +615,8 @@ fun EditNameBottomSheet(
                             onPillUpdate(pill.copy(name = name))
                             onDismiss()
                         },
-                        content = { Text(text = "Save") },
-                        enabled = isValid
+                        content = { Text(text = stringResource(id = R.string.edit_name_btn)) },
+                        enabled = isValidName(oldName = pill.name, newName = name)
                     )
                 }
             }
@@ -640,3 +637,6 @@ fun <T : Any?> newOrCached(
         previousData
     }
 }
+
+private fun isValidName(oldName: String?, newName: String?): Boolean =
+    newName?.trim()?.let { it.isNotEmpty() && it != oldName } ?: false
