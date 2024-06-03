@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.brewthings.app.R
 import org.koin.androidx.compose.koinViewModel
@@ -79,14 +78,5 @@ fun GraphTopBar(
             }
         },
         scrollBehavior = scrollBehavior,
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GraphScreenPreview() {
-    GraphScreen(
-        screenState = GraphScreenState(title = "My Pill", pillMacAddress = "12:34:56:AB"),
-        onBackClick = {}
     )
 }
