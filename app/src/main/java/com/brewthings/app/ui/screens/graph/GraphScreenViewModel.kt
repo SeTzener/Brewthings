@@ -4,10 +4,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.brewthings.app.data.model.RaptPillData
+import com.brewthings.app.data.repository.RaptPillRepository
+import com.brewthings.app.ui.components.graph.GraphDataPoint
+import com.brewthings.app.ui.components.graph.GraphSeries
+import com.brewthings.app.ui.components.graph.GraphState
+import kotlinx.coroutines.launch
 
 class GraphScreenViewModel(
     name: String?,
-    macAddress: String
+    macAddress: String,
+    private val repo: RaptPillRepository,
 ) : ViewModel() {
     var screenState: GraphScreenState by mutableStateOf(
         GraphScreenState(
@@ -16,4 +24,30 @@ class GraphScreenViewModel(
         )
     )
         private set
+
+    init {
+        loadGraphData(macAddress)
+    }
+
+    private fun loadGraphData(macAddress: String) {
+        viewModelScope.launch {
+            repo.observeData(macAddress)
+                .collect { data: List<RaptPillData> ->
+                    screenState = screenState.copy(graphState = data.toGraphState())
+                }
+        }
+    }
 }
+
+private fun List<RaptPillData>.toGraphState(): GraphState =
+    fold(
+        initial = List(2) { mutableListOf<GraphDataPoint>() }
+    ) { dataPoints, raptPillData ->
+        dataPoints[0] + GraphDataPoint(raptPillData.timestamp.epochSecond, raptPillData.gravity)
+        dataPoints[1] + GraphDataPoint(raptPillData.timestamp.epochSecond, raptPillData.temperature)
+        dataPoints
+    }.map { dataPoints ->
+        GraphSeries(dataPoints)
+    }.let { series ->
+        GraphState(series)
+    }
