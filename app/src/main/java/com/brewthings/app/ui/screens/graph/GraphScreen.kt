@@ -20,15 +20,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.brewthings.app.R
-import com.brewthings.app.data.model.RaptPillInfo
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
 fun GraphScreen(
     navController: NavController,
-    pill: RaptPillInfo,
-    viewModel: GraphScreenViewModel = koinViewModel { parametersOf(pill) },
+    name: String?,
+    macAddress: String,
+    viewModel: GraphScreenViewModel = koinViewModel { parametersOf(name, macAddress) },
 ) {
     GraphScreen(
         screenState = viewModel.screenState,

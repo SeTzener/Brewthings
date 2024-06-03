@@ -21,5 +21,5 @@ val appModule = module {
     factory { get<RaptPillDatabase>().raptPillDao() }
     factory { RaptPillRepository(scanner = get(), dao = get()) }
     viewModel { ScanningScreenViewModel(repo = get()) }
-    viewModel { GraphScreenViewModel(get()) }
+    viewModel { GraphScreenViewModel(get(), get()) }
 }
