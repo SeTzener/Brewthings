@@ -21,9 +21,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.brewthings.app.R
+import com.brewthings.app.data.model.RaptPillInfo
 
 @Composable
-fun GraphScreen(navController: NavController) {
+fun GraphScreen(
+    navController: NavController,
+    pill: RaptPillInfo,
+) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

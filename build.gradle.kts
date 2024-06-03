@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.gradle.kotlin) apply false
     alias(libs.plugins.gradle.room) apply false
     alias(libs.plugins.gradle.ksp) apply false
+    alias(libs.plugins.gradle.serialization) apply false
 }
 
 buildscript{
