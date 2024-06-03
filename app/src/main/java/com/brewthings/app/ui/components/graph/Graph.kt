@@ -1,11 +1,10 @@
 package com.brewthings.app.ui.components.graph
 
-import android.util.Log
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
@@ -21,29 +20,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
-private const val TAG = "Graph"
-
 @Composable
 fun Graph(
     modifier: Modifier,
-    loadData: () -> Result<GraphData>
+    colors: List<Color>,
+    state: GraphState,
 ) {
-    val modelProducer = rememberModelProducer(loadData)
+    val modelProducer = rememberModelProducer(state)
 
     CartesianChartHost(
         modifier = modifier,
         chart = rememberCartesianChart(
             rememberLineCartesianLayer(
-                lines = listOf(
+                lines = List(state.series.size) { index ->
                     rememberLineSpec(
-                        shader = DynamicShader.color(MaterialTheme.colorScheme.primary),
+                        shader = DynamicShader.color(colors[index % colors.size]),
                         backgroundShader = null
-                    ),
-                    rememberLineSpec(
-                        shader = DynamicShader.color(MaterialTheme.colorScheme.secondary),
-                        backgroundShader = null
-                    ),
-                )
+                    )
+                }
             ),
             startAxis = rememberStartAxis(),
             bottomAxis = rememberBottomAxis(),
@@ -56,38 +50,32 @@ fun Graph(
 }
 
 @Composable
-fun rememberModelProducer(loadData: () -> Result<GraphData>): CartesianChartModelProducer {
+fun rememberModelProducer(state: GraphState): CartesianChartModelProducer {
     val modelProducer = remember { CartesianChartModelProducer.build() }
-    LaunchedEffect(Unit) {
+
+    LaunchedEffect(state) {
         withContext(Dispatchers.Default) {
             while (isActive) {
                 modelProducer.tryRunTransaction {
-                    loadData()
-                        .onFailure { Log.e(TAG, "Failed to load data.", it) }
-                        .onSuccess { data ->
-                            lineSeries {
-                                data.series
-                                    .forEach { series ->
-                                        series.dataPoints
-                                            .fold(
-                                                initial = mutableListOf<Number>() to mutableListOf<Number>()
-                                            ) { (xSeries, ySeries), point ->
-                                                xSeries + point.x
-                                                ySeries + point.y
-                                                xSeries to ySeries
-                                            }.also { (xSeries, ySeries) ->
-                                                series(xSeries, ySeries)
-                                            }
+                    lineSeries {
+                        state.series
+                            .forEach { series ->
+                                series.dataPoints
+                                    .fold(
+                                        initial = mutableListOf<Number>() to mutableListOf<Number>()
+                                    ) { (xSeries, ySeries), point ->
+                                        xSeries + point.x
+                                        ySeries + point.y
+                                        xSeries to ySeries
+                                    }.also { (xSeries, ySeries) ->
+                                        series(xSeries, ySeries)
                                     }
                             }
-                        }
-
-                    lineSeries {
-                        series(List(10) { it.toFloat() })
                     }
                 }
             }
         }
     }
+
     return modelProducer
 }

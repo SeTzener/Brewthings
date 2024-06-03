@@ -1,6 +1,6 @@
 package com.brewthings.app.ui.components.graph
 
-data class GraphData (
+data class GraphState (
     val series: List<GraphSeries>
 )
 
