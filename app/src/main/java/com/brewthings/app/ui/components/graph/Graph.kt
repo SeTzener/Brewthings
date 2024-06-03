@@ -10,12 +10,20 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
+import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.shader.color
+import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerValueFormatter
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarkerValueFormatter
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
+import java.text.DecimalFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
@@ -32,6 +40,7 @@ fun Graph(
         modifier = modifier,
         chart = rememberCartesianChart(
             rememberLineCartesianLayer(
+                axisValueOverrider = AxisValueOverrider.fixed(minY = 1.000f, maxY = 1.130f),
                 lines = List(state.series.size) { index ->
                     rememberLineSpec(
                         shader = DynamicShader.color(colors[index % colors.size]),
@@ -39,11 +48,14 @@ fun Graph(
                     )
                 }
             ),
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(),
+            startAxis = rememberStartAxis(valueFormatter = gravityFormatter()),
+            bottomAxis = rememberBottomAxis(valueFormatter = dateFormatter()),
         ),
         modelProducer = modelProducer,
-        marker = rememberMarker(),
+        marker = rememberDefaultCartesianMarker(
+            label = rememberMarkerTextComponent(),
+            valueFormatter = gravityMarkerFormatter(),
+        ),
         runInitialAnimation = true,
         zoomState = rememberVicoZoomState(zoomEnabled = true),
     )
@@ -79,3 +91,19 @@ fun rememberModelProducer(state: GraphState): CartesianChartModelProducer {
 
     return modelProducer
 }
+
+private fun dateFormatter(): CartesianValueFormatter {
+    val dateTimeFormatter = DateTimeFormatter.ofPattern("d MMM")
+    return CartesianValueFormatter { x, _, _ ->
+        LocalDate.ofEpochDay(x.toLong()).format(dateTimeFormatter)
+    }
+}
+
+private fun gravityFormatter(): CartesianValueFormatter =
+    CartesianValueFormatter { y, _, _ -> "%.3f".format(y) }
+
+private fun gravityMarkerFormatter(): CartesianMarkerValueFormatter =
+    DefaultCartesianMarkerValueFormatter(
+        decimalFormat = DecimalFormat("#.000"),
+        colorCode = true
+    )

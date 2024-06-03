@@ -10,6 +10,8 @@ import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.ui.components.graph.GraphDataPoint
 import com.brewthings.app.ui.components.graph.GraphSeries
 import com.brewthings.app.ui.components.graph.GraphState
+import java.time.Instant
+import java.time.ZoneId
 import kotlinx.coroutines.launch
 
 class GraphScreenViewModel(
@@ -39,16 +41,18 @@ class GraphScreenViewModel(
     }
 }
 
-private fun List<RaptPillData>.toGraphState(): GraphState =
-    fold(
-        initial = List(2) { mutableListOf<GraphDataPoint>() }
+private fun List<RaptPillData>.toGraphState(): GraphState {
+    val series = fold(
+        initial = List(1) { mutableListOf<GraphDataPoint>() }
     ) { dataPoints, raptPillData ->
         dataPoints.also {
-            it[0].add(GraphDataPoint(raptPillData.timestamp.epochSecond, raptPillData.gravity))
-            it[1].add(GraphDataPoint(raptPillData.timestamp.epochSecond, raptPillData.temperature))
+            it[0].add(GraphDataPoint(raptPillData.timestamp.toEpochDay(), raptPillData.gravity))
+            //it[1].add(GraphDataPoint(raptPillData.timestamp.toEpochDay(), raptPillData.temperature))
         }
     }.map { dataPoints ->
         GraphSeries(dataPoints)
-    }.let { series ->
-        GraphState(series)
     }
+    return GraphState(series)
+}
+
+private fun Instant.toEpochDay(): Float = atZone(ZoneId.systemDefault()).toLocalDate().toEpochDay().toFloat()

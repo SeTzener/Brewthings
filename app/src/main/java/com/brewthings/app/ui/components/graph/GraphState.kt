@@ -9,6 +9,6 @@ data class GraphSeries (
 )
 
 data class GraphDataPoint (
-    val x: Long,
+    val x: Float,
     val y: Float
 )
