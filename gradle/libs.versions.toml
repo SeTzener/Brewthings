@@ -3,9 +3,8 @@
 [versions]
 accompanist = "0.34.0"
 activityCompose = "1.9.0"
-gradleAndroid = "8.2.2"
-gradleKotlin = "1.6.21"
-gradleKsp = "1.9.20-1.0.14"
+android = "8.2.2"
+ksp = "1.9.20-1.0.14"
 appCompat = "1.6.1"
 composeBom = "2024.05.00"
 composeMaterial = "1.6.7"
@@ -17,16 +16,18 @@ koin = "3.5.6"
 mockk = "1.12.5"
 kotlin = "1.9.20"
 material = "1.12.0"
-navigation = "2.8.0-beta01"
+navigation = "2.8.0-beta02"
 junit = "4.13.2"
 room = "2.6.1"
+serializationJson = "1.6.3"
 toml4j = "0.7.2"
 
 [plugins]
 # Core Plugins
-gradle-android = { id = "com.android.application", version.ref = "gradleAndroid" }
-gradle-kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "gradleKotlin" }
-gradle-ksp = { id = "com.google.devtools.ksp", version.ref = "gradleKsp" }
+gradle-android = { id = "com.android.application", version.ref = "android" }
+gradle-kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+gradle-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+gradle-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 # Room
 gradle-room = { id = "androidx.room", version.ref = "room" }
@@ -34,9 +35,9 @@ gradle-room = { id = "androidx.room", version.ref = "room" }
 
 [libraries]
 # Core Libraries
-android-application = { group = "com.android.tools.build", name = "gradle", version.ref = "gradleAndroid" }
+android-application = { group = "com.android.tools.build", name = "gradle", version.ref = "android" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-kotlin-android = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "gradleKotlin" }
+kotlin-android = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 
 # Accompanist
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
@@ -69,6 +70,9 @@ kable = { group = "com.juul.kable", name = "core-android", version.ref = "kable"
 # Koin
 koin = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
+
+# KotlinX Serialization
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serializationJson" }
 
 # Material Design for Jetpack Compose
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }

@@ -280,7 +280,14 @@ private fun ScannedPill(
         ExpandableCard(
             isExpanded = isExpanded,
             topContent = { ScannedPillTopContent(pill, isInScannedPills, savePill) },
-            expandedContent = { PillData(pill.data, navGraph = navGraph) }
+            expandedContent = {
+                PillData(
+                    name = pill.name,
+                    macAddress = pill.macAddress,
+                    pill.data,
+                    navGraph = navGraph
+                )
+            }
         )
     }
 }
@@ -367,7 +374,7 @@ private fun Pill(
         Column {
             val maxTimestamp = pill.data.maxOfOrNull { it.timestamp } ?: Instant.EPOCH
             pill.data.find { it.timestamp == maxTimestamp }?.let { data ->
-                PillData(data, navGraph = navGraph)
+                PillData(name = pill.name, macAddress = pill.macAddress, pillData = data, navGraph = navGraph)
             }
         }
     }
@@ -376,7 +383,8 @@ private fun Pill(
 @Composable
 private fun PillTopContent(
     pill: RaptPill,
-    onPillUpdate: (RaptPill) -> Unit) {
+    onPillUpdate: (RaptPill) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -409,7 +417,7 @@ private fun PillTopContent(
 }
 
 @Composable
-private fun PillData(pillData: RaptPillData?, navGraph: NavController) {
+private fun PillData(name: String?, macAddress: String, pillData: RaptPillData?, navGraph: NavController) {
     newOrCached(pillData, null)?.let { data ->
         Box(modifier = Modifier.fillMaxSize()) {
             Row(
@@ -463,7 +471,7 @@ private fun PillData(pillData: RaptPillData?, navGraph: NavController) {
                         )
                         IconButton(
                             onClick = {
-                                navGraph.navigate(route = Screen.Graph.route)
+                                navGraph.navigate(route = Screen.Graph(name = name, macAddress = macAddress))
                             },
                         ) {
                             TextWithIcon(

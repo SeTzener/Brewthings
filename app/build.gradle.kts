@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.gradle.kotlin)
     alias(libs.plugins.gradle.room)
     alias(libs.plugins.gradle.ksp)
+    alias(libs.plugins.gradle.serialization)
 }
 
 val appId = stringProperty("app.id")
@@ -92,6 +93,9 @@ dependencies {
     // Koin
     implementation(libs.koin)
     implementation(libs.koin.compose)
+
+    // KotlinX Serialization
+    implementation(libs.kotlinx.serialization.json)
 
     // Room
     implementation(libs.room.runtime)
