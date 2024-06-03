@@ -43,9 +43,10 @@ private fun List<RaptPillData>.toGraphState(): GraphState =
     fold(
         initial = List(2) { mutableListOf<GraphDataPoint>() }
     ) { dataPoints, raptPillData ->
-        dataPoints[0] + GraphDataPoint(raptPillData.timestamp.epochSecond, raptPillData.gravity)
-        dataPoints[1] + GraphDataPoint(raptPillData.timestamp.epochSecond, raptPillData.temperature)
-        dataPoints
+        dataPoints.also {
+            it[0].add(GraphDataPoint(raptPillData.timestamp.epochSecond, raptPillData.gravity))
+            it[1].add(GraphDataPoint(raptPillData.timestamp.epochSecond, raptPillData.temperature))
+        }
     }.map { dataPoints ->
         GraphSeries(dataPoints)
     }.let { series ->

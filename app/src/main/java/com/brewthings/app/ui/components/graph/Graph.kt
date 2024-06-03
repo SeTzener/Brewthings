@@ -64,8 +64,8 @@ fun rememberModelProducer(state: GraphState): CartesianChartModelProducer {
                                     .fold(
                                         initial = mutableListOf<Number>() to mutableListOf<Number>()
                                     ) { (xSeries, ySeries), point ->
-                                        xSeries + point.x
-                                        ySeries + point.y
+                                        xSeries.add(point.x)
+                                        ySeries.add(point.y)
                                         xSeries to ySeries
                                     }.also { (xSeries, ySeries) ->
                                         series(xSeries, ySeries)

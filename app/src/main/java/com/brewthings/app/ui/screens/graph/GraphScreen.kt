@@ -5,6 +5,7 @@ package com.brewthings.app.ui.screens.graph
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -19,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.brewthings.app.R
 import com.brewthings.app.ui.components.graph.Graph
@@ -61,7 +63,7 @@ fun GraphScreen(
         ) {
             screenState.graphState?.also {
                 Graph(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().height(300.dp),
                     colors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary),
                     state = it,
                 )
