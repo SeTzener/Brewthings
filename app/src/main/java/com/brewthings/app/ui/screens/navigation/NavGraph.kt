@@ -8,6 +8,7 @@ import androidx.navigation.toRoute
 import com.brewthings.app.data.model.RaptPillInfo
 import com.brewthings.app.ui.screens.graph.GraphScreen
 import com.brewthings.app.ui.screens.scanning.ScanningScreen
+import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
