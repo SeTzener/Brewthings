@@ -135,6 +135,9 @@ dependencies {
     // KotlinX Serialization
     implementation(libs.kotlinx.serialization.json)
 
+    // Vico
+    implementation(libs.vico.compose.m3)
+
     // Room
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)

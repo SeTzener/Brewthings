@@ -24,6 +24,7 @@ junit = "4.13.2"
 room = "2.6.1"
 serializationJson = "1.6.3"
 toml4j = "0.7.2"
+vico = "2.0.0-alpha.21"
 
 [plugins]
 android = { id = "com.android.application", version.ref = "android" }
@@ -95,3 +96,6 @@ toml4j = { group = "com.moandjiezana.toml", name = "toml4j", version.ref = "toml
 # Test
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 mockk = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
+
+#Vico
+vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
