@@ -61,11 +61,11 @@ fun GraphScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            screenState.graphState?.also {
+            screenState.graphData?.also {
                 Graph(
                     modifier = Modifier.fillMaxWidth().height(300.dp),
-                    colors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary),
-                    state = it,
+                    color = MaterialTheme.colorScheme.primary,
+                    series = it.series[0],
                 )
             }
         }

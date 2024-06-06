@@ -31,30 +31,30 @@ import kotlinx.coroutines.withContext
 @Composable
 fun Graph(
     modifier: Modifier,
-    colors: List<Color>,
-    state: GraphState,
+    color: Color,
+    series: GraphSeries,
 ) {
-    val modelProducer = rememberModelProducer(state)
+    val modelProducer = rememberModelProducer(series)
 
     CartesianChartHost(
         modifier = modifier,
         chart = rememberCartesianChart(
             rememberLineCartesianLayer(
-                axisValueOverrider = AxisValueOverrider.fixed(minY = 1.000f, maxY = 1.130f),
-                lines = List(state.series.size) { index ->
+                axisValueOverrider = AxisValueOverrider.fixed(minY = series.minY, maxY = series.maxY),
+                lines = listOf(
                     rememberLineSpec(
-                        shader = DynamicShader.color(colors[index % colors.size]),
+                        shader = DynamicShader.color(color),
                         backgroundShader = null
                     )
-                }
+                )
             ),
-            startAxis = rememberStartAxis(valueFormatter = gravityFormatter()),
-            bottomAxis = rememberBottomAxis(valueFormatter = dateFormatter()),
+            startAxis = rememberStartAxis(valueFormatter = series.type.toYFormatter()),
+            bottomAxis = rememberBottomAxis(valueFormatter = dateValueFormatter()),
         ),
         modelProducer = modelProducer,
         marker = rememberDefaultCartesianMarker(
             label = rememberMarkerTextComponent(),
-            valueFormatter = gravityMarkerFormatter(),
+            valueFormatter = series.type.toMarkerFormatter(),
         ),
         runInitialAnimation = true,
         zoomState = rememberVicoZoomState(zoomEnabled = true),
@@ -62,27 +62,15 @@ fun Graph(
 }
 
 @Composable
-fun rememberModelProducer(state: GraphState): CartesianChartModelProducer {
+fun rememberModelProducer(series: GraphSeries): CartesianChartModelProducer {
     val modelProducer = remember { CartesianChartModelProducer.build() }
 
-    LaunchedEffect(state) {
+    LaunchedEffect(series) {
         withContext(Dispatchers.Default) {
             while (isActive) {
                 modelProducer.tryRunTransaction {
                     lineSeries {
-                        state.series
-                            .forEach { series ->
-                                series.dataPoints
-                                    .fold(
-                                        initial = mutableListOf<Number>() to mutableListOf<Number>()
-                                    ) { (xSeries, ySeries), point ->
-                                        xSeries.add(point.x)
-                                        ySeries.add(point.y)
-                                        xSeries to ySeries
-                                    }.also { (xSeries, ySeries) ->
-                                        series(xSeries, ySeries)
-                                    }
-                            }
+                        series(series.xValues, series.yValues)
                     }
                 }
             }
@@ -92,18 +80,39 @@ fun rememberModelProducer(state: GraphState): CartesianChartModelProducer {
     return modelProducer
 }
 
-private fun dateFormatter(): CartesianValueFormatter {
+private fun dateValueFormatter(): CartesianValueFormatter {
     val dateTimeFormatter = DateTimeFormatter.ofPattern("d MMM")
     return CartesianValueFormatter { x, _, _ ->
         LocalDate.ofEpochDay(x.toLong()).format(dateTimeFormatter)
     }
 }
 
-private fun gravityFormatter(): CartesianValueFormatter =
-    CartesianValueFormatter { y, _, _ -> "%.3f".format(y) }
+private fun gravityValueFormatter(): CartesianValueFormatter =
+    CartesianValueFormatter { y, _, _ -> "%d".format((y * 1000 - 1000).toInt()) }
+
+private fun integerValueFormatter(): CartesianValueFormatter =
+    CartesianValueFormatter { y, _, _ -> "%d".format(y.toInt()) }
+
+private fun DataType.toYFormatter(): CartesianValueFormatter = when (this) {
+    DataType.Gravity -> gravityValueFormatter()
+    DataType.Temperature,
+    DataType.Battery -> integerValueFormatter()
+}
 
 private fun gravityMarkerFormatter(): CartesianMarkerValueFormatter =
     DefaultCartesianMarkerValueFormatter(
         decimalFormat = DecimalFormat("0.000"),
         colorCode = true
     )
+
+private fun decimalMarkerFormatter(): CartesianMarkerValueFormatter =
+    DefaultCartesianMarkerValueFormatter(
+        decimalFormat = DecimalFormat("#.#"),
+        colorCode = true
+    )
+
+private fun DataType.toMarkerFormatter(): CartesianMarkerValueFormatter = when (this) {
+    DataType.Gravity -> gravityMarkerFormatter()
+    DataType.Temperature,
+    DataType.Battery -> decimalMarkerFormatter()
+}
