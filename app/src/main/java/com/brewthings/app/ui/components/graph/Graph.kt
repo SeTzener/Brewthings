@@ -104,6 +104,6 @@ private fun gravityFormatter(): CartesianValueFormatter =
 
 private fun gravityMarkerFormatter(): CartesianMarkerValueFormatter =
     DefaultCartesianMarkerValueFormatter(
-        decimalFormat = DecimalFormat("#.000"),
+        decimalFormat = DecimalFormat("0.000"),
         colorCode = true
     )
