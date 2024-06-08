@@ -136,6 +136,9 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.datetime)
 
+    // MPAndroidChart
+    implementation(libs.mpandroidchart)
+
     // Room
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
