@@ -19,11 +19,16 @@ android {
 
     signingConfigs {
         create("release") {
-            val secrets = readProperties(file("../secrets.properties"))
-            storeFile = file(secrets.getString("signing.release.storeFile"))
-            storePassword = secrets.getString("signing.release.storePassword")
-            keyAlias = secrets.getString("signing.release.keyAlias")
-            keyPassword = secrets.getString("signing.release.keyPassword")
+            try {
+                val secrets = readProperties(file("../secrets.properties"))
+                storeFile = file(secrets.getString("signing.release.storeFile"))
+                storePassword = secrets.getString("signing.release.storePassword")
+                keyAlias = secrets.getString("signing.release.keyAlias")
+                keyPassword = secrets.getString("signing.release.keyPassword")
+            } catch (e: Exception) {
+                println("Warning: Could not read signing properties from secrets.properties file.")
+                e.printStackTrace()
+            }
         }
         getByName("debug") {
             storeFile = file(stringProperty("signing.debug.storeFile"))
