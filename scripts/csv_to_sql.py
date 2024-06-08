@@ -18,7 +18,8 @@ def process_files_in_directory(directory_path):
         if filename.endswith('.csv'):
             csv_file_path = os.path.join(directory_path, filename)
             sql_file_path = os.path.join(directory_path, f'{os.path.splitext(filename)[0]}.sql')
-            table_name = os.path.splitext(filename)[0]
+            # Extract table name by splitting the filename and taking the last part before the extension
+            table_name = os.path.splitext(filename)[0].split('-')[-1]
             csv_to_sql(csv_file_path, sql_file_path, table_name)
             print(f'Processed {csv_file_path} -> {sql_file_path}')
 
