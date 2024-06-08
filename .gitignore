@@ -1,6 +1,9 @@
 *.iml
 .gradle
 /local.properties
+/secrets.properties
+/app/credentials/release-keystore.jks
+/app/release
 /.idea/*
 .DS_Store
 /build

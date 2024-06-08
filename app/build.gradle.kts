@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.gradle.android)
     alias(libs.plugins.gradle.kotlin)
@@ -15,6 +17,27 @@ android {
     namespace = appId
     compileSdk = target
 
+    signingConfigs {
+        create("release") {
+            try {
+                val secrets = readProperties(file("../secrets.properties"))
+                storeFile = file(secrets.getString("signing.release.storeFile"))
+                storePassword = secrets.getString("signing.release.storePassword")
+                keyAlias = secrets.getString("signing.release.keyAlias")
+                keyPassword = secrets.getString("signing.release.keyPassword")
+            } catch (e: Exception) {
+                println("Warning: Could not read signing properties from secrets.properties file.")
+                e.printStackTrace()
+            }
+        }
+        getByName("debug") {
+            storeFile = file(stringProperty("signing.debug.storeFile"))
+            storePassword = stringProperty("signing.debug.storePassword")
+            keyAlias = stringProperty("signing.debug.keyAlias")
+            keyPassword = stringProperty("signing.debug.keyPassword")
+        }
+    }
+
     defaultConfig {
         applicationId = appId
         minSdk = intProperty("app.minSdk")
@@ -27,11 +50,19 @@ android {
 
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
+            applicationIdSuffix = stringProperty("app.debug.applicationIdSuffix")
+            versionNameSuffix = stringProperty("app.debug.versionNameSuffix")
+            isDebuggable = true
         }
     }
     compileOptions {
@@ -119,3 +150,11 @@ fun generateVersionCode(versionName: String, buildVersion: Int): Int {
 
 fun stringProperty(name: String) = properties[name] as String
 fun intProperty(name: String) = stringProperty(name).toInt()
+
+fun readProperties(propertiesFile: File): Properties = Properties().apply {
+    propertiesFile.inputStream().use { fis ->
+        load(fis)
+    }
+}
+
+fun Properties.getString(name: String) = this[name] as String
