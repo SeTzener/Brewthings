@@ -61,12 +61,10 @@ object RaptPillParser {
 
         // Extract data from ByteBuffer
         val gravityVelocityValid = buffer.get()!= 0.toByte()
-//        Log.d("INFO: PillParser: GravityVelocityFlag", "$gravityVelocityValid")
 
         buffer.get() // for no reason at all
 
         val gravityVelocity = buffer.float
-//        Log.d("INFO: PillParser: GravityVelocity", "$gravityVelocity")
 
         val temperature = buffer.toUShort().toFloat()
         val gravity = buffer.float / 1000

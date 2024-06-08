@@ -1,6 +1,5 @@
 package com.brewthings.app.ui.screens.scanning
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,14 +8,13 @@ import androidx.lifecycle.viewModelScope
 import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.repository.RaptPillRepository
+import com.brewthings.app.util.Logger
 import com.juul.kable.Bluetooth
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-
-private const val TAG = "ScanningScreenViewModel"
 
 class ScanningScreenViewModel(
     private val repo: RaptPillRepository
@@ -26,6 +24,8 @@ class ScanningScreenViewModel(
 
     private var scanJob: Job? = null
     private val scannedRaptPills: MutableList<ScannedRaptPill> = mutableListOf()
+
+    private val logger = Logger("ScanningScreenViewModel")
 
     init {
         observeBluetoothAvailability()
@@ -76,7 +76,7 @@ class ScanningScreenViewModel(
         scanJob = repo
             .fromBluetooth()
             .onEach { result ->
-                Log.d(TAG, "Scanning result: $result")
+                logger.info("Scanning result: $result")
                 scannedRaptPills.addOrUpdate(instrument = result)
                 updateInstrumentsScreenState()
             }.onCompletion {
