@@ -2,11 +2,13 @@
 plugins {
     application
     kotlin("jvm") version libs.versions.kotlin
-    alias(libs.plugins.gradle.android) apply false
-    alias(libs.plugins.gradle.kotlin) apply false
-    alias(libs.plugins.gradle.room) apply false
-    alias(libs.plugins.gradle.ksp) apply false
-    alias(libs.plugins.gradle.serialization) apply false
+    alias(libs.plugins.android) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
+    alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.kotlin) apply false
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.room) apply false
+    alias(libs.plugins.serialization) apply false
 }
 
 buildscript{

@@ -10,6 +10,9 @@ composeBom = "2024.05.00"
 composeMaterial = "1.6.7"
 composeMaterial3 = "1.2.1"
 coreKtx = "1.13.1"
+firebase = "33.1.0"
+firebaseCrashlytics = "3.0.1"
+googleServices = "4.4.2"
 lifecycleRuntimeKtx = "2.7.0"
 kable = "0.31.1"
 koin = "3.5.6"
@@ -23,15 +26,13 @@ serializationJson = "1.6.3"
 toml4j = "0.7.2"
 
 [plugins]
-# Core Plugins
-gradle-android = { id = "com.android.application", version.ref = "android" }
-gradle-kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-gradle-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-gradle-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-
-# Room
-gradle-room = { id = "androidx.room", version.ref = "room" }
-
+android = { id = "com.android.application", version.ref = "android" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+room = { id = "androidx.room", version.ref = "room" }
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 [libraries]
 # Core Libraries
@@ -48,8 +49,13 @@ app-compat = { group = "androidx.appcompat", name = "appcompat", version.ref = "
 # Google Material Components
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
-#AndroidX Lifecycle
+# AndroidX Lifecycle
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+
+# Firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
 
 # Jetpack Compose
 compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }

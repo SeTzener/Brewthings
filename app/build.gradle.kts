@@ -1,11 +1,13 @@
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.gradle.android)
-    alias(libs.plugins.gradle.kotlin)
-    alias(libs.plugins.gradle.room)
-    alias(libs.plugins.gradle.ksp)
-    alias(libs.plugins.gradle.serialization)
+    alias(libs.plugins.android)
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
+    alias(libs.plugins.serialization)
 }
 
 val appId = stringProperty("app.id")
@@ -100,6 +102,11 @@ dependencies {
 
     // AndroidX Lifecycle
     implementation(libs.lifecycle.runtime.ktx)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 
     // Jetpack Compose
     implementation(libs.compose.activity)
