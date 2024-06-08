@@ -15,6 +15,15 @@ android {
     namespace = appId
     compileSdk = target
 
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file(stringProperty("signing.debug.storeFile"))
+            storePassword = stringProperty("signing.debug.storePassword")
+            keyAlias = stringProperty("signing.debug.keyAlias")
+            keyPassword = stringProperty("signing.debug.keyPassword")
+        }
+    }
+
     defaultConfig {
         applicationId = appId
         minSdk = intProperty("app.minSdk")
@@ -28,10 +37,17 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
+            applicationIdSuffix = stringProperty("app.debug.applicationIdSuffix")
+            versionNameSuffix = stringProperty("app.debug.versionNameSuffix")
+            isDebuggable = true
         }
     }
     compileOptions {
