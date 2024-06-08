@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "146926198187",
+    "project_id": "brewthings-651b5",
+    "storage_bucket": "brewthings-651b5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:146926198187:android:5c203c7f43891bc6c246ee",
+        "android_client_info": {
+          "package_name": "com.brewthings.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxeOwNdi3Qnh6YIGQM6cv_kF0QUzk0f1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:146926198187:android:c88edbbceb29c894c246ee",
+        "android_client_info": {
+          "package_name": "com.brewthings.app.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxeOwNdi3Qnh6YIGQM6cv_kF0QUzk0f1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
