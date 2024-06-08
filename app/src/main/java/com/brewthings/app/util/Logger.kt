@@ -11,13 +11,13 @@ class Logger(private val tag: String) {
     }
 
     fun warning(message: String, throwable: Throwable? = null) {
-        Log.w(tag, message)
+        Log.w(tag, message, throwable)
         Firebase.crashlytics.log(composeFirebaseLog(tag, "WARNING", message))
         throwable?.also { Firebase.crashlytics.recordException(it) }
     }
 
     fun error(message: String, throwable: Throwable? = null) {
-        Log.e(tag, message)
+        Log.e(tag, message, throwable)
         Firebase.crashlytics.log(composeFirebaseLog(tag, "ERROR", message))
         throwable?.also { Firebase.crashlytics.recordException(it) }
     }
