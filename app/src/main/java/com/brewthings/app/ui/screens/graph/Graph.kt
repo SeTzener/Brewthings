@@ -55,9 +55,10 @@ private fun GraphData.toChartData(): ChartData = ChartData(
 @Composable
 private fun GraphSeries.toChartDataSet(maxY: Float): ILineDataSet = NormalizedLineDataSet(
     yVals = data.map { Entry(it.x, it.y) },
-    label = type.toLabel(),
     coeff = maxY / yMax,
+    label = type.toLabel(),
     lineColor = type.toLineColor().toArgb(),
+    formatPattern = type.toFormatPattern(),
 )
 
 @Composable
@@ -72,4 +73,11 @@ private fun DataType.toLineColor(): Color = when (this) {
     DataType.TEMPERATURE -> Blue_GovernorBay
     DataType.GRAVITY -> Green_Apple
     DataType.BATTERY -> Red_Alert
+}
+
+@Composable
+private fun DataType.toFormatPattern(): String = when (this) {
+    DataType.GRAVITY -> "0.000"
+    DataType.TEMPERATURE,
+    DataType.BATTERY -> "#.#"
 }
