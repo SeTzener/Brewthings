@@ -132,8 +132,9 @@ dependencies {
     implementation(libs.koin)
     implementation(libs.koin.compose)
 
-    // KotlinX Serialization
+    // KotlinX
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.datetime)
 
     // Room
     implementation(libs.room.runtime)
