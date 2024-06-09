@@ -58,8 +58,9 @@ fun GraphScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            RaptPillDataGraph(
+            Graph(
                 modifier = Modifier.height(300.dp),
+                graphData = screenState.graphData,
             )
         }
     }

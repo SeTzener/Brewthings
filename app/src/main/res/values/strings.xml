@@ -30,4 +30,7 @@
     <string name="pill_tilt">"%.2f°"</string>
     <string name="edit_name_tooltip">Pill Name</string>
     <string name="edit_name_btn">Save</string>
+    <string name="graph_dat_label_gravity">Gravity</string>
+    <string name="graph_dat_label_temperature">Temperature</string>
+    <string name="graph_dat_label_battery">Battery</string>
 </resources>
