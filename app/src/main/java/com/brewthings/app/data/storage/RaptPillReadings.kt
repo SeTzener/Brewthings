@@ -1,6 +1,6 @@
 package com.brewthings.app.data.storage
 
-import java.time.Instant
+import kotlinx.datetime.Instant
 
 data class RaptPillReadings(
     val timestamp: Instant,

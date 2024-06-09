@@ -22,7 +22,8 @@ material = "1.12.0"
 navigation = "2.8.0-beta02"
 junit = "4.13.2"
 room = "2.6.1"
-serializationJson = "1.6.3"
+kotlinxSerializationJson = "1.6.3"
+kotlinxDatetime = "0.6.0"
 toml4j = "0.7.2"
 
 [plugins]
@@ -77,8 +78,9 @@ kable = { group = "com.juul.kable", name = "core-android", version.ref = "kable"
 koin = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
 
-# KotlinX Serialization
-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serializationJson" }
+# KotlinX
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 
 # Material Design for Jetpack Compose
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }

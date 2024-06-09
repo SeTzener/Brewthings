@@ -65,7 +65,7 @@ import com.brewthings.app.ui.components.ScanPane
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.screens.navigation.Screen
 import com.brewthings.app.ui.theme.Typography
-import java.time.Instant
+import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -372,7 +372,7 @@ private fun Pill(
             }
         }
         Column {
-            val maxTimestamp = pill.data.maxOfOrNull { it.timestamp } ?: Instant.EPOCH
+            val maxTimestamp = pill.data.maxOfOrNull { it.timestamp } ?: Instant.DISTANT_PAST
             pill.data.find { it.timestamp == maxTimestamp }?.let { data ->
                 PillData(name = pill.name, macAddress = pill.macAddress, pillData = data, navGraph = navGraph)
             }
