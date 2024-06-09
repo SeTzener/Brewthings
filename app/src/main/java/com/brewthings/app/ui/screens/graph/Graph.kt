@@ -5,14 +5,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import com.brewthings.app.R
 import com.brewthings.app.ui.android.chart.ChartData
 import com.brewthings.app.ui.android.chart.MpAndroidLineChart
+import com.brewthings.app.ui.android.chart.NormalizedLineDataSet
+import com.brewthings.app.ui.theme.Blue_GovernorBay
+import com.brewthings.app.ui.theme.Green_Apple
+import com.brewthings.app.ui.theme.Red_Alert
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
 @Composable
@@ -43,14 +48,16 @@ fun Graph(
 @Composable
 private fun GraphData.toChartData(): ChartData = ChartData(
     data = LineData(
-        series.map { it.toChartDataSet() }
+        series.map { it.toChartDataSet(yMax) }
     )
 )
 
 @Composable
-private fun GraphSeries.toChartDataSet(): ILineDataSet = LineDataSet(
-    data.map { Entry(it.x, it.y) },
-    type.toLabel()
+private fun GraphSeries.toChartDataSet(maxY: Float): ILineDataSet = NormalizedLineDataSet(
+    yVals = data.map { Entry(it.x, it.y) },
+    label = type.toLabel(),
+    coeff = maxY / yMax,
+    lineColor = type.toLineColor().toArgb(),
 )
 
 @Composable
@@ -58,4 +65,11 @@ private fun DataType.toLabel(): String = when (this) {
     DataType.TEMPERATURE -> stringResource(id = R.string.graph_dat_label_temperature)
     DataType.GRAVITY -> stringResource(id = R.string.graph_dat_label_gravity)
     DataType.BATTERY -> stringResource(id = R.string.graph_dat_label_battery)
+}
+
+@Composable
+private fun DataType.toLineColor(): Color = when (this) {
+    DataType.TEMPERATURE -> Blue_GovernorBay
+    DataType.GRAVITY -> Green_Apple
+    DataType.BATTERY -> Red_Alert
 }
