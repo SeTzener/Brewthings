@@ -1,12 +1,12 @@
 package com.brewthings.app.data.storage
 
 import androidx.room.TypeConverter
-import java.time.Instant
+import kotlinx.datetime.Instant
 
 class TypeConverters {
   @TypeConverter
-  fun fromTimestamp(value: Long?): Instant? = value?.let { Instant.ofEpochMilli(it) }
+  fun fromTimestamp(value: Long?): Instant? = value?.let { Instant.fromEpochMilliseconds(it) }
 
   @TypeConverter
-  fun dateToTimestamp(instant: Instant?): Long? = instant?.toEpochMilli()
+  fun dateToTimestamp(instant: Instant?): Long? = instant?.toEpochMilliseconds()
 }
