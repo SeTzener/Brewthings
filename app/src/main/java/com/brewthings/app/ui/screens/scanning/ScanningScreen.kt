@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.Surface
 import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -76,20 +77,22 @@ fun ScanningScreen(
     showLocationSettings: () -> Unit,
     enableBluetooth: () -> Unit,
 ) {
-    ScanPane(
-        bluetooth = viewModel.screenState.bluetooth,
-        openAppDetails = openAppDetails,
-        showLocationSettings = showLocationSettings,
-        enableBluetooth = enableBluetooth,
-    ) {
-        ScanningScreen(
-            state = viewModel.screenState,
-            navGraph = navController,
-            onRssiThresholdChanged = viewModel::onRssiThresholdChanged,
-            toggleScan = viewModel::toggleScan,
-            savePill = viewModel::savePill,
-            onPillUpdate = viewModel::onPillUpdate,
-        )
+    Surface(color = MaterialTheme.colorScheme.background) {
+        ScanPane(
+            bluetooth = viewModel.screenState.bluetooth,
+            openAppDetails = openAppDetails,
+            showLocationSettings = showLocationSettings,
+            enableBluetooth = enableBluetooth,
+        ) {
+            ScanningScreen(
+                state = viewModel.screenState,
+                navGraph = navController,
+                onRssiThresholdChanged = viewModel::onRssiThresholdChanged,
+                toggleScan = viewModel::toggleScan,
+                savePill = viewModel::savePill,
+                onPillUpdate = viewModel::onPillUpdate,
+            )
+        }
     }
 }
 
