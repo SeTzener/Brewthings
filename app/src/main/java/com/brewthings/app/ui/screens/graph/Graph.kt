@@ -1,6 +1,6 @@
 package com.brewthings.app.ui.screens.graph
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -25,23 +25,31 @@ fun Graph(
     graphData: GraphData?,
 ) {
     val density: Density = LocalDensity.current
-    val surfaceColor = MaterialTheme.colorScheme.surface
+    val textSize = MaterialTheme.typography.labelMedium.fontSize
+
+    val isDarkTheme = isSystemInDarkTheme()
+    val textColor = MaterialTheme.colorScheme.onBackground
+
     val chartData = graphData?.toChartData()
+
     AndroidView(
-        modifier = modifier
-            .fillMaxSize()
-            .background(color = surfaceColor),
+        modifier = modifier.fillMaxSize(),
         factory = { context ->
             MpAndroidLineChart(
                 context = context,
-                density = density,
                 chartData = chartData,
+                density = density,
+                textSize = textSize,
+                isDarkTheme = isDarkTheme,
+                textColor = textColor,
             )
         },
         update = { chart ->
-            chartData?.also { data ->
-                chart.showData(data)
-            }
+            chart.refresh(
+                chartData = chartData,
+                isDarkTheme = isDarkTheme,
+                textColor = textColor,
+            )
         }
     )
 }
