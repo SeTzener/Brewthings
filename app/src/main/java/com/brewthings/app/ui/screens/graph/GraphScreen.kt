@@ -18,9 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.brewthings.app.R
+import com.brewthings.app.ui.theme.Size
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -59,7 +59,7 @@ fun GraphScreen(
                 .padding(paddingValues)
         ) {
             Graph(
-                modifier = Modifier.height(300.dp),
+                modifier = Modifier.height(Size.Graph.HEIGHT),
                 graphData = screenState.graphData,
             )
         }
