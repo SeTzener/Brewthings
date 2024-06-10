@@ -36,6 +36,12 @@ class MpAndroidLineChart(
         axisLeft.isEnabled = false
         description.isEnabled = false
         legend.isEnabled = false
+
+        renderer = HighlightedLineChartRenderer(
+            this,
+            animator,
+            viewPortHandler,
+        )
     }
 
     fun refresh(
