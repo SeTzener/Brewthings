@@ -15,9 +15,6 @@ import com.brewthings.app.R
 import com.brewthings.app.ui.android.chart.ChartData
 import com.brewthings.app.ui.android.chart.MpAndroidLineChart
 import com.brewthings.app.ui.android.chart.NormalizedLineDataSet
-import com.brewthings.app.ui.theme.Blue_GovernorBay
-import com.brewthings.app.ui.theme.Green_Apple
-import com.brewthings.app.ui.theme.Red_Alert
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
@@ -74,9 +71,9 @@ private fun DataType.toLabel(): String = when (this) {
 
 @Composable
 private fun DataType.toLineColor(): Color = when (this) {
-    DataType.TEMPERATURE -> Blue_GovernorBay
-    DataType.GRAVITY -> Green_Apple
-    DataType.BATTERY -> Red_Alert
+    DataType.GRAVITY -> MaterialTheme.colorScheme.primary
+    DataType.TEMPERATURE -> MaterialTheme.colorScheme.secondary
+    DataType.BATTERY -> MaterialTheme.colorScheme.tertiary
 }
 
 @Composable
