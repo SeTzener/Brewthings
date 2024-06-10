@@ -24,8 +24,9 @@ class MpAndroidLineChart(
     private val textSize: TextUnit,
     private var isDarkTheme: Boolean,
     private var textColor: Color,
+    primaryColor: Color,
 ) : LineChart(context, attrs, defStyleAttr) {
-
+    val highlightedRenderer: HighlightedLineChartRenderer get() = renderer as HighlightedLineChartRenderer
 
     init {
         chartData?.also { updateDatasets(chartData) }
@@ -41,6 +42,8 @@ class MpAndroidLineChart(
             this,
             animator,
             viewPortHandler,
+            density,
+            primaryColor.toArgb(),
         )
     }
 
@@ -48,9 +51,11 @@ class MpAndroidLineChart(
         chartData: ChartData?,
         isDarkTheme: Boolean,
         textColor: Color,
+        primaryColor: Color,
     ) {
         this.isDarkTheme = isDarkTheme
         this.textColor = textColor
+        highlightedRenderer.primaryColor = primaryColor.toArgb()
         chartData?.also {
             updateDatasets(it)
             data.notifyDataChanged()

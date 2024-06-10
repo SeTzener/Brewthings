@@ -29,6 +29,7 @@ fun Graph(
 
     val isDarkTheme = isSystemInDarkTheme()
     val textColor = MaterialTheme.colorScheme.onBackground
+    val primaryColor = MaterialTheme.colorScheme.primary
 
     val chartData = graphData?.toChartData()
 
@@ -42,6 +43,7 @@ fun Graph(
                 textSize = textSize,
                 isDarkTheme = isDarkTheme,
                 textColor = textColor,
+                primaryColor = primaryColor
             )
         },
         update = { chart ->
@@ -49,6 +51,7 @@ fun Graph(
                 chartData = chartData,
                 isDarkTheme = isDarkTheme,
                 textColor = textColor,
+                primaryColor = primaryColor
             )
         }
     )
