@@ -7,7 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.viewinterop.AndroidView
 import com.brewthings.app.R
 import com.brewthings.app.ui.android.chart.ChartData
@@ -25,6 +27,7 @@ fun Graph(
     modifier: Modifier = Modifier,
     graphData: GraphData?,
 ) {
+    val density: Density = LocalDensity.current
     val surfaceColor = MaterialTheme.colorScheme.surface
     val chartData = graphData?.toChartData()
     AndroidView(
@@ -34,6 +37,7 @@ fun Graph(
         factory = { context ->
             MpAndroidLineChart(
                 context = context,
+                density = density,
                 chartData = chartData,
             )
         },

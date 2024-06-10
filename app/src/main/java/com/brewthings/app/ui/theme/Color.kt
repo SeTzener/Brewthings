@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 val Red_Alert = Color(0xFFD32F2F)
 val Green_Apple = Color(0xFF2fd32f)
 val Blue_GovernorBay = Color(0xFF2f2fd3)
+val Grey_Nevada = Color(0xff616f77)
 
 val Darkmode_Primary = Color(0xBB86FCFF)
 val Darkmode_PrimaryVariant = Color(0x3700B3FF)
