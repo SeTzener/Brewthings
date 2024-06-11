@@ -35,6 +35,7 @@ class MpAndroidLineChart(
 
         configureXAxis()
         configureYAxis()
+        setupHorizontalEdges()
 
         description.isEnabled = false
         legend.isEnabled = false
@@ -119,5 +120,11 @@ class MpAndroidLineChart(
         val visibleGraphTimePeriod = (endDate.epochSeconds - startDate.epochSeconds).toFloat()
         setVisibleXRange(visibleGraphTimePeriod, visibleGraphTimePeriod)
         moveViewToX(endDate.epochSeconds.toFloat())
+    }
+
+    private fun setupHorizontalEdges() {
+        setViewPortOffsets(0f, 0f, 0f, 0f)
+        val dragOffsetX = with(density) { Size.Graph.DRAG_OFFSET_X.toPx() }
+        setDragOffsetX(dragOffsetX)
     }
 }
