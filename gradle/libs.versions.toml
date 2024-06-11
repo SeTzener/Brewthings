@@ -63,7 +63,6 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "composeMaterial" }
-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "composeMaterial" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "composeMaterial" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "composeMaterial" }
 
