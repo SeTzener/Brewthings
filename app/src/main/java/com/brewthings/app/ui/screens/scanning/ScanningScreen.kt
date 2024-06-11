@@ -39,7 +39,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -91,6 +90,7 @@ fun ScanningScreen(
                 toggleScan = viewModel::toggleScan,
                 savePill = viewModel::savePill,
                 onPillUpdate = viewModel::onPillUpdate,
+                stopScan = viewModel::stopScan,
             )
         }
     }
@@ -104,7 +104,8 @@ private fun ScanningScreen(
     onRssiThresholdChanged: (Int) -> Unit,
     toggleScan: () -> Unit,
     savePill: (ScannedRaptPill) -> Unit,
-    onPillUpdate: (RaptPill) -> Unit
+    onPillUpdate: (RaptPill) -> Unit,
+    stopScan: () -> Unit
 ) {
     val scannedPills = newOrCached(state.scannedPills, emptyList())
     val savedPills = newOrCached(state.savedPills, emptyList())
@@ -162,8 +163,9 @@ private fun ScanningScreen(
                 pill = pill,
                 isExpanded = scannedPills.size == 1,
                 isInScannedPills = state.scannedPills.contains(pill),
+                navGraph = navGraph,
                 savePill = savePill,
-                navGraph = navGraph
+                stopScan = stopScan,
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -181,14 +183,11 @@ private fun ScanningScreen(
             Pill(
                 pill = pill,
                 navGraph = navGraph,
-                onPillUpdate = onPillUpdate
+                onPillUpdate = onPillUpdate,
+                stopScan = stopScan,
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
-    }
-
-    LaunchedEffect(key1 = state.bluetooth) {
-        toggleScan()
     }
 }
 
@@ -273,7 +272,8 @@ private fun ScannedPill(
     isExpanded: Boolean,
     isInScannedPills: Boolean,
     navGraph: NavController,
-    savePill: (ScannedRaptPill) -> Unit
+    savePill: (ScannedRaptPill) -> Unit,
+    stopScan: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -287,8 +287,9 @@ private fun ScannedPill(
                 PillData(
                     name = pill.name,
                     macAddress = pill.macAddress,
-                    pill.data,
-                    navGraph = navGraph
+                    pillData = pill.data,
+                    navGraph = navGraph,
+                    stopScan = stopScan,
                 )
             }
         )
@@ -362,7 +363,8 @@ private fun ScannedPillTopContent(
 private fun Pill(
     pill: RaptPill,
     navGraph: NavController,
-    onPillUpdate: (RaptPill) -> Unit
+    onPillUpdate: (RaptPill) -> Unit,
+    stopScan: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -377,7 +379,13 @@ private fun Pill(
         Column {
             val maxTimestamp = pill.data.maxOfOrNull { it.timestamp } ?: Instant.DISTANT_PAST
             pill.data.find { it.timestamp == maxTimestamp }?.let { data ->
-                PillData(name = pill.name, macAddress = pill.macAddress, pillData = data, navGraph = navGraph)
+                PillData(
+                    name = pill.name,
+                    macAddress = pill.macAddress,
+                    pillData = data,
+                    navGraph = navGraph,
+                    stopScan = stopScan
+                )
             }
         }
     }
@@ -420,7 +428,13 @@ private fun PillTopContent(
 }
 
 @Composable
-private fun PillData(name: String?, macAddress: String, pillData: RaptPillData?, navGraph: NavController) {
+private fun PillData(
+    name: String?,
+    macAddress: String,
+    pillData: RaptPillData?,
+    navGraph: NavController,
+    stopScan: () -> Unit
+) {
     newOrCached(pillData, null)?.let { data ->
         Box(modifier = Modifier.fillMaxSize()) {
             Row(
@@ -474,6 +488,7 @@ private fun PillData(name: String?, macAddress: String, pillData: RaptPillData?,
                         )
                         IconButton(
                             onClick = {
+                                stopScan()
                                 navGraph.navigate(route = Screen.Graph(name = name, macAddress = macAddress))
                             },
                         ) {
