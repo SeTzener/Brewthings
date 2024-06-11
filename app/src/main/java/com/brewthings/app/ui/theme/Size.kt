@@ -10,6 +10,6 @@ object Size {
         val CIRCLE_RADIUS = 3.dp
         val DASHED_LINE_LENGTH = 4.dp
         val GRID_LINE_PADDING: Dp = 8.dp
-        val HIGHLIGHTER_PADDING: Dp = 10.dp
+        val HIGHLIGHTER_LINE_PADDING: Dp = 10.dp
     }
 }

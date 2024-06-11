@@ -10,15 +10,13 @@ import com.github.mikephil.charting.animation.ChartAnimator
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.renderer.LineChartRenderer
-import com.github.mikephil.charting.utils.ViewPortHandler
 
 class HighlightedLineChartRenderer(
     chart: LineChart,
     chartAnimator: ChartAnimator,
-    private val viewPortHandler: ViewPortHandler,
     private val density: Density,
     var primaryColor: Int,
-) : LineChartRenderer(chart, chartAnimator, viewPortHandler) {
+) : LineChartRenderer(chart, chartAnimator, chart.viewPortHandler) {
 
     private val highlightPaint: Paint = Paint().apply {
         strokeWidth = with(density) { Size.Graph.CIRCLE_RADIUS.toPx() * 1.5f }
@@ -33,7 +31,7 @@ class HighlightedLineChartRenderer(
         }
     }
 
-    private val highlighterPadding = with(density) { Size.Graph.HIGHLIGHTER_PADDING.toPx() }
+    private val highlighterPadding = with(density) { Size.Graph.HIGHLIGHTER_LINE_PADDING.toPx() }
 
     override fun drawHighlighted(c: Canvas, indices: Array<Highlight>) {
         for (high in indices) {
@@ -61,8 +59,8 @@ class HighlightedLineChartRenderer(
                         dottedLinePaint.color = primaryColor
                         // Drawing a vertical dotted line at the highlighted points
                         c.drawLine(
-                            pts[0], viewPortHandler.contentTop() + highlighterPadding,
-                            pts[0], viewPortHandler.contentBottom() - highlighterPadding,
+                            pts[0], mViewPortHandler.contentTop() + highlighterPadding,
+                            pts[0], mViewPortHandler.contentBottom() - highlighterPadding,
                             dottedLinePaint
                         )
                     }

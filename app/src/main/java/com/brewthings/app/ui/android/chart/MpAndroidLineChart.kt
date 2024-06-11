@@ -13,6 +13,8 @@ import com.brewthings.app.ui.theme.Size
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
+import kotlin.time.Duration.Companion.days
+import kotlinx.datetime.Clock
 
 @SuppressLint("ViewConstructor")
 class MpAndroidLineChart(
@@ -40,7 +42,6 @@ class MpAndroidLineChart(
         renderer = HighlightedLineChartRenderer(
             this,
             animator,
-            viewPortHandler,
             density,
             primaryColor.toArgb(),
         )
@@ -60,7 +61,9 @@ class MpAndroidLineChart(
             data.notifyDataChanged()
             notifyDataSetChanged()
         }
-        invalidate()
+        updateVisibleXRange()
+        // Note: all moveViewTo(...) methods will automatically invalidate() (refresh) the chart. There is no need for
+        // further calling invalidate().
     }
 
     private fun updateDatasets(chartData: ChartData) {
@@ -108,5 +111,13 @@ class MpAndroidLineChart(
 
     private fun updateYAxisVisibility() {
         axisLeft.isEnabled = data.dataSets.size == 1
+    }
+
+    private fun updateVisibleXRange() {
+        val endDate = Clock.System.now()
+        val startDate = endDate - 7.days
+        val visibleGraphTimePeriod = (endDate.epochSeconds - startDate.epochSeconds).toFloat()
+        setVisibleXRange(visibleGraphTimePeriod, visibleGraphTimePeriod)
+        moveViewToX(endDate.epochSeconds.toFloat())
     }
 }
