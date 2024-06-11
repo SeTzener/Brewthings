@@ -26,15 +26,14 @@ class MpAndroidLineChart(
     private var textColor: Color,
     primaryColor: Color,
 ) : LineChart(context, attrs, defStyleAttr) {
-    val highlightedRenderer: HighlightedLineChartRenderer get() = renderer as HighlightedLineChartRenderer
+    private val highlightedRenderer get() = renderer as HighlightedLineChartRenderer
 
     init {
         chartData?.also { updateDatasets(chartData) }
 
         configureXAxis()
+        configureYAxis()
 
-        axisRight.isEnabled = false
-        axisLeft.isEnabled = false
         description.isEnabled = false
         legend.isEnabled = false
 
@@ -66,10 +65,12 @@ class MpAndroidLineChart(
 
     private fun updateDatasets(chartData: ChartData) {
         data = chartData.data
+        updateYAxisVisibility()
     }
 
     private fun configureXAxis() {
         with(xAxis) {
+            isEnabled = true
             valueFormatter = DateValueFormatter(dateFormat = "d/M")
             position = XAxis.XAxisPosition.BOTTOM
             setDrawGridLines(true)
@@ -85,10 +86,27 @@ class MpAndroidLineChart(
                 XAxisLabelRenderer(
                     gridLinePadding = with(density) { Size.Graph.GRID_LINE_PADDING.toPx() },
                     viewPortHandler = viewPortHandler,
-                    xAxis = xAxis,
+                    xAxis = this,
                     transformer = getTransformer(YAxis.AxisDependency.LEFT),
                 )
             )
         }
+    }
+
+    private fun configureYAxis() {
+        axisRight.isEnabled = false
+
+        with(axisLeft) {
+            setDrawGridLines(false)
+            setDrawGridLinesBehindData(false)
+            setDrawAxisLine(false)
+            textColor = this@MpAndroidLineChart.textColor.toArgb()
+            textSize = this@MpAndroidLineChart.textSize.value
+            xOffset = with(density) { Size.Graph.GRID_LINE_PADDING.toPx() }
+        }
+    }
+
+    private fun updateYAxisVisibility() {
+        axisLeft.isEnabled = data.dataSets.size == 1
     }
 }

@@ -8,7 +8,7 @@ import com.github.mikephil.charting.utils.Transformer
 import com.github.mikephil.charting.utils.ViewPortHandler
 
 /**
- * This class allows drawing X axis labels with a rectangular background with rounded corners.
+ * This class allows drawing X axis labels.
  *
  * @param gridLinePadding Padding between the the grid line and vertical edges of the chart.
  */

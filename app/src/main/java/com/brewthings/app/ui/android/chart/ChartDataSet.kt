@@ -6,10 +6,9 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import java.text.DecimalFormat
 
-class NormalizedLineDataSet(
+class ChartDataSet(
     yVals: List<Entry>,
     label: String,
-    coeff: Float,
     lineColor: Int,
     formatPattern: String,
 ): LineDataSet(emptyList(), label) {
@@ -22,7 +21,7 @@ class NormalizedLineDataSet(
         mode = Mode.HORIZONTAL_BEZIER
         setDrawValues(false)
 
-        values = yVals.map { Entry(it.x, it.y * coeff, it.y) }
+        values = yVals
 
         valueFormatter = object : ValueFormatter() {
             override fun getPointLabel(entry: Entry): String {

@@ -13,11 +13,13 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.viewinterop.AndroidView
 import com.brewthings.app.R
 import com.brewthings.app.ui.android.chart.ChartData
+import com.brewthings.app.ui.android.chart.ChartDataSet
 import com.brewthings.app.ui.android.chart.MpAndroidLineChart
-import com.brewthings.app.ui.android.chart.NormalizedLineDataSet
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 @Composable
 fun Graph(
@@ -60,14 +62,13 @@ fun Graph(
 @Composable
 private fun GraphData.toChartData(): ChartData = ChartData(
     data = LineData(
-        series.map { it.toChartDataSet(yMax) }
+        series.map { it.toChartDataSet() }
     )
 )
 
 @Composable
-private fun GraphSeries.toChartDataSet(maxY: Float): ILineDataSet = NormalizedLineDataSet(
-    yVals = data.map { Entry(it.x, it.y) },
-    coeff = maxY / yMax,
+private fun GraphSeries.toChartDataSet(): ILineDataSet = ChartDataSet(
+    yVals = data.standardize(),
     label = type.toLabel(),
     lineColor = type.toLineColor().toArgb(),
     formatPattern = type.toFormatPattern(),
@@ -92,4 +93,25 @@ private fun DataType.toFormatPattern(): String = when (this) {
     DataType.GRAVITY -> "0.000"
     DataType.TEMPERATURE,
     DataType.BATTERY -> "#.#"
+}
+
+/**
+ * Normalizes the y values of the data points to a range between 0 and 1, for multiline chart plotting.
+ * THe original y values are stored in the data field of the [Entry].
+ */
+/*private fun List<DataPoint>.normalize(): List<Entry> {
+    val minY = minOf { it.y }
+    val maxY = maxOf { it.y }
+    return map { Entry(it.x, (it.y - minY) / (maxY - minY), it.y) }
+}*/
+
+/**
+ * Transform the data using z-score normalization so that each sensor's readings are centered around the mean with a
+ * standard deviation of 1, for multiline chart plotting.
+ * The original y values are stored in the data field of the [Entry].
+ */
+private fun List<DataPoint>.standardize(): List<Entry> {
+    val mean = map { it.y }.average().toFloat()
+    val stdDev = sqrt(map { (it.y - mean).pow(2) }.average().toFloat())
+    return map { Entry(it.x, (it.y - mean) / stdDev, it.y) }
 }
