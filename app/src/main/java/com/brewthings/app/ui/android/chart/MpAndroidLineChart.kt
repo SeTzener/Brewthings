@@ -63,6 +63,7 @@ class MpAndroidLineChart(
             notifyDataSetChanged()
         }
         updateVisibleXRange()
+        highlightLast()
         // Note: all moveViewTo(...) methods will automatically invalidate() (refresh) the chart. There is no need for
         // further calling invalidate().
     }
@@ -120,6 +121,13 @@ class MpAndroidLineChart(
         val visibleGraphTimePeriod = (endDate.epochSeconds - startDate.epochSeconds).toFloat()
         setVisibleXRange(visibleGraphTimePeriod, visibleGraphTimePeriod)
         moveViewToX(endDate.epochSeconds.toFloat())
+    }
+
+    private fun highlightLast() {
+        val lastX = Clock.System.now().epochSeconds.toFloat()
+        data?.dataSets?.firstOrNull()?.getEntryForXValue(lastX, Float.NaN)?.let {
+            highlightValue(it.x, it.y, 0, true)
+        }
     }
 
     private fun setupHorizontalEdges() {
