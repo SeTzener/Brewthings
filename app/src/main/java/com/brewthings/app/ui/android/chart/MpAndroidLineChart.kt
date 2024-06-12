@@ -34,7 +34,6 @@ class MpAndroidLineChart(
         chartData?.also {
             updateDatasets(chartData)
             updateVisibleXRange()
-            updateYAxisVisibility()
             highlightLast()
         }
 
@@ -69,7 +68,7 @@ class MpAndroidLineChart(
         updateDatasets(chartData)
         data.notifyDataChanged()
         notifyDataSetChanged()
-        updateYAxisVisibility()
+
         if (wasEmpty) {
             updateVisibleXRange()
             highlightLast()
@@ -111,19 +110,7 @@ class MpAndroidLineChart(
 
     private fun configureYAxis() {
         axisRight.isEnabled = false
-
-        with(axisLeft) {
-            setDrawGridLines(false)
-            setDrawGridLinesBehindData(false)
-            setDrawAxisLine(false)
-            textColor = this@MpAndroidLineChart.textColor.toArgb()
-            textSize = this@MpAndroidLineChart.textSize.value
-            xOffset = with(density) { Size.Graph.GRID_LINE_PADDING.toPx() }
-        }
-    }
-
-    private fun updateYAxisVisibility() {
-        axisLeft.isEnabled = data.dataSets.size == 1
+        axisLeft.isEnabled = false
     }
 
     private fun updateVisibleXRange() {
