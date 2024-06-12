@@ -1,4 +1,4 @@
-package com.brewthings.app.ui.screens.navigation
+package com.brewthings.app.ui.screens.navigation.nextgen
 
 import kotlinx.serialization.Serializable
 

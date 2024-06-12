@@ -20,14 +20,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.brewthings.app.R
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun GraphScreen(
     navController: NavController,
-    name: String?,
-    macAddress: String,
-    viewModel: GraphScreenViewModel = koinViewModel { parametersOf(name, macAddress) },
+    viewModel: GraphScreenViewModel = koinViewModel(),
 ) {
     GraphScreen(
         screenState = viewModel.screenState,
