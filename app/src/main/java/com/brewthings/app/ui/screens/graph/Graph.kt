@@ -118,14 +118,14 @@ fun LegendItem(
 private fun GraphData.toChartData(enabledTypes: Set<DataType>): ChartData = ChartData(
     data = LineData(
         series.mapNotNull {
-            if (enabledTypes.contains(it.type)) it.toChartDataSet() else null
+            if (enabledTypes.contains(it.type)) it.toChartDataSet(isMultiChart = enabledTypes.size > 1) else null
         }
     )
 )
 
 @Composable
-private fun GraphSeries.toChartDataSet(): ILineDataSet = ChartDataSet(
-    yVals = data.standardize(),
+private fun GraphSeries.toChartDataSet(isMultiChart: Boolean): ILineDataSet = ChartDataSet(
+    yVals = if (isMultiChart) data.standardize() else data.convert(),
     label = type.toLabel(),
     lineColor = type.toLineColor().toArgb(),
     formatPattern = type.toFormatPattern(),
@@ -151,6 +151,11 @@ private fun DataType.toFormatPattern(): String = when (this) {
     DataType.TEMPERATURE,
     DataType.BATTERY -> "#.#"
 }
+
+/**
+ * Converts the data points to entries for plotting on the chart.
+ */
+private fun List<DataPoint>.convert(): List<Entry> = map { Entry(it.x, it.y, it.y) }
 
 /**
  * Normalizes the y values of the data points to a range between 0 and 1, for multiline chart plotting.
