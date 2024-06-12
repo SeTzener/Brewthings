@@ -34,7 +34,8 @@ fun GraphScreen(
 ) {
     GraphScreen(
         screenState = viewModel.screenState,
-        onBackClick = { navController.popBackStack() }
+        onBackClick = { navController.popBackStack() },
+        viewModel::toggleSeries
     )
 }
 
@@ -42,6 +43,7 @@ fun GraphScreen(
 fun GraphScreen(
     screenState: GraphScreenState,
     onBackClick: () -> Unit,
+    toggleSeries: (DataType) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
@@ -61,7 +63,9 @@ fun GraphScreen(
         ) {
             Graph(
                 modifier = Modifier.height(Size.Graph.HEIGHT),
+                enabledTypes = screenState.enabledTypes,
                 graphData = screenState.graphData,
+                toggleSeries = toggleSeries,
             )
         }
     }

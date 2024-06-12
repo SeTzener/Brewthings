@@ -1,15 +1,27 @@
 package com.brewthings.app.ui.screens.graph
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.brewthings.app.R
 import com.brewthings.app.ui.android.chart.ChartData
@@ -21,10 +33,13 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import kotlin.math.pow
 import kotlin.math.sqrt
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun Graph(
     modifier: Modifier = Modifier,
     graphData: GraphData?,
+    enabledTypes: Set<DataType>,
+    toggleSeries: (DataType) -> Unit,
 ) {
     val density: Density = LocalDensity.current
     val textSize = MaterialTheme.typography.labelMedium.fontSize
@@ -33,36 +48,78 @@ fun Graph(
     val textColor = MaterialTheme.colorScheme.onBackground
     val primaryColor = MaterialTheme.colorScheme.primary
 
-    val chartData = graphData?.toChartData()
+    val chartData = graphData?.toChartData(enabledTypes)
 
-    AndroidView(
-        modifier = modifier.fillMaxSize(),
-        factory = { context ->
-            MpAndroidLineChart(
-                context = context,
-                chartData = chartData,
-                density = density,
-                textSize = textSize,
-                isDarkTheme = isDarkTheme,
-                textColor = textColor,
-                primaryColor = primaryColor
-            )
-        },
-        update = { chart ->
-            chart.refresh(
-                chartData = chartData,
-                isDarkTheme = isDarkTheme,
-                textColor = textColor,
-                primaryColor = primaryColor
-            )
+    Column(modifier = modifier.fillMaxSize()) {
+        AndroidView(
+            modifier = modifier
+                .fillMaxWidth()
+                .weight(1f),
+            factory = { context ->
+                MpAndroidLineChart(
+                    context = context,
+                    chartData = chartData,
+                    density = density,
+                    textSize = textSize,
+                    isDarkTheme = isDarkTheme,
+                    textColor = textColor,
+                    primaryColor = primaryColor
+                )
+            },
+            update = { chart ->
+                chart.refresh(
+                    chartData = chartData,
+                    isDarkTheme = isDarkTheme,
+                    textColor = textColor,
+                    primaryColor = primaryColor
+                )
+            }
+        )
+
+        FlowRow(modifier = Modifier.fillMaxWidth()) {
+            graphData?.series?.forEach {
+                LegendItem(
+                    type = it.type,
+                    isChecked = enabledTypes.contains(it.type),
+                    onCheckedChange = { toggleSeries(it.type) }
+                )
+            }
         }
-    )
+    }
 }
 
 @Composable
-private fun GraphData.toChartData(): ChartData = ChartData(
+fun LegendItem(
+    type: DataType,
+    isChecked: Boolean,
+    onCheckedChange: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.padding(top = 24.dp, end = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Checkbox(
+            checked = isChecked,
+            onCheckedChange = { onCheckedChange() },
+            colors = CheckboxDefaults.colors(
+                checkedColor = type.toLineColor(),
+                uncheckedColor = type.toLineColor(),
+            )
+        )
+        Text(
+            modifier = Modifier.clickable { onCheckedChange() },
+            text = type.toLabel(),
+            style = MaterialTheme.typography.labelMedium,
+        )
+    }
+}
+
+@Composable
+private fun GraphData.toChartData(enabledTypes: Set<DataType>): ChartData = ChartData(
     data = LineData(
-        series.map { it.toChartDataSet() }
+        series.mapNotNull {
+            if (enabledTypes.contains(it.type)) it.toChartDataSet() else null
+        }
     )
 )
 
@@ -97,7 +154,6 @@ private fun DataType.toFormatPattern(): String = when (this) {
 
 /**
  * Normalizes the y values of the data points to a range between 0 and 1, for multiline chart plotting.
- * THe original y values are stored in the data field of the [Entry].
  */
 /*private fun List<DataPoint>.normalize(): List<Entry> {
     val minY = minOf { it.y }
