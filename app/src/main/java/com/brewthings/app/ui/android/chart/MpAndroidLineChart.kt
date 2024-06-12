@@ -31,7 +31,12 @@ class MpAndroidLineChart(
     private val highlightedRenderer get() = renderer as HighlightedLineChartRenderer
 
     init {
-        chartData?.also { updateDatasets(chartData) }
+        chartData?.also {
+            updateDatasets(chartData)
+            updateVisibleXRange()
+            updateYAxisVisibility()
+            highlightLast()
+        }
 
         configureXAxis()
         configureYAxis()
@@ -57,20 +62,26 @@ class MpAndroidLineChart(
         this.isDarkTheme = isDarkTheme
         this.textColor = textColor
         highlightedRenderer.primaryColor = primaryColor.toArgb()
-        chartData?.also {
-            updateDatasets(it)
-            data.notifyDataChanged()
-            notifyDataSetChanged()
+
+        if (chartData == null) return
+
+        val wasEmpty = data?.dataSets?.isEmpty() ?: true
+        updateDatasets(chartData)
+        data.notifyDataChanged()
+        notifyDataSetChanged()
+        updateYAxisVisibility()
+        if (wasEmpty) {
+            updateVisibleXRange()
+            highlightLast()
+            // Note: all moveViewTo(...) methods will automatically invalidate() (refresh) the chart. There is no
+            // need for further calling invalidate().
+        } else {
+            invalidate()
         }
-        updateVisibleXRange()
-        highlightLast()
-        // Note: all moveViewTo(...) methods will automatically invalidate() (refresh) the chart. There is no need for
-        // further calling invalidate().
     }
 
     private fun updateDatasets(chartData: ChartData) {
         data = chartData.data
-        updateYAxisVisibility()
     }
 
     private fun configureXAxis() {
