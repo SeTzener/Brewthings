@@ -11,8 +11,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.brewthings.app.ui.screens.navigation.SetupNavGraph
-import com.brewthings.app.ui.screens.scanning.ScanningScreen
+import com.brewthings.app.ui.screens.navigation.legacy.SetupNavGraph
 import com.brewthings.app.ui.theme.BrewthingsTheme
 
 object RequestCode {

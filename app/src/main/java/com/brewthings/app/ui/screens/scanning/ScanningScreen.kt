@@ -63,7 +63,8 @@ import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.ExpandableCard
 import com.brewthings.app.ui.components.ScanPane
 import com.brewthings.app.ui.components.TextWithIcon
-import com.brewthings.app.ui.screens.navigation.Screen
+import com.brewthings.app.ui.screens.navigation.legacy.Destination
+import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder
 import com.brewthings.app.ui.theme.Typography
 import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
@@ -489,7 +490,9 @@ private fun PillData(
                         IconButton(
                             onClick = {
                                 stopScan()
-                                navGraph.navigate(route = Screen.Graph(name = name, macAddress = macAddress))
+                                ParameterHolder.Graph.name = name
+                                ParameterHolder.Graph.macAddress = macAddress
+                                navGraph.navigate(route = Destination.Graph)
                             },
                         ) {
                             TextWithIcon(

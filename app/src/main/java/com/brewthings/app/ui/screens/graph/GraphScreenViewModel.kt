@@ -7,13 +7,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.repository.RaptPillRepository
+import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder
 import kotlinx.coroutines.launch
 
 class GraphScreenViewModel(
-    name: String?,
-    macAddress: String,
     private val repo: RaptPillRepository,
 ) : ViewModel() {
+    private val name: String? = ParameterHolder.Graph.name
+    private val macAddress: String = ParameterHolder.Graph.macAddress ?: error("macAddress is required")
+
     var screenState: GraphScreenState by mutableStateOf(
         GraphScreenState(
             title = name ?: macAddress,

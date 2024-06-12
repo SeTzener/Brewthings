@@ -1,10 +1,9 @@
-package com.brewthings.app.ui.screens.navigation
+package com.brewthings.app.ui.screens.navigation.legacy
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.brewthings.app.ui.screens.graph.GraphScreen
 import com.brewthings.app.ui.screens.scanning.ScanningScreen
 import org.koin.androidx.compose.koinViewModel
@@ -18,9 +17,11 @@ fun SetupNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Scanning
+        startDestination = Destination.Scanning
     ) {
-        composable<Screen.Scanning> {
+        composable(
+            route = Destination.Scanning
+        ) {
             ScanningScreen(
                 navController = navController,
                 viewModel = koinViewModel(),
@@ -29,9 +30,10 @@ fun SetupNavGraph(
                 enableBluetooth = enableBluetooth,
             )
         }
-        composable<Screen.Graph> {backStackEntry ->
-            val data: Screen.Graph = backStackEntry.toRoute()
-            GraphScreen(navController = navController, name = data.name, macAddress = data.macAddress)
+        composable(
+            route = Destination.Graph
+        ) {
+            GraphScreen(navController = navController)
         }
     }
 }
