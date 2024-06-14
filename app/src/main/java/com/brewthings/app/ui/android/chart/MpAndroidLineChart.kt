@@ -13,6 +13,9 @@ import com.brewthings.app.ui.theme.Size
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Clock
 
@@ -27,8 +30,19 @@ class MpAndroidLineChart(
     private var isDarkTheme: Boolean,
     private var textColor: Color,
     primaryColor: Color,
+    onValueSelected: (Any?) -> Unit,
 ) : LineChart(context, attrs, defStyleAttr) {
     private val highlightedRenderer get() = renderer as HighlightedLineChartRenderer
+
+    private val sensorValueSelector = object : OnChartValueSelectedListener {
+        override fun onValueSelected(entry: Entry, highlight: Highlight) {
+            onValueSelected(entry.data)
+        }
+
+        override fun onNothingSelected() {
+            // do nothing.
+        }
+    }
 
     init {
         chartData?.also {

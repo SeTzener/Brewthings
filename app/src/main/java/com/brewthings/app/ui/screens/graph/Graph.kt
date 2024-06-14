@@ -2,6 +2,7 @@ package com.brewthings.app.ui.screens.graph
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -25,9 +26,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.brewthings.app.R
 import com.brewthings.app.data.model.DataType
+import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.android.chart.ChartData
 import com.brewthings.app.ui.android.chart.ChartDataSet
 import com.brewthings.app.ui.android.chart.MpAndroidLineChart
+import com.brewthings.app.ui.components.RaptPillReadings
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
@@ -39,8 +42,10 @@ import kotlin.math.sqrt
 fun Graph(
     modifier: Modifier = Modifier,
     graphData: GraphData?,
+    insights: RaptPillInsights?,
     enabledTypes: Set<DataType>,
     toggleSeries: (DataType) -> Unit,
+    onValueSelected: (Any?) -> Unit,
 ) {
     val density: Density = LocalDensity.current
     val textSize = MaterialTheme.typography.labelMedium.fontSize
@@ -64,7 +69,8 @@ fun Graph(
                     textSize = textSize,
                     isDarkTheme = isDarkTheme,
                     textColor = textColor,
-                    primaryColor = primaryColor
+                    primaryColor = primaryColor,
+                    onValueSelected = onValueSelected,
                 )
             },
             update = { chart ->
@@ -84,6 +90,15 @@ fun Graph(
                     isChecked = enabledTypes.contains(it.type),
                     onCheckedChange = { toggleSeries(it.type) }
                 )
+            }
+        }
+
+        insights?.also {
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                RaptPillReadings(data = it)
             }
         }
     }
@@ -156,24 +171,14 @@ private fun DataType.toFormatPattern(): String = when (this) {
 /**
  * Converts the data points to entries for plotting on the chart.
  */
-private fun List<DataPoint>.convert(): List<Entry> = map { Entry(it.x, it.y, it.y) }
-
-/**
- * Normalizes the y values of the data points to a range between 0 and 1, for multiline chart plotting.
- */
-/*private fun List<DataPoint>.normalize(): List<Entry> {
-    val minY = minOf { it.y }
-    val maxY = maxOf { it.y }
-    return map { Entry(it.x, (it.y - minY) / (maxY - minY), it.y) }
-}*/
+private fun List<DataPoint>.convert(): List<Entry> = map { Entry(it.x, it.y, it.data) }
 
 /**
  * Transform the data using z-score normalization so that each sensor's readings are centered around the mean with a
  * standard deviation of 1, for multiline chart plotting.
- * The original y values are stored in the data field of the [Entry].
  */
 private fun List<DataPoint>.standardize(): List<Entry> {
     val mean = map { it.y }.average().toFloat()
     val stdDev = sqrt(map { (it.y - mean).pow(2) }.average().toFloat())
-    return map { Entry(it.x, (it.y - mean) / stdDev, it.y) }
+    return map { Entry(it.x, (it.y - mean) / stdDev, it.data) }
 }

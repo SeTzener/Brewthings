@@ -40,8 +40,8 @@ class GraphScreenViewModel(
     private fun loadGraphData(macAddress: String) {
         viewModelScope.launch {
             repo.observeData(macAddress).collect { pillData ->
-                val data = pillData.toGraphData()
                 insights = pillData.toInsights()
+                val data = pillData.toGraphData()
                 screenState = screenState.copy(
                     graphData = data,
                     enabledTypes = data.series.map { it.type }.toSet()
@@ -61,9 +61,18 @@ class GraphScreenViewModel(
         screenState = screenState.copy(enabledTypes = enabledTypes)
     }
 
+    fun onValueSelected(data: Any?) {
+        val raptPillData = data as RaptPillData // Any? is casted to RaptPillData
+        val selectedInsight = insights.find { it.timestamp == raptPillData.timestamp }
+        if (selectedInsight != null) {
+            screenState = screenState.copy(selectedInsights = selectedInsight)
+        }
+    }
+
     private fun RaptPillData.toDataPoint(toY: RaptPillData.() -> Float): DataPoint = DataPoint(
         x = timestamp.epochSeconds.toFloat(),
-        y = toY()
+        y = toY(),
+        data = this // RaptPillData is passed as Any?
     )
 
     private fun List<RaptPillData>.toGraphData(): GraphData {
