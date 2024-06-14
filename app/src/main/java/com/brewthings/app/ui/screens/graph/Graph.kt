@@ -30,7 +30,6 @@ import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.android.chart.ChartData
 import com.brewthings.app.ui.android.chart.ChartDataSet
 import com.brewthings.app.ui.android.chart.MpAndroidLineChart
-import com.brewthings.app.ui.components.RaptPillReadings
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet

@@ -1,4 +1,4 @@
-package com.brewthings.app.ui.components
+package com.brewthings.app.ui.screens.graph
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -22,13 +22,15 @@ import com.brewthings.app.R
 import com.brewthings.app.data.model.Insight
 import com.brewthings.app.data.model.OGInsight
 import com.brewthings.app.data.model.RaptPillInsights
+import com.brewthings.app.ui.components.BatteryLevelIndicator
+import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.util.datetime.toFormattedDate
 import kotlin.math.abs
 import kotlinx.datetime.Instant
 
 @Composable
-fun RaptPillReadings(data: RaptPillInsights) {
+fun GraphInsights(data: RaptPillInsights) {
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
@@ -41,7 +43,7 @@ fun RaptPillReadings(data: RaptPillInsights) {
                     .padding(top = 12.dp)
             ) {
                 data.gravity.run {
-                    RaptPillValue(
+                    Insight(
                         modifier = Modifier.weight(1f),
                         iconResId = R.drawable.ic_gravity,
                         textResId = R.string.pill_gravity,
@@ -51,7 +53,7 @@ fun RaptPillReadings(data: RaptPillInsights) {
                     )
                 }
                 data.tilt.run {
-                    RaptPillValue(
+                    Insight(
                         modifier = Modifier.weight(1f),
                         iconResId = R.drawable.ic_tilt,
                         textResId = R.string.pill_tilt,
@@ -67,7 +69,7 @@ fun RaptPillReadings(data: RaptPillInsights) {
                     .padding(top = 8.dp)
             ) {
                 data.temperature.run {
-                    RaptPillValue(
+                    Insight(
                         modifier = Modifier.weight(1f),
                         iconResId = R.drawable.ic_temperature,
                         textResId = R.string.pill_temperature,
@@ -77,7 +79,7 @@ fun RaptPillReadings(data: RaptPillInsights) {
                     )
                 }
                 data.battery.run {
-                    RaptPillValue(
+                    Insight(
                         modifier = Modifier.weight(1f),
                         textWithIcon = {
                             TextWithIcon(
@@ -98,7 +100,7 @@ fun RaptPillReadings(data: RaptPillInsights) {
                         .padding(top = 12.dp)
                 ) {
                     data.abv.run {
-                        RaptPillValue(
+                        Insight(
                             modifier = Modifier.weight(1f),
                             iconResId = R.drawable.ic_abv,
                             textResId = R.string.pill_abv,
@@ -107,7 +109,7 @@ fun RaptPillReadings(data: RaptPillInsights) {
                         )
                     }
                     data.velocity.run {
-                        RaptPillValue(
+                        Insight(
                             modifier = Modifier.weight(1f),
                             iconResId = R.drawable.ic_velocity,
                             textResId = R.string.pill_velocity,
@@ -122,7 +124,7 @@ fun RaptPillReadings(data: RaptPillInsights) {
 }
 
 @Composable
-fun RaptPillValue(
+fun Insight(
     modifier: Modifier = Modifier,
     @DrawableRes iconResId: Int,
     @StringRes textResId: Int,
@@ -130,7 +132,7 @@ fun RaptPillValue(
     delta1: Float? = null,
     delta2: Float? = null,
 ) {
-    RaptPillValue(
+    Insight(
         modifier = modifier,
         textResId = textResId,
         delta1 = delta1,
@@ -144,7 +146,7 @@ fun RaptPillValue(
 }
 
 @Composable
-fun RaptPillValue(
+fun Insight(
     modifier: Modifier = Modifier,
     @StringRes textResId: Int,
     delta1: Float? = null,
@@ -192,9 +194,9 @@ private fun Float.asArrowDropIcon(): Int? = when {
 
 @Preview(apiLevel = 33) // workaround for AS Hedgehog and below
 @Composable
-fun RaptPillReadingsPreview() {
+fun GraphInsightsPreview() {
     BrewthingsTheme {
-        RaptPillReadings(
+        GraphInsights(
             data = RaptPillInsights(
                 timestamp = Instant.fromEpochMilliseconds(1716738391308L),
                 temperature = Insight(
