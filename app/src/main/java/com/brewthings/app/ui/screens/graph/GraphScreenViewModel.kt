@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.brewthings.app.data.model.DataType
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder

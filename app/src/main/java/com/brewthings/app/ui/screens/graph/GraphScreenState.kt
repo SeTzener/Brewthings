@@ -1,5 +1,7 @@
 package com.brewthings.app.ui.screens.graph
 
+import com.brewthings.app.data.model.DataType
+
 data class GraphScreenState(
     val title: String,
     val pillMacAddress: String,

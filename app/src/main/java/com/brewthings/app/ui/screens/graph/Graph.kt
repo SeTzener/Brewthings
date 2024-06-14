@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.brewthings.app.R
+import com.brewthings.app.data.model.DataType
 import com.brewthings.app.ui.android.chart.ChartData
 import com.brewthings.app.ui.android.chart.ChartDataSet
 import com.brewthings.app.ui.android.chart.MpAndroidLineChart
@@ -133,23 +134,26 @@ private fun GraphSeries.toChartDataSet(isMultiChart: Boolean): ILineDataSet = Ch
 
 @Composable
 private fun DataType.toLabel(): String = when (this) {
-    DataType.TEMPERATURE -> stringResource(id = R.string.graph_dat_label_temperature)
-    DataType.GRAVITY -> stringResource(id = R.string.graph_dat_label_gravity)
-    DataType.BATTERY -> stringResource(id = R.string.graph_dat_label_battery)
+    DataType.TEMPERATURE -> stringResource(id = R.string.graph_data_label_temperature)
+    DataType.GRAVITY -> stringResource(id = R.string.graph_data_label_gravity)
+    DataType.BATTERY -> stringResource(id = R.string.graph_data_label_battery)
+    DataType.TILT -> stringResource(id = R.string.graph_data_label_tilt)
 }
 
 @Composable
 private fun DataType.toLineColor(): Color = when (this) {
     DataType.GRAVITY -> MaterialTheme.colorScheme.primary
     DataType.TEMPERATURE -> MaterialTheme.colorScheme.secondary
-    DataType.BATTERY -> MaterialTheme.colorScheme.tertiary
+    DataType.BATTERY,
+    DataType.TILT -> MaterialTheme.colorScheme.tertiary
 }
 
 @Composable
 private fun DataType.toFormatPattern(): String = when (this) {
     DataType.GRAVITY -> "0.000"
     DataType.TEMPERATURE,
-    DataType.BATTERY -> "#.#"
+    DataType.BATTERY,
+    DataType.TILT -> "#.#"
 }
 
 /**
