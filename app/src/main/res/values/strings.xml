@@ -28,6 +28,8 @@
     <string name="pill_graph">"View graph"</string>
     <string name="pill_battery">"%.1f\%%"</string>
     <string name="pill_tilt">"%.2f°"</string>
+    <string name="pill_abv">"%.2f\%%"</string>
+    <string name="pill_velocity">"%.3f SG/h"</string>
     <string name="edit_name_tooltip">Pill Name</string>
     <string name="edit_name_btn">Save</string>
     <string name="graph_data_label_gravity">Gravity</string>

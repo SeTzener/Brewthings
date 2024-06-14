@@ -137,23 +137,20 @@ private fun DataType.toLabel(): String = when (this) {
     DataType.TEMPERATURE -> stringResource(id = R.string.graph_data_label_temperature)
     DataType.GRAVITY -> stringResource(id = R.string.graph_data_label_gravity)
     DataType.BATTERY -> stringResource(id = R.string.graph_data_label_battery)
-    DataType.TILT -> stringResource(id = R.string.graph_data_label_tilt)
 }
 
 @Composable
 private fun DataType.toLineColor(): Color = when (this) {
     DataType.GRAVITY -> MaterialTheme.colorScheme.primary
     DataType.TEMPERATURE -> MaterialTheme.colorScheme.secondary
-    DataType.BATTERY,
-    DataType.TILT -> MaterialTheme.colorScheme.tertiary
+    DataType.BATTERY -> MaterialTheme.colorScheme.tertiary
 }
 
 @Composable
 private fun DataType.toFormatPattern(): String = when (this) {
     DataType.GRAVITY -> "0.000"
     DataType.TEMPERATURE,
-    DataType.BATTERY,
-    DataType.TILT -> "#.#"
+    DataType.BATTERY -> "#.#"
 }
 
 /**

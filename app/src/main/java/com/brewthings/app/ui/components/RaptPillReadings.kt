@@ -19,69 +19,99 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.brewthings.app.R
-import com.brewthings.app.data.model.DataType
-import com.brewthings.app.data.model.RaptPillData
+import com.brewthings.app.data.model.Insight
+import com.brewthings.app.data.model.OGInsight
+import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.util.datetime.toFormattedDate
 import kotlin.math.abs
 import kotlinx.datetime.Instant
 
 @Composable
-fun RaptPillReadings(
-    data: RaptPillData,
-    deltaFromPrevious: Map<DataType, Float>,
-    deltaFromOG: Map<DataType, Float>,
-) {
+fun RaptPillReadings(data: RaptPillInsights) {
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                modifier = Modifier.padding(bottom = 12.dp),
                 text = data.timestamp.toFormattedDate(),
                 style = MaterialTheme.typography.bodyMedium,
             )
-            Row(modifier = Modifier.fillMaxWidth()) {
-                RaptPillValue(
-                    modifier = Modifier.weight(1f),
-                    iconResId = R.drawable.ic_gravity,
-                    textResId = R.string.pill_gravity,
-                    value = data.gravity,
-                    delta1 = deltaFromPrevious[DataType.GRAVITY],
-                    delta2 = deltaFromOG[DataType.GRAVITY],
-                )
-
-                RaptPillValue(
-                    modifier = Modifier.weight(1f),
-                    iconResId = R.drawable.ic_tilt,
-                    textResId = R.string.pill_tilt,
-                    value = data.floatingAngle,
-                    delta1 = deltaFromPrevious[DataType.TILT],
-                    delta2 = deltaFromOG[DataType.TILT],
-                )
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(top = 12.dp)
+            ) {
+                data.gravity.run {
+                    RaptPillValue(
+                        modifier = Modifier.weight(1f),
+                        iconResId = R.drawable.ic_gravity,
+                        textResId = R.string.pill_gravity,
+                        value = value,
+                        delta1 = deltaFromPrevious,
+                        delta2 = deltaFromOG,
+                    )
+                }
+                data.tilt.run {
+                    RaptPillValue(
+                        modifier = Modifier.weight(1f),
+                        iconResId = R.drawable.ic_tilt,
+                        textResId = R.string.pill_tilt,
+                        value = value,
+                        delta1 = deltaFromPrevious,
+                        delta2 = deltaFromOG,
+                    )
+                }
             }
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)) {
-                RaptPillValue(
-                    modifier = Modifier.weight(1f),
-                    iconResId = R.drawable.ic_temperature,
-                    textResId = R.string.pill_temperature,
-                    value = data.temperature,
-                    delta1 = deltaFromPrevious[DataType.TEMPERATURE],
-                    delta2 = deltaFromOG[DataType.TEMPERATURE],
-                )
-
-                RaptPillValue(
-                    modifier = Modifier.weight(1f),
-                    textWithIcon = {
-                        TextWithIcon(
-                            icon = { BatteryLevelIndicator(batteryPercentage = data.battery) },
-                            text = stringResource(id = R.string.pill_battery, data.battery)
-                        )
-                    },
-                    textResId = R.string.pill_battery,
-                    delta1 = deltaFromPrevious[DataType.BATTERY],
-                    delta2 = deltaFromOG[DataType.BATTERY],
-                )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            ) {
+                data.temperature.run {
+                    RaptPillValue(
+                        modifier = Modifier.weight(1f),
+                        iconResId = R.drawable.ic_temperature,
+                        textResId = R.string.pill_temperature,
+                        value = value,
+                        delta1 = deltaFromPrevious,
+                        delta2 = deltaFromOG,
+                    )
+                }
+                data.battery.run {
+                    RaptPillValue(
+                        modifier = Modifier.weight(1f),
+                        textWithIcon = {
+                            TextWithIcon(
+                                icon = { BatteryLevelIndicator(batteryPercentage = value) },
+                                text = stringResource(id = R.string.pill_battery, value)
+                            )
+                        },
+                        textResId = R.string.pill_battery,
+                        delta1 = deltaFromPrevious,
+                        delta2 = deltaFromOG,
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(top = 12.dp)
+             ) {
+                data.abv.run {
+                    RaptPillValue(
+                        modifier = Modifier.weight(1f),
+                        iconResId = R.drawable.ic_abv,
+                        textResId = R.string.pill_abv,
+                        value = value,
+                        delta1 = deltaFromPrevious,
+                    )
+                }
+                data.velocity.run {
+                    RaptPillValue(
+                        modifier = Modifier.weight(1f),
+                        iconResId = R.drawable.ic_velocity,
+                        textResId = R.string.pill_velocity,
+                        value = value,
+                        delta1 = deltaFromPrevious,
+                    )
+                }
             }
         }
     }
@@ -161,24 +191,34 @@ private fun Float.asArrowDropIcon(): Int? = when {
 fun RaptPillReadingsPreview() {
     BrewthingsTheme {
         RaptPillReadings(
-            data = RaptPillData(
+            data = RaptPillInsights(
                 timestamp = Instant.fromEpochMilliseconds(1716738391308L),
-                temperature = 22.43f,
-                gravity = 1.100f,
-                x = 236.0625f,
-                y = 4049.375f,
-                z = 1008.9375f,
-                battery = 100.0f
-            ),
-            deltaFromPrevious = mapOf(
-                DataType.GRAVITY to -0.005f,
-                DataType.TILT to -0.10f,
-                DataType.BATTERY to 0f,
-            ),
-            deltaFromOG = mapOf(
-                DataType.GRAVITY to 0.060f,
-                DataType.TEMPERATURE to 5.3f,
-                DataType.BATTERY to 15f,
+                temperature = Insight(
+                    value = 22.43f,
+                    deltaFromOG = 5.3f,
+                ),
+                gravity = Insight(
+                    value = 1.100f,
+                    deltaFromPrevious = -0.005f,
+                    deltaFromOG = 0.060f,
+                ),
+                battery = Insight(
+                    value = 100.0f,
+                    deltaFromPrevious = 0f,
+                    deltaFromOG = 15f,
+                ),
+                tilt = Insight(
+                    value = 0.5f,
+                    deltaFromPrevious = -0.10f,
+                ),
+                abv = OGInsight(
+                    value = 5.5f,
+                    deltaFromPrevious = 0.5f,
+                ),
+                velocity = OGInsight(
+                    value = 0.020f,
+                    deltaFromPrevious = -0.002f,
+                )
             )
         )
     }
