@@ -158,8 +158,7 @@ class GraphScreenViewModel(
 
     private fun calculateVelocity(ogData: RaptPillData, fgData: RaptPillData): Float {
         val gravityDrop = ogData.gravity - fgData.gravity
-        val timeDifference =
-            (fgData.timestamp - ogData.timestamp).inWholeMilliseconds / 3600000.0f // Convert ms to hours
+        val timeDifference = (fgData.timestamp - ogData.timestamp).inWholeHours.toFloat()
         return gravityDrop / timeDifference
     }
 }

@@ -40,7 +40,8 @@ fun GraphInsights(data: RaptPillInsights) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp)
+                    .padding(top = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 data.gravity.run {
                     Insight(
@@ -66,7 +67,8 @@ fun GraphInsights(data: RaptPillInsights) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp)
+                    .padding(top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 data.temperature.run {
                     Insight(
@@ -97,24 +99,27 @@ fun GraphInsights(data: RaptPillInsights) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 12.dp)
+                        .padding(top = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     data.abv.run {
-                        Insight(
+                        UnitInsight(
                             modifier = Modifier.weight(1f),
                             iconResId = R.drawable.ic_abv,
                             textResId = R.string.pill_abv,
                             value = value,
-                            delta1 = deltaFromPrevious,
+                            delta = deltaFromPrevious,
+                            unit = stringResource(id = R.string.pill_abv_unit),
                         )
                     }
                     data.velocity.run {
-                        Insight(
+                        UnitInsight(
                             modifier = Modifier.weight(1f),
                             iconResId = R.drawable.ic_velocity,
                             textResId = R.string.pill_velocity,
                             value = value,
-                            delta1 = deltaFromPrevious,
+                            delta = deltaFromPrevious,
+                            unit = stringResource(id = R.string.pill_velocity_unit),
                         )
                     }
                 }
@@ -164,6 +169,40 @@ fun Insight(
         Column(horizontalAlignment = Alignment.End) {
             DeltaText(textResId, delta1)
             DeltaText(textResId, delta2)
+        }
+    }
+}
+
+@Composable
+fun UnitInsight(
+    modifier: Modifier = Modifier,
+    @DrawableRes iconResId: Int,
+    @StringRes textResId: Int,
+    value: Float,
+    delta: Float? = null,
+    unit: String? = null,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        TextWithIcon(
+            iconResId = iconResId,
+            text = stringResource(id = textResId, value)
+        )
+
+        Spacer(modifier = Modifier.size(12.dp))
+
+        Column(horizontalAlignment = Alignment.End) {
+            DeltaText(textResId, delta)
+            unit?.also {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontSize = 8.sp
+                    ),
+                )
+            }
         }
     }
 }

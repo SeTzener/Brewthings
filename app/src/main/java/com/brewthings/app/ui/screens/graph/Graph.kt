@@ -2,7 +2,6 @@ package com.brewthings.app.ui.screens.graph
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -26,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.brewthings.app.R
 import com.brewthings.app.data.model.DataType
-import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.android.chart.ChartData
 import com.brewthings.app.ui.android.chart.ChartDataSet
 import com.brewthings.app.ui.android.chart.MpAndroidLineChart
@@ -41,7 +39,6 @@ import kotlin.math.sqrt
 fun Graph(
     modifier: Modifier = Modifier,
     graphData: GraphData?,
-    insights: RaptPillInsights?,
     enabledTypes: Set<DataType>,
     toggleSeries: (DataType) -> Unit,
     onValueSelected: (Any?) -> Unit,
@@ -89,15 +86,6 @@ fun Graph(
                     isChecked = enabledTypes.contains(it.type),
                     onCheckedChange = { toggleSeries(it.type) }
                 )
-            }
-        }
-
-        insights?.also {
-            Box(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                RaptPillReadings(data = it)
             }
         }
     }
