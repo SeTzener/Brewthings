@@ -36,7 +36,8 @@ fun RaptPillReadings(data: RaptPillInsights) {
                 style = MaterialTheme.typography.bodyMedium,
             )
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(top = 12.dp)
             ) {
                 data.gravity.run {
@@ -90,27 +91,30 @@ fun RaptPillReadings(data: RaptPillInsights) {
                     )
                 }
             }
-            Row(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(top = 12.dp)
-             ) {
-                data.abv.run {
-                    RaptPillValue(
-                        modifier = Modifier.weight(1f),
-                        iconResId = R.drawable.ic_abv,
-                        textResId = R.string.pill_abv,
-                        value = value,
-                        delta1 = deltaFromPrevious,
-                    )
-                }
-                data.velocity.run {
-                    RaptPillValue(
-                        modifier = Modifier.weight(1f),
-                        iconResId = R.drawable.ic_velocity,
-                        textResId = R.string.pill_velocity,
-                        value = value,
-                        delta1 = deltaFromPrevious,
-                    )
+            if (data.abv != null && data.velocity != null) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp)
+                ) {
+                    data.abv.run {
+                        RaptPillValue(
+                            modifier = Modifier.weight(1f),
+                            iconResId = R.drawable.ic_abv,
+                            textResId = R.string.pill_abv,
+                            value = value,
+                            delta1 = deltaFromPrevious,
+                        )
+                    }
+                    data.velocity.run {
+                        RaptPillValue(
+                            modifier = Modifier.weight(1f),
+                            iconResId = R.drawable.ic_velocity,
+                            textResId = R.string.pill_velocity,
+                            value = value,
+                            delta1 = deltaFromPrevious,
+                        )
+                    }
                 }
             }
         }

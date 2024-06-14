@@ -8,8 +8,8 @@ data class RaptPillInsights(
     val gravity: Insight,
     val tilt: Insight,
     val battery: Insight,
-    val abv: OGInsight,
-    val velocity: OGInsight,
+    val abv: OGInsight? = null,
+    val velocity: OGInsight? = null,
 )
 
 data class Insight(
