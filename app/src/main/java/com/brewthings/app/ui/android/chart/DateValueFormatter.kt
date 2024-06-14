@@ -1,6 +1,6 @@
 package com.brewthings.app.ui.android.chart
 
-import com.brewthings.app.util.roundMsToHour
+import com.brewthings.app.util.datetime.roundMsToHour
 import com.github.mikephil.charting.formatter.ValueFormatter
 import java.text.SimpleDateFormat
 import java.util.Date

@@ -1,13 +1,39 @@
-package com.brewthings.app.util
+package com.brewthings.app.util.datetime
 
+import java.time.format.DateTimeFormatter
 import kotlin.math.roundToLong
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.plus
+import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
+
+fun Instant.formatDateTime(
+    dateTimePattern: String,
+    timeZone: TimeZone = TimeZone.currentSystemDefault()
+): String {
+    val localDate = toLocalDateTime(timeZone)
+    val formatter = DateTimeFormatter.ofPattern(dateTimePattern)
+    return formatter.format(localDate.toJavaLocalDateTime())
+}
+
+fun Duration.getDaysHoursAndMinutes(): Triple<Long, Long, Long> =
+    toComponents { days, hours, minutes, _, _ ->
+        Triple(days, hours.toLong(), minutes.toLong())
+    }
+
+fun isYesterday(date: Instant, now: Instant, timeZone: TimeZone): Boolean {
+    // Adding 24 hours is problematic with daylight saving.
+    val offsetDate = date.plus(24.hours)
+    val localOffsetDate = offsetDate.toLocalDateTime(timeZone)
+    val nowLocalDate = now.toLocalDateTime(timeZone)
+    return localOffsetDate.dayOfYear == nowLocalDate.dayOfYear
+}
 
 /**
  * Returns the default [TimeZone] of the system.

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +22,7 @@ import com.brewthings.app.R
 import com.brewthings.app.data.model.DataType
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.ui.theme.BrewthingsTheme
+import com.brewthings.app.util.datetime.toFormattedDate
 import kotlin.math.abs
 import kotlinx.datetime.Instant
 
@@ -31,7 +33,12 @@ fun RaptPillReadings(
     deltaFromOG: Map<DataType, Float>,
 ) {
     Card {
-        Column(modifier = Modifier.padding(8.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                modifier = Modifier.padding(bottom = 12.dp),
+                text = data.timestamp.toFormattedDate(),
+                style = MaterialTheme.typography.bodyMedium,
+            )
             Row(modifier = Modifier.fillMaxWidth()) {
                 RaptPillValue(
                     modifier = Modifier.weight(1f),
@@ -51,7 +58,9 @@ fun RaptPillReadings(
                     delta2 = deltaFromOG[DataType.TILT],
                 )
             }
-            Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)) {
                 RaptPillValue(
                     modifier = Modifier.weight(1f),
                     iconResId = R.drawable.ic_temperature,
