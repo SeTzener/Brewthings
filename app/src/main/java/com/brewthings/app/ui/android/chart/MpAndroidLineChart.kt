@@ -64,6 +64,8 @@ class MpAndroidLineChart(
             density,
             primaryColor.toArgb(),
         )
+
+        setOnChartValueSelectedListener(sensorValueSelector)
     }
 
     fun refresh(
