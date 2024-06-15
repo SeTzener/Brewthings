@@ -1,6 +1,7 @@
 package com.brewthings.app.ui.components
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -12,9 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.ui.theme.Typography
@@ -24,23 +25,36 @@ fun TextWithIcon(
     modifier: Modifier = Modifier,
     text: String,
     icon: @Composable () -> Unit,
-    iconPadding: Dp = 8.dp,
+    iconPadding: Dp? = 8.dp,
+    textAlign: TextAlign = TextAlign.Start,
     textStyle: TextStyle = Typography.bodyMedium,
     textColor: Color = MaterialTheme.colorScheme.onSurface,
 ) {
     Row(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = if (textAlign == TextAlign.Start) {
+            Arrangement.Start
+        } else {
+            Arrangement.End
+        }
     ) {
-        icon()
-
-        Spacer(modifier = Modifier.padding(iconPadding))
+        if (textAlign == TextAlign.Start) {
+            icon()
+            iconPadding?.let { Spacer(modifier = Modifier.padding(it)) }
+        }
 
         Text(
             text = text,
+            textAlign = textAlign,
             style = textStyle,
             color = textColor
         )
+
+        if (textAlign == TextAlign.End) {
+            iconPadding?.let { Spacer(modifier = Modifier.padding(it)) }
+            icon()
+        }
     }
 }
 
@@ -52,28 +66,26 @@ fun TextWithIcon(
     iconColor: Color = MaterialTheme.colorScheme.primary,
     iconSize: Dp = 24.dp,
     iconPadding: Dp = 8.dp,
+    textAlign: TextAlign = TextAlign.Start,
     textStyle: TextStyle = Typography.bodyMedium,
     textColor: Color = MaterialTheme.colorScheme.onSurface,
 ) {
-    Row(
+    TextWithIcon(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        iconResId?.also {
-            Icon(
-                modifier = Modifier.size(size = iconSize),
-                imageVector = ImageVector.vectorResource(id = it),
-                contentDescription = null,
-                tint = iconColor,
-            )
-
-            Spacer(modifier = Modifier.padding(iconPadding))
+        text = text,
+        textAlign = textAlign,
+        textStyle = textStyle,
+        textColor = textColor,
+        iconPadding = if (iconResId != null) iconPadding else null,
+        icon = {
+            if (iconResId != null) {
+                Icon(
+                    modifier = Modifier.size(iconSize),
+                    painter = painterResource(id = iconResId),
+                    contentDescription = null,
+                    tint = iconColor
+                )
+            }
         }
-
-        Text(
-            text = text,
-            style = textStyle,
-            color = textColor
-        )
-    }
+    )
 }
