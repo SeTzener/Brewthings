@@ -190,7 +190,7 @@ fun InsightDelta(
         modifier = modifier,
         iconResId = delta?.asArrowDropIcon(),
         iconSize = 16.dp,
-        text = if (delta != null) stringResource(id = textResId, abs(delta)) else "",
+        text = if (delta != null && !delta.isNaN()) stringResource(id = textResId, abs(delta)) else "",
         iconPadding = 0.dp,
         iconColor = MaterialTheme.colorScheme.onSurface,
         textStyle = MaterialTheme.typography.bodySmall,
