@@ -25,6 +25,7 @@ import com.brewthings.app.data.model.Insight
 import com.brewthings.app.data.model.OGInsight
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.components.BatteryLevelIndicator
+import com.brewthings.app.ui.components.IconAlign
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.util.datetime.toFormattedDate
@@ -44,8 +45,8 @@ fun GraphInsights(data: RaptPillInsights) {
                 icon = { Spacer(modifier = Modifier.size(24.dp)) },
                 label = { InsightHeader(it, R.string.graph_header_name) },
                 value = { InsightHeader(it, R.string.graph_header_value) },
-                fromPrevious = { InsightHeader(it.padding(start = 4.dp), R.string.graph_header_from_previous) },
-                fromOG = { InsightHeader(it.padding(start = 4.dp), R.string.graph_header_from_og) },
+                fromPrevious = { InsightHeader(it, R.string.graph_header_from_previous) },
+                fromOG = { InsightHeader(it, R.string.graph_header_from_og) },
             )
 
             InsightsRow(
@@ -194,6 +195,7 @@ fun InsightDelta(
         iconPadding = 0.dp,
         iconColor = MaterialTheme.colorScheme.onSurface,
         textStyle = MaterialTheme.typography.bodySmall,
+        iconAlign = IconAlign.End,
         textAlign = TextAlign.Start,
     )
 }

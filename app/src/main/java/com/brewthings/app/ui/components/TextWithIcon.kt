@@ -20,13 +20,16 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.ui.theme.Typography
 
+typealias IconAlign = TextAlign
+
 @Composable
 fun TextWithIcon(
     modifier: Modifier = Modifier,
     text: String,
     icon: @Composable () -> Unit,
     iconPadding: Dp = 8.dp,
-    textAlign: TextAlign = TextAlign.Start,
+    iconAlign: IconAlign = IconAlign.Start,
+    textAlign: TextAlign = iconAlign,
     textStyle: TextStyle = Typography.bodyMedium,
     textColor: Color = MaterialTheme.colorScheme.onSurface,
 ) {
@@ -39,7 +42,7 @@ fun TextWithIcon(
             Arrangement.End
         }
     ) {
-        if (textAlign == TextAlign.Start) {
+        if (iconAlign == IconAlign.Start) {
             icon()
             Spacer(modifier = Modifier.padding(iconPadding))
         }
@@ -51,7 +54,7 @@ fun TextWithIcon(
             color = textColor
         )
 
-        if (textAlign == TextAlign.End) {
+        if (iconAlign == IconAlign.End) {
             Spacer(modifier = Modifier.padding(iconPadding))
             icon()
         }
@@ -66,7 +69,8 @@ fun TextWithIcon(
     iconColor: Color = MaterialTheme.colorScheme.primary,
     iconSize: Dp = 24.dp,
     iconPadding: Dp = 8.dp,
-    textAlign: TextAlign = TextAlign.Start,
+    iconAlign: IconAlign = IconAlign.Start,
+    textAlign: TextAlign = iconAlign,
     textStyle: TextStyle = Typography.bodyMedium,
     textColor: Color = MaterialTheme.colorScheme.onSurface,
 ) {
@@ -77,6 +81,7 @@ fun TextWithIcon(
         textStyle = textStyle,
         textColor = textColor,
         iconPadding = iconPadding,
+        iconAlign = iconAlign,
         icon = {
             if (iconResId != null) {
                 Icon(
