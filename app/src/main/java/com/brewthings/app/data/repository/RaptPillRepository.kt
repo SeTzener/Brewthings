@@ -21,15 +21,7 @@ class RaptPillRepository(
                 macAddress = db.pill.macAddress,
                 name = db.pill.name,
                 data = db.data.map { data ->
-                    RaptPillData(
-                        timestamp = data.readings.timestamp,
-                        temperature = data.readings.temperature,
-                        gravity = data.readings.gravity,
-                        x = data.readings.x,
-                        y = data.readings.y,
-                        z = data.readings.z,
-                        battery = data.readings.battery,
-                    )
+                    data.toModelItem()
                 }
             )
         }
@@ -57,9 +49,25 @@ class RaptPillRepository(
     suspend fun updatePill(raptPill: RaptPill) {
         dao.updatePillData(raptPill = raptPill.toDataItem())
     }
+
+    fun observeData(macAddress: String): Flow<List<RaptPillData>> =
+        dao.observeData(macAddress).map { data ->
+            data.map { it.toModelItem() }
+        }
 }
 
 private fun RaptPill.toDataItem() = com.brewthings.app.data.storage.RaptPill(
     macAddress = macAddress,
     name = name,
 )
+
+private fun com.brewthings.app.data.storage.RaptPillData.toModelItem(): RaptPillData =
+    RaptPillData(
+        timestamp = readings.timestamp,
+        temperature = readings.temperature,
+        gravity = readings.gravity,
+        x = readings.x,
+        y = readings.y,
+        z = readings.z,
+        battery = readings.battery,
+    )

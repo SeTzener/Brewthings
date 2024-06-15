@@ -30,6 +30,7 @@ class ScanningScreenViewModel(
     init {
         observeBluetoothAvailability()
         observeDatabase()
+        toggleScan()
     }
 
     fun savePill(scannedRaptPill: ScannedRaptPill) {
@@ -85,7 +86,7 @@ class ScanningScreenViewModel(
             .launchIn(viewModelScope)
     }
 
-    private fun stopScan() {
+    fun stopScan() {
         scanJob?.cancel()
         scanJob = null
     }

@@ -112,8 +112,7 @@ dependencies {
     implementation(libs.compose.activity)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
-    implementation(libs.compose.ui.graphics)
-    implementation(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.tooling)
 
     // Navigation Compose
@@ -135,6 +134,9 @@ dependencies {
     // KotlinX
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.datetime)
+
+    // MPAndroidChart
+    implementation(libs.mpandroidchart)
 
     // Room
     implementation(libs.room.runtime)
