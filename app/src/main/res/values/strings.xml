@@ -38,6 +38,10 @@
     <string name="graph_data_label_tilt">Tilt</string>
     <string name="graph_data_label_abv">ABV</string>
     <string name="graph_data_label_velocity">Velocity</string>
+    <string name="graph_header_name">Name</string>
+    <string name="graph_header_value">Value</string>
+    <string name="graph_header_from_previous">From prev.</string>
+    <string name="graph_header_from_og">From OG</string>
     <string name="formatted_date_just_now">Just now</string>
     <string name="formatted_date_minutes_ago">%d minutes ago</string>
     <string name="formatted_date_hour_ago">an hour ago</string>

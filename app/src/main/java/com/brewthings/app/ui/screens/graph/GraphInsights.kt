@@ -38,6 +38,15 @@ fun GraphInsights(data: RaptPillInsights) {
             )
 
             InsightsRow(
+                textWithIcon = {
+                    InsightHeader(it.padding(start = 30.dp), R.string.graph_header_name, TextAlign.Start)
+                },
+                value = { InsightHeader(it, R.string.graph_header_value) },
+                fromPrevious = { InsightHeader(it, R.string.graph_header_from_previous) },
+                fromOG = { InsightHeader(it, R.string.graph_header_from_og) },
+            )
+
+            InsightsRow(
                 textWithIcon = { InsightTextWithIcon(it, R.drawable.ic_gravity, R.string.graph_data_label_gravity) },
                 value = { InsightValue(it, R.string.pill_gravity, data.gravity.value) },
                 fromPrevious = { InsightDelta(it, R.string.pill_gravity, data.gravity.deltaFromPrevious) },
@@ -74,6 +83,22 @@ fun InsightsRow(
         fromPrevious(Modifier.weight(1f))
         fromOG(Modifier.weight(1f))
     }
+}
+
+@Composable
+fun InsightHeader(
+    modifier: Modifier,
+    @StringRes headerResId: Int,
+    textAlign: TextAlign = TextAlign.End,
+) {
+    Text(
+        modifier = modifier,
+        text = stringResource(id = headerResId),
+        textAlign = textAlign,
+        style = MaterialTheme.typography.bodyMedium.copy(
+            fontWeight = FontWeight.Black
+        ),
+    )
 }
 
 @Composable
