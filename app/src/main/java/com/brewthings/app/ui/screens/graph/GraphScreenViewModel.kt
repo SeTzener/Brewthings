@@ -13,6 +13,7 @@ import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder
 import com.brewthings.app.util.Logger
+import kotlin.math.abs
 import kotlinx.coroutines.launch
 
 class GraphScreenViewModel(
@@ -109,10 +110,9 @@ class GraphScreenViewModel(
                 )
             } else {
                 val abv = calculateABV(ogData.gravity, pillData.gravity)
-                val velocity = calculateVelocity(ogData, pillData)
+                val velocity = calculateVelocity(ogData, pillData)?.let { abs(it) }
                 val previous = get(index - 1)
                 val previousAbv = calculateABV(ogData.gravity, previous.gravity)
-                val previousVelocity = calculateVelocity(ogData, previous)
                 RaptPillInsights(
                     timestamp = pillData.timestamp,
                     temperature = Insight(
@@ -139,10 +139,12 @@ class GraphScreenViewModel(
                         value = abv,
                         deltaFromPrevious = abv - previousAbv,
                     ),
-                    velocity = OGInsight(
-                        value = velocity,
-                        deltaFromPrevious = velocity - previousVelocity,
-                    )
+                    velocity = velocity?.let {
+                        OGInsight(
+                            value = it,
+                            deltaFromPrevious = calculateVelocity(previous, pillData),
+                        )
+                    },
                 )
             }
         }
@@ -156,9 +158,12 @@ class GraphScreenViewModel(
         return (og - fg) * 131.25f
     }
 
-    private fun calculateVelocity(ogData: RaptPillData, fgData: RaptPillData): Float {
-        val gravityDrop = ogData.gravity - fgData.gravity
-        val timeDifference = (fgData.timestamp - ogData.timestamp).inWholeHours.toFloat()
-        return gravityDrop / timeDifference
+    private fun calculateVelocity(ogData: RaptPillData, fgData: RaptPillData): Float? {
+        val gravityDrop = fgData.gravity - ogData.gravity
+        val timeDifference = (fgData.timestamp - ogData.timestamp).inWholeDays.toFloat()
+        val velocity = gravityDrop / timeDifference
+        return if (velocity.isInfinite() || velocity.isNaN()) {
+            null
+        } else velocity
     }
 }

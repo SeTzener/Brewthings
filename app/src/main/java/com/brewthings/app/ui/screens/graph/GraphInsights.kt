@@ -5,24 +5,27 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.brewthings.app.R
 import com.brewthings.app.data.model.Insight
 import com.brewthings.app.data.model.OGInsight
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.components.BatteryLevelIndicator
+import com.brewthings.app.ui.components.IconAlign
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.util.datetime.toFormattedDate
@@ -37,170 +40,62 @@ fun GraphInsights(data: RaptPillInsights) {
                 text = data.timestamp.toFormattedDate(),
                 style = MaterialTheme.typography.bodyMedium,
             )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                data.gravity.run {
-                    Insight(
-                        modifier = Modifier.weight(1f),
-                        iconResId = R.drawable.ic_gravity,
-                        textResId = R.string.pill_gravity,
-                        value = value,
-                        delta1 = deltaFromPrevious,
-                        delta2 = deltaFromOG,
-                    )
-                }
-                data.tilt.run {
-                    Insight(
-                        modifier = Modifier.weight(1f),
-                        iconResId = R.drawable.ic_tilt,
-                        textResId = R.string.pill_tilt,
-                        value = value,
-                        delta1 = deltaFromPrevious,
-                        delta2 = deltaFromOG,
-                    )
-                }
+
+            InsightsRow(
+                icon = { Spacer(modifier = Modifier.size(24.dp)) },
+                label = { InsightHeader(it, R.string.graph_header_name) },
+                value = { InsightHeader(it, R.string.graph_header_value) },
+                fromPrevious = { InsightHeader(it, R.string.graph_header_from_previous) },
+                fromOG = { InsightHeader(it, R.string.graph_header_from_og) },
+            )
+
+            InsightsRow(
+                icon = { InsightIcon(it, R.drawable.ic_gravity) },
+                label = { InsightLabel(it, R.string.graph_data_label_gravity) },
+                value = { InsightValue(it, R.string.pill_gravity, data.gravity.value) },
+                fromPrevious = { InsightDelta(it, R.string.pill_gravity, data.gravity.deltaFromPrevious) },
+                fromOG = { InsightDelta(it, R.string.pill_gravity, data.gravity.deltaFromOG) },
+            )
+
+            InsightsRow(
+                icon = { InsightIcon(it, R.drawable.ic_temperature) },
+                label = { InsightLabel(it, R.string.graph_data_label_temperature) },
+                value = { InsightValue(it, R.string.pill_temperature, data.temperature.value) },
+                fromPrevious = { InsightDelta(it, R.string.pill_temperature, data.temperature.deltaFromPrevious) },
+                fromOG = { InsightDelta(it, R.string.pill_temperature, data.temperature.deltaFromOG) },
+            )
+
+            InsightsRow(
+                icon = { InsightIcon(it, R.drawable.ic_tilt) },
+                label = { InsightLabel(it, R.string.graph_data_label_tilt) },
+                value = { InsightValue(it, R.string.pill_tilt, data.tilt.value) },
+                fromPrevious = { InsightDelta(it, R.string.pill_tilt, data.tilt.deltaFromPrevious) },
+                fromOG = { InsightDelta(it, R.string.pill_tilt, data.tilt.deltaFromOG) },
+            )
+
+            InsightsRow(
+                icon = { BatteryLevelIndicator(data.battery.value) },
+                label = { InsightLabel(it, R.string.graph_data_label_battery) },
+                value = { InsightValue(it, R.string.pill_battery, data.battery.value) },
+                fromPrevious = { InsightDelta(it, R.string.pill_battery, data.battery.deltaFromPrevious) },
+                fromOG = { InsightDelta(it, R.string.pill_battery, data.battery.deltaFromOG) },
+            )
+
+            data.abv?.also { abv ->
+                InsightsRow(
+                    icon = { InsightIcon(it, R.drawable.ic_abv) },
+                    label = { InsightLabel(it, R.string.graph_data_label_abv) },
+                    value = { InsightValue(it, R.string.pill_abv, abv.value) },
+                    fromPrevious = { InsightDelta(it, R.string.pill_abv, abv.deltaFromPrevious) },
+                )
             }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                data.temperature.run {
-                    Insight(
-                        modifier = Modifier.weight(1f),
-                        iconResId = R.drawable.ic_temperature,
-                        textResId = R.string.pill_temperature,
-                        value = value,
-                        delta1 = deltaFromPrevious,
-                        delta2 = deltaFromOG,
-                    )
-                }
-                data.battery.run {
-                    Insight(
-                        modifier = Modifier.weight(1f),
-                        textWithIcon = {
-                            TextWithIcon(
-                                icon = { BatteryLevelIndicator(batteryPercentage = value) },
-                                text = stringResource(id = R.string.pill_battery, value)
-                            )
-                        },
-                        textResId = R.string.pill_battery,
-                        delta1 = deltaFromPrevious,
-                        delta2 = deltaFromOG,
-                    )
-                }
-            }
-            if (data.abv != null && data.velocity != null) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    data.abv.run {
-                        UnitInsight(
-                            modifier = Modifier.weight(1f),
-                            iconResId = R.drawable.ic_abv,
-                            textResId = R.string.pill_abv,
-                            value = value,
-                            delta = deltaFromPrevious,
-                            unit = stringResource(id = R.string.pill_abv_unit),
-                        )
-                    }
-                    data.velocity.run {
-                        UnitInsight(
-                            modifier = Modifier.weight(1f),
-                            iconResId = R.drawable.ic_velocity,
-                            textResId = R.string.pill_velocity,
-                            value = value,
-                            delta = deltaFromPrevious,
-                            unit = stringResource(id = R.string.pill_velocity_unit),
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
 
-@Composable
-fun Insight(
-    modifier: Modifier = Modifier,
-    @DrawableRes iconResId: Int,
-    @StringRes textResId: Int,
-    value: Float,
-    delta1: Float? = null,
-    delta2: Float? = null,
-) {
-    Insight(
-        modifier = modifier,
-        textResId = textResId,
-        delta1 = delta1,
-        delta2 = delta2,
-    ) {
-        TextWithIcon(
-            iconResId = iconResId,
-            text = stringResource(id = textResId, value)
-        )
-    }
-}
-
-@Composable
-fun Insight(
-    modifier: Modifier = Modifier,
-    @StringRes textResId: Int,
-    delta1: Float? = null,
-    delta2: Float? = null,
-    textWithIcon: @Composable () -> Unit,
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        textWithIcon()
-
-        Spacer(modifier = Modifier.size(12.dp))
-
-        Column(horizontalAlignment = Alignment.End) {
-            DeltaText(textResId, delta1)
-            DeltaText(textResId, delta2)
-        }
-    }
-}
-
-@Composable
-fun UnitInsight(
-    modifier: Modifier = Modifier,
-    @DrawableRes iconResId: Int,
-    @StringRes textResId: Int,
-    value: Float,
-    delta: Float? = null,
-    unit: String? = null,
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        TextWithIcon(
-            iconResId = iconResId,
-            text = stringResource(id = textResId, value)
-        )
-
-        Spacer(modifier = Modifier.size(12.dp))
-
-        Column(horizontalAlignment = Alignment.End) {
-            DeltaText(textResId, delta)
-            unit?.also {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        fontSize = 8.sp
-                    ),
+            data.velocity?.also { velocity ->
+                InsightsRow(
+                    icon = { InsightIcon(it, R.drawable.ic_velocity) },
+                    label = { InsightLabel(it, R.string.graph_data_label_velocity) },
+                    value = { InsightValue(it, R.string.pill_velocity, velocity.value) },
+                    fromPrevious = { InsightDelta(it, R.string.pill_velocity, velocity.deltaFromPrevious) },
                 )
             }
         }
@@ -208,19 +103,100 @@ fun UnitInsight(
 }
 
 @Composable
-fun DeltaText(
+fun InsightsRow(
+    modifier: Modifier = Modifier,
+    icon: @Composable (Modifier) -> Unit,
+    label: @Composable (Modifier) -> Unit,
+    value: @Composable (Modifier) -> Unit,
+    fromPrevious: @Composable (Modifier) -> Unit,
+    fromOG: @Composable (Modifier) -> Unit = { Spacer(it) },
+) {
+    Row(
+        modifier = modifier.padding(top = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        icon(Modifier)
+        Spacer(modifier = Modifier.size(16.dp))
+        label(Modifier.weight(1f))
+        Spacer(modifier = Modifier.size(8.dp))
+        value(Modifier.weight(1f))
+        Spacer(modifier = Modifier.size(16.dp))
+        fromPrevious(Modifier.weight(1f))
+        Spacer(modifier = Modifier.size(8.dp))
+        fromOG(Modifier.weight(1f))
+    }
+}
+
+@Composable
+fun InsightHeader(
+    modifier: Modifier,
+    @StringRes headerResId: Int,
+) {
+    Text(
+        modifier = modifier,
+        text = stringResource(id = headerResId),
+        textAlign = TextAlign.Start,
+        style = MaterialTheme.typography.bodyMedium.copy(
+            fontWeight = FontWeight.Bold
+        ),
+    )
+}
+
+@Composable
+fun InsightIcon(
+    modifier: Modifier,
+    @DrawableRes iconResId: Int,
+) {
+    Icon(
+        modifier = Modifier.size(24.dp),
+        painter = painterResource(id = iconResId),
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.primary
+    )
+}
+
+@Composable
+fun InsightLabel(
+    modifier: Modifier,
+    @StringRes labelResId: Int,
+) {
+    Text(
+        modifier = modifier,
+        text = stringResource(id = labelResId),
+        style = MaterialTheme.typography.bodyMedium,
+    )
+}
+
+@Composable
+fun InsightValue(
+    modifier: Modifier,
     @StringRes textResId: Int,
-    delta: Float? = null,
+    value: Float,
+) {
+    Text(
+        modifier = modifier,
+        text = stringResource(id = textResId, value),
+        textAlign = TextAlign.Start,
+        style = MaterialTheme.typography.bodyMedium,
+    )
+}
+
+@Composable
+fun InsightDelta(
+    modifier: Modifier,
+    @StringRes textResId: Int,
+    delta: Float?,
 ) {
     TextWithIcon(
+        modifier = modifier,
         iconResId = delta?.asArrowDropIcon(),
-        iconSize = 12.dp,
-        text = delta?.let { stringResource(id = textResId, abs(it)) } ?: "",
+        iconSize = 16.dp,
+        text = if (delta != null && !delta.isNaN()) stringResource(id = textResId, abs(delta)) else "",
         iconPadding = 0.dp,
         iconColor = MaterialTheme.colorScheme.onSurface,
-        textStyle = MaterialTheme.typography.bodySmall.copy(
-            fontSize = 8.sp
-        ),
+        textStyle = MaterialTheme.typography.bodySmall,
+        iconAlign = IconAlign.End,
+        textAlign = TextAlign.Start,
     )
 }
 

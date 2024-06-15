@@ -3,11 +3,11 @@
 package com.brewthings.app.ui.screens.graph
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -60,26 +60,31 @@ fun GraphScreen(
             )
         },
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
         ) {
-            Graph(
-                modifier = Modifier.height(Size.Graph.HEIGHT),
-                enabledTypes = screenState.enabledTypes,
-                graphData = screenState.graphData,
-                toggleSeries = toggleSeries,
-                onValueSelected = onValueSelected
-            )
-            screenState.selectedInsights?.also {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    GraphInsights(data = it)
+            item {
+                Graph(
+                    modifier = Modifier.height(Size.Graph.HEIGHT),
+                    enabledTypes = screenState.enabledTypes,
+                    graphData = screenState.graphData,
+                    toggleSeries = toggleSeries,
+                    onValueSelected = onValueSelected
+                )
+            }
+            item {
+                screenState.selectedInsights?.also {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        GraphInsights(data = it)
+                    }
                 }
             }
         }
