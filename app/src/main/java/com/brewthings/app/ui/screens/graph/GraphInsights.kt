@@ -22,6 +22,7 @@ import com.brewthings.app.R
 import com.brewthings.app.data.model.Insight
 import com.brewthings.app.data.model.OGInsight
 import com.brewthings.app.data.model.RaptPillInsights
+import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.util.datetime.toFormattedDate
@@ -42,8 +43,8 @@ fun GraphInsights(data: RaptPillInsights) {
                     InsightHeader(it.padding(start = 30.dp), R.string.graph_header_name, TextAlign.Start)
                 },
                 value = { InsightHeader(it, R.string.graph_header_value) },
-                fromPrevious = { InsightHeader(it, R.string.graph_header_from_previous) },
-                fromOG = { InsightHeader(it, R.string.graph_header_from_og) },
+                fromPrevious = { InsightHeader(it.padding(end = 2.dp), R.string.graph_header_from_previous) },
+                fromOG = { InsightHeader(it.padding(end = 2.dp), R.string.graph_header_from_og) },
             )
 
             InsightsRow(
@@ -61,6 +62,38 @@ fun GraphInsights(data: RaptPillInsights) {
                 fromPrevious = { InsightDelta(it, R.string.pill_temperature, data.temperature.deltaFromPrevious) },
                 fromOG = { InsightDelta(it, R.string.pill_temperature, data.temperature.deltaFromOG) },
             )
+
+            InsightsRow(
+                textWithIcon = { InsightTextWithIcon(it, R.drawable.ic_tilt, R.string.graph_data_label_tilt) },
+                value = { InsightValue(it, R.string.pill_tilt, data.tilt.value) },
+                fromPrevious = { InsightDelta(it, R.string.pill_tilt, data.tilt.deltaFromPrevious) },
+                fromOG = { InsightDelta(it, R.string.pill_tilt, data.tilt.deltaFromOG) },
+            )
+
+            InsightsRow(
+                textWithIcon = { InsightBattery(it, data.battery.value) },
+                value = { InsightValue(it, R.string.pill_battery, data.battery.value) },
+                fromPrevious = { InsightDelta(it, R.string.pill_battery, data.battery.deltaFromPrevious) },
+                fromOG = { InsightDelta(it, R.string.pill_battery, data.battery.deltaFromOG) },
+            )
+
+            data.abv?.also { abv ->
+                InsightsRow(
+                    textWithIcon = { InsightTextWithIcon(it, R.drawable.ic_abv, R.string.graph_data_label_abv) },
+                    value = { InsightValue(it, R.string.pill_abv, abv.value) },
+                    fromPrevious = { InsightDelta(it, R.string.pill_abv, abv.deltaFromPrevious) },
+                )
+            }
+
+            data.velocity?.also { velocity ->
+                InsightsRow(
+                    textWithIcon = {
+                        InsightTextWithIcon(it, R.drawable.ic_velocity, R.string.graph_data_label_velocity)
+                    },
+                    value = { InsightValue(it, R.string.pill_velocity, velocity.value) },
+                    fromPrevious = { InsightDelta(it, R.string.pill_velocity, velocity.deltaFromPrevious) },
+                )
+            }
         }
     }
 }
@@ -71,10 +104,10 @@ fun InsightsRow(
     textWithIcon: @Composable (Modifier) -> Unit,
     value: @Composable (Modifier) -> Unit,
     fromPrevious: @Composable (Modifier) -> Unit,
-    fromOG: @Composable (Modifier) -> Unit,
+    fromOG: @Composable (Modifier) -> Unit = { Spacer(it) },
 ) {
     Row(
-        modifier = modifier.padding(top = 8.dp),
+        modifier = modifier.padding(top = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         textWithIcon(Modifier.weight(1.7f))
@@ -112,6 +145,20 @@ fun InsightTextWithIcon(
         iconResId = iconResId,
         iconPadding = 4.dp,
         text = stringResource(id = labelResId),
+        textStyle = MaterialTheme.typography.bodyMedium,
+    )
+}
+
+@Composable
+fun InsightBattery(
+    modifier: Modifier,
+    batteryPercentage: Float,
+) {
+    TextWithIcon(
+        modifier = modifier,
+        icon = { BatteryLevelIndicator(batteryPercentage) },
+        iconPadding = 4.dp,
+        text = stringResource(id = R.string.graph_data_label_battery),
         textStyle = MaterialTheme.typography.bodyMedium,
     )
 }

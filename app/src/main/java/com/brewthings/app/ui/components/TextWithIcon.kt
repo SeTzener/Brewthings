@@ -25,7 +25,7 @@ fun TextWithIcon(
     modifier: Modifier = Modifier,
     text: String,
     icon: @Composable () -> Unit,
-    iconPadding: Dp? = 8.dp,
+    iconPadding: Dp = 8.dp,
     textAlign: TextAlign = TextAlign.Start,
     textStyle: TextStyle = Typography.bodyMedium,
     textColor: Color = MaterialTheme.colorScheme.onSurface,
@@ -41,7 +41,7 @@ fun TextWithIcon(
     ) {
         if (textAlign == TextAlign.Start) {
             icon()
-            iconPadding?.let { Spacer(modifier = Modifier.padding(it)) }
+            Spacer(modifier = Modifier.padding(iconPadding))
         }
 
         Text(
@@ -52,7 +52,7 @@ fun TextWithIcon(
         )
 
         if (textAlign == TextAlign.End) {
-            iconPadding?.let { Spacer(modifier = Modifier.padding(it)) }
+            Spacer(modifier = Modifier.padding(iconPadding))
             icon()
         }
     }
@@ -76,7 +76,7 @@ fun TextWithIcon(
         textAlign = textAlign,
         textStyle = textStyle,
         textColor = textColor,
-        iconPadding = if (iconResId != null) iconPadding else null,
+        iconPadding = iconPadding,
         icon = {
             if (iconResId != null) {
                 Icon(
@@ -85,6 +85,8 @@ fun TextWithIcon(
                     contentDescription = null,
                     tint = iconColor
                 )
+            } else {
+                Spacer(modifier = Modifier.size(iconSize))
             }
         }
     )
