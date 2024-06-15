@@ -39,12 +39,10 @@ fun GraphInsights(data: RaptPillInsights) {
             )
 
             InsightsRow(
-                textWithIcon = {
-                    InsightHeader(it.padding(start = 30.dp), R.string.graph_header_name, TextAlign.Start)
-                },
+                textWithIcon = { InsightHeader(it.padding(start = 30.dp), R.string.graph_header_name) },
                 value = { InsightHeader(it, R.string.graph_header_value) },
-                fromPrevious = { InsightHeader(it.padding(end = 2.dp), R.string.graph_header_from_previous) },
-                fromOG = { InsightHeader(it.padding(end = 2.dp), R.string.graph_header_from_og) },
+                fromPrevious = { InsightHeader(it.padding(start = 4.dp), R.string.graph_header_from_previous) },
+                fromOG = { InsightHeader(it.padding(start = 4.dp), R.string.graph_header_from_og) },
             )
 
             InsightsRow(
@@ -110,9 +108,9 @@ fun InsightsRow(
         modifier = modifier.padding(top = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        textWithIcon(Modifier.weight(1.7f))
+        textWithIcon(Modifier.weight(1.6f))
         value(Modifier.weight(1f))
-        Spacer(modifier = Modifier.size(16.dp))
+        Spacer(modifier = Modifier.size(8.dp))
         fromPrevious(Modifier.weight(1f))
         fromOG(Modifier.weight(1f))
     }
@@ -122,12 +120,11 @@ fun InsightsRow(
 fun InsightHeader(
     modifier: Modifier,
     @StringRes headerResId: Int,
-    textAlign: TextAlign = TextAlign.End,
 ) {
     Text(
         modifier = modifier,
         text = stringResource(id = headerResId),
-        textAlign = textAlign,
+        textAlign = TextAlign.Start,
         style = MaterialTheme.typography.bodyMedium.copy(
             fontWeight = FontWeight.Black
         ),
@@ -172,7 +169,7 @@ fun InsightValue(
     Text(
         modifier = modifier,
         text = stringResource(id = textResId, value),
-        textAlign = TextAlign.End,
+        textAlign = TextAlign.Start,
         style = MaterialTheme.typography.bodyMedium.copy(
             fontWeight = FontWeight.Bold
         ),
@@ -193,7 +190,7 @@ fun InsightDelta(
         iconPadding = 0.dp,
         iconColor = MaterialTheme.colorScheme.onSurface,
         textStyle = MaterialTheme.typography.bodySmall,
-        textAlign = TextAlign.End,
+        textAlign = TextAlign.Start,
     )
 }
 
