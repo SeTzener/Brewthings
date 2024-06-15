@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -39,37 +41,40 @@ fun GraphInsights(data: RaptPillInsights) {
             )
 
             InsightsRow(
-                textWithIcon = { InsightHeader(it.padding(start = 38.dp), R.string.graph_header_name) },
+                icon = { Spacer(modifier = Modifier.size(24.dp)) },
+                label = { InsightHeader(it, R.string.graph_header_name) },
                 value = { InsightHeader(it, R.string.graph_header_value) },
                 fromPrevious = { InsightHeader(it.padding(start = 4.dp), R.string.graph_header_from_previous) },
                 fromOG = { InsightHeader(it.padding(start = 4.dp), R.string.graph_header_from_og) },
             )
 
             InsightsRow(
-                textWithIcon = { InsightTextWithIcon(it, R.drawable.ic_gravity, R.string.graph_data_label_gravity) },
+                icon = { InsightIcon(it, R.drawable.ic_gravity) },
+                label = { InsightLabel(it, R.string.graph_data_label_gravity) },
                 value = { InsightValue(it, R.string.pill_gravity, data.gravity.value) },
                 fromPrevious = { InsightDelta(it, R.string.pill_gravity, data.gravity.deltaFromPrevious) },
                 fromOG = { InsightDelta(it, R.string.pill_gravity, data.gravity.deltaFromOG) },
             )
 
             InsightsRow(
-                textWithIcon = {
-                    InsightTextWithIcon(it, R.drawable.ic_temperature, R.string.graph_data_label_temperature)
-                },
+                icon = { InsightIcon(it, R.drawable.ic_temperature) },
+                label = { InsightLabel(it, R.string.graph_data_label_temperature) },
                 value = { InsightValue(it, R.string.pill_temperature, data.temperature.value) },
                 fromPrevious = { InsightDelta(it, R.string.pill_temperature, data.temperature.deltaFromPrevious) },
                 fromOG = { InsightDelta(it, R.string.pill_temperature, data.temperature.deltaFromOG) },
             )
 
             InsightsRow(
-                textWithIcon = { InsightTextWithIcon(it, R.drawable.ic_tilt, R.string.graph_data_label_tilt) },
+                icon = { InsightIcon(it, R.drawable.ic_tilt) },
+                label = { InsightLabel(it, R.string.graph_data_label_tilt) },
                 value = { InsightValue(it, R.string.pill_tilt, data.tilt.value) },
                 fromPrevious = { InsightDelta(it, R.string.pill_tilt, data.tilt.deltaFromPrevious) },
                 fromOG = { InsightDelta(it, R.string.pill_tilt, data.tilt.deltaFromOG) },
             )
 
             InsightsRow(
-                textWithIcon = { InsightBattery(it, data.battery.value) },
+                icon = { BatteryLevelIndicator(data.battery.value) },
+                label = { InsightLabel(it, R.string.graph_data_label_battery) },
                 value = { InsightValue(it, R.string.pill_battery, data.battery.value) },
                 fromPrevious = { InsightDelta(it, R.string.pill_battery, data.battery.deltaFromPrevious) },
                 fromOG = { InsightDelta(it, R.string.pill_battery, data.battery.deltaFromOG) },
@@ -77,7 +82,8 @@ fun GraphInsights(data: RaptPillInsights) {
 
             data.abv?.also { abv ->
                 InsightsRow(
-                    textWithIcon = { InsightTextWithIcon(it, R.drawable.ic_abv, R.string.graph_data_label_abv) },
+                    icon = { InsightIcon(it, R.drawable.ic_abv) },
+                    label = { InsightLabel(it, R.string.graph_data_label_abv) },
                     value = { InsightValue(it, R.string.pill_abv, abv.value) },
                     fromPrevious = { InsightDelta(it, R.string.pill_abv, abv.deltaFromPrevious) },
                 )
@@ -85,9 +91,8 @@ fun GraphInsights(data: RaptPillInsights) {
 
             data.velocity?.also { velocity ->
                 InsightsRow(
-                    textWithIcon = {
-                        InsightTextWithIcon(it, R.drawable.ic_velocity, R.string.graph_data_label_velocity)
-                    },
+                    icon = { InsightIcon(it, R.drawable.ic_velocity) },
+                    label = { InsightLabel(it, R.string.graph_data_label_velocity) },
                     value = { InsightValue(it, R.string.pill_velocity, velocity.value) },
                     fromPrevious = { InsightDelta(it, R.string.pill_velocity, velocity.deltaFromPrevious) },
                 )
@@ -99,7 +104,8 @@ fun GraphInsights(data: RaptPillInsights) {
 @Composable
 fun InsightsRow(
     modifier: Modifier = Modifier,
-    textWithIcon: @Composable (Modifier) -> Unit,
+    icon: @Composable (Modifier) -> Unit,
+    label: @Composable (Modifier) -> Unit,
     value: @Composable (Modifier) -> Unit,
     fromPrevious: @Composable (Modifier) -> Unit,
     fromOG: @Composable (Modifier) -> Unit = { Spacer(it) },
@@ -108,10 +114,14 @@ fun InsightsRow(
         modifier = modifier.padding(top = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        textWithIcon(Modifier.weight(1.6f))
-        value(Modifier.weight(1f))
+        icon(Modifier)
+        Spacer(modifier = Modifier.size(16.dp))
+        label(Modifier.weight(1f))
         Spacer(modifier = Modifier.size(8.dp))
+        value(Modifier.weight(1f))
+        Spacer(modifier = Modifier.size(16.dp))
         fromPrevious(Modifier.weight(1f))
+        Spacer(modifier = Modifier.size(8.dp))
         fromOG(Modifier.weight(1f))
     }
 }
@@ -132,31 +142,27 @@ fun InsightHeader(
 }
 
 @Composable
-fun InsightTextWithIcon(
+fun InsightIcon(
     modifier: Modifier,
     @DrawableRes iconResId: Int,
-    @StringRes labelResId: Int,
 ) {
-    TextWithIcon(
-        modifier = modifier,
-        iconResId = iconResId,
-        iconPadding = 8.dp,
-        text = stringResource(id = labelResId),
-        textStyle = MaterialTheme.typography.bodyMedium,
+    Icon(
+        modifier = Modifier.size(24.dp),
+        painter = painterResource(id = iconResId),
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.primary
     )
 }
 
 @Composable
-fun InsightBattery(
+fun InsightLabel(
     modifier: Modifier,
-    batteryPercentage: Float,
+    @StringRes labelResId: Int,
 ) {
-    TextWithIcon(
+    Text(
         modifier = modifier,
-        icon = { BatteryLevelIndicator(batteryPercentage) },
-        iconPadding = 4.dp,
-        text = stringResource(id = R.string.graph_data_label_battery),
-        textStyle = MaterialTheme.typography.bodyMedium,
+        text = stringResource(id = labelResId),
+        style = MaterialTheme.typography.bodyMedium,
     )
 }
 
