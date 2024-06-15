@@ -39,7 +39,7 @@ fun GraphInsights(data: RaptPillInsights) {
             )
 
             InsightsRow(
-                textWithIcon = { InsightHeader(it.padding(start = 30.dp), R.string.graph_header_name) },
+                textWithIcon = { InsightHeader(it.padding(start = 38.dp), R.string.graph_header_name) },
                 value = { InsightHeader(it, R.string.graph_header_value) },
                 fromPrevious = { InsightHeader(it.padding(start = 4.dp), R.string.graph_header_from_previous) },
                 fromOG = { InsightHeader(it.padding(start = 4.dp), R.string.graph_header_from_og) },
@@ -126,7 +126,7 @@ fun InsightHeader(
         text = stringResource(id = headerResId),
         textAlign = TextAlign.Start,
         style = MaterialTheme.typography.bodyMedium.copy(
-            fontWeight = FontWeight.Black
+            fontWeight = FontWeight.Bold
         ),
     )
 }
@@ -140,7 +140,7 @@ fun InsightTextWithIcon(
     TextWithIcon(
         modifier = modifier,
         iconResId = iconResId,
-        iconPadding = 4.dp,
+        iconPadding = 8.dp,
         text = stringResource(id = labelResId),
         textStyle = MaterialTheme.typography.bodyMedium,
     )
@@ -170,9 +170,7 @@ fun InsightValue(
         modifier = modifier,
         text = stringResource(id = textResId, value),
         textAlign = TextAlign.Start,
-        style = MaterialTheme.typography.bodyMedium.copy(
-            fontWeight = FontWeight.Bold
-        ),
+        style = MaterialTheme.typography.bodyMedium,
     )
 }
 

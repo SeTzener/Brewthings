@@ -3,6 +3,7 @@ package com.brewthings.app.util.datetime
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.brewthings.app.R
+import kotlin.math.abs
 import kotlin.time.Duration
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -28,7 +29,7 @@ fun Instant.toFormattedDate(
                 return stringResource(R.string.formatted_date_just_now)
 
             (-2 downTo -59L).contains(minutes) ->
-                return stringResource(R.string.formatted_date_minutes_ago, minutes)
+                return stringResource(R.string.formatted_date_minutes_ago, abs(minutes))
         }
 
         // Only hours and minutes have passed since now.
@@ -36,7 +37,7 @@ fun Instant.toFormattedDate(
             -1L ->
                 return stringResource(R.string.formatted_date_hour_ago)
             in -2 downTo -23L ->
-                return stringResource(R.string.formatted_date_hours_ago, hours)
+                return stringResource(R.string.formatted_date_hours_ago, abs(hours))
         }
 
         // Days, hours and minutes have passed since now.
