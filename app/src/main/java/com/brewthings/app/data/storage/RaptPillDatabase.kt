@@ -9,7 +9,7 @@ import com.brewthings.app.R
 import com.brewthings.app.data.utils.ReadScript
 import com.brewthings.app.util.Logger
 
-@Database(entities = [RaptPill::class, RaptPillData::class], version = 1)
+@Database(entities = [RaptPill::class, RaptPillData::class, Gravity::class], version = 1)
 @androidx.room.TypeConverters(TypeConverters::class)
 abstract class RaptPillDatabase : RoomDatabase() {
     abstract fun raptPillDao(): RaptPillDao
