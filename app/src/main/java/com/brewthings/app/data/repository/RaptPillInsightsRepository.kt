@@ -11,10 +11,10 @@ import kotlin.math.abs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -26,18 +26,17 @@ class RaptPillInsightsRepository(
     private val cache = mutableMapOf<Instant, RaptPillInsights>()
     private val selectedTimestamp: MutableStateFlow<Instant?> = MutableStateFlow(null)
 
-    val selectedInsights: Flow<RaptPillInsights?> = selectedTimestamp
-        .flatMapLatest { timestamp ->
-            if (timestamp == null) {
-                flowOf(null)
-            } else {
-                combine(
-                    dao.observeOG(macAddress)
-                        .map { it?.toModelItem() },
+    val selectedInsights: Flow<RaptPillInsights?> = dao.observeOG(macAddress)
+        .map { it?.toModelItem() }
+        .onEach { invalidateCache() }
+        .flatMapLatest { ogData ->
+            selectedTimestamp.flatMapLatest { timestamp ->
+                if (timestamp == null) {
+                    flowOf(null)
+                } else {
                     dao.observeDataAndPrevious(macAddress, timestamp)
                         .map { list -> list.map { it.toModelItem() } }
-                ) { ogData, data ->
-                    getInsights(timestamp, ogData, data)
+                        .map { data -> getInsights(timestamp, ogData, data) }
                 }
             }
         }
