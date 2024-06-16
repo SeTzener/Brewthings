@@ -253,7 +253,7 @@ fun GraphInsightsPreview() {
                     value = 0.020f,
                     deltaFromPrevious = -0.002f,
                 ),
-                durationFromOG = timestamp - timestampOG,
+                durationFromOG = timestampOG - timestamp,
             )
         )
     }
