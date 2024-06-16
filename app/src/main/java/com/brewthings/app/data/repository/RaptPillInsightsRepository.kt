@@ -52,11 +52,6 @@ class RaptPillInsightsRepository(
             return cachedData
         }
 
-        if (ogData == null) {
-            logger.error("No OG data found for $macAddress")
-            return null
-        }
-
         if (data.isEmpty()) {
             logger.error("No data found for $macAddress, $timestamp")
             return null
@@ -76,7 +71,7 @@ class RaptPillInsightsRepository(
     }
 
     private fun calculateInsights(
-        ogData: RaptPillData,
+        ogData: RaptPillData?,
         pillData: RaptPillData,
         previousData: RaptPillData?
     ): RaptPillInsights {
@@ -86,7 +81,7 @@ class RaptPillInsightsRepository(
                     "Previous: $previousData\n" +
                     "OG: $ogData"
         )
-        if (pillData == ogData) {
+        if (ogData == null || pillData == ogData) {
             return RaptPillInsights(
                 timestamp = pillData.timestamp,
                 temperature = Insight(value = pillData.temperature),
