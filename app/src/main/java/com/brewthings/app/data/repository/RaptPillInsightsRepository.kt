@@ -20,7 +20,10 @@ class RaptPillInsightsRepository(
 
     suspend fun getInsights(timestamp: Instant): RaptPillInsights? {
         val cachedData = cache[timestamp]
-        if (cachedData != null) return cachedData
+        if (cachedData != null) {
+            logger.info("Fetching cached insights for $timestamp.")
+            return cachedData
+        }
 
         val ogData = dao.getOG(macAddress)?.toModelItem()
         if (ogData == null) {
@@ -51,6 +54,11 @@ class RaptPillInsightsRepository(
         pillData: RaptPillData,
         previousData: RaptPillData?
     ): RaptPillInsights {
+        logger.info("Calculating insights for for ${pillData.timestamp}.\n" +
+                "PillData: $pillData.\n" +
+                "Previous: $previousData\n" +
+                "OG: $ogData"
+        )
         if (pillData == ogData) {
             return RaptPillInsights(
                 timestamp = pillData.timestamp,
