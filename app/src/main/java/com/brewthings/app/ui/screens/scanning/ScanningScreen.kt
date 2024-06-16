@@ -19,10 +19,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Surface
-import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
@@ -30,12 +26,15 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -52,9 +51,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.brewthings.app.R
 import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.RaptPillData
@@ -65,6 +66,7 @@ import com.brewthings.app.ui.components.ScanPane
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.screens.navigation.legacy.Destination
 import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder
+import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.ui.theme.Typography
 import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
@@ -285,13 +287,10 @@ private fun ScannedPill(
             isExpanded = isExpanded,
             topContent = { ScannedPillTopContent(pill, isInScannedPills, savePill) },
             expandedContent = {
-                PillData(
-                    name = pill.name,
-                    macAddress = pill.macAddress,
-                    pillData = pill.data,
-                    navGraph = navGraph,
-                    stopScan = stopScan,
-                )
+                Column {
+                    PillData(pillData = pill.data)
+                    PillFooter(name = pill.name, macAddress = pill.macAddress, navGraph = navGraph, stopScan = stopScan)
+                }
             }
         )
     }
@@ -348,7 +347,7 @@ private fun ScannedPillTopContent(
             }
         }
 
-        Spacer(modifier = Modifier.padding(12.dp))
+        Spacer(modifier = Modifier.padding(24.dp))
 
         IconButton(onClick = { savePill(pill) }) {
             Icon(
@@ -377,17 +376,10 @@ private fun Pill(
                 PillTopContent(pill, onPillUpdate)
             }
         }
-        Column {
-            val maxTimestamp = pill.data.maxOfOrNull { it.timestamp } ?: Instant.DISTANT_PAST
-            pill.data.find { it.timestamp == maxTimestamp }?.let { data ->
-                PillData(
-                    name = pill.name,
-                    macAddress = pill.macAddress,
-                    pillData = data,
-                    navGraph = navGraph,
-                    stopScan = stopScan
-                )
-            }
+        val maxTimestamp = pill.data.maxOfOrNull { it.timestamp } ?: Instant.DISTANT_PAST
+        pill.data.find { it.timestamp == maxTimestamp }?.let { data ->
+            PillData(pillData = data)
+            PillFooter(name = pill.name, macAddress = pill.macAddress, navGraph = navGraph, stopScan = stopScan)
         }
     }
 }
@@ -401,7 +393,7 @@ private fun PillTopContent(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(start = 20.dp, end = 20.dp),
+            .padding(start = 16.dp, end = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
@@ -422,88 +414,73 @@ private fun PillTopContent(
                 style = Typography.bodySmall,
             )
         }
-        Column {
-            DropDownMenu(pill, onPillUpdate)
+
+        DropDownMenu(pill, onPillUpdate)
+    }
+}
+
+@Composable
+private fun PillData(pillData: RaptPillData?) {
+    newOrCached(pillData, null)?.let { data ->
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, top = 8.dp, bottom = 16.dp, end = 62.dp),
+        ) {
+            Column {
+                TextWithIcon(
+                    iconResId = R.drawable.ic_gravity,
+                    text = stringResource(id = R.string.pill_gravity, data.gravity)
+                )
+
+                Spacer(modifier = Modifier.padding(8.dp))
+
+                TextWithIcon(
+                    iconResId = R.drawable.ic_temperature,
+                    text = stringResource(id = R.string.pill_temperature, data.temperature)
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Column {
+                TextWithIcon(
+                    iconResId = R.drawable.ic_tilt,
+                    text = stringResource(id = R.string.pill_tilt, data.floatingAngle)
+                )
+
+                Spacer(modifier = Modifier.padding(8.dp))
+
+                TextWithIcon(
+                    icon = { BatteryLevelIndicator(data.battery) },
+                    text = stringResource(id = R.string.pill_battery, data.battery)
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun PillData(
+private fun PillFooter(
+    modifier: Modifier = Modifier,
     name: String?,
     macAddress: String,
-    pillData: RaptPillData?,
     navGraph: NavController,
     stopScan: () -> Unit
 ) {
-    newOrCached(pillData, null)?.let { data ->
-        Box(modifier = Modifier.fillMaxSize()) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, top = 8.dp, bottom = 16.dp, end = 62.dp),
-            ) {
-                Column {
-                    TextWithIcon(
-                        iconResId = R.drawable.ic_gravity,
-                        text = stringResource(id = R.string.pill_gravity, data.gravity)
-                    )
-
-                    Spacer(modifier = Modifier.padding(8.dp))
-
-                    TextWithIcon(
-                        iconResId = R.drawable.ic_temperature,
-                        text = stringResource(id = R.string.pill_temperature, data.temperature)
-                    )
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Column {
-                    TextWithIcon(
-                        iconResId = R.drawable.ic_tilt,
-                        text = stringResource(id = R.string.pill_tilt, data.floatingAngle)
-                    )
-
-                    Spacer(modifier = Modifier.padding(8.dp))
-
-                    TextWithIcon(
-                        icon = { BatteryLevelIndicator(data.battery) },
-                        text = stringResource(id = R.string.pill_battery, data.battery)
-                    )
-                }
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, top = 8.dp, bottom = 16.dp, end = 62.dp),
-            ) {
-                Column {
-                    Spacer(modifier = Modifier.padding(40.dp))
-                    Column {
-                        Divider(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 50.dp),
-                            color = Color.LightGray
-                        )
-                        IconButton(
-                            onClick = {
-                                stopScan()
-                                ParameterHolder.Graph.name = name
-                                ParameterHolder.Graph.macAddress = macAddress
-                                navGraph.navigate(route = Destination.Graph)
-                            },
-                        ) {
-                            TextWithIcon(
-                                iconResId = R.drawable.ic_pill,
-                                text = stringResource(id = R.string.pill_graph),
-                            )
-                        }
-                    }
-                }
-            }
-        }
+    TextButton(
+        modifier = modifier.padding(bottom = 8.dp, start = 10.dp, end = 10.dp),
+        onClick = {
+            stopScan()
+            ParameterHolder.Graph.name = name
+            ParameterHolder.Graph.macAddress = macAddress
+            navGraph.navigate(route = Destination.Graph)
+        },
+    ) {
+        Text(
+            text = stringResource(id = R.string.pill_graph),
+            style = Typography.bodyMedium,
+        )
     }
 }
 
@@ -626,3 +603,50 @@ fun <T : Any?> newOrCached(
 
 private fun isValidName(oldName: String?, newName: String?): Boolean =
     newName?.trim()?.let { it.isNotEmpty() && it != oldName } ?: false
+
+@Preview(apiLevel = 33) // workaround for AS Hedgehog and below
+@Composable
+fun ScannedPillPreview() {
+    BrewthingsTheme {
+        ScannedPill(
+            pill = ScannedRaptPill(
+                name = "Pill Name",
+                macAddress = "00:00:00:00:00:00",
+                rssi = -50,
+                data = mockRaptPillData()
+            ),
+            isExpanded = true,
+            isInScannedPills = true,
+            navGraph = rememberNavController(),
+            savePill = {},
+            stopScan = {}
+        )
+    }
+}
+
+@Preview(apiLevel = 33) // workaround for AS Hedgehog and below
+@Composable
+fun PillPreview() {
+    BrewthingsTheme {
+        Pill(
+            pill = RaptPill(
+                name = "Pill Name",
+                macAddress = "00:00:00:00:00:00",
+                data = listOf(mockRaptPillData())
+            ),
+            navGraph = rememberNavController(),
+            onPillUpdate = {},
+            stopScan = {}
+        )
+    }
+}
+
+private fun mockRaptPillData() = RaptPillData(
+    timestamp = Instant.DISTANT_PAST,
+    gravity = 1.0f,
+    temperature = 20.0f,
+    x = 236.0625f,
+    y = 4049.375f,
+    z = 1008.9375f,
+    battery = 100f
+)
