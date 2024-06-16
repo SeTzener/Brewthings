@@ -613,15 +613,7 @@ fun ScannedPillPreview() {
                 name = "Pill Name",
                 macAddress = "00:00:00:00:00:00",
                 rssi = -50,
-                data = RaptPillData(
-                    timestamp = Instant.DISTANT_PAST,
-                    gravity = 1.0f,
-                    temperature = 20.0f,
-                    x = 236.0625f,
-                    y = 4049.375f,
-                    z = 1008.9375f,
-                    battery = 100f
-                )
+                data = mockRaptPillData()
             ),
             isExpanded = true,
             isInScannedPills = true,
@@ -640,17 +632,7 @@ fun PillPreview() {
             pill = RaptPill(
                 name = "Pill Name",
                 macAddress = "00:00:00:00:00:00",
-                data = listOf(
-                    RaptPillData(
-                        timestamp = Instant.DISTANT_PAST,
-                        gravity = 1.0f,
-                        temperature = 20.0f,
-                        x = 236.0625f,
-                        y = 4049.375f,
-                        z = 1008.9375f,
-                        battery = 100f
-                    )
-                )
+                data = listOf(mockRaptPillData())
             ),
             navGraph = rememberNavController(),
             onPillUpdate = {},
@@ -658,3 +640,13 @@ fun PillPreview() {
         )
     }
 }
+
+private fun mockRaptPillData() = RaptPillData(
+    timestamp = Instant.DISTANT_PAST,
+    gravity = 1.0f,
+    temperature = 20.0f,
+    x = 236.0625f,
+    y = 4049.375f,
+    z = 1008.9375f,
+    battery = 100f
+)
