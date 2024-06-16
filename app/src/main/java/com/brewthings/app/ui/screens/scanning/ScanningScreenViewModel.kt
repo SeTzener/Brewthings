@@ -15,12 +15,14 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class ScanningScreenViewModel(
-    private val repo: RaptPillRepository
-) : ViewModel() {
+class ScanningScreenViewModel : ViewModel(), KoinComponent {
     var screenState: ScanningScreenState by mutableStateOf(ScanningScreenState())
         private set
+
+    private val repo: RaptPillRepository by inject()
 
     private var scanJob: Job? = null
     private val scannedRaptPills: MutableList<ScannedRaptPill> = mutableListOf()
