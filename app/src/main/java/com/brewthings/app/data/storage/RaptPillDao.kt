@@ -29,7 +29,7 @@ interface RaptPillDao {
                 "AND RaptPillData.timestamp <= :timestamp " +
                 "ORDER BY RaptPillData.timestamp DESC LIMIT 2"
     )
-    suspend fun getDataAndPrevious(macAddress: String, timestamp: Instant): List<RaptPillData>
+    fun observeDataAndPrevious(macAddress: String, timestamp: Instant): Flow<List<RaptPillData>>
 
     @Query(
         "SELECT * FROM RaptPillData " +
@@ -37,7 +37,7 @@ interface RaptPillDao {
                 "WHERE RaptPill.macAddress = :macAddress " +
                 "ORDER BY RaptPillData.timestamp ASC LIMIT 1"
     )
-    suspend fun getOG(macAddress: String): RaptPillData? // TODO: change to query set OG.
+    fun observeOG(macAddress: String): Flow<RaptPillData?> // TODO: change to query set OG.
 
     @Query("SELECT pillId FROM RaptPill WHERE macAddress = :macAddress")
     suspend fun getPillIdByMacAddress(macAddress: String): Long?

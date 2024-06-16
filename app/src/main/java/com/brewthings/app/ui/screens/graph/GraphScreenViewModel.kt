@@ -32,6 +32,7 @@ class GraphScreenViewModel(
 
     init {
         loadGraphData(macAddress)
+        loadInsights()
     }
 
     private fun loadGraphData(macAddress: String) {
@@ -42,6 +43,14 @@ class GraphScreenViewModel(
                     graphData = data,
                     enabledTypes = data.series.map { it.type }.toSet()
                 )
+            }
+        }
+    }
+
+    private fun loadInsights() {
+        viewModelScope.launch {
+            insightsRepo.selectedInsights.collect { insights ->
+                screenState = screenState.copy(selectedInsights = insights)
             }
         }
     }
@@ -58,12 +67,9 @@ class GraphScreenViewModel(
     }
 
     fun onValueSelected(data: Any?) {
-        val raptPillData = data as RaptPillData // Any? is casted to RaptPillData
         viewModelScope.launch {
-            val selectedInsight = insightsRepo.getInsights(raptPillData.timestamp)
-            if (selectedInsight != null) {
-                screenState = screenState.copy(selectedInsights = selectedInsight)
-            }
+            val raptPillData = data as RaptPillData // Any? is casted to RaptPillData
+            insightsRepo.setTimestamp(raptPillData.timestamp)
         }
     }
 

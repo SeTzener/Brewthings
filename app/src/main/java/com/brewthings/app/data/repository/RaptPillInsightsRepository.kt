@@ -8,44 +8,71 @@ import com.brewthings.app.data.storage.RaptPillDao
 import com.brewthings.app.data.storage.toModelItem
 import com.brewthings.app.util.Logger
 import kotlin.math.abs
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class RaptPillInsightsRepository(
     private val macAddress: String,
     private val dao: RaptPillDao
 ) {
     private val logger = Logger("RaptPillInsightsRepository")
-
     private val cache = mutableMapOf<Instant, RaptPillInsights>()
+    private val selectedTimestamp: MutableStateFlow<Instant?> = MutableStateFlow(null)
 
-    suspend fun getInsights(timestamp: Instant): RaptPillInsights? {
+    val selectedInsights: Flow<RaptPillInsights?> = selectedTimestamp
+        .flatMapLatest { timestamp ->
+            if (timestamp == null) {
+                flowOf(null)
+            } else {
+                combine(
+                    dao.observeOG(macAddress)
+                        .map { it?.toModelItem() },
+                    dao.observeDataAndPrevious(macAddress, timestamp)
+                        .map { list -> list.map { it.toModelItem() } }
+                ) { ogData, data ->
+                    getInsights(timestamp, ogData, data)
+                }
+            }
+        }
+
+    suspend fun setTimestamp(timestamp: Instant) {
+        selectedTimestamp.emit(timestamp)
+    }
+
+    private fun getInsights(timestamp: Instant, ogData: RaptPillData?, data: List<RaptPillData>): RaptPillInsights? {
         val cachedData = cache[timestamp]
         if (cachedData != null) {
             logger.info("Fetching cached insights for $timestamp.")
             return cachedData
         }
 
-        val ogData = dao.getOG(macAddress)?.toModelItem()
         if (ogData == null) {
             logger.error("No OG data found for $macAddress")
             return null
         }
 
-        val data = dao.getDataAndPrevious(macAddress, timestamp)
         if (data.isEmpty()) {
             logger.error("No data found for $macAddress, $timestamp")
             return null
         }
 
-        val pillData = data.first().toModelItem()
-        val previousData = data.getOrNull(1)?.toModelItem()
+        val pillData = data.first()
+        val previousData = data.getOrNull(1)
 
         return calculateInsights(ogData, pillData, previousData).also {
             cache[timestamp] = it
         }
     }
 
-    fun invalidateCache() {
+    private fun invalidateCache() {
+        logger.info("Invalidating cache.")
         cache.clear()
     }
 
@@ -54,10 +81,11 @@ class RaptPillInsightsRepository(
         pillData: RaptPillData,
         previousData: RaptPillData?
     ): RaptPillInsights {
-        logger.info("Calculating insights for for ${pillData.timestamp}.\n" +
-                "PillData: $pillData.\n" +
-                "Previous: $previousData\n" +
-                "OG: $ogData"
+        logger.info(
+            "Calculating insights for for ${pillData.timestamp}.\n" +
+                    "PillData: $pillData.\n" +
+                    "Previous: $previousData\n" +
+                    "OG: $ogData"
         )
         if (pillData == ogData) {
             return RaptPillInsights(
@@ -97,9 +125,9 @@ class RaptPillInsightsRepository(
                 value = abv,
                 deltaFromPrevious = previousData?.let { abv - calculateABV(ogData.gravity, it.gravity) },
             ),
-            velocity = velocity?.let {
+            velocity = velocity?.let { value ->
                 OGInsight(
-                    value = it,
+                    value = value,
                     deltaFromPrevious = previousData?.let { calculateVelocity(it, pillData) },
                 )
             },
