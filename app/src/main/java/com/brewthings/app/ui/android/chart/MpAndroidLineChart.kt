@@ -40,7 +40,7 @@ class MpAndroidLineChart(
         }
 
         override fun onNothingSelected() {
-            // do nothing.
+            onValueSelected(null)
         }
     }
 

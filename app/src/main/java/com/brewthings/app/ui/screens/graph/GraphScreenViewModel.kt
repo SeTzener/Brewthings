@@ -68,8 +68,8 @@ class GraphScreenViewModel(
 
     fun onValueSelected(data: Any?) {
         viewModelScope.launch {
-            val raptPillData = data as RaptPillData // Any? is casted to RaptPillData
-            insightsRepo.setTimestamp(raptPillData.timestamp)
+            val raptPillData = data as RaptPillData? // Any? is casted to RaptPillData?
+            insightsRepo.setTimestamp(raptPillData?.timestamp)
         }
     }
 

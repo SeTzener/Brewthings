@@ -41,7 +41,7 @@ class RaptPillInsightsRepository(
             }
         }
 
-    suspend fun setTimestamp(timestamp: Instant) {
+    suspend fun setTimestamp(timestamp: Instant?) {
         selectedTimestamp.emit(timestamp)
     }
 
