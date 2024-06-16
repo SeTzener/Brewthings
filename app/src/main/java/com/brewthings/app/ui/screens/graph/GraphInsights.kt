@@ -45,7 +45,7 @@ fun GraphInsights(data: RaptPillInsights) {
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
                     text = stringResource(
-                        id = R.string.graph_data_duration_since_brew,
+                        id = R.string.graph_data_duration_since_og,
                         data.durationFromOG.toFormattedDuration()
                     ),
                     style = MaterialTheme.typography.bodySmall,
