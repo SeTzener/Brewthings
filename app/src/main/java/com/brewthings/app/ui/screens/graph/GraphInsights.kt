@@ -29,6 +29,7 @@ import com.brewthings.app.ui.components.IconAlign
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.util.datetime.toFormattedDate
+import com.brewthings.app.util.datetime.toFormattedDuration
 import kotlin.math.abs
 import kotlinx.datetime.Instant
 
@@ -40,6 +41,16 @@ fun GraphInsights(data: RaptPillInsights) {
                 text = data.timestamp.toFormattedDate(),
                 style = MaterialTheme.typography.bodyMedium,
             )
+            data.durationFromOG?.also {
+                Text(
+                    modifier = Modifier.padding(top = 4.dp),
+                    text = stringResource(
+                        id = R.string.graph_data_duration_since_brew,
+                        data.durationFromOG.toFormattedDuration()
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
 
             InsightsRow(
                 icon = { Spacer(modifier = Modifier.size(24.dp)) },
@@ -210,10 +221,12 @@ private fun Float.asArrowDropIcon(): Int? = when {
 @Preview(apiLevel = 33) // workaround for AS Hedgehog and below
 @Composable
 fun GraphInsightsPreview() {
+    val timestamp = Instant.parse("2024-06-01T15:46:31Z")
+    val timestampOG = Instant.parse("2024-05-26T00:00:00Z")
     BrewthingsTheme {
         GraphInsights(
             data = RaptPillInsights(
-                timestamp = Instant.fromEpochMilliseconds(1716738391308L),
+                timestamp = timestamp,
                 temperature = Insight(
                     value = 22.43f,
                     deltaFromOG = 5.3f,
@@ -239,7 +252,8 @@ fun GraphInsightsPreview() {
                 velocity = OGInsight(
                     value = 0.020f,
                     deltaFromPrevious = -0.002f,
-                )
+                ),
+                durationFromOG = timestamp - timestampOG,
             )
         )
     }

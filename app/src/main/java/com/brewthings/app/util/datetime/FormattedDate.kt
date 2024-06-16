@@ -26,7 +26,7 @@ fun Instant.toFormattedDate(
         // Only minutes have passed since now.
         days == 0L && hours == 0L -> when {
             (0 downTo -1L).contains(minutes) ->
-                return stringResource(R.string.formatted_date_just_now)
+                return stringResource(R.string.formatted_date_less_than_a_minute)
 
             (-2 downTo -59L).contains(minutes) ->
                 return stringResource(R.string.formatted_date_minutes_ago, abs(minutes))
@@ -46,12 +46,17 @@ fun Instant.toFormattedDate(
             val (daysFromStartOfDay, _, _) = diffFromStartOfDay.getDaysHoursAndMinutes()
 
             when (daysFromStartOfDay) {
-                in -1L downTo -6L ->
-                    return date.formatDateTime("EEEE, HH:mm", timeZone)
+                in -1L downTo -6L -> {
+                    val lastWeekday = stringResource(
+                        id = R.string.formatted_date_last_weekday,
+                        date.formatDateTime("EEEE", timeZone)
+                    )
+                    return "$lastWeekday, ${date.formatDateTime("MMM d, HH:mm", timeZone)}"
+                }
             }
         }
     }
 
     // Covering both dates older than 1 week ago and dates in the future.
-    return date.formatDateTime("MMM d, HH:mm", timeZone)
+    return date.formatDateTime("MMM d, yyyy, HH:mm", timeZone)
 }
