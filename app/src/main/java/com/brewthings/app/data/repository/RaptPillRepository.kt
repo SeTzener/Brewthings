@@ -6,6 +6,8 @@ import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.storage.RaptPillDao
 import com.brewthings.app.data.storage.RaptPillReadings
+import com.brewthings.app.data.storage.toDataItem
+import com.brewthings.app.data.storage.toModelItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -55,19 +57,3 @@ class RaptPillRepository(
             data.map { it.toModelItem() }
         }
 }
-
-private fun RaptPill.toDataItem() = com.brewthings.app.data.storage.RaptPill(
-    macAddress = macAddress,
-    name = name,
-)
-
-private fun com.brewthings.app.data.storage.RaptPillData.toModelItem(): RaptPillData =
-    RaptPillData(
-        timestamp = readings.timestamp,
-        temperature = readings.temperature,
-        gravity = readings.gravity,
-        x = readings.x,
-        y = readings.y,
-        z = readings.z,
-        battery = readings.battery,
-    )

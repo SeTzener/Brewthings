@@ -1,6 +1,7 @@
 package com.brewthings.app.di
 
 import com.brewthings.app.data.ble.RaptPillScanner
+import com.brewthings.app.data.repository.RaptPillInsightsRepository
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.data.storage.RaptPillDatabase
 import com.brewthings.app.ui.screens.graph.GraphScreenViewModel
@@ -14,6 +15,7 @@ val appModule = module {
     single { RaptPillDatabase.create(context = androidContext()) }
     factory { get<RaptPillDatabase>().raptPillDao() }
     factory { RaptPillRepository(scanner = get(), dao = get()) }
-    viewModel { ScanningScreenViewModel(repo = get()) }
-    viewModel { GraphScreenViewModel(repo = get()) }
+    factory { RaptPillInsightsRepository(macAddress = get(), dao = get()) }
+    viewModel { ScanningScreenViewModel() }
+    viewModel { GraphScreenViewModel() }
 }
