@@ -37,20 +37,7 @@ import kotlinx.datetime.Instant
 fun GraphInsights(data: RaptPillInsights) {
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = data.timestamp.toFormattedDate(),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            data.durationFromOG?.also {
-                Text(
-                    modifier = Modifier.padding(top = 4.dp),
-                    text = stringResource(
-                        id = R.string.graph_data_duration_since_og,
-                        data.durationFromOG.toFormattedDuration()
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
+            InsightsTimeHeader(data)
 
             InsightsRow(
                 icon = { Spacer(modifier = Modifier.size(24.dp)) },
@@ -114,6 +101,33 @@ fun GraphInsights(data: RaptPillInsights) {
 }
 
 @Composable
+fun InsightsTimeHeader(data: RaptPillInsights) {
+    Row(
+        modifier = Modifier.padding(bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        InsightIcon(iconResId = R.drawable.ic_calendar)
+        Spacer(modifier = Modifier.size(16.dp))
+        Column {
+            Text(
+                text = data.timestamp.toFormattedDate(),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            data.durationFromOG?.also {
+                Text(
+                    modifier = Modifier.padding(top = 4.dp),
+                    text = stringResource(
+                        id = R.string.graph_data_duration_since_og,
+                        data.durationFromOG.toFormattedDuration()
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun InsightsRow(
     modifier: Modifier = Modifier,
     icon: @Composable (Modifier) -> Unit,
@@ -140,7 +154,7 @@ fun InsightsRow(
 
 @Composable
 fun InsightHeader(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     @StringRes headerResId: Int,
 ) {
     Text(
@@ -155,11 +169,11 @@ fun InsightHeader(
 
 @Composable
 fun InsightIcon(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     @DrawableRes iconResId: Int,
 ) {
     Icon(
-        modifier = Modifier.size(24.dp),
+        modifier = modifier.size(24.dp),
         painter = painterResource(id = iconResId),
         contentDescription = null,
         tint = MaterialTheme.colorScheme.primary
@@ -168,7 +182,7 @@ fun InsightIcon(
 
 @Composable
 fun InsightLabel(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     @StringRes labelResId: Int,
 ) {
     Text(
@@ -180,7 +194,7 @@ fun InsightLabel(
 
 @Composable
 fun InsightValue(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     @StringRes textResId: Int,
     value: Float,
 ) {
@@ -194,7 +208,7 @@ fun InsightValue(
 
 @Composable
 fun InsightDelta(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     @StringRes textResId: Int,
     delta: Float?,
 ) {
