@@ -125,7 +125,7 @@ class RaptPillInsightsRepository(
                     deltaFromPrevious = previousData?.let { calculateVelocity(it, pillData) },
                 )
             },
-            durationFromOG = pillData.timestamp - ogData.timestamp,
+            durationFromOG = ogData.timestamp - pillData.timestamp,
         )
     }
 
