@@ -29,6 +29,7 @@ import com.brewthings.app.ui.components.IconAlign
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.util.datetime.toFormattedDate
+import com.brewthings.app.util.datetime.toFormattedDuration
 import kotlin.math.abs
 import kotlinx.datetime.Instant
 
@@ -36,10 +37,7 @@ import kotlinx.datetime.Instant
 fun GraphInsights(data: RaptPillInsights) {
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = data.timestamp.toFormattedDate(),
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            InsightsTimeHeader(data)
 
             InsightsRow(
                 icon = { Spacer(modifier = Modifier.size(24.dp)) },
@@ -103,6 +101,33 @@ fun GraphInsights(data: RaptPillInsights) {
 }
 
 @Composable
+fun InsightsTimeHeader(data: RaptPillInsights) {
+    Row(
+        modifier = Modifier.padding(bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        InsightIcon(iconResId = R.drawable.ic_calendar)
+        Spacer(modifier = Modifier.size(16.dp))
+        Column {
+            Text(
+                text = data.timestamp.toFormattedDate(),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            data.durationFromOG?.also {
+                Text(
+                    modifier = Modifier.padding(top = 4.dp),
+                    text = stringResource(
+                        id = R.string.graph_data_duration_since_og,
+                        data.durationFromOG.toFormattedDuration()
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun InsightsRow(
     modifier: Modifier = Modifier,
     icon: @Composable (Modifier) -> Unit,
@@ -129,7 +154,7 @@ fun InsightsRow(
 
 @Composable
 fun InsightHeader(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     @StringRes headerResId: Int,
 ) {
     Text(
@@ -144,11 +169,11 @@ fun InsightHeader(
 
 @Composable
 fun InsightIcon(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     @DrawableRes iconResId: Int,
 ) {
     Icon(
-        modifier = Modifier.size(24.dp),
+        modifier = modifier.size(24.dp),
         painter = painterResource(id = iconResId),
         contentDescription = null,
         tint = MaterialTheme.colorScheme.primary
@@ -157,7 +182,7 @@ fun InsightIcon(
 
 @Composable
 fun InsightLabel(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     @StringRes labelResId: Int,
 ) {
     Text(
@@ -169,7 +194,7 @@ fun InsightLabel(
 
 @Composable
 fun InsightValue(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     @StringRes textResId: Int,
     value: Float,
 ) {
@@ -183,7 +208,7 @@ fun InsightValue(
 
 @Composable
 fun InsightDelta(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     @StringRes textResId: Int,
     delta: Float?,
 ) {
@@ -210,10 +235,12 @@ private fun Float.asArrowDropIcon(): Int? = when {
 @Preview(apiLevel = 33) // workaround for AS Hedgehog and below
 @Composable
 fun GraphInsightsPreview() {
+    val timestamp = Instant.parse("2024-06-01T15:46:31Z")
+    val timestampOG = Instant.parse("2024-05-26T00:00:00Z")
     BrewthingsTheme {
         GraphInsights(
             data = RaptPillInsights(
-                timestamp = Instant.fromEpochMilliseconds(1716738391308L),
+                timestamp = timestamp,
                 temperature = Insight(
                     value = 22.43f,
                     deltaFromOG = 5.3f,
@@ -239,7 +266,8 @@ fun GraphInsightsPreview() {
                 velocity = OGInsight(
                     value = 0.020f,
                     deltaFromPrevious = -0.002f,
-                )
+                ),
+                durationFromOG = timestampOG - timestamp,
             )
         )
     }

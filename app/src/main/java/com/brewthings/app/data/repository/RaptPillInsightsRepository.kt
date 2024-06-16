@@ -41,7 +41,7 @@ class RaptPillInsightsRepository(
             }
         }
 
-    suspend fun setTimestamp(timestamp: Instant) {
+    suspend fun setTimestamp(timestamp: Instant?) {
         selectedTimestamp.emit(timestamp)
     }
 
@@ -50,11 +50,6 @@ class RaptPillInsightsRepository(
         if (cachedData != null) {
             logger.info("Fetching cached insights for $timestamp.")
             return cachedData
-        }
-
-        if (ogData == null) {
-            logger.error("No OG data found for $macAddress")
-            return null
         }
 
         if (data.isEmpty()) {
@@ -76,7 +71,7 @@ class RaptPillInsightsRepository(
     }
 
     private fun calculateInsights(
-        ogData: RaptPillData,
+        ogData: RaptPillData?,
         pillData: RaptPillData,
         previousData: RaptPillData?
     ): RaptPillInsights {
@@ -86,7 +81,7 @@ class RaptPillInsightsRepository(
                     "Previous: $previousData\n" +
                     "OG: $ogData"
         )
-        if (pillData == ogData) {
+        if (ogData == null || pillData == ogData) {
             return RaptPillInsights(
                 timestamp = pillData.timestamp,
                 temperature = Insight(value = pillData.temperature),
@@ -130,6 +125,7 @@ class RaptPillInsightsRepository(
                     deltaFromPrevious = previousData?.let { calculateVelocity(it, pillData) },
                 )
             },
+            durationFromOG = ogData.timestamp - pillData.timestamp,
         )
     }
 
