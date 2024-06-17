@@ -19,6 +19,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class ScanningScreenViewModel : ViewModel(), KoinComponent {
+    // This is a hack to prevent the scan from starting on navigation.
+    private var isFirstLoad = true
+
     var screenState: ScanningScreenState by mutableStateOf(ScanningScreenState())
         private set
 
@@ -32,12 +35,19 @@ class ScanningScreenViewModel : ViewModel(), KoinComponent {
     init {
         observeBluetoothAvailability()
         observeDatabase()
-        toggleScan()
     }
 
     fun savePill(scannedRaptPill: ScannedRaptPill) {
         viewModelScope.launch {
             repo.save(scannedRaptPill)
+        }
+    }
+
+    fun onFirstLoad() {
+        if (isFirstLoad) {
+            logger.info("Starting scan on first load.")
+            toggleScan()
+            isFirstLoad = false
         }
     }
 
