@@ -38,6 +38,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -90,10 +91,11 @@ fun ScanningScreen(
                 state = viewModel.screenState,
                 navGraph = navController,
                 onRssiThresholdChanged = viewModel::onRssiThresholdChanged,
+                onFirstLoad = viewModel::onFirstLoad,
                 toggleScan = viewModel::toggleScan,
+                stopScan = viewModel::stopScan,
                 savePill = viewModel::savePill,
                 onPillUpdate = viewModel::onPillUpdate,
-                stopScan = viewModel::stopScan,
             )
         }
     }
@@ -104,12 +106,17 @@ fun ScanningScreen(
 private fun ScanningScreen(
     state: ScanningScreenState,
     navGraph: NavController,
-    onRssiThresholdChanged: (Int) -> Unit,
+    onFirstLoad: () -> Unit,
     toggleScan: () -> Unit,
+    stopScan: () -> Unit,
+    onRssiThresholdChanged: (Int) -> Unit,
     savePill: (ScannedRaptPill) -> Unit,
     onPillUpdate: (RaptPill) -> Unit,
-    stopScan: () -> Unit
 ) {
+    LaunchedEffect(Unit) {
+        onFirstLoad()
+    }
+
     val scannedPills = newOrCached(state.scannedPills, emptyList())
     val savedPills = newOrCached(state.savedPills, emptyList())
     LazyColumn(
