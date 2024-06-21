@@ -15,7 +15,6 @@ fun Instant.toFormattedDate(
     timeZone: TimeZone = TimeZone.currentSystemDefault()
 ): String {
     val now = clock.now()
-    val startOfDay = startOfDay(now = now, timeZone = timeZone)
     val date = this
 
     // Diff will have negative values for past dates, positive values for future dates.
@@ -46,13 +45,10 @@ fun Instant.toFormattedDate(
 
         // Days, hours and minutes have passed since now.
         days != 0L -> {
-            val diffFromStartOfDay = date - startOfDay
-            val (daysFromStartOfDay, _, _) = diffFromStartOfDay.getDaysHoursAndMinutes()
-
             when  {
                 isYesterday(date = date, now = now, timeZone = timeZone) -> return date.toFormatYesterday(timeZone)
 
-                daysFromStartOfDay in -1L downTo -6L -> {
+                daysBetweenIgnoringTime(date, now) in -1 downTo -6 -> {
                     val lastWeekday = stringResource(
                         id = R.string.formatted_date_last_weekday,
                         date.formatDateTime("EEEE", timeZone)
