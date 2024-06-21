@@ -28,8 +28,9 @@ import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.IconAlign
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.theme.BrewthingsTheme
+import com.brewthings.app.util.datetime.TimeRange
+import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toFormattedDate
-import com.brewthings.app.util.datetime.toFormattedDuration
 import kotlin.math.abs
 import kotlinx.datetime.Instant
 
@@ -118,7 +119,7 @@ fun InsightsTimeHeader(data: RaptPillInsights) {
                     modifier = Modifier.padding(top = 4.dp),
                     text = stringResource(
                         id = R.string.graph_data_duration_since_og,
-                        data.durationFromOG.toFormattedDuration()
+                        it.format()
                     ),
                     style = MaterialTheme.typography.bodySmall,
                 )
@@ -267,7 +268,7 @@ fun GraphInsightsPreview() {
                     value = 0.020f,
                     deltaFromPrevious = -0.002f,
                 ),
-                durationFromOG = timestampOG - timestamp,
+                durationFromOG = TimeRange(timestampOG, timestamp),
             )
         )
     }

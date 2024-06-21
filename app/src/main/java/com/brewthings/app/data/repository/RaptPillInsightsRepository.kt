@@ -7,6 +7,8 @@ import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.data.storage.RaptPillDao
 import com.brewthings.app.data.storage.toModelItem
 import com.brewthings.app.util.Logger
+import com.brewthings.app.util.datetime.TimeRange
+import com.brewthings.app.util.datetime.daysBetweenIgnoringTime
 import kotlin.math.abs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -125,7 +127,7 @@ class RaptPillInsightsRepository(
                     deltaFromPrevious = previousData?.let { calculateVelocity(it, pillData) },
                 )
             },
-            durationFromOG = ogData.timestamp - pillData.timestamp,
+            durationFromOG = TimeRange(ogData.timestamp, pillData.timestamp),
         )
     }
 
@@ -139,7 +141,7 @@ class RaptPillInsightsRepository(
 
     private fun calculateVelocity(ogData: RaptPillData, fgData: RaptPillData): Float? {
         val gravityDrop = fgData.gravity - ogData.gravity
-        val timeDifference = (fgData.timestamp - ogData.timestamp).inWholeDays.toFloat()
+        val timeDifference = daysBetweenIgnoringTime(fgData.timestamp, ogData.timestamp).toFloat()
         val velocity = gravityDrop / timeDifference
         return if (velocity.isInfinite() || velocity.isNaN()) {
             null

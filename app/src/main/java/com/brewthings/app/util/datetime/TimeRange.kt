@@ -5,10 +5,15 @@ import androidx.compose.ui.res.stringResource
 import com.brewthings.app.R
 import kotlin.math.abs
 import kotlin.time.Duration
+import kotlinx.datetime.Instant
+
+data class TimeRange(val from: Instant, val to: Instant)
 
 @Composable
-fun Duration.toFormattedDuration(): String {
-    val (days, hours, minutes) = absoluteValue.getDaysHoursAndMinutes()
+fun TimeRange.format(): String {
+    val diff: Duration = to - from
+    val (days, hours, minutes) = diff.getDaysHoursAndMinutes()
+    val daysIgnoringTime = daysBetweenIgnoringTime(from, to)
 
     when {
         // Only minutes have passed.
@@ -28,9 +33,9 @@ fun Duration.toFormattedDuration(): String {
                 return stringResource(R.string.formatted_duration_hours, abs(hours))
         }
 
-        days == 1L -> return stringResource(R.string.formatted_duration_day)
+        daysIgnoringTime == 1 -> return stringResource(R.string.formatted_duration_day)
     }
 
     // Covering dates older than 24 hours ago.
-    return  stringResource(R.string.formatted_duration_days, abs(days))
+    return  stringResource(R.string.formatted_duration_days, daysIgnoringTime)
 }
