@@ -7,6 +7,7 @@ import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.data.storage.RaptPillDao
 import com.brewthings.app.data.storage.toModelItem
 import com.brewthings.app.util.Logger
+import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.daysBetweenIgnoringTime
 import kotlin.math.abs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -126,7 +127,7 @@ class RaptPillInsightsRepository(
                     deltaFromPrevious = previousData?.let { calculateVelocity(it, pillData) },
                 )
             },
-            durationFromOG = ogData.timestamp - pillData.timestamp,
+            durationFromOG = TimeRange(ogData.timestamp, pillData.timestamp),
         )
     }
 

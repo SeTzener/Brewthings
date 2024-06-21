@@ -1,6 +1,6 @@
 package com.brewthings.app.data.model
 
-import kotlin.time.Duration
+import com.brewthings.app.util.datetime.TimeRange
 import kotlinx.datetime.Instant
 
 data class RaptPillInsights(
@@ -11,7 +11,7 @@ data class RaptPillInsights(
     val battery: Insight,
     val abv: OGInsight? = null,
     val velocity: OGInsight? = null,
-    val durationFromOG: Duration? = null,
+    val durationFromOG: TimeRange? = null,
 )
 
 data class Insight(

@@ -11,9 +11,10 @@ import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
 
 fun daysBetweenIgnoringTime(instant1: Instant, instant2: Instant): Int {
+    val timeZone = TimeZone.UTC
     // Convert Instants to LocalDate
-    val date1 = instant1.toLocalDateTime(TimeZone.UTC).date
-    val date2 = instant2.toLocalDateTime(TimeZone.UTC).date
+    val date1 = instant1.toLocalDateTime(timeZone).date
+    val date2 = instant2.toLocalDateTime(timeZone).date
 
     // Calculate the difference in days
     return date1.daysUntil(date2)
