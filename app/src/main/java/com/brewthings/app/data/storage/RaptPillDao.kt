@@ -7,7 +7,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import kotlinx.datetime.Instant
 
 @Dao
 interface RaptPillDao {
@@ -21,15 +20,6 @@ interface RaptPillDao {
                 "WHERE RaptPill.macAddress = :macAddress"
     )
     fun observeData(macAddress: String): Flow<List<RaptPillData>>
-
-    @Query(
-        "SELECT * FROM RaptPillData " +
-                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
-                "WHERE RaptPill.macAddress = :macAddress " +
-                "AND RaptPillData.timestamp <= :timestamp " +
-                "ORDER BY RaptPillData.timestamp DESC LIMIT 2"
-    )
-    fun observeDataAndPrevious(macAddress: String, timestamp: Instant): Flow<List<RaptPillData>>
 
     @Query(
         "SELECT * FROM RaptPillData " +
