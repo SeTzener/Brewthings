@@ -4,12 +4,9 @@ import com.brewthings.app.data.model.Insight
 import com.brewthings.app.data.model.OGInsight
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.RaptPillInsights
-import com.brewthings.app.util.Logger
 import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.daysBetweenIgnoringTime
 import kotlin.math.abs
-
-private val logger = Logger("InsightsConverter")
 
 fun List<RaptPillData>.toInsights(ogData: RaptPillData?): List<RaptPillInsights> =
     mapIndexed { index, raptPillData ->
@@ -22,12 +19,6 @@ private fun calculateInsights(
     pillData: RaptPillData,
     previousData: RaptPillData?
 ): RaptPillInsights {
-    logger.info(
-        "Calculating insights for for ${pillData.timestamp}.\n" +
-                "PillData: $pillData.\n" +
-                "Previous: $previousData\n" +
-                "OG: $ogData"
-    )
     if (ogData == null || pillData == ogData) {
         return RaptPillInsights(
             timestamp = pillData.timestamp,
@@ -77,10 +68,7 @@ private fun calculateInsights(
 }
 
 private fun calculateABV(og: Float, fg: Float): Float {
-    if (og <= 1.0 || fg <= 1.0) {
-        logger.error("Invalid OG or FG values: og=$og, fg=$fg")
-        return 0f
-    }
+    if (og <= 1.0 || fg <= 1.0) return 0f
     return (og - fg) * 131.25f
 }
 

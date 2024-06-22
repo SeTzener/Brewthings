@@ -6,14 +6,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.brewthings.app.data.model.DataType
-import com.brewthings.app.data.model.RaptPillData
-import com.brewthings.app.data.repository.RaptPillInsightsRepository
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.koin.core.parameter.parametersOf
 
 class GraphScreenViewModel(
     name: String? = ParameterHolder.Graph.name,
@@ -28,7 +26,6 @@ class GraphScreenViewModel(
         private set
 
     private val repo: RaptPillRepository by inject()
-    private val insightsRepo: RaptPillInsightsRepository by inject { parametersOf(macAddress) }
 
     init {
         loadGraphData(macAddress)
@@ -49,8 +46,16 @@ class GraphScreenViewModel(
 
     private fun loadInsights() {
         viewModelScope.launch {
-            insightsRepo.selectedInsights.collect { insights ->
-                screenState = screenState.copy(selectedInsights = insights)
+            combine(
+                repo.observeOG(screenState.pillMacAddress),
+                repo.observeData(screenState.pillMacAddress)
+            ) { og, data ->
+                data.toInsights(og)
+            }.collect { insights ->
+                screenState = screenState.copy(
+                    insights = insights,
+                    selectedInsights = insights.lastIndex
+                )
             }
         }
     }
@@ -66,10 +71,7 @@ class GraphScreenViewModel(
         screenState = screenState.copy(enabledTypes = enabledTypes)
     }
 
-    fun onValueSelected(data: Any?) {
-        viewModelScope.launch {
-            val raptPillData = data as RaptPillData? // Any? is casted to RaptPillData?
-            insightsRepo.setTimestamp(raptPillData?.timestamp)
-        }
+    fun onSelect(index: Int) {
+        screenState = screenState.copy(selectedInsights = index)
     }
 }

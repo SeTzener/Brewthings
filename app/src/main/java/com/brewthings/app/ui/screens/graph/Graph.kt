@@ -39,9 +39,10 @@ import kotlin.math.sqrt
 fun Graph(
     modifier: Modifier = Modifier,
     graphData: GraphData?,
+    selectedIndex: Int,
     enabledTypes: Set<DataType>,
     toggleSeries: (DataType) -> Unit,
-    onValueSelected: (Any?) -> Unit,
+    onSelect: (Int) -> Unit,
 ) {
     val density: Density = LocalDensity.current
     val textSize = MaterialTheme.typography.labelMedium.fontSize
@@ -61,17 +62,19 @@ fun Graph(
                 MpAndroidLineChart(
                     context = context,
                     chartData = chartData,
+                    selectedIndex = selectedIndex,
                     density = density,
                     textSize = textSize,
                     isDarkTheme = isDarkTheme,
                     textColor = textColor,
                     primaryColor = primaryColor,
-                    onValueSelected = onValueSelected,
+                    onSelect = onSelect,
                 )
             },
             update = { chart ->
                 chart.refresh(
                     chartData = chartData,
+                    selectedIndex = selectedIndex,
                     isDarkTheme = isDarkTheme,
                     textColor = textColor,
                     primaryColor = primaryColor

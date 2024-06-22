@@ -25,22 +25,23 @@ class MpAndroidLineChart(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     chartData: ChartData?,
+    selectedIndex: Int,
     private val density: Density,
     private val textSize: TextUnit,
     private var isDarkTheme: Boolean,
     private var textColor: Color,
     primaryColor: Color,
-    onValueSelected: (Any?) -> Unit,
+    onSelect: (Int) -> Unit,
 ) : LineChart(context, attrs, defStyleAttr) {
     private val highlightedRenderer get() = renderer as HighlightedLineChartRenderer
 
     private val sensorValueSelector = object : OnChartValueSelectedListener {
         override fun onValueSelected(entry: Entry, highlight: Highlight) {
-            onValueSelected(entry.data)
+            onSelect(entry.data as? Int ?: -1)
         }
 
         override fun onNothingSelected() {
-            onValueSelected(null)
+            onSelect(-1)
         }
     }
 
@@ -48,7 +49,7 @@ class MpAndroidLineChart(
         chartData?.also {
             updateDatasets(chartData)
             updateVisibleXRange()
-            highlightLast()
+            highlightIndex(selectedIndex)
         }
 
         configureXAxis()
@@ -70,6 +71,7 @@ class MpAndroidLineChart(
 
     fun refresh(
         chartData: ChartData?,
+        selectedIndex: Int,
         isDarkTheme: Boolean,
         textColor: Color,
         primaryColor: Color,
@@ -87,12 +89,10 @@ class MpAndroidLineChart(
 
         if (wasEmpty) {
             updateVisibleXRange()
-            highlightLast()
-            // Note: all moveViewTo(...) methods will automatically invalidate() (refresh) the chart. There is no
-            // need for further calling invalidate().
-        } else {
-            invalidate()
         }
+
+        highlightIndex(selectedIndex)
+        invalidate()
     }
 
     private fun updateDatasets(chartData: ChartData) {
@@ -137,11 +137,14 @@ class MpAndroidLineChart(
         moveViewToX(endDate.epochSeconds.toFloat())
     }
 
-    private fun highlightLast() {
-        val lastX = Clock.System.now().epochSeconds.toFloat()
-        data?.dataSets?.firstOrNull()?.getEntryForXValue(lastX, Float.NaN)?.let {
-            highlightValue(it.x, it.y, 0, true)
+    private fun highlightIndex(selectedIndex: Int) {
+        if (selectedIndex == -1) return
+        val entry = data?.dataSets?.firstOrNull()?.getEntryForIndex(selectedIndex)
+        if (entry == null) {
+            highlightValue(null, false)
+            return
         }
+        highlightValue(entry.x, entry.y, 0, false)
     }
 
     private fun setupHorizontalEdges() {

@@ -7,22 +7,22 @@ fun List<RaptPillData>.toGraphData(): GraphData {
     val series = listOf(
         GraphSeries(
             type = DataType.TEMPERATURE,
-            data = map { it.toDataPoint { temperature } }
+            data = mapIndexed { index, data -> data.toDataPoint(index) { temperature } }
         ),
         GraphSeries(
             type = DataType.GRAVITY,
-            data = map { it.toDataPoint { gravity } }
+            data =mapIndexed { index, data -> data.toDataPoint(index) { gravity } }
         ),
         GraphSeries(
             type = DataType.BATTERY,
-            data = map { it.toDataPoint { battery } }
+            data = mapIndexed { index, data -> data.toDataPoint(index) { battery } }
         )
     )
     return GraphData(series)
 }
 
-private fun RaptPillData.toDataPoint(toY: RaptPillData.() -> Float): DataPoint = DataPoint(
+private fun RaptPillData.toDataPoint(index: Int, toY: RaptPillData.() -> Float): DataPoint = DataPoint(
     x = timestamp.epochSeconds.toFloat(),
     y = toY(),
-    data = this // RaptPillData is passed as Any?
+    data = index
 )
