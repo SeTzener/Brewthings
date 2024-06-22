@@ -90,10 +90,10 @@ fun GraphInsightsPager(
     screenState: GraphScreenState,
     onSelect: (Int) -> Unit,
 ) {
-    val startIndex = screenState.selectedInsights.takeIf { it != -1 } ?: 0
+    val startIndex = screenState.selectedInsights.takeIf { it != -1 } ?: return
+
     val pagerState = rememberPagerState(
         initialPage = startIndex,
-        initialPageOffsetFraction = 0.2f,
         pageCount = { screenState.insights.count() },
     )
 
