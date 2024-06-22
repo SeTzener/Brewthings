@@ -103,9 +103,7 @@ fun GraphInsightsPager(
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.targetPage }.collect { page ->
-            if (page != screenState.selectedInsights) {
-                onSelect(page)
-            }
+            onSelect(page)
         }
     }
     HorizontalPager(
