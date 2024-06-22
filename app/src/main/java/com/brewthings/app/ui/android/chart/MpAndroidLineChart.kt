@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
 import com.brewthings.app.ui.theme.Grey_Nevada
 import com.brewthings.app.ui.theme.Size
 import com.github.mikephil.charting.charts.LineChart
@@ -18,6 +19,7 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Clock
+
 
 @SuppressLint("ViewConstructor")
 class MpAndroidLineChart(
@@ -134,7 +136,6 @@ class MpAndroidLineChart(
         val startDate = endDate - 7.days
         val visibleGraphTimePeriod = (endDate.epochSeconds - startDate.epochSeconds).toFloat()
         setVisibleXRange(visibleGraphTimePeriod, visibleGraphTimePeriod)
-        moveViewToX(endDate.epochSeconds.toFloat())
     }
 
     private fun highlightIndex(selectedIndex: Int) {
@@ -145,6 +146,13 @@ class MpAndroidLineChart(
             return
         }
         highlightValue(entry.x, entry.y, 0, false)
+        moveToX(entry.x)
+    }
+
+    private fun moveToX(xValue: Float) {
+        val xPadding = with(density) { 16.dp.toPx() }
+        val xTarget: Float = xValue - visibleXRange * xPadding / 100
+        moveViewToX(xTarget)
     }
 
     private fun setupHorizontalEdges() {
