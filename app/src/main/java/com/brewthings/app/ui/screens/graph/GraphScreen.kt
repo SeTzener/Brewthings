@@ -98,7 +98,7 @@ fun GraphInsightsPager(
     )
 
     LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page ->
+        snapshotFlow { pagerState.targetPage }.collect { page ->
             if (page != screenState.selectedInsights) {
                 onSelect(page)
             }
@@ -110,7 +110,7 @@ fun GraphInsightsPager(
     }
 
     LaunchedEffect(screenState.selectedInsights) {
-        pagerState.scrollToPage(screenState.selectedInsights)
+        pagerState.animateScrollToPage(screenState.selectedInsights)
     }
 }
 
