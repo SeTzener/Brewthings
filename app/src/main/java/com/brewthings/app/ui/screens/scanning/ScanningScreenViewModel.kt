@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -48,6 +49,18 @@ class ScanningScreenViewModel : ViewModel(), KoinComponent {
             logger.info("Starting scan on first load.")
             toggleScan()
             isFirstLoad = false
+        }
+    }
+
+    fun setIsOG(macAddress: String, timestamp: Instant, isOg: Boolean){
+        viewModelScope.launch {
+            repo.setIsOG(macAddress = macAddress, timestamp = timestamp, isOg = isOg)
+        }
+    }
+
+    fun setIsFG(macAddress: String, timestamp: Instant, isOg: Boolean){
+        viewModelScope.launch {
+            repo.setIsFG(macAddress = macAddress, timestamp = timestamp, isOg = isOg)
         }
     }
 
