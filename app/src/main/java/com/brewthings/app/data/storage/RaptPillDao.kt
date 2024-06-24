@@ -1,5 +1,6 @@
 package com.brewthings.app.data.storage
 
+import android.view.Gravity
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -7,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.Instant
 
 @Dao
 interface RaptPillDao {
@@ -25,9 +27,70 @@ interface RaptPillDao {
         "SELECT * FROM RaptPillData " +
                 "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
                 "WHERE RaptPill.macAddress = :macAddress " +
+                "AND RaptPillData.timestamp <= :timestamp " +
+                "ORDER BY RaptPillData.timestamp DESC LIMIT 2"
+    )
+    fun observeDataAndPrevious(macAddress: String, timestamp: Instant): Flow<List<RaptPillData>>
+
+    @Query(
+        "SELECT * FROM RaptPillData " +
+                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+                "WHERE RaptPill.macAddress = :macAddress " +
+                "AND RaptPillData.timestamp <= :timestamp "
+    )
+    suspend fun getPillData(macAddress: String, timestamp: Instant): RaptPillData
+
+    @Transaction
+    suspend fun setIsOG(macAddress: String, timestamp: Instant, isOG: Boolean) {
+        val data = getPillData(macAddress, timestamp)
+        insertData(
+            RaptPillData(
+                dataId = data.dataId,
+                pillId = data.pillId,
+                readings = RaptPillReadings(
+                    timestamp = data.readings.timestamp,
+                    temperature = data.readings.temperature,
+                    gravity = data.readings.gravity,
+                    x = data.readings.x,
+                    y = data.readings.y,
+                    z = data.readings.z,
+                    battery = data.readings.battery,
+                    isOG = isOG,
+                    isFG = data.readings.isFG
+                )
+            )
+        )
+    }
+
+    @Transaction
+    suspend fun setIsFG(macAddress: String, timestamp: Instant, isFg: Boolean) {
+        val data = getPillData(macAddress, timestamp)
+        insertData(
+            RaptPillData(
+                dataId = data.dataId,
+                pillId = data.pillId,
+                readings = RaptPillReadings(
+                    timestamp = data.readings.timestamp,
+                    temperature = data.readings.temperature,
+                    gravity = data.readings.gravity,
+                    x = data.readings.x,
+                    y = data.readings.y,
+                    z = data.readings.z,
+                    battery = data.readings.battery,
+                    isOG = data.readings.isOG,
+                    isFG = isFg
+                )
+            )
+        )
+    }
+
+    @Query(
+        "SELECT * FROM RaptPillData " +
+                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+                "WHERE RaptPill.macAddress = :macAddress " +
                 "ORDER BY RaptPillData.timestamp ASC LIMIT 1"
     )
-    fun observeOG(macAddress: String): Flow<RaptPillData?> // TODO: change to query set OG.
+    fun observeOG(macAddress: String): Flow<RaptPillData?>
 
     @Query("SELECT pillId FROM RaptPill WHERE macAddress = :macAddress")
     suspend fun getPillIdByMacAddress(macAddress: String): Long?
