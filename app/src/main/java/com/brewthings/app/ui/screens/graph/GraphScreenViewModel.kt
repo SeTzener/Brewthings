@@ -89,15 +89,19 @@ class GraphScreenViewModel(
         }
     }
 
-    fun setIsOG(macAddress: String, timestamp: Instant, isOg: Boolean){
+    fun setIsOG(macAddress: String, timestamp: Instant, isOg: Boolean?){
         viewModelScope.launch {
-            repo.setIsOG(macAddress = macAddress, timestamp = timestamp, isOg = isOg)
+            if (isOg != null) {
+                repo.setIsOG(macAddress = macAddress, timestamp = timestamp, isOg = isOg)
+            }
         }
     }
 
-    fun setIsFG(macAddress: String, timestamp: Instant, isOg: Boolean){
+    fun setIsFG(macAddress: String, timestamp: Instant, isFg: Boolean?){
         viewModelScope.launch {
-            repo.setIsFG(macAddress = macAddress, timestamp = timestamp, isOg = isOg)
+            if (isFg != null) {
+                repo.setIsFG(macAddress = macAddress, timestamp = timestamp, isOg = isFg)
+            }
         }
     }
 }

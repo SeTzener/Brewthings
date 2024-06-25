@@ -1,5 +1,6 @@
 package com.brewthings.app.data.model
 
+import android.view.Gravity
 import com.brewthings.app.util.datetime.TimeRange
 import kotlinx.datetime.Instant
 
@@ -23,4 +24,6 @@ data class Insight(
 data class OGInsight(
     val value: Float,
     val deltaFromPrevious: Float? = null,
+    val isOg: Boolean?,
+    val isFG: Boolean?
 )

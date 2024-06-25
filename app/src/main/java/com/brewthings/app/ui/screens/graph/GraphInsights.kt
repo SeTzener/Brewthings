@@ -33,14 +33,14 @@ import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toFormattedDate
 import kotlin.math.abs
 import kotlinx.datetime.Instant
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun GraphInsights(
+    macAddress: String,
     data: RaptPillInsights,
-//    viewModel: GraphScreenViewModel = koinViewModel(),
+    viewModel: GraphScreenViewModel = koinViewModel(),
 ) {
-//    val setOg: (macAddress: String, timestamp: Instant, isOG: Boolean) -> Unit = viewModel::setIsOG
-
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
             InsightsTimeHeader(data)
@@ -98,6 +98,42 @@ fun GraphInsights(
                 value = { InsightValue(it, R.string.pill_velocity, data.velocity?.value) },
                 fromPrevious = { InsightDelta(it, R.string.pill_velocity, data.velocity?.deltaFromPrevious) },
             )
+        }
+        Row {
+            Column(
+                modifier = Modifier.padding(start = 25.dp, bottom = 10.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Button(
+                    onClick = {
+                        viewModel.setIsOG(
+                            macAddress = macAddress,
+                            timestamp = data.timestamp,
+                            isOg = data.velocity?.isOg?.not() ?: true
+                        )
+                    }
+                ) {
+                    Text(text = "Set OG")
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 25.dp, bottom = 10.dp),
+                horizontalAlignment = Alignment.End
+            ) {
+                Button(
+                    onClick = {
+                        viewModel.setIsFG(
+                            macAddress = macAddress,
+                            timestamp = data.timestamp,
+                            isFg = data.velocity?.isFG?.not() ?: true
+                        )
+                    }
+                ) {
+                    Text(text = "Set FG")
+                }
+            }
         }
     }
 }
@@ -244,6 +280,7 @@ fun GraphInsightsPreview() {
     val timestampOG = Instant.parse("2024-05-26T00:00:00Z")
     BrewthingsTheme {
         GraphInsights(
+            macAddress = "64:B7:08:58:20:B6",
             data = RaptPillInsights(
                 timestamp = timestamp,
                 temperature = Insight(
@@ -267,10 +304,14 @@ fun GraphInsightsPreview() {
                 abv = OGInsight(
                     value = 5.5f,
                     deltaFromPrevious = 0.5f,
+                    isOg = true,
+                    isFG = null
                 ),
                 velocity = OGInsight(
                     value = 0.020f,
                     deltaFromPrevious = -0.002f,
+                    isOg = null,
+                    isFG = true
                 ),
                 durationFromOG = TimeRange(timestampOG, timestamp),
             )

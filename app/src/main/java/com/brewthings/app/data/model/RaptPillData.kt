@@ -13,7 +13,9 @@ data class RaptPillData(
     val x: Float,
     val y: Float,
     val z: Float,
-    val battery: Float
+    val battery: Float,
+    val isOG: Boolean? = null,
+    val isFG: Boolean? = null
 ) {
     val floatingAngle: Float = atan2(sqrt(x * x + y * y), z) * (180.0f / PI.toFloat())
 }
