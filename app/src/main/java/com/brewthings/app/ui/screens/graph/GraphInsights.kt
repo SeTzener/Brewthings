@@ -35,7 +35,12 @@ import kotlin.math.abs
 import kotlinx.datetime.Instant
 
 @Composable
-fun GraphInsights(data: RaptPillInsights) {
+fun GraphInsights(
+    data: RaptPillInsights,
+//    viewModel: GraphScreenViewModel = koinViewModel(),
+) {
+//    val setOg: (macAddress: String, timestamp: Instant, isOG: Boolean) -> Unit = viewModel::setIsOG
+
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
             InsightsTimeHeader(data)
@@ -213,7 +218,10 @@ fun InsightDelta(
         modifier = modifier,
         iconResId = delta?.asArrowDropIcon(),
         iconSize = 16.dp,
-        text = if (delta != null && !delta.isNaN()) stringResource(id = textResId, abs(delta)) else "",
+        text = if (delta != null && !delta.isNaN()) stringResource(
+            id = textResId,
+            abs(delta)
+        ) else "",
         iconPadding = 0.dp,
         iconColor = MaterialTheme.colorScheme.onSurface,
         textStyle = MaterialTheme.typography.bodySmall,

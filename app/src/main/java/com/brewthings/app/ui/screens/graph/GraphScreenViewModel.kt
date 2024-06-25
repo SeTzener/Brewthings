@@ -11,6 +11,7 @@ import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -85,6 +86,18 @@ class GraphScreenViewModel(
                     )
                 )
             }.collect()
+        }
+    }
+
+    fun setIsOG(macAddress: String, timestamp: Instant, isOg: Boolean){
+        viewModelScope.launch {
+            repo.setIsOG(macAddress = macAddress, timestamp = timestamp, isOg = isOg)
+        }
+    }
+
+    fun setIsFG(macAddress: String, timestamp: Instant, isOg: Boolean){
+        viewModelScope.launch {
+            repo.setIsFG(macAddress = macAddress, timestamp = timestamp, isOg = isOg)
         }
     }
 }

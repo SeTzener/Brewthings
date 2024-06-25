@@ -52,18 +52,6 @@ class ScanningScreenViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    fun setIsOG(macAddress: String, timestamp: Instant, isOg: Boolean){
-        viewModelScope.launch {
-            repo.setIsOG(macAddress = macAddress, timestamp = timestamp, isOg = isOg)
-        }
-    }
-
-    fun setIsFG(macAddress: String, timestamp: Instant, isOg: Boolean){
-        viewModelScope.launch {
-            repo.setIsFG(macAddress = macAddress, timestamp = timestamp, isOg = isOg)
-        }
-    }
-
     fun toggleScan() {
         when {
             screenState.bluetooth is Bluetooth.Availability.Available && !screenState.scanning -> startScan()
