@@ -36,7 +36,7 @@ interface RaptPillDao {
         "SELECT * FROM RaptPillData " +
                 "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
                 "WHERE RaptPill.macAddress = :macAddress " +
-                "AND RaptPillData.timestamp <= :timestamp "
+                "AND RaptPillData.timestamp == :timestamp "
     )
     suspend fun getPillData(macAddress: String, timestamp: Instant): RaptPillData
 

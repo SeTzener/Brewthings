@@ -11,6 +11,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +29,7 @@ import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.IconAlign
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.theme.BrewthingsTheme
+import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toFormattedDate
@@ -104,16 +106,25 @@ fun GraphInsights(
                 modifier = Modifier.padding(start = 25.dp, bottom = 10.dp),
                 horizontalAlignment = Alignment.Start
             ) {
-                Button(
+                TextButton(
                     onClick = {
                         viewModel.setIsOG(
                             macAddress = macAddress,
                             timestamp = data.timestamp,
-                            isOg = data.velocity?.isOg?.not() ?: true
+                            isOg = data.velocity?.isOG?.not() ?: true
                         )
-                    }
+                    },
                 ) {
-                    Text(text = "Set OG")
+                    Text(
+                        text = if (data.abv?.isOG == true) {
+                            stringResource(id = R.string.unset_OG)
+                        } else {
+                            stringResource(
+                                id = R.string.set_OG
+                            )
+                        },
+                        style = Typography.bodyMedium,
+                    )
                 }
             }
             Column(
@@ -122,7 +133,7 @@ fun GraphInsights(
                     .padding(end = 25.dp, bottom = 10.dp),
                 horizontalAlignment = Alignment.End
             ) {
-                Button(
+                TextButton(
                     onClick = {
                         viewModel.setIsFG(
                             macAddress = macAddress,
@@ -131,7 +142,16 @@ fun GraphInsights(
                         )
                     }
                 ) {
-                    Text(text = "Set FG")
+                    Text(
+                        text = if (data.abv?.isFG == true) {
+                            stringResource(id = R.string.unset_FG)
+                        } else {
+                            stringResource(
+                                id = R.string.set_FG
+                            )
+                        },
+                        style = Typography.bodyMedium,
+                    )
                 }
             }
         }
@@ -304,13 +324,13 @@ fun GraphInsightsPreview() {
                 abv = OGInsight(
                     value = 5.5f,
                     deltaFromPrevious = 0.5f,
-                    isOg = true,
+                    isOG = true,
                     isFG = null
                 ),
                 velocity = OGInsight(
                     value = 0.020f,
                     deltaFromPrevious = -0.002f,
-                    isOg = null,
+                    isOG = null,
                     isFG = true
                 ),
                 durationFromOG = TimeRange(timestampOG, timestamp),
