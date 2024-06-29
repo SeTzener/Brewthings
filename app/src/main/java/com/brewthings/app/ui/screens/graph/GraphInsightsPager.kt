@@ -30,6 +30,7 @@ fun GraphInsightsPager(
     )
 
     LaunchedEffect(pagerState) {
+        GraphSelectionLogger.logPager(selectedIndex, animated = false)
         snapshotFlow { pagerState.targetPage }.collect { page ->
             onSelect(page)
         }
@@ -49,6 +50,7 @@ fun GraphInsightsPager(
     }
 
     LaunchedEffect(selectedIndex) {
+        GraphSelectionLogger.logPager(selectedIndex, animated = true)
         pagerState.animateScrollToPage(
             page = selectedIndex,
             animationSpec = tween(500, easing = LinearEasing)

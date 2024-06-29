@@ -47,10 +47,12 @@ class GraphScreenViewModel(
     }
 
     fun onGraphSelect(index: Int?) {
+        GraphSelectionLogger.logGraphSelect(index)
         onSelect(index)
     }
 
     fun onPagerSelect(index: Int) {
+        GraphSelectionLogger.logPagerSelect(index)
         onSelect(index)
     }
 
