@@ -28,50 +28,58 @@ class GraphScreenViewModel(
     private val repo: RaptPillRepository by inject()
 
     init {
-        loadGraphData(macAddress)
-        loadInsights()
-    }
-
-    private fun loadGraphData(macAddress: String) {
-        viewModelScope.launch {
-            repo.observeData(macAddress).collect { pillData ->
-                val data = pillData.toGraphData()
-                screenState = screenState.copy(
-                    graphData = data,
-                    enabledTypes = data.series.map { it.type }.toSet()
-                )
-            }
-        }
-    }
-
-    private fun loadInsights() {
-        viewModelScope.launch {
-            combine(
-                repo.observeOG(screenState.pillMacAddress),
-                repo.observeData(screenState.pillMacAddress)
-            ) { og, data ->
-                data.toInsights(og)
-            }.collect { insights ->
-                screenState = screenState.copy(
-                    insights = insights,
-                    selectedInsights = insights.lastIndex
-                )
-            }
-        }
+        loadData()
     }
 
     fun toggleSeries(dataType: DataType) {
-        val enabledTypes = when (dataType !in screenState.enabledTypes) {
-            true -> screenState.enabledTypes + dataType
-            false -> screenState.enabledTypes - dataType
+        val graphState = screenState.graphState ?: return
+        val enabledTypes = when (dataType !in graphState.enabledTypes) {
+            true -> graphState.enabledTypes + dataType
+            false -> graphState.enabledTypes - dataType
         }
 
         if (enabledTypes.isEmpty()) return
 
-        screenState = screenState.copy(enabledTypes = enabledTypes)
+        screenState = screenState.copy(
+            graphState = graphState.copy(enabledTypes = enabledTypes)
+        )
     }
 
-    fun onSelect(index: Int) {
-        screenState = screenState.copy(selectedInsights = index)
+    fun onGraphSelect(index: Int?) {
+        screenState = screenState.copy(
+            insightsPagerState = screenState.insightsPagerState?.copy(selectedInsightsIndex = index)
+        )
+    }
+
+    fun onPagerSelect(index: Int) {
+        screenState = screenState.copy(
+            graphState = screenState.graphState?.copy(selectedDataIndex = index),
+        )
+    }
+
+    private fun loadData() {
+        viewModelScope.launch {
+            combine(
+                repo.observeOG(screenState.pillMacAddress),
+                repo.observeData(screenState.pillMacAddress)
+            ) { og, pillData ->
+                val data = pillData.toGraphData()
+                val insights = pillData.toInsights(og)
+
+                screenState.copy(
+                    graphState = GraphState(
+                        graphData = data,
+                        selectedDataIndex = data.series.lastIndex,
+                        enabledTypes = data.series.map { it.type }.toSet()
+                    ),
+                    insightsPagerState = GraphInsightsPagerState(
+                        insights = insights,
+                        selectedInsightsIndex = insights.lastIndex
+                    )
+                )
+            }.collect { state ->
+                screenState = state
+            }
+        }
     }
 }

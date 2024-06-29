@@ -27,23 +27,23 @@ class MpAndroidLineChart(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     chartData: ChartData?,
-    selectedIndex: Int,
+    selectedIndex: Int?,
     private val density: Density,
     private val textSize: TextUnit,
     private var isDarkTheme: Boolean,
     private var textColor: Color,
     primaryColor: Color,
-    onSelect: (Int) -> Unit,
+    onSelect: (Int?) -> Unit,
 ) : LineChart(context, attrs, defStyleAttr) {
     private val highlightedRenderer get() = renderer as HighlightedLineChartRenderer
 
     private val sensorValueSelector = object : OnChartValueSelectedListener {
         override fun onValueSelected(entry: Entry, highlight: Highlight) {
-            onSelect(entry.data as? Int ?: -1)
+            onSelect(entry.data as? Int)
         }
 
         override fun onNothingSelected() {
-            onSelect(-1)
+            onSelect(null)
         }
     }
 
@@ -73,7 +73,7 @@ class MpAndroidLineChart(
 
     fun refresh(
         chartData: ChartData?,
-        selectedIndex: Int,
+        selectedIndex: Int?,
         isDarkTheme: Boolean,
         textColor: Color,
         primaryColor: Color,
@@ -138,8 +138,8 @@ class MpAndroidLineChart(
         setVisibleXRange(visibleGraphTimePeriod, visibleGraphTimePeriod)
     }
 
-    private fun highlightIndex(selectedIndex: Int) {
-        if (selectedIndex == -1) return
+    private fun highlightIndex(selectedIndex: Int?) {
+        if (selectedIndex == null) return
         val entry = data?.dataSets?.firstOrNull()?.getEntryForIndex(selectedIndex)
         if (entry == null) {
             highlightValue(null, false)
