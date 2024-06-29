@@ -80,23 +80,19 @@ fun GraphInsights(data: RaptPillInsights) {
                 fromOG = { InsightDelta(it, R.string.pill_battery, data.battery.deltaFromOG) },
             )
 
-            data.abv?.also { abv ->
-                InsightsRow(
-                    icon = { InsightIcon(it, R.drawable.ic_abv) },
-                    label = { InsightLabel(it, R.string.graph_data_label_abv) },
-                    value = { InsightValue(it, R.string.pill_abv, abv.value) },
-                    fromPrevious = { InsightDelta(it, R.string.pill_abv, abv.deltaFromPrevious) },
-                )
-            }
+            InsightsRow(
+                icon = { InsightIcon(it, R.drawable.ic_abv) },
+                label = { InsightLabel(it, R.string.graph_data_label_abv) },
+                value = { InsightValue(it, R.string.pill_abv, data.abv?.value) },
+                fromPrevious = { InsightDelta(it, R.string.pill_abv, data.abv?.deltaFromPrevious) },
+            )
 
-            data.velocity?.also { velocity ->
-                InsightsRow(
-                    icon = { InsightIcon(it, R.drawable.ic_velocity) },
-                    label = { InsightLabel(it, R.string.graph_data_label_velocity) },
-                    value = { InsightValue(it, R.string.pill_velocity, velocity.value) },
-                    fromPrevious = { InsightDelta(it, R.string.pill_velocity, velocity.deltaFromPrevious) },
-                )
-            }
+            InsightsRow(
+                icon = { InsightIcon(it, R.drawable.ic_velocity) },
+                label = { InsightLabel(it, R.string.graph_data_label_velocity) },
+                value = { InsightValue(it, R.string.pill_velocity, data.velocity?.value) },
+                fromPrevious = { InsightDelta(it, R.string.pill_velocity, data.velocity?.deltaFromPrevious) },
+            )
         }
     }
 }
@@ -114,16 +110,16 @@ fun InsightsTimeHeader(data: RaptPillInsights) {
                 text = data.timestamp.toFormattedDate(),
                 style = MaterialTheme.typography.bodyMedium,
             )
-            data.durationFromOG?.also {
-                Text(
-                    modifier = Modifier.padding(top = 4.dp),
-                    text = stringResource(
+            Text(
+                modifier = Modifier.padding(top = 4.dp),
+                text = data.durationFromOG?.let {
+                    stringResource(
                         id = R.string.graph_data_duration_since_og,
                         it.format()
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
+                    )
+                } ?: "",
+                style = MaterialTheme.typography.bodySmall,
+            )
         }
     }
 }
@@ -197,11 +193,11 @@ fun InsightLabel(
 fun InsightValue(
     modifier: Modifier = Modifier,
     @StringRes textResId: Int,
-    value: Float,
+    value: Float?,
 ) {
     Text(
         modifier = modifier,
-        text = stringResource(id = textResId, value),
+        text = if (value != null && !value.isNaN()) stringResource(id = textResId, value) else "",
         textAlign = TextAlign.Start,
         style = MaterialTheme.typography.bodyMedium,
     )
