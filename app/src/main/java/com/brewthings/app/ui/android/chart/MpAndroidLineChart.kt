@@ -20,7 +20,6 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Clock
 
-
 @SuppressLint("ViewConstructor")
 class MpAndroidLineChart(
     context: Context,
@@ -36,6 +35,8 @@ class MpAndroidLineChart(
     onSelect: (Int?) -> Unit,
 ) : LineChart(context, attrs, defStyleAttr) {
     private val highlightedRenderer get() = renderer as HighlightedLineChartRenderer
+
+    private var previousHighlightedIndex: Int? = null
 
     private val sensorValueSelector = object : OnChartValueSelectedListener {
         override fun onValueSelected(entry: Entry, highlight: Highlight) {
@@ -139,7 +140,7 @@ class MpAndroidLineChart(
     }
 
     private fun highlightIndex(selectedIndex: Int?, animated: Boolean) {
-        if (selectedIndex == null) return
+        if (selectedIndex == null || previousHighlightedIndex == selectedIndex) return
         val entry = data?.dataSets?.firstOrNull()?.getEntryForIndex(selectedIndex)
         if (entry == null) {
             highlightValue(null, false)
@@ -147,6 +148,7 @@ class MpAndroidLineChart(
         }
         highlightValue(entry.x, entry.y, 0, false)
         moveToX(entry.x, animated)
+        previousHighlightedIndex = selectedIndex
     }
 
     private fun moveToX(xValue: Float, animated: Boolean) {
@@ -154,8 +156,7 @@ class MpAndroidLineChart(
         val xTarget: Float = xValue - visibleXRange * xPadding / 100
         if (animated) {
             moveViewToAnimated(xTarget, 0f, YAxis.AxisDependency.LEFT, 500)
-        }
-        else {
+        } else {
             moveViewToX(xTarget)
         }
     }

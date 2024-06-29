@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.brewthings.app.data.model.DataType
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -68,21 +69,20 @@ class GraphScreenViewModel(
             ) { og, pillData ->
                 val data = pillData.toGraphData()
                 val insights = pillData.toInsights(og)
+                val selectedIndex = insights.lastIndex
 
-                screenState.copy(
+                screenState = screenState.copy(
                     graphState = GraphState(
                         graphData = data,
-                        selectedDataIndex = data.series.lastIndex,
+                        selectedDataIndex = selectedIndex,
                         enabledTypes = data.series.map { it.type }.toSet()
                     ),
                     insightsPagerState = GraphInsightsPagerState(
                         insights = insights,
-                        selectedInsightsIndex = insights.lastIndex
+                        selectedInsightsIndex = selectedIndex
                     )
                 )
-            }.collect { state ->
-                screenState = state
-            }
+            }.collect()
         }
     }
 }
