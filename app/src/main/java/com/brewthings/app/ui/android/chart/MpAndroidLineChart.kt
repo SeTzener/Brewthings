@@ -51,7 +51,7 @@ class MpAndroidLineChart(
         chartData?.also {
             updateDatasets(chartData)
             updateVisibleXRange()
-            highlightIndex(selectedIndex)
+            highlightIndex(selectedIndex, animated = false)
         }
 
         configureXAxis()
@@ -93,7 +93,7 @@ class MpAndroidLineChart(
             updateVisibleXRange()
         }
 
-        highlightIndex(selectedIndex)
+        highlightIndex(selectedIndex, animated = true)
         invalidate()
     }
 
@@ -138,7 +138,7 @@ class MpAndroidLineChart(
         setVisibleXRange(visibleGraphTimePeriod, visibleGraphTimePeriod)
     }
 
-    private fun highlightIndex(selectedIndex: Int?) {
+    private fun highlightIndex(selectedIndex: Int?, animated: Boolean) {
         if (selectedIndex == null) return
         val entry = data?.dataSets?.firstOrNull()?.getEntryForIndex(selectedIndex)
         if (entry == null) {
@@ -146,13 +146,18 @@ class MpAndroidLineChart(
             return
         }
         highlightValue(entry.x, entry.y, 0, false)
-        moveToX(entry.x)
+        moveToX(entry.x, animated)
     }
 
-    private fun moveToX(xValue: Float) {
+    private fun moveToX(xValue: Float, animated: Boolean) {
         val xPadding = with(density) { 16.dp.toPx() }
         val xTarget: Float = xValue - visibleXRange * xPadding / 100
-        moveViewToX(xTarget)
+        if (animated) {
+            moveViewToAnimated(xTarget, 0f, YAxis.AxisDependency.LEFT, 500)
+        }
+        else {
+            moveViewToX(xTarget)
+        }
     }
 
     private fun setupHorizontalEdges() {

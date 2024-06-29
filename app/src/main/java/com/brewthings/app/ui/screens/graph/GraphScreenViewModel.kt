@@ -46,13 +46,16 @@ class GraphScreenViewModel(
     }
 
     fun onGraphSelect(index: Int?) {
-        screenState = screenState.copy(
-            insightsPagerState = screenState.insightsPagerState?.copy(selectedInsightsIndex = index)
-        )
+        onSelect(index)
     }
 
     fun onPagerSelect(index: Int) {
+        onSelect(index)
+    }
+
+    private fun onSelect(index: Int?) {
         screenState = screenState.copy(
+            insightsPagerState = screenState.insightsPagerState?.copy(selectedInsightsIndex = index),
             graphState = screenState.graphState?.copy(selectedDataIndex = index),
         )
     }

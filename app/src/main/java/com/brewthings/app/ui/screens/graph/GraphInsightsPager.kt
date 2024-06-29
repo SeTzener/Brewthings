@@ -2,6 +2,8 @@
 
 package com.brewthings.app.ui.screens.graph
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -47,6 +49,9 @@ fun GraphInsightsPager(
     }
 
     LaunchedEffect(selectedIndex) {
-        pagerState.animateScrollToPage(selectedIndex)
+        pagerState.animateScrollToPage(
+            page = selectedIndex,
+            animationSpec = tween(500, easing = LinearEasing)
+        )
     }
 }
