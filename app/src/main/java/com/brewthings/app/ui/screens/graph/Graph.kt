@@ -38,10 +38,9 @@ import kotlin.math.sqrt
 @Composable
 fun Graph(
     modifier: Modifier = Modifier,
-    graphData: GraphData?,
-    enabledTypes: Set<DataType>,
+    state: GraphState,
     toggleSeries: (DataType) -> Unit,
-    onValueSelected: (Any?) -> Unit,
+    onSelect: (Int?) -> Unit,
 ) {
     val density: Density = LocalDensity.current
     val textSize = MaterialTheme.typography.labelMedium.fontSize
@@ -50,7 +49,7 @@ fun Graph(
     val textColor = MaterialTheme.colorScheme.onBackground
     val primaryColor = MaterialTheme.colorScheme.primary
 
-    val chartData = graphData?.toChartData(enabledTypes)
+    val chartData = state.graphData.toChartData(state.enabledTypes)
 
     Column(modifier = modifier.fillMaxSize()) {
         AndroidView(
@@ -61,17 +60,19 @@ fun Graph(
                 MpAndroidLineChart(
                     context = context,
                     chartData = chartData,
+                    selectedIndex = state.selectedDataIndex,
                     density = density,
                     textSize = textSize,
                     isDarkTheme = isDarkTheme,
                     textColor = textColor,
                     primaryColor = primaryColor,
-                    onValueSelected = onValueSelected,
+                    onSelect = onSelect,
                 )
             },
             update = { chart ->
                 chart.refresh(
                     chartData = chartData,
+                    selectedIndex = state.selectedDataIndex,
                     isDarkTheme = isDarkTheme,
                     textColor = textColor,
                     primaryColor = primaryColor
@@ -80,10 +81,10 @@ fun Graph(
         )
 
         FlowRow(modifier = Modifier.fillMaxWidth()) {
-            graphData?.series?.forEach {
+            state.graphData.series.forEach {
                 LegendItem(
                     type = it.type,
-                    isChecked = enabledTypes.contains(it.type),
+                    isChecked = state.enabledTypes.contains(it.type),
                     onCheckedChange = { toggleSeries(it.type) }
                 )
             }

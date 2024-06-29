@@ -8,6 +8,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import com.brewthings.app.ui.screens.graph.GraphSelectionLogger
 import com.brewthings.app.ui.theme.Grey_Nevada
 import com.brewthings.app.ui.theme.Size
 import com.github.mikephil.charting.charts.LineChart
@@ -25,22 +27,25 @@ class MpAndroidLineChart(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     chartData: ChartData?,
+    selectedIndex: Int?,
     private val density: Density,
     private val textSize: TextUnit,
     private var isDarkTheme: Boolean,
     private var textColor: Color,
     primaryColor: Color,
-    onValueSelected: (Any?) -> Unit,
+    onSelect: (Int?) -> Unit,
 ) : LineChart(context, attrs, defStyleAttr) {
     private val highlightedRenderer get() = renderer as HighlightedLineChartRenderer
 
+    private var previousHighlightedIndex: Int? = null
+
     private val sensorValueSelector = object : OnChartValueSelectedListener {
         override fun onValueSelected(entry: Entry, highlight: Highlight) {
-            onValueSelected(entry.data)
+            onSelect(entry.data as? Int)
         }
 
         override fun onNothingSelected() {
-            onValueSelected(null)
+            onSelect(null)
         }
     }
 
@@ -48,7 +53,7 @@ class MpAndroidLineChart(
         chartData?.also {
             updateDatasets(chartData)
             updateVisibleXRange()
-            highlightLast()
+            highlightIndex(selectedIndex, animated = false)
         }
 
         configureXAxis()
@@ -70,6 +75,7 @@ class MpAndroidLineChart(
 
     fun refresh(
         chartData: ChartData?,
+        selectedIndex: Int?,
         isDarkTheme: Boolean,
         textColor: Color,
         primaryColor: Color,
@@ -87,12 +93,10 @@ class MpAndroidLineChart(
 
         if (wasEmpty) {
             updateVisibleXRange()
-            highlightLast()
-            // Note: all moveViewTo(...) methods will automatically invalidate() (refresh) the chart. There is no
-            // need for further calling invalidate().
-        } else {
-            invalidate()
         }
+
+        highlightIndex(selectedIndex, animated = true)
+        invalidate()
     }
 
     private fun updateDatasets(chartData: ChartData) {
@@ -134,13 +138,28 @@ class MpAndroidLineChart(
         val startDate = endDate - 7.days
         val visibleGraphTimePeriod = (endDate.epochSeconds - startDate.epochSeconds).toFloat()
         setVisibleXRange(visibleGraphTimePeriod, visibleGraphTimePeriod)
-        moveViewToX(endDate.epochSeconds.toFloat())
     }
 
-    private fun highlightLast() {
-        val lastX = Clock.System.now().epochSeconds.toFloat()
-        data?.dataSets?.firstOrNull()?.getEntryForXValue(lastX, Float.NaN)?.let {
-            highlightValue(it.x, it.y, 0, true)
+    private fun highlightIndex(selectedIndex: Int?, animated: Boolean) {
+        if (selectedIndex == null || previousHighlightedIndex == selectedIndex) return
+        GraphSelectionLogger.logGraph(selectedIndex, animated)
+        val entry = data?.dataSets?.firstOrNull()?.getEntryForIndex(selectedIndex)
+        if (entry == null) {
+            highlightValue(null, false)
+            return
+        }
+        highlightValue(entry.x, entry.y, 0, false)
+        moveToX(entry.x, animated)
+        previousHighlightedIndex = selectedIndex
+    }
+
+    private fun moveToX(xValue: Float, animated: Boolean) {
+        val xPadding = with(density) { 16.dp.toPx() }
+        val xTarget: Float = xValue - visibleXRange * xPadding / 100
+        if (animated) {
+            moveViewToAnimated(xTarget, 0f, YAxis.AxisDependency.LEFT, 500)
+        } else {
+            moveViewToX(xTarget)
         }
     }
 

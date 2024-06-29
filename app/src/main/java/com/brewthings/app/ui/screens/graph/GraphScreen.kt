@@ -2,9 +2,7 @@
 
 package com.brewthings.app.ui.screens.graph
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,11 +16,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.brewthings.app.R
 import com.brewthings.app.data.model.DataType
@@ -38,7 +34,8 @@ fun GraphScreen(
         screenState = viewModel.screenState,
         onBackClick = { navController.popBackStack() },
         viewModel::toggleSeries,
-        viewModel::onValueSelected,
+        viewModel::onGraphSelect,
+        viewModel::onPagerSelect,
     )
 }
 
@@ -47,7 +44,8 @@ fun GraphScreen(
     screenState: GraphScreenState,
     onBackClick: () -> Unit,
     toggleSeries: (DataType) -> Unit,
-    onValueSelected: (Any?) -> Unit,
+    onGraphSelect: (Int?) -> Unit,
+    onPagerSelect: (Int) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
@@ -67,24 +65,22 @@ fun GraphScreen(
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
         ) {
             item {
-                Graph(
-                    modifier = Modifier.height(Size.Graph.HEIGHT),
-                    enabledTypes = screenState.enabledTypes,
-                    graphData = screenState.graphData,
-                    toggleSeries = toggleSeries,
-                    onValueSelected = onValueSelected
-                )
+                screenState.graphState?.also { state ->
+                    Graph(
+                        modifier = Modifier.height(Size.Graph.HEIGHT),
+                        state = state,
+                        toggleSeries = toggleSeries,
+                        onSelect = onGraphSelect
+                    )
+
+                }
             }
             item {
-                screenState.selectedInsights?.also {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        GraphInsights(data = it)
-                    }
+                screenState.insightsPagerState?.also { state ->
+                    GraphInsightsPager(
+                        state = state,
+                        onSelect = onPagerSelect
+                    )
                 }
             }
         }
