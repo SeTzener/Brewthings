@@ -56,11 +56,15 @@ private fun calculateInsights(
         abv = OGInsight(
             value = abv,
             deltaFromPrevious = previousData?.let { abv - calculateABV(ogData.gravity, it.gravity) },
+            isOG = ogData.isOG,
+            isFG = ogData.isFG
         ),
         velocity = velocity?.let { value ->
             OGInsight(
                 value = value,
                 deltaFromPrevious = previousData?.let { calculateVelocity(it, pillData) },
+                isOG = ogData.isOG,
+                isFG = ogData.isFG
             )
         },
         durationFromOG = TimeRange(ogData.timestamp, pillData.timestamp),

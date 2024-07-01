@@ -78,6 +78,7 @@ fun GraphScreen(
             item {
                 screenState.insightsPagerState?.also { state ->
                     GraphInsightsPager(
+                        macAddress = screenState.pillMacAddress,
                         state = state,
                         onSelect = onPagerSelect
                     )
