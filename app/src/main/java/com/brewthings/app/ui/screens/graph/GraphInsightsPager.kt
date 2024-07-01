@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun GraphInsightsPager(
     state: GraphInsightsPagerState,
+    macAddress: String,
     onSelect: (Int) -> Unit,
 ) {
     val selectedIndex = state.selectedInsightsIndex ?: return // Hide if no selected insights
@@ -45,7 +46,9 @@ fun GraphInsightsPager(
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            GraphInsights(data = state.insights[index])
+            GraphInsights(
+                macAddress = macAddress,
+                data = state.insights[index])
         }
     }
 

@@ -5,12 +5,14 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,14 +30,20 @@ import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.IconAlign
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.theme.BrewthingsTheme
+import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toFormattedDate
 import kotlin.math.abs
 import kotlinx.datetime.Instant
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun GraphInsights(data: RaptPillInsights) {
+fun GraphInsights(
+    macAddress: String,
+    data: RaptPillInsights,
+    viewModel: GraphScreenViewModel = koinViewModel(),
+) {
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
             InsightsTimeHeader(data)
@@ -93,6 +101,60 @@ fun GraphInsights(data: RaptPillInsights) {
                 value = { InsightValue(it, R.string.pill_velocity, data.velocity?.value) },
                 fromPrevious = { InsightDelta(it, R.string.pill_velocity, data.velocity?.deltaFromPrevious) },
             )
+        }
+        Row {
+            Column(
+                modifier = Modifier.padding(start = 25.dp, bottom = 10.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+                TextButton(
+                    onClick = {
+                        viewModel.setIsOG(
+                            macAddress = macAddress,
+                            timestamp = data.timestamp,
+                            isOg = data.velocity?.isOG?.not() ?: true
+                        )
+                    },
+                ) {
+                    Text(
+                        text = if (data.abv?.isOG == true) {
+                            stringResource(id = R.string.unset_OG)
+                        } else {
+                            stringResource(
+                                id = R.string.set_OG
+                            )
+                        },
+                        style = Typography.bodyMedium,
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 25.dp, bottom = 10.dp),
+                horizontalAlignment = Alignment.End
+            ) {
+                TextButton(
+                    onClick = {
+                        viewModel.setIsFG(
+                            macAddress = macAddress,
+                            timestamp = data.timestamp,
+                            isFg = data.velocity?.isFG?.not() ?: true
+                        )
+                    }
+                ) {
+                    Text(
+                        text = if (data.abv?.isFG == true) {
+                            stringResource(id = R.string.unset_FG)
+                        } else {
+                            stringResource(
+                                id = R.string.set_FG
+                            )
+                        },
+                        style = Typography.bodyMedium,
+                    )
+                }
+            }
         }
     }
 }
@@ -213,7 +275,10 @@ fun InsightDelta(
         modifier = modifier,
         iconResId = delta?.asArrowDropIcon(),
         iconSize = 16.dp,
-        text = if (delta != null && !delta.isNaN()) stringResource(id = textResId, abs(delta)) else "",
+        text = if (delta != null && !delta.isNaN()) stringResource(
+            id = textResId,
+            abs(delta)
+        ) else "",
         iconPadding = 0.dp,
         iconColor = MaterialTheme.colorScheme.onSurface,
         textStyle = MaterialTheme.typography.bodySmall,
@@ -236,6 +301,7 @@ fun GraphInsightsPreview() {
     val timestampOG = Instant.parse("2024-05-26T00:00:00Z")
     BrewthingsTheme {
         GraphInsights(
+            macAddress = "64:B7:08:58:20:B6",
             data = RaptPillInsights(
                 timestamp = timestamp,
                 temperature = Insight(
@@ -259,10 +325,14 @@ fun GraphInsightsPreview() {
                 abv = OGInsight(
                     value = 5.5f,
                     deltaFromPrevious = 0.5f,
+                    isOG = true,
+                    isFG = null
                 ),
                 velocity = OGInsight(
                     value = 0.020f,
                     deltaFromPrevious = -0.002f,
+                    isOG = null,
+                    isFG = true
                 ),
                 durationFromOG = TimeRange(timestampOG, timestamp),
             )

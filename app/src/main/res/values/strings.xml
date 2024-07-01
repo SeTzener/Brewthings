@@ -55,4 +55,8 @@
     <string name="formatted_duration_hours">%d hours</string>
     <string name="formatted_duration_day">One day</string>
     <string name="formatted_duration_days">%d days</string>
+    <string name="set_OG">Set OG</string>
+    <string name="unset_OG">Unset OG</string>
+    <string name="unset_FG">Unset FG</string>
+    <string name="set_FG">Set FG</string>
 </resources>

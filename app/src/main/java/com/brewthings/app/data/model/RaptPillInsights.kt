@@ -23,4 +23,6 @@ data class Insight(
 data class OGInsight(
     val value: Float,
     val deltaFromPrevious: Float? = null,
+    val isOG: Boolean?,
+    val isFG: Boolean?
 )

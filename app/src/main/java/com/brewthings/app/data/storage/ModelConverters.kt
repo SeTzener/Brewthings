@@ -14,4 +14,6 @@ fun RaptPillData.toModelItem() = com.brewthings.app.data.model.RaptPillData(
     y = readings.y,
     z = readings.z,
     battery = readings.battery,
+    isOG = readings.isOG,
+    isFG = readings.isFG
 )
