@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.model.Insight
-import com.brewthings.app.data.model.OGInsight
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.IconAlign
@@ -112,12 +111,12 @@ fun GraphInsights(
                         viewModel.setIsOG(
                             macAddress = macAddress,
                             timestamp = data.timestamp,
-                            isOg = data.velocity?.isOG?.not() ?: true
+                            isOg = !data.isOG
                         )
                     },
                 ) {
                     Text(
-                        text = if (data.abv?.isOG == true) {
+                        text = if (data.isOG) {
                             stringResource(id = R.string.unset_OG)
                         } else {
                             stringResource(
@@ -139,12 +138,12 @@ fun GraphInsights(
                         viewModel.setIsFG(
                             macAddress = macAddress,
                             timestamp = data.timestamp,
-                            isFg = data.velocity?.isFG?.not() ?: true
+                            isFg = !data.isFG
                         )
                     }
                 ) {
                     Text(
-                        text = if (data.abv?.isFG == true) {
+                        text = if (data.isFG) {
                             stringResource(id = R.string.unset_FG)
                         } else {
                             stringResource(
@@ -322,19 +321,17 @@ fun GraphInsightsPreview() {
                     value = 0.5f,
                     deltaFromPrevious = -0.10f,
                 ),
-                abv = OGInsight(
+                abv = Insight(
                     value = 5.5f,
                     deltaFromPrevious = 0.5f,
-                    isOG = true,
-                    isFG = null
                 ),
-                velocity = OGInsight(
+                velocity = Insight(
                     value = 0.020f,
                     deltaFromPrevious = -0.002f,
-                    isOG = null,
-                    isFG = true
                 ),
                 durationFromOG = TimeRange(timestampOG, timestamp),
+                isOG = true,
+                isFG = false
             )
         )
     }

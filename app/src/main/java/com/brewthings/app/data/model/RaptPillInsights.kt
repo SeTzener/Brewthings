@@ -9,20 +9,15 @@ data class RaptPillInsights(
     val gravity: Insight,
     val tilt: Insight,
     val battery: Insight,
-    val abv: OGInsight? = null,
-    val velocity: OGInsight? = null,
+    val abv: Insight? = null,
+    val velocity: Insight? = null,
     val durationFromOG: TimeRange? = null,
+    val isOG: Boolean,
+    val isFG: Boolean
 )
 
 data class Insight(
     val value: Float,
     val deltaFromPrevious: Float? = null,
     val deltaFromOG: Float? = null,
-)
-
-data class OGInsight(
-    val value: Float,
-    val deltaFromPrevious: Float? = null,
-    val isOG: Boolean?,
-    val isFG: Boolean?
 )
