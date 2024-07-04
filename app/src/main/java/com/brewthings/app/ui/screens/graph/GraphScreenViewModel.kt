@@ -72,24 +72,26 @@ class GraphScreenViewModel(
             ) { og, pillData ->
                 val data = pillData.toGraphData()
                 val insights = pillData.toInsights(og)
-                val selectedIndex = insights.lastIndex
+                val defaultIndex = insights.lastIndex
 
                 screenState = screenState.copy(
                     graphState = GraphState(
                         graphData = data,
-                        selectedDataIndex = selectedIndex,
+                        selectedDataIndex = screenState.graphState?.selectedDataIndex
+                            ?: defaultIndex,
                         enabledTypes = data.series.map { it.type }.toSet()
                     ),
                     insightsPagerState = GraphInsightsPagerState(
                         insights = insights,
-                        selectedInsightsIndex = selectedIndex
+                        selectedInsightsIndex = screenState.insightsPagerState?.selectedInsightsIndex
+                            ?: defaultIndex
                     )
                 )
             }.collect()
         }
     }
 
-    fun setIsOG(macAddress: String, timestamp: Instant, isOg: Boolean?){
+    fun setIsOG(macAddress: String, timestamp: Instant, isOg: Boolean?) {
         viewModelScope.launch {
             if (isOg != null) {
                 repo.setIsOG(macAddress = macAddress, timestamp = timestamp, isOg = isOg)
@@ -97,7 +99,7 @@ class GraphScreenViewModel(
         }
     }
 
-    fun setIsFG(macAddress: String, timestamp: Instant, isFg: Boolean?){
+    fun setIsFG(macAddress: String, timestamp: Instant, isFg: Boolean?) {
         viewModelScope.launch {
             if (isFg != null) {
                 repo.setIsFG(macAddress = macAddress, timestamp = timestamp, isOg = isFg)
