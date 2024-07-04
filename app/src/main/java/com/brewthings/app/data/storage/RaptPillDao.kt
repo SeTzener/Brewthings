@@ -88,7 +88,8 @@ interface RaptPillDao {
         "SELECT * FROM RaptPillData " +
                 "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
                 "WHERE RaptPill.macAddress = :macAddress " +
-                "ORDER BY RaptPillData.timestamp ASC LIMIT 1"
+                "AND isOG = 1 " +
+                "ORDER BY RaptPillData.timestamp DESC LIMIT 1"
     )
     fun observeOG(macAddress: String): Flow<RaptPillData?>
 
