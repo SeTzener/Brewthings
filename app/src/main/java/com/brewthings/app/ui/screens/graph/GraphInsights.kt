@@ -5,12 +5,14 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,20 +24,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.model.Insight
-import com.brewthings.app.data.model.OGInsight
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.IconAlign
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.theme.BrewthingsTheme
+import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toFormattedDate
 import kotlin.math.abs
 import kotlinx.datetime.Instant
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun GraphInsights(data: RaptPillInsights) {
+fun GraphInsights(
+    macAddress: String,
+    data: RaptPillInsights,
+    viewModel: GraphScreenViewModel = koinViewModel(),
+) {
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
             InsightsTimeHeader(data)
@@ -52,7 +59,13 @@ fun GraphInsights(data: RaptPillInsights) {
                 icon = { InsightIcon(it, R.drawable.ic_gravity) },
                 label = { InsightLabel(it, R.string.graph_data_label_gravity) },
                 value = { InsightValue(it, R.string.pill_gravity, data.gravity.value) },
-                fromPrevious = { InsightDelta(it, R.string.pill_gravity, data.gravity.deltaFromPrevious) },
+                fromPrevious = {
+                    InsightDelta(
+                        it,
+                        R.string.pill_gravity,
+                        data.gravity.deltaFromPrevious
+                    )
+                },
                 fromOG = { InsightDelta(it, R.string.pill_gravity, data.gravity.deltaFromOG) },
             )
 
@@ -60,15 +73,33 @@ fun GraphInsights(data: RaptPillInsights) {
                 icon = { InsightIcon(it, R.drawable.ic_temperature) },
                 label = { InsightLabel(it, R.string.graph_data_label_temperature) },
                 value = { InsightValue(it, R.string.pill_temperature, data.temperature.value) },
-                fromPrevious = { InsightDelta(it, R.string.pill_temperature, data.temperature.deltaFromPrevious) },
-                fromOG = { InsightDelta(it, R.string.pill_temperature, data.temperature.deltaFromOG) },
+                fromPrevious = {
+                    InsightDelta(
+                        it,
+                        R.string.pill_temperature,
+                        data.temperature.deltaFromPrevious
+                    )
+                },
+                fromOG = {
+                    InsightDelta(
+                        it,
+                        R.string.pill_temperature,
+                        data.temperature.deltaFromOG
+                    )
+                },
             )
 
             InsightsRow(
                 icon = { InsightIcon(it, R.drawable.ic_tilt) },
                 label = { InsightLabel(it, R.string.graph_data_label_tilt) },
                 value = { InsightValue(it, R.string.pill_tilt, data.tilt.value) },
-                fromPrevious = { InsightDelta(it, R.string.pill_tilt, data.tilt.deltaFromPrevious) },
+                fromPrevious = {
+                    InsightDelta(
+                        it,
+                        R.string.pill_tilt,
+                        data.tilt.deltaFromPrevious
+                    )
+                },
                 fromOG = { InsightDelta(it, R.string.pill_tilt, data.tilt.deltaFromOG) },
             )
 
@@ -76,7 +107,13 @@ fun GraphInsights(data: RaptPillInsights) {
                 icon = { BatteryLevelIndicator(data.battery.value) },
                 label = { InsightLabel(it, R.string.graph_data_label_battery) },
                 value = { InsightValue(it, R.string.pill_battery, data.battery.value) },
-                fromPrevious = { InsightDelta(it, R.string.pill_battery, data.battery.deltaFromPrevious) },
+                fromPrevious = {
+                    InsightDelta(
+                        it,
+                        R.string.pill_battery,
+                        data.battery.deltaFromPrevious
+                    )
+                },
                 fromOG = { InsightDelta(it, R.string.pill_battery, data.battery.deltaFromOG) },
             )
 
@@ -91,8 +128,61 @@ fun GraphInsights(data: RaptPillInsights) {
                 icon = { InsightIcon(it, R.drawable.ic_velocity) },
                 label = { InsightLabel(it, R.string.graph_data_label_velocity) },
                 value = { InsightValue(it, R.string.pill_velocity, data.velocity?.value) },
-                fromPrevious = { InsightDelta(it, R.string.pill_velocity, data.velocity?.deltaFromPrevious) },
+                fromPrevious = {
+                    InsightDelta(
+                        it,
+                        R.string.pill_velocity,
+                        data.velocity?.deltaFromPrevious
+                    )
+                },
             )
+        }
+        Row(
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
+            TextButton(
+                modifier = Modifier.padding(start = 7.dp),
+                onClick = {
+                    viewModel.setIsOG(
+                        macAddress = macAddress,
+                        timestamp = data.timestamp,
+                        isOg = !data.isOG
+                    )
+                },
+            ) {
+                Text(
+                    text = if (data.isOG) {
+                        stringResource(id = R.string.unset_OG)
+                    } else {
+                        stringResource(
+                            id = R.string.set_OG
+                        )
+                    },
+                    style = Typography.bodyMedium,
+                )
+            }
+
+            TextButton(
+                modifier = Modifier.padding(start = 4.dp),
+                onClick = {
+                    viewModel.setIsFG(
+                        macAddress = macAddress,
+                        timestamp = data.timestamp,
+                        isFg = !data.isFG
+                    )
+                }
+            ) {
+                Text(
+                    text = if (data.isFG) {
+                        stringResource(id = R.string.unset_FG)
+                    } else {
+                        stringResource(
+                            id = R.string.set_FG
+                        )
+                    },
+                    style = Typography.bodyMedium,
+                )
+            }
         }
     }
 }
@@ -213,7 +303,10 @@ fun InsightDelta(
         modifier = modifier,
         iconResId = delta?.asArrowDropIcon(),
         iconSize = 16.dp,
-        text = if (delta != null && !delta.isNaN()) stringResource(id = textResId, abs(delta)) else "",
+        text = if (delta != null && !delta.isNaN()) stringResource(
+            id = textResId,
+            abs(delta)
+        ) else "",
         iconPadding = 0.dp,
         iconColor = MaterialTheme.colorScheme.onSurface,
         textStyle = MaterialTheme.typography.bodySmall,
@@ -236,6 +329,7 @@ fun GraphInsightsPreview() {
     val timestampOG = Instant.parse("2024-05-26T00:00:00Z")
     BrewthingsTheme {
         GraphInsights(
+            macAddress = "64:B7:08:58:20:B6",
             data = RaptPillInsights(
                 timestamp = timestamp,
                 temperature = Insight(
@@ -256,15 +350,17 @@ fun GraphInsightsPreview() {
                     value = 0.5f,
                     deltaFromPrevious = -0.10f,
                 ),
-                abv = OGInsight(
+                abv = Insight(
                     value = 5.5f,
                     deltaFromPrevious = 0.5f,
                 ),
-                velocity = OGInsight(
+                velocity = Insight(
                     value = 0.020f,
                     deltaFromPrevious = -0.002f,
                 ),
                 durationFromOG = TimeRange(timestampOG, timestamp),
+                isOG = true,
+                isFG = false
             )
         )
     }

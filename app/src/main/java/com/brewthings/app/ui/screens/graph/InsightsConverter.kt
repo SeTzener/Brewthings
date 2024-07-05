@@ -1,7 +1,6 @@
 package com.brewthings.app.ui.screens.graph
 
 import com.brewthings.app.data.model.Insight
-import com.brewthings.app.data.model.OGInsight
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.util.datetime.TimeRange
@@ -26,6 +25,8 @@ private fun calculateInsights(
             gravity = Insight(value = pillData.gravity),
             battery = Insight(value = pillData.battery),
             tilt = Insight(value = pillData.floatingAngle),
+            isOG = pillData.isOG ?: false,
+            isFG = pillData.isFG ?: false
         )
     }
 
@@ -53,17 +54,19 @@ private fun calculateInsights(
             deltaFromPrevious = previousData?.let { pillData.floatingAngle - it.floatingAngle },
             deltaFromOG = pillData.floatingAngle - ogData.floatingAngle,
         ),
-        abv = OGInsight(
+        abv = Insight(
             value = abv,
             deltaFromPrevious = previousData?.let { abv - calculateABV(ogData.gravity, it.gravity) },
         ),
         velocity = velocity?.let { value ->
-            OGInsight(
+            Insight(
                 value = value,
                 deltaFromPrevious = previousData?.let { calculateVelocity(it, pillData) },
             )
         },
         durationFromOG = TimeRange(ogData.timestamp, pillData.timestamp),
+        isOG = pillData.isOG ?: false,
+        isFG = pillData.isFG ?: false
     )
 }
 
