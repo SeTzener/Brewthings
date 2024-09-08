@@ -42,8 +42,6 @@ import com.brewthings.app.ui.theme.Size
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -60,7 +58,7 @@ fun Graph(
     val textColor = MaterialTheme.colorScheme.onBackground
     val primaryColor = MaterialTheme.colorScheme.primary
 
-    val chartData = state.graphData.toChartData(state.dataTypes.toSet()) //TODO(walt): change me
+    val chartData = state.graphData.toChartData(state.selectedDataType)
 
     Column(modifier = modifier.wrapContentHeight()) {
         FlowRow(
@@ -151,17 +149,15 @@ fun DataTypeSelector(
 }
 
 @Composable
-private fun GraphData.toChartData(enabledTypes: Set<DataType>): ChartData = ChartData(
+private fun GraphData.toChartData(dataType: DataType): ChartData = ChartData(
     data = LineData(
-        series.mapNotNull {
-            if (enabledTypes.contains(it.type)) it.toChartDataSet(isMultiChart = enabledTypes.size > 1) else null
-        }
+        series.find { it.type == dataType }?.toChartDataSet()
     )
 )
 
 @Composable
-private fun GraphSeries.toChartDataSet(isMultiChart: Boolean): ILineDataSet = ChartDataSet(
-    yVals = if (isMultiChart) data.standardize() else data.convert(),
+private fun GraphSeries.toChartDataSet(): ILineDataSet = ChartDataSet(
+    yVals = data.convert(),
     label = type.toLabel(),
     lineColor = type.toLineColor().toArgb(),
     formatPattern = type.toFormatPattern(),
@@ -195,10 +191,10 @@ private fun List<DataPoint>.convert(): List<Entry> = map { Entry(it.x, it.y, it.
 
 /**
  * Transform the data using z-score normalization so that each sensor's readings are centered around the mean with a
- * standard deviation of 1, for multiline chart plotting.
+ * standard deviation of 1 (for multiline chart plotting).
  */
-private fun List<DataPoint>.standardize(): List<Entry> {
+/*private fun List<DataPoint>.standardize(): List<Entry> {
     val mean = map { it.y }.average().toFloat()
     val stdDev = sqrt(map { (it.y - mean).pow(2) }.average().toFloat())
     return map { Entry(it.x, (it.y - mean) / stdDev, it.data) }
-}
+}*/
