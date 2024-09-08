@@ -140,10 +140,22 @@ class MpAndroidLineChart(
         setVisibleXRange(visibleGraphTimePeriod, visibleGraphTimePeriod)
     }
 
+    private fun entryForIndex(index: Int): Entry? {
+        data?.dataSets?.forEach { dataSet ->
+            for (i in 0 until dataSet.entryCount) {
+                val entry = dataSet.getEntryForIndex(i)
+                if (entry.data == index) {
+                    return entry
+                }
+            }
+        }
+        return null
+    }
+
     private fun highlightIndex(selectedIndex: Int?, animated: Boolean) {
         if (selectedIndex == null || previousHighlightedIndex == selectedIndex) return
         GraphSelectionLogger.logGraph(selectedIndex, animated)
-        val entry = data?.dataSets?.firstOrNull()?.getEntryForIndex(selectedIndex)
+        val entry = entryForIndex(selectedIndex)
         if (entry == null) {
             highlightValue(null, false)
             return

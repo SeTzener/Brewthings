@@ -26,8 +26,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
@@ -36,12 +34,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.brewthings.app.R
 import com.brewthings.app.data.model.DataType
 import com.brewthings.app.ui.android.chart.ChartData
-import com.brewthings.app.ui.android.chart.ChartDataSet
 import com.brewthings.app.ui.android.chart.MpAndroidLineChart
 import com.brewthings.app.ui.theme.Size
-import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -116,7 +111,7 @@ fun DataTypeSelector(
     Box {
         OutlinedButton(
             modifier = Modifier.wrapContentSize(),
-            contentPadding = PaddingValues(start =16.dp, end = 8.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 8.dp),
             onClick = { expanded = !expanded },
         ) {
             Text(text = selectedDataType.toLabel())
@@ -149,21 +144,6 @@ fun DataTypeSelector(
 }
 
 @Composable
-private fun GraphData.toChartData(dataType: DataType): ChartData = ChartData(
-    data = LineData(
-        series.find { it.type == dataType }?.toChartDataSet()
-    )
-)
-
-@Composable
-private fun GraphSeries.toChartDataSet(): ILineDataSet = ChartDataSet(
-    yVals = data.convert(),
-    label = type.toLabel(),
-    lineColor = type.toLineColor().toArgb(),
-    formatPattern = type.toFormatPattern(),
-)
-
-@Composable
 private fun DataType.toLabel(): String = when (this) {
     DataType.TEMPERATURE -> stringResource(id = R.string.graph_data_label_temp_full)
     DataType.GRAVITY -> stringResource(id = R.string.graph_data_label_gravity)
@@ -171,23 +151,14 @@ private fun DataType.toLabel(): String = when (this) {
 }
 
 @Composable
-private fun DataType.toLineColor(): Color = when (this) {
-    DataType.GRAVITY -> MaterialTheme.colorScheme.primary
-    DataType.TEMPERATURE -> MaterialTheme.colorScheme.secondary
-    DataType.BATTERY -> MaterialTheme.colorScheme.tertiary
-}
-
-@Composable
-private fun DataType.toFormatPattern(): String = when (this) {
-    DataType.GRAVITY -> "0.000"
-    DataType.TEMPERATURE,
-    DataType.BATTERY -> "#.#"
-}
-
-/**
- * Converts the data points to entries for plotting on the chart.
- */
-private fun List<DataPoint>.convert(): List<Entry> = map { Entry(it.x, it.y, it.data) }
+private fun GraphData.toChartData(dataType: DataType): ChartData = ChartData(
+    data = LineData(
+        series.find { it.type == dataType }
+            ?.data
+            ?.toSegments()
+            ?.toDataSets(dataType)
+    )
+)
 
 /**
  * Transform the data using z-score normalization so that each sensor's readings are centered around the mean with a
