@@ -13,7 +13,8 @@ data class GraphScreenState(
 data class GraphState(
     val graphData: GraphData,
     val selectedDataIndex: Int?,
-    val enabledTypes: Set<DataType>,
+    val selectedDataType: DataType,
+    val dataTypes: List<DataType>,
 )
 
 data class GraphInsightsPagerState(
