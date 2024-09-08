@@ -202,19 +202,19 @@ fun InsightsTimeHeader(data: RaptPillInsights) {
             Text(
                 modifier = Modifier.padding(top = 4.dp),
                 text = when {
-                    data.isOG -> stringResource(id = R.string.graph_data_duration_og)
-
-                    data.durationSinceOG == null -> ""
-
-                    data.isFG -> stringResource(
-                        id = R.string.graph_data_duration_fg,
+                    data.isFG && data.durationSinceOG != null -> stringResource(
+                        id = R.string.graph_data_duration_fg_since_og,
                         data.durationSinceOG.format()
                     )
 
-                    else -> stringResource(
+                    data.isOG -> stringResource(id = R.string.graph_data_duration_og)
+
+                    data.durationSinceOG != null -> stringResource(
                         id = R.string.graph_data_duration_since_og,
                         data.durationSinceOG.format()
                     )
+
+                    else -> ""
                 },
                 style = MaterialTheme.typography.bodySmall,
             )
