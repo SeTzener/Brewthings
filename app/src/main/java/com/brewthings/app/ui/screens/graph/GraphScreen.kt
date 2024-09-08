@@ -3,7 +3,6 @@
 package com.brewthings.app.ui.screens.graph
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,7 +21,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.brewthings.app.R
 import com.brewthings.app.data.model.DataType
-import com.brewthings.app.ui.theme.Size
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -33,7 +31,7 @@ fun GraphScreen(
     GraphScreen(
         screenState = viewModel.screenState,
         onBackClick = { navController.popBackStack() },
-        viewModel::toggleSeries,
+        viewModel::selectSeries,
         viewModel::onGraphSelect,
         viewModel::onPagerSelect,
     )
@@ -43,7 +41,7 @@ fun GraphScreen(
 fun GraphScreen(
     screenState: GraphScreenState,
     onBackClick: () -> Unit,
-    toggleSeries: (DataType) -> Unit,
+    selectSeries: (DataType) -> Unit,
     onGraphSelect: (Int?) -> Unit,
     onPagerSelect: (Int) -> Unit,
 ) {
@@ -67,9 +65,8 @@ fun GraphScreen(
             item {
                 screenState.graphState?.also { state ->
                     Graph(
-                        modifier = Modifier.height(Size.Graph.HEIGHT),
                         state = state,
-                        toggleSeries = toggleSeries,
+                        selectSeries = selectSeries,
                         onSelect = onGraphSelect
                     )
 

@@ -31,17 +31,11 @@ class GraphScreenViewModel(
         loadData()
     }
 
-    fun toggleSeries(dataType: DataType) {
+    fun selectSeries(dataType: DataType) {
         val graphState = screenState.graphState ?: return
-        val enabledTypes = when (dataType !in graphState.enabledTypes) {
-            true -> graphState.enabledTypes + dataType
-            false -> graphState.enabledTypes - dataType
-        }
-
-        if (enabledTypes.isEmpty()) return
 
         screenState = screenState.copy(
-            graphState = graphState.copy(enabledTypes = enabledTypes)
+            graphState = graphState.copy(selectedDataType = dataType)
         )
     }
 
@@ -69,13 +63,16 @@ class GraphScreenViewModel(
                     val data = pillData.toGraphData()
                     val insights = pillData.toInsights()
                     val defaultIndex = insights.lastIndex
+                    val types = DataType.entries.toList()
+                    val previousType = screenState.graphState?.selectedDataType
 
                     screenState = screenState.copy(
                         graphState = GraphState(
                             graphData = data,
                             selectedDataIndex = screenState.graphState?.selectedDataIndex
                                 ?: defaultIndex,
-                            enabledTypes = data.series.map { it.type }.toSet()
+                            selectedDataType = previousType ?: types[0],
+                            dataTypes = types,
                         ),
                         insightsPagerState = GraphInsightsPagerState(
                             insights = insights,

@@ -70,7 +70,7 @@ fun GraphInsights(
 
             InsightsRow(
                 icon = { InsightIcon(it, R.drawable.ic_temperature) },
-                label = { InsightLabel(it, R.string.graph_data_label_temperature) },
+                label = { InsightLabel(it, R.string.graph_data_label_temp_short) },
                 value = { InsightValue(it, R.string.pill_temperature, data.temperature.value) },
                 fromPrevious = {
                     InsightDelta(
