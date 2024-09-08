@@ -7,17 +7,36 @@ import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.daysBetweenIgnoringTime
 import kotlin.math.abs
 
-fun List<RaptPillData>.toInsights(ogData: RaptPillData?): List<RaptPillInsights> =
-    mapIndexed { index, raptPillData ->
-        val previousData = if (index > 0) get(index - 1) else null
-        calculateInsights(ogData, raptPillData, previousData)
+fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
+    val result = mutableListOf<RaptPillInsights>()
+    var ogData: RaptPillData? = null
+    var previousData: RaptPillData? = null
+
+    for (data in this) {
+        // Add the insights for the current data point.
+        result.add(data.toInsights(ogData = ogData, previousData = previousData))
+
+        if (data.isFG == true) {
+            // Invalidate the OG data for the next data point.
+            ogData = null
+        }
+
+        if (data.isOG == true) {
+            // Remember the OG data for the next data point.
+            ogData = data
+        }
+
+        previousData = data
     }
 
-private fun calculateInsights(
+    return result
+}
+
+private fun RaptPillData.toInsights(
     ogData: RaptPillData?,
-    pillData: RaptPillData,
     previousData: RaptPillData?
 ): RaptPillInsights {
+    val pillData = this
     if (ogData == null || pillData == ogData) {
         return RaptPillInsights(
             timestamp = pillData.timestamp,
@@ -64,7 +83,7 @@ private fun calculateInsights(
                 deltaFromPrevious = previousData?.let { calculateVelocity(it, pillData) },
             )
         },
-        durationFromOG = TimeRange(ogData.timestamp, pillData.timestamp),
+        durationSinceOG = TimeRange(ogData.timestamp, pillData.timestamp),
         isOG = pillData.isOG ?: false,
         isFG = pillData.isFG ?: false
     )

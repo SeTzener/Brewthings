@@ -11,7 +11,7 @@ data class RaptPillInsights(
     val battery: Insight,
     val abv: Insight? = null,
     val velocity: Insight? = null,
-    val durationFromOG: TimeRange? = null,
+    val durationSinceOG: TimeRange? = null,
     val isOG: Boolean,
     val isFG: Boolean
 )

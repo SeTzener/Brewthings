@@ -75,9 +75,4 @@ class RaptPillRepository(
         dao.observeData(macAddress).map { data ->
             data.map { it.toModelItem() }
         }
-
-    fun observeOG(macAddress: String): Flow<RaptPillData?> =
-        dao.observeOG(macAddress).map {
-            it?.toModelItem()
-        }
 }

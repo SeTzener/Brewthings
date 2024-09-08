@@ -39,6 +39,8 @@
     <string name="graph_data_label_abv">ABV</string>
     <string name="graph_data_label_velocity">SG/day</string>
     <string name="graph_data_duration_since_og">%s since OG</string>
+    <string name="graph_data_duration_og">OG</string>
+    <string name="graph_data_duration_fg_since_og">%s at FG</string>
     <string name="graph_header_name">Name</string>
     <string name="graph_header_value">Value</string>
     <string name="graph_header_from_previous">Δ prev.</string>
