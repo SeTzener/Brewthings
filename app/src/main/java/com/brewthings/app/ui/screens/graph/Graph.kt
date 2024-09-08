@@ -165,7 +165,7 @@ private fun GraphSeries.toChartDataSet(): ILineDataSet = ChartDataSet(
 
 @Composable
 private fun DataType.toLabel(): String = when (this) {
-    DataType.TEMPERATURE -> stringResource(id = R.string.graph_data_label_temperature)
+    DataType.TEMPERATURE -> stringResource(id = R.string.graph_data_label_temp_full)
     DataType.GRAVITY -> stringResource(id = R.string.graph_data_label_gravity)
     DataType.BATTERY -> stringResource(id = R.string.graph_data_label_battery)
 }

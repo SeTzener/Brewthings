@@ -33,7 +33,8 @@
     <string name="edit_name_tooltip">Pill Name</string>
     <string name="edit_name_btn">Save</string>
     <string name="graph_data_label_gravity">Gravity</string>
-    <string name="graph_data_label_temperature">Temperature</string>
+    <string name="graph_data_label_temp_short">Temp</string>
+    <string name="graph_data_label_temp_full">Temperature</string>
     <string name="graph_data_label_battery">Battery</string>
     <string name="graph_data_label_tilt">Tilt</string>
     <string name="graph_data_label_abv">ABV</string>
