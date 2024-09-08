@@ -24,5 +24,7 @@ fun List<RaptPillData>.toGraphData(): GraphData {
 private fun RaptPillData.toDataPoint(index: Int, toY: RaptPillData.() -> Float): DataPoint = DataPoint(
     x = timestamp.epochSeconds.toFloat(),
     y = toY(),
+    isOG = isOG == true,
+    isFG = isFG == true,
     data = index
 )
