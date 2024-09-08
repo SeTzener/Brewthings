@@ -92,7 +92,7 @@ private fun RaptPillData.toInsights(
                 deltaFromPrevious = previousData?.let { calculateVelocity(it, pillData) },
             )
         },
-        durationFromOG = TimeRange(ogData.timestamp, pillData.timestamp),
+        durationSinceOG = TimeRange(ogData.timestamp, pillData.timestamp),
         isOG = pillData.isOG ?: false,
         isFG = pillData.isFG ?: false
     )

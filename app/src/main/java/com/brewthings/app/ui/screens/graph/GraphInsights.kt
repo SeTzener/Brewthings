@@ -5,7 +5,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
@@ -202,7 +201,7 @@ fun InsightsTimeHeader(data: RaptPillInsights) {
             )
             Text(
                 modifier = Modifier.padding(top = 4.dp),
-                text = data.durationFromOG?.let {
+                text = data.durationSinceOG?.let {
                     stringResource(
                         id = R.string.graph_data_duration_since_og,
                         it.format()
@@ -358,7 +357,7 @@ fun GraphInsightsPreview() {
                     value = 0.020f,
                     deltaFromPrevious = -0.002f,
                 ),
-                durationFromOG = TimeRange(timestampOG, timestamp),
+                durationSinceOG = TimeRange(timestampOG, timestamp),
                 isOG = true,
                 isFG = false
             )
