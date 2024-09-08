@@ -14,20 +14,38 @@ fun List<RaptPillData>.toInsights(): List<List<RaptPillInsights>> {
     var previousData: RaptPillData? = null
 
     for (data in this) {
-        ogData = when {
-            data.isOG == true -> data
-            data.isFG == true -> null
-            else -> ogData
+        val insights = data.toInsights(ogData = ogData, previousData = previousData)
+
+        if (data.isFG == true) {
+            // If this is an FG, close the current group with this value...
+            currentGroup.add(insights)
+
+            // ...and start a new group.
+            result.add(currentGroup)
+            currentGroup = mutableListOf()
+
+            // Invalidate the OG data for the next data point.
+            ogData = null
         }
 
-        // Add the current data to the current group
-        currentGroup.add(data.toInsights(ogData = ogData, previousData = previousData))
+        if (data.isOG == true) {
+            // If this is an OG, start a new group with this value (if necessary)...
+            if (currentGroup.isNotEmpty()) {
+                result.add(currentGroup)
+                currentGroup = mutableListOf()
+            }
 
-        // If it's an OG or FG, check if we need to finalize the current group
-        if (data.isOG == true || data.isFG == true) {
-            // If we have reached a marker (OG or FG), finalize the current group and start a new one
-            result.add(currentGroup)
-            currentGroup = mutableListOf()  // Start a new group
+            // ...and add this value to the new group.
+            // Note that, if the insights is both an OG and a FG, it will be added to both the groups.
+            currentGroup.add(insights)
+
+            // Save the OG data for the next data point.
+            ogData = data
+        }
+
+        if (data.isFG != true && data.isOG != true) {
+            // If this is neither an OG nor a FG, just add it to the current group.
+            currentGroup.add(insights)
         }
 
         previousData = data
