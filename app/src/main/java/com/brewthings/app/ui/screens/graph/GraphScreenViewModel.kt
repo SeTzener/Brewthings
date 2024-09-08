@@ -68,6 +68,7 @@ class GraphScreenViewModel(
                 .collect { pillData ->
                     val data = pillData.toGraphData()
                     val insights = pillData.toInsights()
+                        .flatten() // TODO(walt): remove me after changing the graph rendering
                     val defaultIndex = insights.lastIndex
 
                     screenState = screenState.copy(

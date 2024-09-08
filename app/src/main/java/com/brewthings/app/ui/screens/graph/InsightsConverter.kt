@@ -7,17 +7,45 @@ import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.daysBetweenIgnoringTime
 import kotlin.math.abs
 
-fun List<RaptPillData>.toInsights(): List<RaptPillInsights> =
-    mapIndexed { index, raptPillData ->
-        val previousData = if (index > 0) get(index - 1) else null
-        calculateInsights(raptPillData, previousData)
+fun List<RaptPillData>.toInsights(): List<List<RaptPillInsights>> {
+    val result = mutableListOf<List<RaptPillInsights>>()
+    var currentGroup = mutableListOf<RaptPillInsights>()
+    var ogData: RaptPillData? = null
+    var previousData: RaptPillData? = null
+
+    for (data in this) {
+        ogData = when {
+            data.isOG == true -> data
+            data.isFG == true -> null
+            else -> ogData
+        }
+
+        // Add the current data to the current group
+        currentGroup.add(data.toInsights(ogData = ogData, previousData = previousData))
+
+        // If it's an OG or FG, check if we need to finalize the current group
+        if (data.isOG == true || data.isFG == true) {
+            // If we have reached a marker (OG or FG), finalize the current group and start a new one
+            result.add(currentGroup)
+            currentGroup = mutableListOf()  // Start a new group
+        }
+
+        previousData = data
     }
 
-private fun calculateInsights(
+    // Add any remaining data that hasn't been closed off by an FG
+    if (currentGroup.isNotEmpty()) {
+        result.add(currentGroup)
+    }
+
+    return result
+}
+
+private fun RaptPillData.toInsights(
     ogData: RaptPillData?,
-    pillData: RaptPillData,
     previousData: RaptPillData?
 ): RaptPillInsights {
+    val pillData = this
     if (ogData == null || pillData == ogData) {
         return RaptPillInsights(
             timestamp = pillData.timestamp,
