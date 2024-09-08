@@ -8,8 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.brewthings.app.data.model.DataType
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
@@ -66,28 +64,26 @@ class GraphScreenViewModel(
 
     private fun loadData() {
         viewModelScope.launch {
-            combine(
-                repo.observeOG(screenState.pillMacAddress),
-                repo.observeData(screenState.pillMacAddress)
-            ) { og, pillData ->
-                val data = pillData.toGraphData()
-                val insights = pillData.toInsights(og)
-                val defaultIndex = insights.lastIndex
+            repo.observeData(screenState.pillMacAddress)
+                .collect { pillData ->
+                    val data = pillData.toGraphData()
+                    val insights = pillData.toInsights()
+                    val defaultIndex = insights.lastIndex
 
-                screenState = screenState.copy(
-                    graphState = GraphState(
-                        graphData = data,
-                        selectedDataIndex = screenState.graphState?.selectedDataIndex
-                            ?: defaultIndex,
-                        enabledTypes = data.series.map { it.type }.toSet()
-                    ),
-                    insightsPagerState = GraphInsightsPagerState(
-                        insights = insights,
-                        selectedInsightsIndex = screenState.insightsPagerState?.selectedInsightsIndex
-                            ?: defaultIndex
+                    screenState = screenState.copy(
+                        graphState = GraphState(
+                            graphData = data,
+                            selectedDataIndex = screenState.graphState?.selectedDataIndex
+                                ?: defaultIndex,
+                            enabledTypes = data.series.map { it.type }.toSet()
+                        ),
+                        insightsPagerState = GraphInsightsPagerState(
+                            insights = insights,
+                            selectedInsightsIndex = screenState.insightsPagerState?.selectedInsightsIndex
+                                ?: defaultIndex
+                        )
                     )
-                )
-            }.collect()
+                }
         }
     }
 

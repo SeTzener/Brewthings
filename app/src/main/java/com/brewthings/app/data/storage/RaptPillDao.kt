@@ -1,6 +1,5 @@
 package com.brewthings.app.data.storage
 
-import android.view.Gravity
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -83,15 +82,6 @@ interface RaptPillDao {
             )
         )
     }
-
-    @Query(
-        "SELECT * FROM RaptPillData " +
-                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
-                "WHERE RaptPill.macAddress = :macAddress " +
-                "AND isOG = 1 " +
-                "ORDER BY RaptPillData.timestamp DESC LIMIT 1"
-    )
-    fun observeOG(macAddress: String): Flow<RaptPillData?>
 
     @Query("SELECT pillId FROM RaptPill WHERE macAddress = :macAddress")
     suspend fun getPillIdByMacAddress(macAddress: String): Long?

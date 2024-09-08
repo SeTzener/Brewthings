@@ -7,10 +7,10 @@ import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.daysBetweenIgnoringTime
 import kotlin.math.abs
 
-fun List<RaptPillData>.toInsights(ogData: RaptPillData?): List<RaptPillInsights> =
+fun List<RaptPillData>.toInsights(): List<RaptPillInsights> =
     mapIndexed { index, raptPillData ->
         val previousData = if (index > 0) get(index - 1) else null
-        calculateInsights(ogData, raptPillData, previousData)
+        calculateInsights(raptPillData, previousData)
     }
 
 private fun calculateInsights(
