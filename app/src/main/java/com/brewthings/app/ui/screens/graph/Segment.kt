@@ -14,7 +14,29 @@ data class Segment(
     val entries: List<Entry>
 )
 
-fun List<DataPoint>.toSegments(): List<Segment> = emptyList()
+fun List<DataPoint>.toSegments(): List<Segment> {
+    val result = mutableListOf<Segment>()
+    var currentGroup = mutableListOf<DataPoint>()
+
+    for (data in this) {
+        currentGroup.add(data)
+
+        if (data.isOG || data.isFG) {
+            if (currentGroup.isNotEmpty()) {
+                result.add(currentGroup.toSegment())
+                currentGroup = mutableListOf()
+            }
+            currentGroup.add(data)
+        }
+    }
+
+    if (currentGroup.isNotEmpty()) {
+        result.add(currentGroup.toSegment())
+    }
+
+    return result
+
+}
 
 @Composable
 fun List<Segment>.toDataSets(type: DataType): List<ILineDataSet> = map { segment ->
@@ -39,3 +61,8 @@ private fun DataType.toFormatPattern(): String = when (this) {
     DataType.TEMPERATURE,
     DataType.BATTERY -> "#.#"
 }
+
+private fun List<DataPoint>.toSegment(): Segment = Segment(
+    isValid = first().isOG,
+    entries = map { Entry(it.x, it.y, it.data) }
+)
