@@ -7,53 +7,26 @@ import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.daysBetweenIgnoringTime
 import kotlin.math.abs
 
-fun List<RaptPillData>.toInsights(): List<List<RaptPillInsights>> {
-    val result = mutableListOf<List<RaptPillInsights>>()
-    var currentGroup = mutableListOf<RaptPillInsights>()
+fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
+    val result = mutableListOf<RaptPillInsights>()
     var ogData: RaptPillData? = null
     var previousData: RaptPillData? = null
 
     for (data in this) {
-        val insights = data.toInsights(ogData = ogData, previousData = previousData)
+        // Add the insights for the current data point.
+        result.add(data.toInsights(ogData = ogData, previousData = previousData))
 
         if (data.isFG == true) {
-            // If this is an FG, close the current group with this value...
-            currentGroup.add(insights)
-
-            // ...and start a new group.
-            result.add(currentGroup)
-            currentGroup = mutableListOf()
-
             // Invalidate the OG data for the next data point.
             ogData = null
         }
 
         if (data.isOG == true) {
-            // If this is an OG, start a new group with this value (if necessary)...
-            if (currentGroup.isNotEmpty()) {
-                result.add(currentGroup)
-                currentGroup = mutableListOf()
-            }
-
-            // ...and add this value to the new group.
-            // Note that, if the insights is both an OG and a FG, it will be added to both the groups.
-            currentGroup.add(insights)
-
-            // Save the OG data for the next data point.
+            // Remember the OG data for the next data point.
             ogData = data
         }
 
-        if (data.isFG != true && data.isOG != true) {
-            // If this is neither an OG nor a FG, just add it to the current group.
-            currentGroup.add(insights)
-        }
-
         previousData = data
-    }
-
-    // Add any remaining data that hasn't been closed off by an FG
-    if (currentGroup.isNotEmpty()) {
-        result.add(currentGroup)
     }
 
     return result
