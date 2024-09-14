@@ -53,7 +53,7 @@ class RaptPillScanner {
             return null
         }
 
-        logger.warning("Found manufacturer data: ${data.asHexString()}.")
+        logger.info("Found manufacturer data: ${data.asHexString()}.")
         return try {
             RaptPillParser.parse(data)
         } catch (t: Throwable) {
