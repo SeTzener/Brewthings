@@ -4,5 +4,5 @@ data class ScannedRaptPill(
     val macAddress: String,
     val name: String?,
     val rssi: Int,
-    val data: RaptPillData?
+    val data: ScannedRaptPillData
 )

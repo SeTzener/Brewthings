@@ -61,6 +61,7 @@ import com.brewthings.app.R
 import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.ScannedRaptPill
+import com.brewthings.app.data.model.ScannedRaptPillData
 import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.ExpandableCard
 import com.brewthings.app.ui.components.ScanPane
@@ -295,7 +296,12 @@ private fun ScannedPill(
             topContent = { ScannedPillTopContent(pill, isInScannedPills, savePill) },
             expandedContent = {
                 Column {
-                    PillData(pillData = pill.data)
+                    PillData(
+                        temperature = pill.data.temperature,
+                        gravity = pill.data.gravity,
+                        floatingAngle = pill.data.floatingAngle,
+                        battery = pill.data.battery,
+                    )
                     PillFooter(name = pill.name, macAddress = pill.macAddress, navGraph = navGraph, stopScan = stopScan)
                 }
             }
@@ -385,7 +391,12 @@ private fun Pill(
         }
         val maxTimestamp = pill.data.maxOfOrNull { it.timestamp } ?: Instant.DISTANT_PAST
         pill.data.find { it.timestamp == maxTimestamp }?.let { data ->
-            PillData(pillData = data)
+            PillData(
+                temperature = data.temperature,
+                gravity = data.gravity,
+                floatingAngle = data.floatingAngle,
+                battery = data.battery,
+            )
             PillFooter(name = pill.name, macAddress = pill.macAddress, navGraph = navGraph, stopScan = stopScan)
         }
     }
@@ -427,42 +438,45 @@ private fun PillTopContent(
 }
 
 @Composable
-private fun PillData(pillData: RaptPillData?) {
-    newOrCached(pillData, null)?.let { data ->
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, top = 8.dp, bottom = 16.dp, end = 62.dp),
-        ) {
-            Column {
-                TextWithIcon(
-                    iconResId = R.drawable.ic_gravity,
-                    text = stringResource(id = R.string.pill_gravity, data.gravity)
-                )
+private fun PillData(
+    gravity: Float,
+    temperature: Float,
+    floatingAngle: Float,
+    battery: Float,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, top = 8.dp, bottom = 16.dp, end = 62.dp),
+    ) {
+        Column {
+            TextWithIcon(
+                iconResId = R.drawable.ic_gravity,
+                text = stringResource(id = R.string.pill_gravity, gravity)
+            )
 
-                Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.padding(8.dp))
 
-                TextWithIcon(
-                    iconResId = R.drawable.ic_temperature,
-                    text = stringResource(id = R.string.pill_temperature, data.temperature)
-                )
-            }
+            TextWithIcon(
+                iconResId = R.drawable.ic_temperature,
+                text = stringResource(id = R.string.pill_temperature, temperature)
+            )
+        }
 
-            Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(1f))
 
-            Column {
-                TextWithIcon(
-                    iconResId = R.drawable.ic_tilt,
-                    text = stringResource(id = R.string.pill_tilt, data.floatingAngle)
-                )
+        Column {
+            TextWithIcon(
+                iconResId = R.drawable.ic_tilt,
+                text = stringResource(id = R.string.pill_tilt, floatingAngle)
+            )
 
-                Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.padding(8.dp))
 
-                TextWithIcon(
-                    icon = { BatteryLevelIndicator(data.battery) },
-                    text = stringResource(id = R.string.pill_battery, data.battery)
-                )
-            }
+            TextWithIcon(
+                icon = { BatteryLevelIndicator(battery) },
+                text = stringResource(id = R.string.pill_battery, battery)
+            )
         }
     }
 }
@@ -528,7 +542,7 @@ private fun DropDownMenu(
         if (showBottomSheet) {
             expanded = false
             EditNameBottomSheet(
-                isBottomSheetVisible = showBottomSheet,
+                isBottomSheetVisible = true,
                 sheetState = SheetState(skipPartiallyExpanded = true, density = Density(1f)),
                 pill = raptPill,
                 onDismiss = { showBottomSheet = false },
@@ -620,7 +634,15 @@ fun ScannedPillPreview() {
                 name = "Pill Name",
                 macAddress = "00:00:00:00:00:00",
                 rssi = -50,
-                data = mockRaptPillData()
+                data = ScannedRaptPillData(
+                    gravity = 1.0f,
+                    gravityVelocity = -2.4f,
+                    temperature = 20.0f,
+                    x = 236.0625f,
+                    y = 4049.375f,
+                    z = 1008.9375f,
+                    battery = 100f
+                )
             ),
             isExpanded = true,
             isInScannedPills = true,
@@ -639,7 +661,18 @@ fun PillPreview() {
             pill = RaptPill(
                 name = "Pill Name",
                 macAddress = "00:00:00:00:00:00",
-                data = listOf(mockRaptPillData())
+                data = listOf(
+                    RaptPillData(
+                        timestamp = Instant.DISTANT_PAST,
+                        gravity = 1.0f,
+                        gravityVelocity = -2.4f,
+                        temperature = 20.0f,
+                        x = 236.0625f,
+                        y = 4049.375f,
+                        z = 1008.9375f,
+                        battery = 100f
+                    )
+                )
             ),
             navGraph = rememberNavController(),
             onPillUpdate = {},
@@ -647,14 +680,3 @@ fun PillPreview() {
         )
     }
 }
-
-private fun mockRaptPillData() = RaptPillData(
-    timestamp = Instant.DISTANT_PAST,
-    gravity = 1.0f,
-    gravityVelocity = -2.4f,
-    temperature = 20.0f,
-    x = 236.0625f,
-    y = 4049.375f,
-    z = 1008.9375f,
-    battery = 100f
-)

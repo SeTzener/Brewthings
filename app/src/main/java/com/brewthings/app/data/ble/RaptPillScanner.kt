@@ -1,8 +1,8 @@
 package com.brewthings.app.data.ble
 
 import android.bluetooth.le.ScanSettings
-import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.ScannedRaptPill
+import com.brewthings.app.data.model.ScannedRaptPillData
 import com.brewthings.app.util.Logger
 import com.brewthings.app.util.asHexString
 import com.juul.kable.Advertisement
@@ -10,8 +10,8 @@ import com.juul.kable.Scanner
 import com.juul.kable.logs.Logging
 import com.juul.kable.logs.SystemLogEngine
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 
 class RaptPillScanner {
@@ -32,24 +32,24 @@ class RaptPillScanner {
 
     }
 
-    fun scan(): Flow<ScannedRaptPill> =
-        scanner.advertisements
-            .filter { advertisement ->
-                advertisement.manufacturerData?.code == manufacturerId
-            }
-            .mapNotNull { advertisement ->
-                advertisement to parseManufacturerData(advertisement)
-            }
-            .map { (advertisement, data) ->
+    fun scan(): Flow<ScannedRaptPill> = scanner
+        .advertisements
+        .filter { advertisement ->
+            advertisement.manufacturerData?.code == manufacturerId
+        }
+        .mapNotNull { advertisement ->
+            parseManufacturerData(advertisement)?.let { data ->
                 ScannedRaptPill(
                     macAddress = advertisement.address,
                     name = advertisement.name,
                     rssi = advertisement.rssi,
-                    data = data,
+                    data = data
                 )
             }
+        }
+        .distinctUntilChanged()
 
-    private fun parseManufacturerData(advertisement: Advertisement): RaptPillData? {
+    private fun parseManufacturerData(advertisement: Advertisement): ScannedRaptPillData? {
         val data = advertisement.manufacturerData?.data
 
         if (data == null) {

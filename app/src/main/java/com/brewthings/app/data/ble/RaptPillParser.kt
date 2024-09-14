@@ -1,6 +1,6 @@
 package com.brewthings.app.data.ble
 
-import com.brewthings.app.data.model.RaptPillData
+import com.brewthings.app.data.model.ScannedRaptPillData
 import com.brewthings.app.data.utils.toUShort
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -43,7 +43,7 @@ typedef struct __attribute__((packed)) {
 */
 
 object RaptPillParser {
-    fun parse(data: ByteArray): RaptPillData {
+    fun parse(data: ByteArray): ScannedRaptPillData {
         if (data.size != 23) {
             throw IllegalArgumentException("Metrics data must have length 23")
         }
@@ -71,7 +71,7 @@ object RaptPillParser {
         val z = buffer.toUShort().toInt() / 16f
         val battery = buffer.toUShort().toFloat() / 256f
 
-        return RaptPillData(
+        return ScannedRaptPillData(
             temperature = (temperature / 128.0 - 273.15).toFloat(),
             gravity = gravity,
             gravityVelocity = if (gravityVelocityValid) gravityVelocity else null,
