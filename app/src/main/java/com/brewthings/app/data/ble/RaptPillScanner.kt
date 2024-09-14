@@ -12,6 +12,7 @@ import com.juul.kable.logs.SystemLogEngine
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 class RaptPillScanner {
     private val logger = Logger("RaptPillScanner")
@@ -36,12 +37,15 @@ class RaptPillScanner {
             .filter { advertisement ->
                 advertisement.manufacturerData?.code == manufacturerId
             }
-            .map { advertisement ->
+            .mapNotNull { advertisement ->
+                advertisement to parseManufacturerData(advertisement)
+            }
+            .map { (advertisement, data) ->
                 ScannedRaptPill(
                     macAddress = advertisement.address,
                     name = advertisement.name,
                     rssi = advertisement.rssi,
-                    data = parseManufacturerData(advertisement),
+                    data = data,
                 )
             }
 
