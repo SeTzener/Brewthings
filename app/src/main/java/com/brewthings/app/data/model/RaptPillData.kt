@@ -10,6 +10,7 @@ data class RaptPillData(
     val timestamp: Instant = Clock.System.now(),
     val temperature: Float,
     val gravity: Float,
+    val gravityVelocity: Float?,
     val x: Float,
     val y: Float,
     val z: Float,

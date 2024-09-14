@@ -20,6 +20,7 @@ data class RaptPillReadings(
     val timestamp: Instant,
     val temperature: Float,
     val gravity: Float,
+    val gravityVelocity: Float?,
     val x: Float,
     val y: Float,
     val z: Float,

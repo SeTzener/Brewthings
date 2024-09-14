@@ -40,6 +40,7 @@ class RaptPillRepository(
                 timestamp = it.timestamp,
                 temperature = it.temperature,
                 gravity = it.gravity,
+                gravityVelocity = it.gravityVelocity,
                 x = it.x,
                 y = it.y,
                 z = it.z,

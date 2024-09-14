@@ -10,7 +10,7 @@ import com.brewthings.app.R
 import com.brewthings.app.data.utils.ReadScript
 import com.brewthings.app.util.Logger
 
-@Database(entities = [RaptPill::class, RaptPillData::class], version = 2)
+@Database(entities = [RaptPill::class, RaptPillData::class], version = 3)
 @androidx.room.TypeConverters(TypeConverters::class)
 abstract class RaptPillDatabase : RoomDatabase() {
     abstract fun raptPillDao(): RaptPillDao
@@ -19,22 +19,31 @@ abstract class RaptPillDatabase : RoomDatabase() {
         private const val DATABASE_NAME = "rapt-db"
 
         private val logger = Logger("RaptPillDatabase")
+
         private val MIGRATION_1_2 = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 // Adding new columns to the RaptPillReadings table
-                database.execSQL("ALTER TABLE RaptPillData ADD COLUMN isOG INTEGER")
-                database.execSQL("ALTER TABLE RaptPillData ADD COLUMN isFG INTEGER")
+                db.execSQL("ALTER TABLE RaptPillData ADD COLUMN isOG INTEGER")
+                db.execSQL("ALTER TABLE RaptPillData ADD COLUMN isFG INTEGER")
             }
         }
 
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Adding new columns to the RaptPillReadings table
+                db.execSQL("ALTER TABLE RaptPillData ADD COLUMN gravityVelocity REAL")
+            }
+        }
 
         fun create(context: Context): RaptPillDatabase {
             return Room.databaseBuilder(
                 context,
                 RaptPillDatabase::class.java,
                 DATABASE_NAME
-            ).addMigrations(MIGRATION_1_2)
-                .addCallback(object : Callback() {
+            ).addMigrations(
+                MIGRATION_1_2,
+                MIGRATION_2_3,
+            ).addCallback(object : Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
                     try {
