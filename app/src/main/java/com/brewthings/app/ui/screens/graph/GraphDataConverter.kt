@@ -1,6 +1,5 @@
 package com.brewthings.app.ui.screens.graph
 
-import com.brewthings.app.data.model.DataType
 import com.brewthings.app.data.model.RaptPillData
 
 fun List<RaptPillData>.toGraphData(): GraphData {

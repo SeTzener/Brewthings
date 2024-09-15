@@ -4,6 +4,7 @@ import com.brewthings.app.data.model.ScannedRaptPillData
 import com.brewthings.app.data.utils.toUShort
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import kotlinx.datetime.Clock
 
 /*
 Process advertisement with metrics.
@@ -72,6 +73,7 @@ object RaptPillParser {
         val battery = buffer.toUShort().toFloat() / 256f
 
         return ScannedRaptPillData(
+            timestamp = Clock.System.now(),
             temperature = (temperature / 128.0 - 273.15).toFloat(),
             gravity = gravity,
             gravityVelocity = if (gravityVelocityValid) gravityVelocity else null,

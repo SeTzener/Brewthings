@@ -10,7 +10,6 @@ import com.brewthings.app.data.storage.toDataItem
 import com.brewthings.app.data.storage.toModelItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 class RaptPillRepository(
@@ -36,9 +35,9 @@ class RaptPillRepository(
             macAddress = scannedRaptPill.macAddress,
             name = scannedRaptPill.name,
         )
-        val readings = scannedRaptPill.data?.let {
+        val readings = scannedRaptPill.data.let {
             RaptPillReadings(
-                timestamp = Clock.System.now(),
+                timestamp = it.timestamp,
                 temperature = it.temperature,
                 gravity = it.gravity,
                 gravityVelocity = it.gravityVelocity,

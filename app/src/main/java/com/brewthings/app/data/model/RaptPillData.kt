@@ -1,19 +1,18 @@
 package com.brewthings.app.data.model
 
-import com.brewthings.app.util.floatingAngle
+import com.brewthings.app.data.domain.MeasurementData
+import com.brewthings.app.data.domain.SensorWithTiltData
 import kotlinx.datetime.Instant
 
 data class RaptPillData(
-    val timestamp: Instant,
-    val temperature: Float,
-    val gravity: Float,
-    val gravityVelocity: Float?,
-    val x: Float,
-    val y: Float,
-    val z: Float,
-    val battery: Float,
-    val isOG: Boolean? = null,
-    val isFG: Boolean? = null
-) {
-    val floatingAngle: Float = floatingAngle(x, y, z)
-}
+    override val timestamp: Instant,
+    override val temperature: Float,
+    override val gravity: Float,
+    override val gravityVelocity: Float?,
+    override val x: Float,
+    override val y: Float,
+    override val z: Float,
+    override val battery: Float,
+    override val isOG: Boolean,
+    override val isFG: Boolean,
+) : MeasurementData, SensorWithTiltData

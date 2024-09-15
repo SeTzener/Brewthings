@@ -11,7 +11,7 @@ import com.brewthings.app.data.utils.ReadScript
 import com.brewthings.app.util.Logger
 
 @Database(entities = [RaptPill::class, RaptPillData::class], version = 3)
-@androidx.room.TypeConverters(TypeConverters::class)
+@androidx.room.TypeConverters(TypeConverter::class)
 abstract class RaptPillDatabase : RoomDatabase() {
     abstract fun raptPillDao(): RaptPillDao
 

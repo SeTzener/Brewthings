@@ -22,7 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
-import com.brewthings.app.data.model.Insight
+import com.brewthings.app.data.domain.Insight
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.IconAlign
@@ -126,12 +126,12 @@ fun GraphInsights(
             InsightsRow(
                 icon = { InsightIcon(it, R.drawable.ic_velocity) },
                 label = { InsightLabel(it, R.string.graph_data_label_velocity) },
-                value = { InsightValue(it, R.string.pill_velocity, data.velocity?.value) },
+                value = { InsightValue(it, R.string.pill_velocity, data.calculatedVelocity?.value) },
                 fromPrevious = {
                     InsightDelta(
                         it,
                         R.string.pill_velocity,
-                        data.velocity?.deltaFromPrevious
+                        data.calculatedVelocity?.deltaFromPrevious
                     )
                 },
             )
@@ -349,6 +349,10 @@ fun GraphInsightsPreview() {
                     deltaFromPrevious = -0.005f,
                     deltaFromOG = 0.060f,
                 ),
+                gravityVelocity = Insight(
+                    value = 0.022f,
+                    deltaFromPrevious = -0.003f,
+                ),
                 battery = Insight(
                     value = 100.0f,
                     deltaFromPrevious = 0f,
@@ -362,7 +366,7 @@ fun GraphInsightsPreview() {
                     value = 5.5f,
                     deltaFromPrevious = 0.5f,
                 ),
-                velocity = Insight(
+                calculatedVelocity = Insight(
                     value = 0.020f,
                     deltaFromPrevious = -0.002f,
                 ),

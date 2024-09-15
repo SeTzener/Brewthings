@@ -299,7 +299,7 @@ private fun ScannedPill(
                     PillData(
                         temperature = pill.data.temperature,
                         gravity = pill.data.gravity,
-                        floatingAngle = pill.data.floatingAngle,
+                        floatingAngle = pill.data.tilt,
                         battery = pill.data.battery,
                     )
                     PillFooter(name = pill.name, macAddress = pill.macAddress, navGraph = navGraph, stopScan = stopScan)
@@ -394,7 +394,7 @@ private fun Pill(
             PillData(
                 temperature = data.temperature,
                 gravity = data.gravity,
-                floatingAngle = data.floatingAngle,
+                floatingAngle = data.tilt,
                 battery = data.battery,
             )
             PillFooter(name = pill.name, macAddress = pill.macAddress, navGraph = navGraph, stopScan = stopScan)
@@ -635,6 +635,7 @@ fun ScannedPillPreview() {
                 macAddress = "00:00:00:00:00:00",
                 rssi = -50,
                 data = ScannedRaptPillData(
+                    timestamp = Instant.DISTANT_PAST,
                     gravity = 1.0f,
                     gravityVelocity = -2.4f,
                     temperature = 20.0f,
@@ -670,7 +671,9 @@ fun PillPreview() {
                         x = 236.0625f,
                         y = 4049.375f,
                         z = 1008.9375f,
-                        battery = 100f
+                        battery = 100f,
+                        isOG = false,
+                        isFG = false,
                     )
                 )
             ),

@@ -1,4 +1,4 @@
-package com.brewthings.app.data.model
+package com.brewthings.app.ui.screens.graph
 
 enum class DataType {
     GRAVITY,
