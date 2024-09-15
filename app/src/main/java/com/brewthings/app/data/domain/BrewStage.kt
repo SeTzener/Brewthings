@@ -1,6 +1,6 @@
 package com.brewthings.app.data.domain
 
-interface MeasurementData {
+interface BrewStage {
     val isOG: Boolean
     val isFG: Boolean
 }

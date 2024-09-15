@@ -1,6 +1,6 @@
 package com.brewthings.app.data.domain
 
-interface TiltData {
+interface TiltReadings {
     val x: Float
     val y: Float
     val z: Float

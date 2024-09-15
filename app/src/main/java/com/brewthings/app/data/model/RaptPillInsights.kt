@@ -1,9 +1,9 @@
 package com.brewthings.app.data.model
 
-import com.brewthings.app.data.domain.BrewData
+import com.brewthings.app.data.domain.BrewInsights
+import com.brewthings.app.data.domain.BrewStage
 import com.brewthings.app.data.domain.Insight
-import com.brewthings.app.data.domain.MeasurementData
-import com.brewthings.app.data.domain.SensorData
+import com.brewthings.app.data.domain.SensorInsights
 import com.brewthings.app.util.datetime.TimeRange
 import kotlinx.datetime.Instant
 
@@ -14,9 +14,9 @@ data class RaptPillInsights(
     override val gravityVelocity: Insight?,
     override val tilt: Insight,
     override val battery: Insight,
-    override val isOG: Boolean,
-    override val isFG: Boolean,
     override val abv: Insight?,
     override val calculatedVelocity: Insight?,
     override val durationSinceOG: TimeRange?,
-) : MeasurementData, BrewData, SensorData<Insight>
+    override val isOG: Boolean,
+    override val isFG: Boolean,
+) : SensorInsights, BrewInsights, BrewStage

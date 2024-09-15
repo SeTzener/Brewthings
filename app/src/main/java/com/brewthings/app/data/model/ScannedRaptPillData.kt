@@ -1,6 +1,6 @@
 package com.brewthings.app.data.model
 
-import com.brewthings.app.data.domain.SensorWithTiltData
+import com.brewthings.app.data.domain.SensorWithTiltReadings
 import kotlinx.datetime.Instant
 
 data class ScannedRaptPillData(
@@ -12,4 +12,4 @@ data class ScannedRaptPillData(
     override val y: Float,
     override val z: Float,
     override val battery: Float,
-) : SensorWithTiltData
+) : SensorWithTiltReadings

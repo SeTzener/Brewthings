@@ -1,7 +1,7 @@
 package com.brewthings.app.data.model
 
-import com.brewthings.app.data.domain.MeasurementData
-import com.brewthings.app.data.domain.SensorWithTiltData
+import com.brewthings.app.data.domain.BrewStage
+import com.brewthings.app.data.domain.SensorWithTiltReadings
 import kotlinx.datetime.Instant
 
 data class RaptPillData(
@@ -15,4 +15,4 @@ data class RaptPillData(
     override val battery: Float,
     override val isOG: Boolean,
     override val isFG: Boolean,
-) : MeasurementData, SensorWithTiltData
+) : SensorWithTiltReadings, BrewStage

@@ -3,9 +3,7 @@ package com.brewthings.app.data.storage
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
-import com.brewthings.app.data.domain.MeasurementData
-import com.brewthings.app.data.domain.SensorData
-import com.brewthings.app.data.domain.SensorWithTiltData
+import com.brewthings.app.data.domain.SensorWithTiltReadings
 import kotlinx.datetime.Instant
 
 @Entity(
@@ -30,4 +28,4 @@ data class RaptPillReadings(
     override val battery: Float,
     val isOG: Boolean?,
     val isFG: Boolean?
-) : SensorWithTiltData
+) : SensorWithTiltReadings
