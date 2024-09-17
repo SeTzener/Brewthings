@@ -25,7 +25,7 @@ import com.brewthings.app.R
 import com.brewthings.app.data.domain.Insight
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.components.BatteryLevelIndicator
-import com.brewthings.app.ui.components.ExpandableCard
+import com.brewthings.app.ui.components.ExpandableContent
 import com.brewthings.app.ui.components.IconAlign
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.theme.BrewthingsTheme
@@ -45,7 +45,7 @@ fun GraphInsights(
     viewModel: GraphScreenViewModel = koinViewModel(),
 ) {
     Card {
-        ExpandableCard(
+        ExpandableContent(
             topContent = {
                 InsightsTimeHeader(data)
             },

@@ -63,7 +63,7 @@ import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.model.ScannedRaptPillData
 import com.brewthings.app.ui.components.BatteryLevelIndicator
-import com.brewthings.app.ui.components.ExpandableCard
+import com.brewthings.app.ui.components.ExpandableContent
 import com.brewthings.app.ui.components.ScanPane
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.screens.navigation.legacy.Destination
@@ -140,7 +140,7 @@ private fun ScanningScreen(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    ExpandableCard(
+                    ExpandableContent(
                         topContent = { TopContent() },
                         expandedContent = {
                             RssiThreshold(
@@ -291,7 +291,7 @@ private fun ScannedPill(
         border = BorderStroke(0.dp, Color.LightGray),
         shape = RoundedCornerShape(16.dp)
     ) {
-        ExpandableCard(
+        ExpandableContent(
             isExpanded = isExpanded,
             topContent = { ScannedPillTopContent(pill, isInScannedPills, savePill) },
             expandedContent = {

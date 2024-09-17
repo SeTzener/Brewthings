@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 
 @Composable
-fun ExpandableCard(
+fun ExpandableContent(
     isExpanded: Boolean = false,
     topContent: @Composable () -> Unit,
     collapsedContent: @Composable () -> Unit = {},
