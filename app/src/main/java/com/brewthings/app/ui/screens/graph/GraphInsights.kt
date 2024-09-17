@@ -50,7 +50,7 @@ fun GraphInsights(
                 InsightsTimeHeader(data)
             },
             collapsedContent = {
-                Column(modifier = Modifier.padding(bottom = 12.dp)) {
+                Column {
                     InsightsHeader()
                     when (dataType) {
                         DataType.GRAVITY -> {
@@ -74,16 +74,18 @@ fun GraphInsights(
                     InsightsTemperature(temperature = data.temperature)
                     InsightsBattery(battery = data.battery)
                     InsightsTilt(tilt = data.tilt)
-                    InsightsAbv(abv = data.abv)
-                    InsightsCalculatedVelocity(calculatedVelocity = data.calculatedVelocity)
-                    BrewStageFooter(
-                        isOG = data.isOG,
-                        isFG = data.isFG,
-                        setIsOG = { isOG -> viewModel.setIsOG(macAddress, data.timestamp, isOG) },
-                        setIsFG = { isFG -> viewModel.setIsFG(macAddress, data.timestamp, isFG) },
-                    )
                 }
             },
+            bottomContent = {
+                InsightsAbv(abv = data.abv)
+                InsightsCalculatedVelocity(calculatedVelocity = data.calculatedVelocity)
+                BrewStageFooter(
+                    isOG = data.isOG,
+                    isFG = data.isFG,
+                    setIsOG = { isOG -> viewModel.setIsOG(macAddress, data.timestamp, isOG) },
+                    setIsFG = { isFG -> viewModel.setIsFG(macAddress, data.timestamp, isFG) },
+                )
+            }
         )
     }
 }
