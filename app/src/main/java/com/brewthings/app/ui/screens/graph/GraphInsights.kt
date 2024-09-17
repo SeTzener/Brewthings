@@ -45,48 +45,48 @@ fun GraphInsights(
     viewModel: GraphScreenViewModel = koinViewModel(),
 ) {
     Card {
-        ExpandableContent(
-            topContent = {
-                InsightsTimeHeader(data)
-            },
-            collapsedContent = {
-                Column {
-                    InsightsHeader()
-                    when (dataType) {
-                        DataType.GRAVITY -> {
-                            InsightsGravity(data.gravity)
-                        }
+        Column {
+            ExpandableContent(
+                topContent = {
+                    InsightsTimeHeader(data)
+                },
+                collapsedContent = {
+                    Column {
+                        InsightsHeader()
+                        when (dataType) {
+                            DataType.GRAVITY -> {
+                                InsightsGravity(data.gravity)
+                            }
 
-                        DataType.TEMPERATURE -> {
-                            InsightsTemperature(data.temperature)
-                        }
+                            DataType.TEMPERATURE -> {
+                                InsightsTemperature(data.temperature)
+                            }
 
-                        DataType.BATTERY -> {
-                            InsightsBattery(data.battery)
+                            DataType.BATTERY -> {
+                                InsightsBattery(data.battery)
+                            }
                         }
                     }
-                }
-            },
-            expandedContent = {
-                Column {
-                    InsightsHeader()
-                    InsightsGravity(gravity = data.gravity)
-                    InsightsTemperature(temperature = data.temperature)
-                    InsightsBattery(battery = data.battery)
-                    InsightsTilt(tilt = data.tilt)
-                }
-            },
-            bottomContent = {
-                InsightsAbv(abv = data.abv)
-                InsightsCalculatedVelocity(calculatedVelocity = data.calculatedVelocity)
-                BrewStageFooter(
-                    isOG = data.isOG,
-                    isFG = data.isFG,
-                    setIsOG = { isOG -> viewModel.setIsOG(macAddress, data.timestamp, isOG) },
-                    setIsFG = { isFG -> viewModel.setIsFG(macAddress, data.timestamp, isFG) },
-                )
-            }
-        )
+                },
+                expandedContent = {
+                    Column {
+                        InsightsHeader()
+                        InsightsGravity(gravity = data.gravity)
+                        InsightsTemperature(temperature = data.temperature)
+                        InsightsBattery(battery = data.battery)
+                        InsightsTilt(tilt = data.tilt)
+                    }
+                },
+            )
+            InsightsAbv(abv = data.abv)
+            InsightsCalculatedVelocity(calculatedVelocity = data.calculatedVelocity)
+            BrewStageFooter(
+                isOG = data.isOG,
+                isFG = data.isFG,
+                setIsOG = { isOG -> viewModel.setIsOG(macAddress, data.timestamp, isOG) },
+                setIsFG = { isFG -> viewModel.setIsFG(macAddress, data.timestamp, isFG) },
+            )
+        }
     }
 }
 

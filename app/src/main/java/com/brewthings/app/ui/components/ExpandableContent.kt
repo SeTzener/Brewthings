@@ -28,7 +28,6 @@ fun ExpandableContent(
     topContent: @Composable () -> Unit,
     collapsedContent: @Composable () -> Unit = {},
     expandedContent: @Composable () -> Unit,
-    bottomContent: @Composable () -> Unit = {},
     onAnimationFinished: ((isExpanded: Boolean) -> Unit)? = null,
 ) {
     val expandedState = remember { mutableStateOf(isExpanded) }
@@ -71,7 +70,5 @@ fun ExpandableContent(
                 collapsedContent()
             }
         }
-
-        bottomContent()
     }
 }
