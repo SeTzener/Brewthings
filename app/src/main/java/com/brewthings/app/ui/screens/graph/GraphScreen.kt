@@ -20,7 +20,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.brewthings.app.R
-import com.brewthings.app.data.model.DataType
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

@@ -35,11 +35,12 @@ class RaptPillRepository(
             macAddress = scannedRaptPill.macAddress,
             name = scannedRaptPill.name,
         )
-        val readings = scannedRaptPill.data?.let {
+        val readings = scannedRaptPill.data.let {
             RaptPillReadings(
                 timestamp = it.timestamp,
                 temperature = it.temperature,
                 gravity = it.gravity,
+                gravityVelocity = it.gravityVelocity,
                 x = it.x,
                 y = it.y,
                 z = it.z,

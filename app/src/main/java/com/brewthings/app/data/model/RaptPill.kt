@@ -1,7 +1,9 @@
 package com.brewthings.app.data.model
 
+import com.brewthings.app.data.domain.Device
+
 data class RaptPill(
-    val macAddress: String,
-    val name: String?,
+    override val macAddress: String,
+    override val name: String?,
     val data: List<RaptPillData>
-)
+) : Device

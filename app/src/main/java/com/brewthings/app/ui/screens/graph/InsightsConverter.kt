@@ -1,6 +1,6 @@
 package com.brewthings.app.ui.screens.graph
 
-import com.brewthings.app.data.model.Insight
+import com.brewthings.app.data.domain.Insight
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.util.datetime.TimeRange
@@ -16,12 +16,12 @@ fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
         // Add the insights for the current data point.
         result.add(data.toInsights(ogData = ogData, previousData = previousData))
 
-        if (data.isFG == true) {
+        if (data.isFG) {
             // Invalidate the OG data for the next data point.
             ogData = null
         }
 
-        if (data.isOG == true) {
+        if (data.isOG) {
             // Remember the OG data for the next data point.
             ogData = data
         }
@@ -42,10 +42,14 @@ private fun RaptPillData.toInsights(
             timestamp = pillData.timestamp,
             temperature = Insight(value = pillData.temperature),
             gravity = Insight(value = pillData.gravity),
+            gravityVelocity = pillData.gravityVelocity?.let { Insight(value = it) },
             battery = Insight(value = pillData.battery),
-            tilt = Insight(value = pillData.floatingAngle),
-            isOG = pillData.isOG ?: false,
-            isFG = pillData.isFG ?: false
+            tilt = Insight(value = pillData.tilt),
+            isOG = pillData.isOG,
+            isFG = pillData.isFG,
+            durationSinceOG = null,
+            calculatedVelocity = null,
+            abv = null,
         )
     }
 
@@ -69,23 +73,30 @@ private fun RaptPillData.toInsights(
             deltaFromOG = pillData.battery - ogData.battery,
         ),
         tilt = Insight(
-            value = pillData.floatingAngle,
-            deltaFromPrevious = previousData?.let { pillData.floatingAngle - it.floatingAngle },
-            deltaFromOG = pillData.floatingAngle - ogData.floatingAngle,
+            value = pillData.tilt,
+            deltaFromPrevious = previousData?.let { pillData.tilt - it.tilt },
+            deltaFromOG = pillData.tilt - ogData.tilt,
         ),
         abv = Insight(
             value = abv,
             deltaFromPrevious = previousData?.let { abv - calculateABV(ogData.gravity, it.gravity) },
         ),
-        velocity = velocity?.let { value ->
+        gravityVelocity = pillData.gravityVelocity?.let { value ->
+            Insight(
+                value = value,
+                deltaFromPrevious = previousData?.gravityVelocity?.let { pillData.gravityVelocity - it },
+                deltaFromOG = ogData.gravityVelocity?.let { pillData.gravityVelocity - it },
+            )
+        },
+        calculatedVelocity = velocity?.let { value ->
             Insight(
                 value = value,
                 deltaFromPrevious = previousData?.let { calculateVelocity(it, pillData) },
             )
         },
         durationSinceOG = TimeRange(ogData.timestamp, pillData.timestamp),
-        isOG = pillData.isOG ?: false,
-        isFG = pillData.isFG ?: false
+        isOG = pillData.isOG,
+        isFG = pillData.isFG,
     )
 }
 

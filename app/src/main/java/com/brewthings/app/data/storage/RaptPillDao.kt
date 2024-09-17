@@ -43,42 +43,18 @@ interface RaptPillDao {
     suspend fun setIsOG(macAddress: String, timestamp: Instant, isOG: Boolean) {
         val data = getPillData(macAddress, timestamp)
         insertData(
-            RaptPillData(
-                dataId = data.dataId,
-                pillId = data.pillId,
-                readings = RaptPillReadings(
-                    timestamp = data.readings.timestamp,
-                    temperature = data.readings.temperature,
-                    gravity = data.readings.gravity,
-                    x = data.readings.x,
-                    y = data.readings.y,
-                    z = data.readings.z,
-                    battery = data.readings.battery,
-                    isOG = isOG,
-                    isFG = data.readings.isFG
-                )
+            data.copy(
+                readings = data.readings.copy(isOG = isOG)
             )
         )
     }
 
     @Transaction
     suspend fun setIsFG(macAddress: String, timestamp: Instant, isFg: Boolean) {
-        val data = getPillData(macAddress, timestamp)
+        val data: RaptPillData = getPillData(macAddress, timestamp)
         insertData(
-            RaptPillData(
-                dataId = data.dataId,
-                pillId = data.pillId,
-                readings = RaptPillReadings(
-                    timestamp = data.readings.timestamp,
-                    temperature = data.readings.temperature,
-                    gravity = data.readings.gravity,
-                    x = data.readings.x,
-                    y = data.readings.y,
-                    z = data.readings.z,
-                    battery = data.readings.battery,
-                    isOG = data.readings.isOG,
-                    isFG = isFg
-                )
+            data.copy(
+                readings = data.readings.copy(isFG = isFg)
             )
         )
     }

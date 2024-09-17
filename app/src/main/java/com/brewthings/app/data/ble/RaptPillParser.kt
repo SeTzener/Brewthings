@@ -1,9 +1,10 @@
 package com.brewthings.app.data.ble
 
-import com.brewthings.app.data.model.RaptPillData
+import com.brewthings.app.data.model.ScannedRaptPillData
 import com.brewthings.app.data.utils.toUShort
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import kotlinx.datetime.Clock
 
 /*
 Process advertisement with metrics.
@@ -11,7 +12,7 @@ Process advertisement with metrics.
 This is what the advertisement data payload looks like in C,
 endianness is big endian:
 
-Version 1 (with MAC, no gravity velocity):
+Version 1 not supported (with MAC, no gravity velocity):
 
 typedef struct __attribute__((packed)) {
     char prefix[4];        // RAPT
@@ -28,21 +29,22 @@ typedef struct __attribute__((packed)) {
 Version 2 (no MAC, with gravity velocity):
 
 typedef struct __attribute__((packed)) {
-    char prefix[4];        // RAPT
-    uint8_t version;       // always 0x02
-    bool gravity_velocity_valid;
-    float gravity_velocity;
-    uint16_t temperature;  // x / 128 - 273.15
-    float gravity;         // / 1000
-    int16_t x;             // x / 16
-    int16_t y;             // x / 16
-    int16_t z;             // x / 16
-    int16_t battery;       // x / 256
+    char prefix[4];              // RAPT
+    uint8_t version;             // always 0x02
+    0x00                         // not sure what this is
+    bool gravity_velocity_valid; // 0x00 or 0x01
+    float gravity_velocity;      // not sure what the unit is
+    uint16_t temperature;        // x / 128 - 273.15
+    float gravity;               // / 1000
+    int16_t x;                   // x / 16
+    int16_t y;                   // x / 16
+    int16_t z;                   // x / 16
+    int16_t battery;             // x / 256
 } RAPTPillMetricsV2;
 */
 
 object RaptPillParser {
-    fun parse(data: ByteArray): RaptPillData {
+    fun parse(data: ByteArray): ScannedRaptPillData {
         if (data.size != 23) {
             throw IllegalArgumentException("Metrics data must have length 23")
         }
@@ -57,13 +59,10 @@ object RaptPillParser {
         }
 
         // Convert byte array to ByteBuffer for easier manipulation
-        val buffer = ByteBuffer.wrap(data.copyOfRange(3, data.size)).order(ByteOrder.BIG_ENDIAN)
+        val buffer = ByteBuffer.wrap(data.copyOfRange(4, data.size)).order(ByteOrder.BIG_ENDIAN)
 
         // Extract data from ByteBuffer
         val gravityVelocityValid = buffer.get()!= 0.toByte()
-
-        buffer.get() // for no reason at all
-
         val gravityVelocity = buffer.float
 
         val temperature = buffer.toUShort().toFloat()
@@ -73,9 +72,11 @@ object RaptPillParser {
         val z = buffer.toUShort().toInt() / 16f
         val battery = buffer.toUShort().toFloat() / 256f
 
-        return RaptPillData(
+        return ScannedRaptPillData(
+            timestamp = Clock.System.now(),
             temperature = (temperature / 128.0 - 273.15).toFloat(),
             gravity = gravity,
+            gravityVelocity = if (gravityVelocityValid) gravityVelocity else null,
             x = x,
             y = y,
             z = z,

@@ -1,23 +1,22 @@
 package com.brewthings.app.data.model
 
+import com.brewthings.app.data.domain.BrewInsights
+import com.brewthings.app.data.domain.BrewStage
+import com.brewthings.app.data.domain.Insight
+import com.brewthings.app.data.domain.SensorInsights
 import com.brewthings.app.util.datetime.TimeRange
 import kotlinx.datetime.Instant
 
 data class RaptPillInsights(
-    val timestamp: Instant,
-    val temperature: Insight,
-    val gravity: Insight,
-    val tilt: Insight,
-    val battery: Insight,
-    val abv: Insight? = null,
-    val velocity: Insight? = null,
-    val durationSinceOG: TimeRange? = null,
-    val isOG: Boolean,
-    val isFG: Boolean
-)
-
-data class Insight(
-    val value: Float,
-    val deltaFromPrevious: Float? = null,
-    val deltaFromOG: Float? = null,
-)
+    override val timestamp: Instant,
+    override val temperature: Insight,
+    override val gravity: Insight,
+    override val gravityVelocity: Insight?,
+    override val tilt: Insight,
+    override val battery: Insight,
+    override val abv: Insight?,
+    override val calculatedVelocity: Insight?,
+    override val durationSinceOG: TimeRange?,
+    override val isOG: Boolean,
+    override val isFG: Boolean,
+) : SensorInsights, BrewInsights, BrewStage

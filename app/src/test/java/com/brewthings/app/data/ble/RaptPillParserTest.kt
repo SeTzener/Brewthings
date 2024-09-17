@@ -6,12 +6,13 @@ import org.junit.Test
 class RaptPillParserTest {
     @Test
     fun parseValidPillData() {
-        val hexString = "50540200000000000095AB44BA0232FC8BC52112796400"
+        val hexString = "5054020001C01D9DBD95AB44BA0232FC8BC52112796400"
         val byteArray = hexStringToByteArray(hexString)
         val data = RaptPillParser.parse(byteArray)
         with (data){
-            assertTrue(temperature.toDouble() == 26.185937881469727)
-            assertTrue(gravity.toDouble() == 1.4880685806274414)
+            assertTrue(gravityVelocity == -2.4627526f)
+            assertTrue(temperature == 26.185938f)
+            assertTrue(gravity == 1.4880686f)
             assertTrue(x == 4040.6875f)
             assertTrue(y == 3154.0625f)
             assertTrue(z == 295.5625f)
