@@ -18,5 +18,6 @@ data class GraphState(
 
 data class GraphInsightsPagerState(
     val selectedInsightsIndex: Int?,
+    val selectedDataType: DataType,
     val insights: List<RaptPillInsights>,
 )

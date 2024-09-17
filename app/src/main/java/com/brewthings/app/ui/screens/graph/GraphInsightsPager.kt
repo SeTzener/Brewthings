@@ -48,7 +48,9 @@ fun GraphInsightsPager(
         ) {
             GraphInsights(
                 macAddress = macAddress,
-                data = state.insights[index])
+                data = state.insights[index],
+                dataType = state.selectedDataType,
+            )
         }
     }
 

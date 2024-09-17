@@ -40,6 +40,7 @@ import org.koin.androidx.compose.koinViewModel
 fun GraphInsights(
     macAddress: String,
     data: RaptPillInsights,
+    dataType: DataType,
     viewModel: GraphScreenViewModel = koinViewModel(),
 ) {
     Card {
@@ -338,6 +339,7 @@ fun GraphInsightsPreview() {
     BrewthingsTheme {
         GraphInsights(
             macAddress = "64:B7:08:58:20:B6",
+            dataType = DataType.GRAVITY,
             data = RaptPillInsights(
                 timestamp = timestamp,
                 temperature = Insight(

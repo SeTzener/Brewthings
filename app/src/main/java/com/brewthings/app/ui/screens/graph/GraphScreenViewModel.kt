@@ -64,17 +64,19 @@ class GraphScreenViewModel(
                     val defaultIndex = insights.lastIndex
                     val types = DataType.entries.toList()
                     val previousType = screenState.graphState?.selectedDataType
+                    val type = previousType ?: types[0]
 
                     screenState = screenState.copy(
                         graphState = GraphState(
                             graphData = data,
                             selectedDataIndex = screenState.graphState?.selectedDataIndex
                                 ?: defaultIndex,
-                            selectedDataType = previousType ?: types[0],
+                            selectedDataType = type,
                             dataTypes = types,
                         ),
                         insightsPagerState = GraphInsightsPagerState(
                             insights = insights,
+                            selectedDataType = type,
                             selectedInsightsIndex = screenState.insightsPagerState?.selectedInsightsIndex
                                 ?: defaultIndex
                         )
