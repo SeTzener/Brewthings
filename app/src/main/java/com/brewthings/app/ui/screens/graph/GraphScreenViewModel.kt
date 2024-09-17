@@ -32,9 +32,11 @@ class GraphScreenViewModel(
 
     fun selectSeries(dataType: DataType) {
         val graphState = screenState.graphState ?: return
+        val insightsPagerState = screenState.insightsPagerState ?: return
 
         screenState = screenState.copy(
-            graphState = graphState.copy(selectedDataType = dataType)
+            graphState = graphState.copy(selectedDataType = dataType),
+            insightsPagerState = insightsPagerState.copy(selectedDataType = dataType)
         )
     }
 
