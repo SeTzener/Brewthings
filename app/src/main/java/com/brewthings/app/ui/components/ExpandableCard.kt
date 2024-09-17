@@ -1,13 +1,16 @@
 package com.brewthings.app.ui.components
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +26,7 @@ import com.brewthings.app.R
 fun ExpandableCard(
     isExpanded: Boolean = false,
     topContent: @Composable () -> Unit,
+    collapsedContent: @Composable () -> Unit = {},
     expandedContent: @Composable () -> Unit,
     onAnimationFinished: ((isExpanded: Boolean) -> Unit)? = null,
 ) {
@@ -49,12 +53,21 @@ fun ExpandableCard(
                 tint = MaterialTheme.colorScheme.primary,
             )
         }
-        if (expandedState.value) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(),
-            ) {
+
+        // Using Crossfade to transition between collapsed and expanded content
+        Crossfade(
+            label = "ExpandableCardContent",
+            animationSpec = tween(
+                durationMillis = 500,
+                easing = FastOutLinearInEasing
+            ),
+            targetState = expandedState.value,
+            modifier = Modifier.fillMaxWidth()
+        ) { isExpanded ->
+            if (isExpanded) {
                 expandedContent()
+            } else {
+                collapsedContent()
             }
         }
     }
