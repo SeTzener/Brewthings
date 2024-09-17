@@ -25,6 +25,7 @@ import com.brewthings.app.R
 import com.brewthings.app.data.domain.Insight
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.components.BatteryLevelIndicator
+import com.brewthings.app.ui.components.ExpandableCard
 import com.brewthings.app.ui.components.IconAlign
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.theme.BrewthingsTheme
@@ -44,145 +45,200 @@ fun GraphInsights(
     viewModel: GraphScreenViewModel = koinViewModel(),
 ) {
     Card {
-        Column(modifier = Modifier.padding(16.dp)) {
-            InsightsTimeHeader(data)
+        ExpandableCard(
+            topContent = {
+                InsightsTimeHeader(data)
+            },
+            collapsedContent = {
+                Column(modifier = Modifier.padding(bottom = 12.dp)) {
+                    InsightsHeader()
+                    when (dataType) {
+                        DataType.GRAVITY -> {
+                            InsightsGravity(data.gravity)
+                        }
 
-            InsightsRow(
-                icon = { Spacer(modifier = Modifier.size(24.dp)) },
-                label = { InsightHeader(it, R.string.graph_header_name) },
-                value = { InsightHeader(it, R.string.graph_header_value) },
-                fromPrevious = { InsightHeader(it, R.string.graph_header_from_previous) },
-                fromOG = { InsightHeader(it, R.string.graph_header_from_og) },
-            )
+                        DataType.TEMPERATURE -> {
+                            InsightsTemperature(data.temperature)
+                        }
 
-            InsightsRow(
-                icon = { InsightIcon(it, R.drawable.ic_gravity) },
-                label = { InsightLabel(it, R.string.graph_data_label_gravity) },
-                value = { InsightValue(it, R.string.pill_gravity, data.gravity.value) },
-                fromPrevious = {
-                    InsightDelta(
-                        it,
-                        R.string.pill_gravity,
-                        data.gravity.deltaFromPrevious
-                    )
-                },
-                fromOG = { InsightDelta(it, R.string.pill_gravity, data.gravity.deltaFromOG) },
-            )
-
-            InsightsRow(
-                icon = { InsightIcon(it, R.drawable.ic_temperature) },
-                label = { InsightLabel(it, R.string.graph_data_label_temp_short) },
-                value = { InsightValue(it, R.string.pill_temperature, data.temperature.value) },
-                fromPrevious = {
-                    InsightDelta(
-                        it,
-                        R.string.pill_temperature,
-                        data.temperature.deltaFromPrevious
-                    )
-                },
-                fromOG = {
-                    InsightDelta(
-                        it,
-                        R.string.pill_temperature,
-                        data.temperature.deltaFromOG
-                    )
-                },
-            )
-
-            InsightsRow(
-                icon = { InsightIcon(it, R.drawable.ic_tilt) },
-                label = { InsightLabel(it, R.string.graph_data_label_tilt) },
-                value = { InsightValue(it, R.string.pill_tilt, data.tilt.value) },
-                fromPrevious = {
-                    InsightDelta(
-                        it,
-                        R.string.pill_tilt,
-                        data.tilt.deltaFromPrevious
-                    )
-                },
-                fromOG = { InsightDelta(it, R.string.pill_tilt, data.tilt.deltaFromOG) },
-            )
-
-            InsightsRow(
-                icon = { BatteryLevelIndicator(data.battery.value) },
-                label = { InsightLabel(it, R.string.graph_data_label_battery) },
-                value = { InsightValue(it, R.string.pill_battery, data.battery.value) },
-                fromPrevious = {
-                    InsightDelta(
-                        it,
-                        R.string.pill_battery,
-                        data.battery.deltaFromPrevious
-                    )
-                },
-                fromOG = { InsightDelta(it, R.string.pill_battery, data.battery.deltaFromOG) },
-            )
-
-            InsightsRow(
-                icon = { InsightIcon(it, R.drawable.ic_abv) },
-                label = { InsightLabel(it, R.string.graph_data_label_abv) },
-                value = { InsightValue(it, R.string.pill_abv, data.abv?.value) },
-                fromPrevious = { InsightDelta(it, R.string.pill_abv, data.abv?.deltaFromPrevious) },
-            )
-
-            InsightsRow(
-                icon = { InsightIcon(it, R.drawable.ic_velocity) },
-                label = { InsightLabel(it, R.string.graph_data_label_velocity) },
-                value = { InsightValue(it, R.string.pill_velocity, data.calculatedVelocity?.value) },
-                fromPrevious = {
-                    InsightDelta(
-                        it,
-                        R.string.pill_velocity,
-                        data.calculatedVelocity?.deltaFromPrevious
-                    )
-                },
-            )
-        }
-        Row(
-            modifier = Modifier.padding(bottom = 8.dp)
-        ) {
-            TextButton(
-                modifier = Modifier.padding(start = 7.dp),
-                onClick = {
-                    viewModel.setIsOG(
-                        macAddress = macAddress,
-                        timestamp = data.timestamp,
-                        isOg = !data.isOG
-                    )
-                },
-            ) {
-                Text(
-                    text = if (data.isOG) {
-                        stringResource(id = R.string.unset_OG)
-                    } else {
-                        stringResource(
-                            id = R.string.set_OG
-                        )
-                    },
-                    style = Typography.bodyMedium,
-                )
-            }
-
-            TextButton(
-                modifier = Modifier.padding(start = 4.dp),
-                onClick = {
-                    viewModel.setIsFG(
-                        macAddress = macAddress,
-                        timestamp = data.timestamp,
-                        isFg = !data.isFG
+                        DataType.BATTERY -> {
+                            InsightsBattery(data.battery)
+                        }
+                    }
+                }
+            },
+            expandedContent = {
+                Column {
+                    InsightsHeader()
+                    InsightsGravity(gravity = data.gravity)
+                    InsightsTemperature(temperature = data.temperature)
+                    InsightsBattery(battery = data.battery)
+                    InsightsTilt(tilt = data.tilt)
+                    InsightsAbv(abv = data.abv)
+                    InsightsCalculatedVelocity(calculatedVelocity = data.calculatedVelocity)
+                    BrewStageFooter(
+                        isOG = data.isOG,
+                        isFG = data.isFG,
+                        setIsOG = { isOG -> viewModel.setIsOG(macAddress, data.timestamp, isOG) },
+                        setIsFG = { isFG -> viewModel.setIsFG(macAddress, data.timestamp, isFG) },
                     )
                 }
-            ) {
-                Text(
-                    text = if (data.isFG) {
-                        stringResource(id = R.string.unset_FG)
-                    } else {
-                        stringResource(
-                            id = R.string.set_FG
-                        )
-                    },
-                    style = Typography.bodyMedium,
-                )
-            }
+            },
+        )
+    }
+}
+
+@Composable
+fun InsightsHeader() {
+    InsightsRow(
+        icon = { Spacer(modifier = Modifier.size(24.dp)) },
+        label = { InsightHeader(it, R.string.graph_header_name) },
+        value = { InsightHeader(it, R.string.graph_header_value) },
+        fromPrevious = { InsightHeader(it, R.string.graph_header_from_previous) },
+        fromOG = { InsightHeader(it, R.string.graph_header_from_og) },
+    )
+}
+
+@Composable
+fun InsightsGravity(gravity: Insight) {
+    InsightsRow(
+        icon = { InsightIcon(it, R.drawable.ic_gravity) },
+        label = { InsightLabel(it, R.string.graph_data_label_gravity) },
+        value = { InsightValue(it, R.string.pill_gravity, gravity.value) },
+        fromPrevious = {
+            InsightDelta(
+                it,
+                R.string.pill_gravity,
+                gravity.deltaFromPrevious
+            )
+        },
+        fromOG = { InsightDelta(it, R.string.pill_gravity, gravity.deltaFromOG) },
+    )
+}
+
+@Composable
+fun InsightsTemperature(temperature: Insight) {
+    InsightsRow(
+        icon = { InsightIcon(it, R.drawable.ic_temperature) },
+        label = { InsightLabel(it, R.string.graph_data_label_temp_short) },
+        value = { InsightValue(it, R.string.pill_temperature, temperature.value) },
+        fromPrevious = {
+            InsightDelta(
+                it,
+                R.string.pill_temperature,
+                temperature.deltaFromPrevious
+            )
+        },
+        fromOG = {
+            InsightDelta(
+                it,
+                R.string.pill_temperature,
+                temperature.deltaFromOG
+            )
+        },
+    )
+}
+
+@Composable
+fun InsightsTilt(tilt: Insight) {
+    InsightsRow(
+        icon = { InsightIcon(it, R.drawable.ic_tilt) },
+        label = { InsightLabel(it, R.string.graph_data_label_tilt) },
+        value = { InsightValue(it, R.string.pill_tilt, tilt.value) },
+        fromPrevious = {
+            InsightDelta(
+                it,
+                R.string.pill_tilt,
+                tilt.deltaFromPrevious
+            )
+        },
+        fromOG = { InsightDelta(it, R.string.pill_tilt, tilt.deltaFromOG) },
+    )
+}
+
+@Composable
+fun InsightsBattery(battery: Insight) {
+    InsightsRow(
+        icon = { BatteryLevelIndicator(battery.value) },
+        label = { InsightLabel(it, R.string.graph_data_label_battery) },
+        value = { InsightValue(it, R.string.pill_battery, battery.value) },
+        fromPrevious = {
+            InsightDelta(
+                it,
+                R.string.pill_battery,
+                battery.deltaFromPrevious
+            )
+        },
+        fromOG = { InsightDelta(it, R.string.pill_battery, battery.deltaFromOG) },
+    )
+}
+
+@Composable
+fun InsightsAbv(abv: Insight?) {
+    InsightsRow(
+        icon = { InsightIcon(it, R.drawable.ic_abv) },
+        label = { InsightLabel(it, R.string.graph_data_label_abv) },
+        value = { InsightValue(it, R.string.pill_abv, abv?.value) },
+        fromPrevious = { InsightDelta(it, R.string.pill_abv, abv?.deltaFromPrevious) },
+    )
+}
+
+@Composable
+fun InsightsCalculatedVelocity(calculatedVelocity: Insight?) {
+    InsightsRow(
+        icon = { InsightIcon(it, R.drawable.ic_velocity) },
+        label = { InsightLabel(it, R.string.graph_data_label_velocity) },
+        value = { InsightValue(it, R.string.pill_velocity, calculatedVelocity?.value) },
+        fromPrevious = {
+            InsightDelta(
+                it,
+                R.string.pill_velocity,
+                calculatedVelocity?.deltaFromPrevious
+            )
+        },
+    )
+}
+
+@Composable
+fun BrewStageFooter(
+    isOG: Boolean,
+    isFG: Boolean,
+    setIsOG: (Boolean) -> Unit,
+    setIsFG: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier.padding(bottom = 8.dp),
+    ) {
+        TextButton(
+            modifier = Modifier.padding(start = 7.dp),
+            onClick = { setIsOG(!isOG) },
+        ) {
+            Text(
+                text = if (isOG) {
+                    stringResource(id = R.string.unset_OG)
+                } else {
+                    stringResource(
+                        id = R.string.set_OG
+                    )
+                },
+                style = Typography.bodyMedium,
+            )
+        }
+
+        TextButton(
+            modifier = Modifier.padding(start = 4.dp),
+            onClick = { setIsFG(!isFG) }
+        ) {
+            Text(
+                text = if (isFG) {
+                    stringResource(id = R.string.unset_FG)
+                } else {
+                    stringResource(
+                        id = R.string.set_FG
+                    )
+                },
+                style = Typography.bodyMedium,
+            )
         }
     }
 }
@@ -190,7 +246,7 @@ fun GraphInsights(
 @Composable
 fun InsightsTimeHeader(data: RaptPillInsights) {
     Row(
-        modifier = Modifier.padding(bottom = 8.dp),
+        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         InsightIcon(iconResId = R.drawable.ic_calendar)
@@ -233,7 +289,7 @@ fun InsightsRow(
     fromOG: @Composable (Modifier) -> Unit = { Spacer(it) },
 ) {
     Row(
-        modifier = modifier.padding(top = 16.dp),
+        modifier = modifier.padding(vertical = 8.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         icon(Modifier)
