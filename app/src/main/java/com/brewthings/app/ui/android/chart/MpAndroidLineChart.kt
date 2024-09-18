@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.brewthings.app.ui.screens.graph.GraphSelectionLogger
+import com.brewthings.app.ui.screens.pill.GraphScreenLogger
 import com.brewthings.app.ui.theme.Grey_Nevada
 import com.brewthings.app.ui.theme.Size
 import com.github.mikephil.charting.charts.LineChart
@@ -154,7 +154,7 @@ class MpAndroidLineChart(
 
     private fun highlightIndex(selectedIndex: Int?, animated: Boolean) {
         if (selectedIndex == null || previousHighlightedIndex == selectedIndex) return
-        GraphSelectionLogger.logGraph(selectedIndex, animated)
+        GraphScreenLogger.logGraph(selectedIndex, animated)
         val entry = entryForIndex(selectedIndex)
         if (entry == null) {
             highlightValue(null, false)

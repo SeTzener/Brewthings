@@ -1,9 +1,9 @@
-package com.brewthings.app.ui.screens.graph
+package com.brewthings.app.ui.screens.pill
 
 import com.brewthings.app.util.Logger
 
-object GraphSelectionLogger {
-    private val logger = Logger("GraphSelection")
+object GraphScreenLogger {
+    private val logger = Logger("GraphScreen")
 
     fun logGraphSelect(index: Int?) {
         logger.info("GraphSelect: index=$index")

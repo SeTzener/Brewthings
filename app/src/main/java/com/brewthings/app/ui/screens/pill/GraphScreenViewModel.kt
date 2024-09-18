@@ -1,4 +1,4 @@
-package com.brewthings.app.ui.screens.graph
+package com.brewthings.app.ui.screens.pill
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,6 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder
+import com.brewthings.app.ui.screens.pill.data.DataType
+import com.brewthings.app.ui.screens.pill.graph.toGraphState
+import com.brewthings.app.ui.screens.pill.insights.toInsightsState
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
@@ -30,12 +33,12 @@ class GraphScreenViewModel(
     }
 
     fun onGraphSelect(index: Int?) {
-        GraphSelectionLogger.logGraphSelect(index)
+        GraphScreenLogger.logGraphSelect(index)
         onSelect(index)
     }
 
     fun onPagerSelect(index: Int) {
-        GraphSelectionLogger.logPagerSelect(index)
+        GraphScreenLogger.logPagerSelect(index)
         onSelect(index)
     }
 

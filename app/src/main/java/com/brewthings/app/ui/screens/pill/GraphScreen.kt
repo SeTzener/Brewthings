@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.brewthings.app.ui.screens.graph
+package com.brewthings.app.ui.screens.pill
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,6 +39,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.brewthings.app.R
+import com.brewthings.app.ui.screens.pill.data.DataType
+import com.brewthings.app.ui.screens.pill.graph.Graph
+import com.brewthings.app.ui.screens.pill.insights.InsightsPager
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

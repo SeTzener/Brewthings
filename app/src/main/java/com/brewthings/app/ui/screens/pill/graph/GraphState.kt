@@ -1,4 +1,6 @@
-package com.brewthings.app.ui.screens.graph
+package com.brewthings.app.ui.screens.pill.graph
+
+import com.brewthings.app.ui.screens.pill.data.DataType
 
 data class GraphState(val series: List<GraphSeries>)
 

@@ -1,4 +1,4 @@
-package com.brewthings.app.ui.screens.graph
+package com.brewthings.app.ui.screens.pill.insights
 
 import com.brewthings.app.data.domain.Insight
 import com.brewthings.app.data.model.RaptPillData

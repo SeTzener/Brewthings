@@ -1,4 +1,4 @@
-package com.brewthings.app.ui.screens.graph
+package com.brewthings.app.ui.screens.pill.insights
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -27,6 +27,7 @@ import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.IconAlign
 import com.brewthings.app.ui.components.TextWithIcon
+import com.brewthings.app.ui.screens.pill.GraphScreenViewModel
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
@@ -37,7 +38,7 @@ import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun GraphInsights(
+fun InsightsCard(
     data: RaptPillInsights,
     viewModel: GraphScreenViewModel = koinViewModel(),
 ) {
@@ -329,11 +330,11 @@ private fun Float.asArrowDropIcon(): Int? = when {
 
 @Preview(apiLevel = 33) // workaround for AS Hedgehog and below
 @Composable
-fun GraphInsightsPreview() {
+fun InsightsCardPreview() {
     val timestamp = Instant.parse("2024-06-01T15:46:31Z")
     val timestampOG = Instant.parse("2024-05-26T00:00:00Z")
     BrewthingsTheme {
-        GraphInsights(
+        InsightsCard(
             data = RaptPillInsights(
                 timestamp = timestamp,
                 temperature = Insight(
