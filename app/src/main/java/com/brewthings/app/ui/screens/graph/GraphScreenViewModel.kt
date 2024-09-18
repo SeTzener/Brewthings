@@ -13,8 +13,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class GraphScreenViewModel(
+    val macAddress: String = ParameterHolder.Graph.macAddress ?: error("macAddress is required"),
     name: String? = ParameterHolder.Graph.name,
-    macAddress: String = ParameterHolder.Graph.macAddress ?: error("macAddress is required")
 ) : ViewModel(), KoinComponent {
     var screenState: GraphScreenState by mutableStateOf(createInitialState(name, macAddress))
         private set
@@ -45,7 +45,7 @@ class GraphScreenViewModel(
 
     private fun loadData() {
         viewModelScope.launch {
-            repo.observeData(screenState.pillMacAddress)
+            repo.observeData(macAddress)
                 .collect { pillData ->
                     val defaultIndex = pillData.lastIndex
                     val graphState = pillData.toGraphState()
@@ -60,7 +60,7 @@ class GraphScreenViewModel(
         }
     }
 
-    fun setIsOG(macAddress: String, timestamp: Instant, isOg: Boolean?) {
+    fun setIsOG(timestamp: Instant, isOg: Boolean?) {
         viewModelScope.launch {
             if (isOg != null) {
                 repo.setIsOG(macAddress = macAddress, timestamp = timestamp, isOg = isOg)
@@ -68,7 +68,7 @@ class GraphScreenViewModel(
         }
     }
 
-    fun setIsFG(macAddress: String, timestamp: Instant, isFg: Boolean?) {
+    fun setIsFG(timestamp: Instant, isFg: Boolean?) {
         viewModelScope.launch {
             if (isFg != null) {
                 repo.setIsFG(macAddress = macAddress, timestamp = timestamp, isOg = isFg)
@@ -80,7 +80,6 @@ class GraphScreenViewModel(
         val types = DataType.entries.toList()
         return GraphScreenState(
             title = name ?: macAddress,
-            pillMacAddress = macAddress,
             dataTypes = types,
             selectedDataType = types[0]
         )

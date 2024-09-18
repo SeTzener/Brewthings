@@ -120,7 +120,6 @@ fun GraphScreen(
                 ) {
                     InsightsPager(
                         state = insightsState,
-                        macAddress = screenState.pillMacAddress,
                         dataType = selectedType,
                         selectedIndex = selectedIndex,
                         onSelect = onPagerSelect

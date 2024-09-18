@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun InsightsPager(
     state: InsightsState,
-    macAddress: String,
     dataType: DataType,
     selectedIndex: Int,
     onSelect: (Int) -> Unit,
@@ -45,10 +44,7 @@ fun InsightsPager(
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            GraphInsights(
-                macAddress = macAddress,
-                data = state.insights[index]
-            )
+            GraphInsights(state.insights[index])
         }
     }
 

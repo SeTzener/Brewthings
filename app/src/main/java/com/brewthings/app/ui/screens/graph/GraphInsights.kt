@@ -38,7 +38,6 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun GraphInsights(
-    macAddress: String,
     data: RaptPillInsights,
     viewModel: GraphScreenViewModel = koinViewModel(),
 ) {
@@ -143,7 +142,6 @@ fun GraphInsights(
                 modifier = Modifier.padding(start = 7.dp),
                 onClick = {
                     viewModel.setIsOG(
-                        macAddress = macAddress,
                         timestamp = data.timestamp,
                         isOg = !data.isOG
                     )
@@ -165,7 +163,6 @@ fun GraphInsights(
                 modifier = Modifier.padding(start = 4.dp),
                 onClick = {
                     viewModel.setIsFG(
-                        macAddress = macAddress,
                         timestamp = data.timestamp,
                         isFg = !data.isFG
                     )
@@ -337,7 +334,6 @@ fun GraphInsightsPreview() {
     val timestampOG = Instant.parse("2024-05-26T00:00:00Z")
     BrewthingsTheme {
         GraphInsights(
-            macAddress = "64:B7:08:58:20:B6",
             data = RaptPillInsights(
                 timestamp = timestamp,
                 temperature = Insight(
