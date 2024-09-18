@@ -16,12 +16,7 @@ class GraphScreenViewModel(
     name: String? = ParameterHolder.Graph.name,
     macAddress: String = ParameterHolder.Graph.macAddress ?: error("macAddress is required")
 ) : ViewModel(), KoinComponent {
-    var screenState: GraphScreenState by mutableStateOf(
-        GraphScreenState(
-            title = name ?: macAddress,
-            pillMacAddress = macAddress,
-        )
-    )
+    var screenState: GraphScreenState by mutableStateOf(createInitialState(name, macAddress))
         private set
 
     private val repo: RaptPillRepository by inject()
@@ -31,11 +26,7 @@ class GraphScreenViewModel(
     }
 
     fun selectSeries(dataType: DataType) {
-        val graphState = screenState.graphState ?: return
-
-        screenState = screenState.copy(
-            graphState = graphState.copy(selectedDataType = dataType)
-        )
+        screenState = screenState.copy(selectedDataType = dataType)
     }
 
     fun onGraphSelect(index: Int?) {
@@ -49,35 +40,21 @@ class GraphScreenViewModel(
     }
 
     private fun onSelect(index: Int?) {
-        screenState = screenState.copy(
-            insightsPagerState = screenState.insightsPagerState?.copy(selectedInsightsIndex = index),
-            graphState = screenState.graphState?.copy(selectedDataIndex = index),
-        )
+        screenState = screenState.copy(selectedDataIndex = index)
     }
 
     private fun loadData() {
         viewModelScope.launch {
             repo.observeData(screenState.pillMacAddress)
                 .collect { pillData ->
-                    val data = pillData.toGraphData()
-                    val insights = pillData.toInsights()
-                    val defaultIndex = insights.lastIndex
-                    val types = DataType.entries.toList()
-                    val previousType = screenState.graphState?.selectedDataType
+                    val defaultIndex = pillData.lastIndex
+                    val graphState = pillData.toGraphState()
+                    val insightsState = pillData.toInsightsState()
 
                     screenState = screenState.copy(
-                        graphState = GraphState(
-                            graphData = data,
-                            selectedDataIndex = screenState.graphState?.selectedDataIndex
-                                ?: defaultIndex,
-                            selectedDataType = previousType ?: types[0],
-                            dataTypes = types,
-                        ),
-                        insightsPagerState = GraphInsightsPagerState(
-                            insights = insights,
-                            selectedInsightsIndex = screenState.insightsPagerState?.selectedInsightsIndex
-                                ?: defaultIndex
-                        )
+                        selectedDataIndex = screenState.selectedDataIndex ?: defaultIndex,
+                        graphState = graphState,
+                        insightsState = insightsState
                     )
                 }
         }
@@ -97,5 +74,15 @@ class GraphScreenViewModel(
                 repo.setIsFG(macAddress = macAddress, timestamp = timestamp, isOg = isFg)
             }
         }
+    }
+
+    private fun createInitialState(name: String?, macAddress: String) : GraphScreenState {
+        val types = DataType.entries.toList()
+        return GraphScreenState(
+            title = name ?: macAddress,
+            pillMacAddress = macAddress,
+            dataTypes = types,
+            selectedDataType = types[0]
+        )
     }
 }

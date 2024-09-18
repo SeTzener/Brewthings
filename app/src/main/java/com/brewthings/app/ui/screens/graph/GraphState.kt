@@ -1,6 +1,6 @@
 package com.brewthings.app.ui.screens.graph
 
-data class GraphData(val series: List<GraphSeries>)
+data class GraphState(val series: List<GraphSeries>)
 
 data class GraphSeries(val type: DataType, val data: List<DataPoint>)
 

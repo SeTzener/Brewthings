@@ -150,7 +150,7 @@ private fun DataType.toLabel(): String = when (this) {
 }
 
 @Composable
-private fun GraphData.toChartData(dataType: DataType): ChartData = ChartData(
+private fun GraphState.toChartData(dataType: DataType): ChartData = ChartData(
     data = LineData(
         series.find { it.type == dataType }
             ?.data

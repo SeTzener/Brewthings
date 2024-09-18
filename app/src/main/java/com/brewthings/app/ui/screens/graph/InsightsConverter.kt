@@ -7,14 +7,14 @@ import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.daysBetweenIgnoringTime
 import kotlin.math.abs
 
-fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
-    val result = mutableListOf<RaptPillInsights>()
+fun List<RaptPillData>.toInsightsState(): InsightsState {
+    val insights = mutableListOf<RaptPillInsights>()
     var ogData: RaptPillData? = null
     var previousData: RaptPillData? = null
 
     for (data in this) {
         // Add the insights for the current data point.
-        result.add(data.toInsights(ogData = ogData, previousData = previousData))
+        insights.add(data.toInsights(ogData = ogData, previousData = previousData))
 
         if (data.isFG) {
             // Invalidate the OG data for the next data point.
@@ -29,7 +29,7 @@ fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
         previousData = data
     }
 
-    return result
+    return InsightsState(insights)
 }
 
 private fun RaptPillData.toInsights(
