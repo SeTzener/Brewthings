@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.brewthings.app.ui.screens.graph
 
 import androidx.compose.animation.core.LinearEasing
@@ -17,14 +15,15 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun GraphInsightsPager(
-    state: GraphInsightsPagerState,
+fun InsightsPager(
+    state: InsightsState,
     macAddress: String,
+    dataType: DataType,
+    selectedIndex: Int,
     onSelect: (Int) -> Unit,
 ) {
-    val selectedIndex = state.selectedInsightsIndex ?: return // Hide if no selected insights
-
     val pagerState = rememberPagerState(
         initialPage = selectedIndex,
         pageCount = { state.insights.count() },
@@ -48,7 +47,8 @@ fun GraphInsightsPager(
         ) {
             GraphInsights(
                 macAddress = macAddress,
-                data = state.insights[index])
+                data = state.insights[index]
+            )
         }
     }
 

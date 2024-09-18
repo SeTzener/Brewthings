@@ -2,22 +2,41 @@
 
 package com.brewthings.app.ui.screens.graph
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.brewthings.app.R
 import org.koin.androidx.compose.koinViewModel
@@ -36,6 +55,7 @@ fun GraphScreen(
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GraphScreen(
     screenState: GraphScreenState,
@@ -45,6 +65,12 @@ fun GraphScreen(
     onPagerSelect: (Int) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
+    val graphState = screenState.graphState
+    val insightsState = screenState.insightsState
+    val selectedType = screenState.selectedDataType
+    val selectedIndex = screenState.selectedDataIndex
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -62,20 +88,41 @@ fun GraphScreen(
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
         ) {
             item {
-                screenState.graphState?.also { state ->
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    DataTypeSelector(
+                        options = screenState.dataTypes,
+                        selected = selectedType,
+                        onSelect = selectSeries,
+                    )
+                }
+            }
+            item {
+                if (graphState != null) {
                     Graph(
-                        state = state,
-                        selectSeries = selectSeries,
+                        state = graphState,
+                        dataType = selectedType,
+                        selectedIndex = selectedIndex,
                         onSelect = onGraphSelect
                     )
 
                 }
             }
             item {
-                screenState.insightsState?.also { state ->
-                    GraphInsightsPager(
+                if (
+                    insightsState != null &&
+                    selectedIndex != null // Hide if no selected data
+                ) {
+                    InsightsPager(
+                        state = insightsState,
                         macAddress = screenState.pillMacAddress,
-                        state = state,
+                        dataType = selectedType,
+                        selectedIndex = selectedIndex,
                         onSelect = onPagerSelect
                     )
                 }
@@ -107,4 +154,53 @@ fun GraphTopBar(
         },
         scrollBehavior = scrollBehavior,
     )
+}
+
+@Composable
+fun DataTypeSelector(
+    options: List<DataType>,
+    selected: DataType,
+    onSelect: (DataType) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Box {
+        OutlinedButton(
+            modifier = Modifier.wrapContentSize(),
+            contentPadding = PaddingValues(start = 16.dp, end = 8.dp),
+            onClick = { expanded = !expanded },
+        ) {
+            Text(text = selected.toLabel())
+
+            Icon(
+                modifier = Modifier.padding(start = 4.dp),
+                imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = null
+            )
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            // Each DropdownMenuItem represents an option in the dropdown
+            options.forEach { option ->
+                DropdownMenuItem(
+                    onClick = {
+                        onSelect(option)
+                        expanded = false
+                    },
+                    text = {
+                        Text(text = option.toLabel())
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DataType.toLabel(): String = when (this) {
+    DataType.TEMPERATURE -> stringResource(id = R.string.graph_data_label_temp_full)
+    DataType.GRAVITY -> stringResource(id = R.string.graph_data_label_gravity)
+    DataType.BATTERY -> stringResource(id = R.string.graph_data_label_battery)
 }
