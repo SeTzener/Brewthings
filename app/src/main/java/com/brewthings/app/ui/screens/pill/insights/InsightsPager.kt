@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.ui.screens.pill.GraphScreenLogger
 import com.brewthings.app.ui.screens.pill.data.DataType
+import kotlinx.datetime.Instant
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -24,6 +25,8 @@ fun InsightsPager(
     dataType: DataType,
     selectedIndex: Int,
     onSelect: (Int) -> Unit,
+    setIsOG: (Instant, Boolean) -> Unit,
+    setIsFG: (Instant, Boolean) -> Unit,
 ) {
     val pagerState = rememberPagerState(
         initialPage = selectedIndex,
@@ -46,7 +49,11 @@ fun InsightsPager(
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            InsightsCard(state.insights[index])
+            InsightsCard(
+                data = state.insights[index],
+                setIsOG = setIsOG,
+                setIsFG = setIsFG,
+            )
         }
     }
 

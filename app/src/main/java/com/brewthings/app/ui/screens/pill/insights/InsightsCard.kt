@@ -27,7 +27,6 @@ import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.IconAlign
 import com.brewthings.app.ui.components.TextWithIcon
-import com.brewthings.app.ui.screens.pill.GraphScreenViewModel
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
@@ -35,12 +34,12 @@ import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toFormattedDate
 import kotlin.math.abs
 import kotlinx.datetime.Instant
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun InsightsCard(
     data: RaptPillInsights,
-    viewModel: GraphScreenViewModel = koinViewModel(),
+    setIsOG: (Instant, Boolean) -> Unit,
+    setIsFG: (Instant, Boolean) -> Unit,
 ) {
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -141,12 +140,7 @@ fun InsightsCard(
         ) {
             TextButton(
                 modifier = Modifier.padding(start = 7.dp),
-                onClick = {
-                    viewModel.setIsOG(
-                        timestamp = data.timestamp,
-                        isOg = !data.isOG
-                    )
-                },
+                onClick = { setIsOG(data.timestamp, !data.isOG) },
             ) {
                 Text(
                     text = if (data.isOG) {
@@ -162,12 +156,7 @@ fun InsightsCard(
 
             TextButton(
                 modifier = Modifier.padding(start = 4.dp),
-                onClick = {
-                    viewModel.setIsFG(
-                        timestamp = data.timestamp,
-                        isFg = !data.isFG
-                    )
-                }
+                onClick = { setIsFG(data.timestamp, !data.isFG) }
             ) {
                 Text(
                     text = if (data.isFG) {
@@ -369,8 +358,10 @@ fun InsightsCardPreview() {
                 ),
                 durationSinceOG = TimeRange(timestampOG, timestamp),
                 isOG = false,
-                isFG = false
-            )
+                isFG = false,
+            ),
+            setIsOG = { _, _ -> },
+            setIsFG = { _, _ -> },
         )
     }
 }

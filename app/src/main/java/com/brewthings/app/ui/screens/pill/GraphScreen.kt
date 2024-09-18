@@ -42,6 +42,7 @@ import com.brewthings.app.R
 import com.brewthings.app.ui.screens.pill.data.DataType
 import com.brewthings.app.ui.screens.pill.graph.Graph
 import com.brewthings.app.ui.screens.pill.insights.InsightsPager
+import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -55,6 +56,8 @@ fun GraphScreen(
         viewModel::selectSeries,
         viewModel::onGraphSelect,
         viewModel::onPagerSelect,
+        viewModel::setIsOG,
+        viewModel::setIsFG,
     )
 }
 
@@ -66,6 +69,8 @@ fun GraphScreen(
     selectSeries: (DataType) -> Unit,
     onGraphSelect: (Int?) -> Unit,
     onPagerSelect: (Int) -> Unit,
+    setIsOG: (Instant, Boolean) -> Unit,
+    setIsFG: (Instant, Boolean) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -125,7 +130,9 @@ fun GraphScreen(
                         state = insightsState,
                         dataType = selectedType,
                         selectedIndex = selectedIndex,
-                        onSelect = onPagerSelect
+                        onSelect = onPagerSelect,
+                        setIsOG = setIsOG,
+                        setIsFG = setIsFG,
                     )
                 }
             }
