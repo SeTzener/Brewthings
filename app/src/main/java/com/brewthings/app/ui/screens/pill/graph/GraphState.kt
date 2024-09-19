@@ -1,6 +1,8 @@
-package com.brewthings.app.ui.screens.graph
+package com.brewthings.app.ui.screens.pill.graph
 
-data class GraphData(val series: List<GraphSeries>)
+import com.brewthings.app.ui.screens.pill.data.DataType
+
+data class GraphState(val series: List<GraphSeries>)
 
 data class GraphSeries(val type: DataType, val data: List<DataPoint>)
 

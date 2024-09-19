@@ -1,8 +1,9 @@
-package com.brewthings.app.ui.screens.graph
+package com.brewthings.app.ui.screens.pill.graph
 
 import com.brewthings.app.data.model.RaptPillData
+import com.brewthings.app.ui.screens.pill.data.DataType
 
-fun List<RaptPillData>.toGraphData(): GraphData {
+fun List<RaptPillData>.toGraphState(): GraphState {
     val series = listOf(
         GraphSeries(
             type = DataType.TEMPERATURE,
@@ -17,13 +18,13 @@ fun List<RaptPillData>.toGraphData(): GraphData {
             data = mapIndexed { index, data -> data.toDataPoint(index) { battery } }
         )
     )
-    return GraphData(series)
+    return GraphState(series)
 }
 
 private fun RaptPillData.toDataPoint(index: Int, toY: RaptPillData.() -> Float): DataPoint = DataPoint(
     x = timestamp.epochSeconds.toFloat(),
     y = toY(),
-    isOG = isOG == true,
-    isFG = isFG == true,
+    isOG = isOG,
+    isFG = isFG,
     data = index
 )

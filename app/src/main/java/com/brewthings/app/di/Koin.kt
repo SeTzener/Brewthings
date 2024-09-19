@@ -3,7 +3,7 @@ package com.brewthings.app.di
 import com.brewthings.app.data.ble.RaptPillScanner
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.data.storage.RaptPillDatabase
-import com.brewthings.app.ui.screens.graph.GraphScreenViewModel
+import com.brewthings.app.ui.screens.pill.GraphScreenViewModel
 import com.brewthings.app.ui.screens.scanning.ScanningScreenViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel

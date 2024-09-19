@@ -1,4 +1,4 @@
-package com.brewthings.app.ui.screens.graph
+package com.brewthings.app.ui.screens.pill.insights
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -34,13 +34,12 @@ import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toFormattedDate
 import kotlin.math.abs
 import kotlinx.datetime.Instant
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun GraphInsights(
-    macAddress: String,
+fun InsightsCard(
     data: RaptPillInsights,
-    viewModel: GraphScreenViewModel = koinViewModel(),
+    setIsOG: (Instant, Boolean) -> Unit,
+    setIsFG: (Instant, Boolean) -> Unit,
 ) {
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -141,13 +140,7 @@ fun GraphInsights(
         ) {
             TextButton(
                 modifier = Modifier.padding(start = 7.dp),
-                onClick = {
-                    viewModel.setIsOG(
-                        macAddress = macAddress,
-                        timestamp = data.timestamp,
-                        isOg = !data.isOG
-                    )
-                },
+                onClick = { setIsOG(data.timestamp, !data.isOG) },
             ) {
                 Text(
                     text = if (data.isOG) {
@@ -163,13 +156,7 @@ fun GraphInsights(
 
             TextButton(
                 modifier = Modifier.padding(start = 4.dp),
-                onClick = {
-                    viewModel.setIsFG(
-                        macAddress = macAddress,
-                        timestamp = data.timestamp,
-                        isFg = !data.isFG
-                    )
-                }
+                onClick = { setIsFG(data.timestamp, !data.isFG) }
             ) {
                 Text(
                     text = if (data.isFG) {
@@ -332,12 +319,11 @@ private fun Float.asArrowDropIcon(): Int? = when {
 
 @Preview(apiLevel = 33) // workaround for AS Hedgehog and below
 @Composable
-fun GraphInsightsPreview() {
+fun InsightsCardPreview() {
     val timestamp = Instant.parse("2024-06-01T15:46:31Z")
     val timestampOG = Instant.parse("2024-05-26T00:00:00Z")
     BrewthingsTheme {
-        GraphInsights(
-            macAddress = "64:B7:08:58:20:B6",
+        InsightsCard(
             data = RaptPillInsights(
                 timestamp = timestamp,
                 temperature = Insight(
@@ -372,8 +358,10 @@ fun GraphInsightsPreview() {
                 ),
                 durationSinceOG = TimeRange(timestampOG, timestamp),
                 isOG = false,
-                isFG = false
-            )
+                isFG = false,
+            ),
+            setIsOG = { _, _ -> },
+            setIsFG = { _, _ -> },
         )
     }
 }

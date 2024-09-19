@@ -1,6 +1,4 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
-package com.brewthings.app.ui.screens.graph
+package com.brewthings.app.ui.screens.pill.insights
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -16,22 +14,25 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.brewthings.app.ui.screens.pill.GraphScreenLogger
+import kotlinx.datetime.Instant
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun GraphInsightsPager(
-    state: GraphInsightsPagerState,
-    macAddress: String,
+fun InsightsPager(
+    state: InsightsState,
+    selectedIndex: Int,
     onSelect: (Int) -> Unit,
+    setIsOG: (Instant, Boolean) -> Unit,
+    setIsFG: (Instant, Boolean) -> Unit,
 ) {
-    val selectedIndex = state.selectedInsightsIndex ?: return // Hide if no selected insights
-
     val pagerState = rememberPagerState(
         initialPage = selectedIndex,
         pageCount = { state.insights.count() },
     )
 
     LaunchedEffect(pagerState) {
-        GraphSelectionLogger.logPager(selectedIndex, animated = false)
+        GraphScreenLogger.logPager(selectedIndex, animated = false)
         snapshotFlow { pagerState.targetPage }.collect { page ->
             onSelect(page)
         }
@@ -46,14 +47,16 @@ fun GraphInsightsPager(
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            GraphInsights(
-                macAddress = macAddress,
-                data = state.insights[index])
+            InsightsCard(
+                data = state.insights[index],
+                setIsOG = setIsOG,
+                setIsFG = setIsFG,
+            )
         }
     }
 
     LaunchedEffect(selectedIndex) {
-        GraphSelectionLogger.logPager(selectedIndex, animated = true)
+        GraphScreenLogger.logPager(selectedIndex, animated = true)
         pagerState.animateScrollToPage(
             page = selectedIndex,
             animationSpec = tween(500, easing = LinearEasing)

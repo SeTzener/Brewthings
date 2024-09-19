@@ -1,10 +1,11 @@
-package com.brewthings.app.ui.screens.graph
+package com.brewthings.app.ui.screens.pill.data
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.brewthings.app.ui.android.chart.ChartDataSet
+import com.brewthings.app.ui.screens.pill.graph.DataPoint
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
