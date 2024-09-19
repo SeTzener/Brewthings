@@ -128,7 +128,6 @@ fun GraphScreen(
                 ) {
                     InsightsPager(
                         state = insightsState,
-                        dataType = selectedType,
                         selectedIndex = selectedIndex,
                         onSelect = onPagerSelect,
                         setIsOG = setIsOG,
