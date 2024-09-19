@@ -17,6 +17,8 @@ import com.brewthings.app.ui.screens.pill.data.toDataSets
 import com.brewthings.app.ui.screens.pill.data.toSegments
 import com.brewthings.app.ui.theme.Size
 import com.github.mikephil.charting.data.LineData
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 @Composable
 fun Graph(
@@ -68,6 +70,7 @@ private fun GraphState.toChartData(dataType: DataType): ChartData = ChartData(
     data = LineData(
         series.find { it.type == dataType }
             ?.data
+            ?.standardize()
             ?.toSegments()
             ?.toDataSets(dataType)
     )
@@ -77,8 +80,8 @@ private fun GraphState.toChartData(dataType: DataType): ChartData = ChartData(
  * Transform the data using z-score normalization so that each sensor's readings are centered around the mean with a
  * standard deviation of 1 (for multiline chart plotting).
  */
-/*private fun List<DataPoint>.standardize(): List<Entry> {
+private fun List<DataPoint>.standardize(): List<DataPoint> {
     val mean = map { it.y }.average().toFloat()
     val stdDev = sqrt(map { (it.y - mean).pow(2) }.average().toFloat())
-    return map { Entry(it.x, (it.y - mean) / stdDev, it.data) }
-}*/
+    return map { it.copy(x = it.x, y = (it.y - mean) / stdDev) }
+}
