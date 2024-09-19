@@ -17,8 +17,6 @@ import com.brewthings.app.ui.screens.pill.data.toDataSets
 import com.brewthings.app.ui.screens.pill.data.toSegments
 import com.brewthings.app.ui.theme.Size
 import com.github.mikephil.charting.data.LineData
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 @Composable
 fun Graph(
@@ -68,20 +66,33 @@ fun Graph(
 @Composable
 private fun GraphState.toChartData(dataType: DataType): ChartData = ChartData(
     data = LineData(
-        series.find { it.type == dataType }
-            ?.data
-            ?.standardize()
-            ?.toSegments()
-            ?.toDataSets(dataType)
+        series.map {
+            it.data
+                .normalize()
+                .toSegments()
+                .toDataSets(it.type)
+        }.flatten()
     )
 )
 
 /**
- * Transform the data using z-score normalization so that each sensor's readings are centered around the mean with a
- * standard deviation of 1 (for multiline chart plotting).
+ * Interpolates y-values to the range [0, 1], for multiline chart plotting.
  */
-private fun List<DataPoint>.standardize(): List<DataPoint> {
-    val mean = map { it.y }.average().toFloat()
-    val stdDev = sqrt(map { (it.y - mean).pow(2) }.average().toFloat())
-    return map { it.copy(x = it.x, y = (it.y - mean) / stdDev) }
+private fun List<DataPoint>.normalize(): List<DataPoint> {
+    if (this.isEmpty()) return emptyList()
+
+    // Find the minimum and maximum y-values
+    val minY = this.minOf { it.y }
+    val maxY = this.maxOf { it.y }
+
+    // Handle the case where all points have the same y-value to avoid division by zero
+    if (minY == maxY) {
+        return this.map { it.copy(x = it.x, y = 0.5f) } // Normalize to the middle of the target range
+    }
+
+    // Interpolate
+    return this.map { dataPoint ->
+        val normalizedY = (dataPoint.y - minY) / (maxY - minY)
+        dataPoint.copy(x = dataPoint.x, y = normalizedY)
+    }
 }
