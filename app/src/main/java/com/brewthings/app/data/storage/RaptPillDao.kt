@@ -35,6 +35,24 @@ interface RaptPillDao {
         "SELECT * FROM RaptPillData " +
                 "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
                 "WHERE RaptPill.macAddress = :macAddress " +
+                "AND RaptPillData.isOG == 1 " +
+                "AND RaptPillData.isFG == 1 " +
+                "ORDER BY RaptPillData.timestamp ASC"
+    )
+    fun getBrewEdges(macAddress: String): Flow<List<RaptPillData>>
+
+    @Query(
+        "SELECT * FROM RaptPillData " +
+                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+                "WHERE RaptPill.macAddress = :macAddress ORDER BY RaptPillData.pillId DESC " +
+                "LIMIT 1"
+    )
+    fun getLastMeasurement(macAddress: String): Flow<RaptPillData>
+
+    @Query(
+        "SELECT * FROM RaptPillData " +
+                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+                "WHERE RaptPill.macAddress = :macAddress " +
                 "AND RaptPillData.timestamp == :timestamp "
     )
     suspend fun getPillData(macAddress: String, timestamp: Instant): RaptPillData
