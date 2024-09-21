@@ -6,13 +6,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.brewthings.app.ui.android.chart.ChartDataSet
 import com.brewthings.app.ui.screens.pill.graph.DataPoint
+import com.brewthings.app.ui.screens.pill.graph.DataType
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
-
-data class Segment(
-    val isValid: Boolean,
-    val entries: List<Entry>
-)
 
 fun List<DataPoint>.toSegments(): List<Segment> {
     val result = mutableListOf<Segment>()

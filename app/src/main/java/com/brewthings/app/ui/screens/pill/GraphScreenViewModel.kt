@@ -5,9 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder
-import com.brewthings.app.ui.screens.pill.data.DataType
+import com.brewthings.app.ui.screens.pill.graph.DataType
 import com.brewthings.app.ui.screens.pill.graph.toGraphState
 import com.brewthings.app.ui.screens.pill.insights.toInsightsState
 import kotlinx.coroutines.launch
@@ -23,6 +24,9 @@ class GraphScreenViewModel(
         private set
 
     private val repo: RaptPillRepository by inject()
+
+    private val dataTypes = mutableListOf(DataType.GRAVITY, DataType.TEMPERATURE, DataType.BATTERY)
+    private var insights = emptyList<RaptPillInsights>()
 
     init {
         loadData()

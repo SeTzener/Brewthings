@@ -1,10 +1,16 @@
 package com.brewthings.app.ui.screens.pill.graph
 
-import com.brewthings.app.ui.screens.pill.data.DataType
+data class GraphState(val series: Map<DataType, List<DataPoint>>)
 
-data class GraphState(val series: List<GraphSeries>)
-
-data class GraphSeries(val type: DataType, val data: List<DataPoint>)
+enum class DataType {
+    GRAVITY,
+    TEMPERATURE,
+    BATTERY,
+    TILT,
+    ABV,
+    MEASURED_VELOCITY,
+    COMPUTED_VELOCITY
+}
 
 data class DataPoint(
     val x: Float,

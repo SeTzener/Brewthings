@@ -39,7 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.brewthings.app.R
-import com.brewthings.app.ui.screens.pill.data.DataType
+import com.brewthings.app.ui.screens.pill.graph.DataType
 import com.brewthings.app.ui.screens.pill.graph.Graph
 import com.brewthings.app.ui.screens.pill.insights.InsightsPager
 import kotlinx.datetime.Instant

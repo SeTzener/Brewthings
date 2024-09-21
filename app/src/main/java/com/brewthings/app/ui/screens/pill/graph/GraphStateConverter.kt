@@ -1,7 +1,6 @@
 package com.brewthings.app.ui.screens.pill.graph
 
 import com.brewthings.app.data.model.RaptPillData
-import com.brewthings.app.ui.screens.pill.data.DataType
 
 fun List<RaptPillData>.toGraphState(): GraphState {
     val series = listOf(

@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.viewinterop.AndroidView
 import com.brewthings.app.ui.android.chart.ChartData
 import com.brewthings.app.ui.android.chart.MpAndroidLineChart
-import com.brewthings.app.ui.screens.pill.data.DataType
 import com.brewthings.app.ui.screens.pill.data.toDataSets
 import com.brewthings.app.ui.screens.pill.data.toSegments
 import com.brewthings.app.ui.theme.Size
