@@ -1,7 +1,7 @@
 package com.brewthings.app.data.ble
 
-import junit.framework.TestCase.assertTrue
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 class RaptPillParserTest {
     @Test
