@@ -131,7 +131,7 @@ private fun List<RaptPillInsights>.toDataPoints(dataType: DataType): List<DataPo
             isOG = insights.isOG,
             isFG = insights.isFG,
         )
-    }
+    }.normalize()
 
 private fun RaptPillInsights.toY(dataType: DataType): Float? =
     when (dataType) {
@@ -147,24 +147,30 @@ private fun RaptPillInsights.toY(dataType: DataType): Float? =
 /**
  * Interpolates y-values to the range [0, 1], for multiline chart plotting.
  */
-private fun List<Float?>.normalize(): List<Float?> {
-    val listNotNull = filterNotNull()
+private fun List<DataPoint>.normalize(): List<DataPoint> {
+    val yValues = mapNotNull { it.y }
 
-    if (listNotNull.isEmpty()) return emptyList()
+    // Handle the case where there are no y-values, or all y-values are null
+    if (yValues.isEmpty()) return this
 
     // Find the minimum and maximum y-values
-    val min = listNotNull.min()
-    val max = listNotNull.max()
+    val minY = yValues.min()
+    val maxY = yValues.max()
 
     // Handle the case where all points have the same y-value to avoid division by zero
-    if (min == max) {
-        return List(size) { 0.5f } // Normalize to the middle of the target range
+    if (minY == maxY) {
+        return replaceY { 0.5f } // Normalize to the middle of the target range
     }
 
     // Interpolate
-    return map {
-        it?.let { value ->
-            (value - min) / (max - min)
-        }
+    return replaceY { (this - minY) / (maxY - minY) }
+}
+
+private fun List<DataPoint>.replaceY(transform: Float.() -> Float): List<DataPoint> = map { value ->
+    val y = value.y
+    if (y != null) {
+        value.copy(y = y.transform())
+    } else {
+        value
     }
 }
