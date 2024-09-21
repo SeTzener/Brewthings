@@ -46,7 +46,6 @@ android {
         targetSdk = target
         versionCode = generateVersionCode(semanticVersioning, buildVersion)
         versionName = semanticVersioning
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -145,8 +144,17 @@ dependencies {
     ksp(libs.room.compiler)
 
     // Unit Testing
-    testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.kotest.junit5)
     testImplementation(libs.mockk)
+    testImplementation(libs.karumi)
+    testImplementation(libs.serialization.moshi)
+    testImplementation(libs.serialization.moshi.kotlin)
+}
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 fun generateVersionCode(versionName: String, buildVersion: Int): Int {
