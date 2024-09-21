@@ -16,17 +16,20 @@ import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Clock
+
+typealias MpAndroidLineChartData = LineData
 
 @SuppressLint("ViewConstructor")
 class MpAndroidLineChart(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    chartData: ChartData?,
+    chartData: MpAndroidLineChartData,
     selectedIndex: Int?,
     private val density: Density,
     private val textSize: TextUnit,
@@ -50,11 +53,9 @@ class MpAndroidLineChart(
     }
 
     init {
-        chartData?.also {
-            updateDatasets(chartData)
-            updateVisibleXRange()
-            highlightIndex(selectedIndex, animated = false)
-        }
+        data = chartData
+        updateVisibleXRange()
+        highlightIndex(selectedIndex, animated = false)
 
         configureXAxis()
         configureYAxis()
@@ -74,7 +75,7 @@ class MpAndroidLineChart(
     }
 
     fun refresh(
-        chartData: ChartData?,
+        chartData: MpAndroidLineChartData,
         selectedIndex: Int?,
         isDarkTheme: Boolean,
         textColor: Color,
@@ -84,10 +85,8 @@ class MpAndroidLineChart(
         this.textColor = textColor
         highlightedRenderer.primaryColor = primaryColor.toArgb()
 
-        if (chartData == null) return
-
         val wasEmpty = data?.dataSets?.isEmpty() ?: true
-        updateDatasets(chartData)
+        data = chartData
         data.notifyDataChanged()
         notifyDataSetChanged()
 
@@ -97,10 +96,6 @@ class MpAndroidLineChart(
 
         highlightIndex(selectedIndex, animated = true)
         invalidate()
-    }
-
-    private fun updateDatasets(chartData: ChartData) {
-        data = chartData.data
     }
 
     private fun configureXAxis() {

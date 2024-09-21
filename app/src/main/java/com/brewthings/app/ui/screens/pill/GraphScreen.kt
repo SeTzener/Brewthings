@@ -7,14 +7,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
@@ -53,7 +58,7 @@ fun GraphScreen(
     GraphScreen(
         screenState = viewModel.screenState,
         onBackClick = { navController.popBackStack() },
-        viewModel::selectSeries,
+        viewModel::toggleDataType,
         viewModel::onGraphSelect,
         viewModel::onPagerSelect,
         viewModel::setIsOG,
@@ -66,7 +71,7 @@ fun GraphScreen(
 fun GraphScreen(
     screenState: GraphScreenState,
     onBackClick: () -> Unit,
-    selectSeries: (DataType) -> Unit,
+    toggleDataType: (DataType) -> Unit,
     onGraphSelect: (Int?) -> Unit,
     onPagerSelect: (Int) -> Unit,
     setIsOG: (Instant, Boolean) -> Unit,
@@ -74,10 +79,10 @@ fun GraphScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    val graphState = screenState.graphState
-    val insightsState = screenState.insightsState
-    val selectedType = screenState.selectedDataType
-    val selectedIndex = screenState.selectedDataIndex
+    val graphSeries = screenState.graphSeries
+    val insights = screenState.insights
+    val selectedDataTypes = screenState.selectedDataTypes
+    val selectedDataIndex = screenState.selectedDataIndex
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -105,17 +110,16 @@ fun GraphScreen(
                 ) {
                     DataTypeSelector(
                         options = screenState.dataTypes,
-                        selected = selectedType,
-                        onSelect = selectSeries,
+                        selectedDataTypes = selectedDataTypes,
+                        toggleDataType = toggleDataType,
                     )
                 }
             }
             item {
-                if (graphState != null) {
+                if (graphSeries.isNotEmpty()) {
                     Graph(
-                        state = graphState,
-                        dataType = selectedType,
-                        selectedIndex = selectedIndex,
+                        series = graphSeries,
+                        selectedIndex = selectedDataIndex,
                         onSelect = onGraphSelect
                     )
 
@@ -123,12 +127,12 @@ fun GraphScreen(
             }
             item {
                 if (
-                    insightsState != null &&
-                    selectedIndex != null // Hide if no selected data
+                    insights.isNotEmpty() &&
+                    selectedDataIndex != null // Hide if no selected data
                 ) {
                     InsightsPager(
                         state = insightsState,
-                        selectedIndex = selectedIndex,
+                        selectedIndex = selectedDataIndex,
                         onSelect = onPagerSelect,
                         setIsOG = setIsOG,
                         setIsFG = setIsFG,
@@ -167,17 +171,18 @@ fun GraphTopBar(
 @Composable
 fun DataTypeSelector(
     options: List<DataType>,
-    selected: DataType,
-    onSelect: (DataType) -> Unit,
+    selectedDataTypes: List<DataType>,
+    toggleDataType: (DataType) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
+
     Box {
         OutlinedButton(
             modifier = Modifier.wrapContentSize(),
             contentPadding = PaddingValues(start = 16.dp, end = 8.dp),
-            onClick = { expanded = !expanded },
+            onClick = { expanded = !expanded }
         ) {
-            Text(text = selected.toLabel())
+            Text(text = stringResource(id = R.string.graph_data_label_data_types))
 
             Icon(
                 modifier = Modifier.padding(start = 4.dp),
@@ -194,11 +199,20 @@ fun DataTypeSelector(
             options.forEach { option ->
                 DropdownMenuItem(
                     onClick = {
-                        onSelect(option)
-                        expanded = false
+                        toggleDataType(option)
                     },
                     text = {
-                        Text(text = option.toLabel())
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Checkbox(
+                                checked = option in selectedDataTypes,
+                                onCheckedChange = null
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = option.toLabel())
+                        }
                     }
                 )
             }
@@ -206,9 +220,14 @@ fun DataTypeSelector(
     }
 }
 
+
 @Composable
-private fun DataType.toLabel(): String = when (this) {
+fun DataType.toLabel(): String = when (this) {
     DataType.TEMPERATURE -> stringResource(id = R.string.graph_data_label_temp_full)
     DataType.GRAVITY -> stringResource(id = R.string.graph_data_label_gravity)
     DataType.BATTERY -> stringResource(id = R.string.graph_data_label_battery)
+    DataType.TILT -> stringResource(id = R.string.graph_data_label_tilt)
+    DataType.ABV -> stringResource(id = R.string.graph_data_label_abv)
+    DataType.VELOCITY_MEASURED -> stringResource(id = R.string.graph_data_label_velocity_measured_full)
+    DataType.VELOCITY_COMPUTED -> stringResource(id = R.string.graph_data_label_velocity_computed_full)
 }

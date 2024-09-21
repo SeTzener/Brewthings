@@ -1,14 +1,17 @@
 package com.brewthings.app.ui.screens.pill
 
+import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.screens.pill.graph.DataType
-import com.brewthings.app.ui.screens.pill.graph.GraphState
-import com.brewthings.app.ui.screens.pill.insights.InsightsState
+import com.brewthings.app.ui.screens.pill.graph.GraphSeries
 
 data class GraphScreenState(
+    // Immutable state
     val title: String,
     val dataTypes: List<DataType>,
-    val selectedDataType: DataType,
+    // Selection state
+    val selectedDataTypes: List<DataType>,
     val selectedDataIndex: Int? = null,
-    val graphState: GraphState? = null,
-    val insightsState: InsightsState? = null,
+    // Data state
+    val graphSeries: List<GraphSeries> = emptyList(),
+    val insights: List<RaptPillInsights> = emptyList(),
 )

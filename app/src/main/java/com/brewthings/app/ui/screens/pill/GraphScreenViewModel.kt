@@ -8,9 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder
+import com.brewthings.app.ui.screens.pill.graph.DataPoint
 import com.brewthings.app.ui.screens.pill.graph.DataType
-import com.brewthings.app.ui.screens.pill.graph.toGraphState
-import com.brewthings.app.ui.screens.pill.insights.toInsightsState
+import com.brewthings.app.ui.screens.pill.graph.GraphSeries
+import com.brewthings.app.ui.screens.pill.insights.toInsights
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
@@ -25,15 +26,27 @@ class GraphScreenViewModel(
 
     private val repo: RaptPillRepository by inject()
 
-    private val dataTypes = mutableListOf(DataType.GRAVITY, DataType.TEMPERATURE, DataType.BATTERY)
-    private var insights = emptyList<RaptPillInsights>()
+    private val dataPointsMap = mutableMapOf<DataType, List<DataPoint>>()
 
     init {
         loadData()
     }
 
-    fun selectSeries(dataType: DataType) {
-        screenState = screenState.copy(selectedDataType = dataType)
+    fun toggleDataType(dataType: DataType) {
+        val oldDataTypes = screenState.dataTypes
+        val newDataTypes = if (oldDataTypes.contains(dataType)) {
+            oldDataTypes - dataType
+        } else {
+            oldDataTypes + dataType
+        }
+
+        screenState = screenState.copy(
+            selectedDataTypes = newDataTypes,
+            graphSeries = updateGraphSeries(
+                dataTypes = newDataTypes,
+                insights = screenState.insights,
+            ),
+        )
     }
 
     fun onGraphSelect(index: Int?) {
@@ -44,27 +57,6 @@ class GraphScreenViewModel(
     fun onPagerSelect(index: Int) {
         GraphScreenLogger.logPagerSelect(index)
         onSelect(index)
-    }
-
-    private fun onSelect(index: Int?) {
-        screenState = screenState.copy(selectedDataIndex = index)
-    }
-
-    private fun loadData() {
-        viewModelScope.launch {
-            repo.observeData(macAddress)
-                .collect { pillData ->
-                    val defaultIndex = pillData.lastIndex
-                    val graphState = pillData.toGraphState()
-                    val insightsState = pillData.toInsightsState()
-
-                    screenState = screenState.copy(
-                        selectedDataIndex = screenState.selectedDataIndex ?: defaultIndex,
-                        graphState = graphState,
-                        insightsState = insightsState
-                    )
-                }
-        }
     }
 
     fun setIsOG(timestamp: Instant, isOg: Boolean?) {
@@ -83,12 +75,96 @@ class GraphScreenViewModel(
         }
     }
 
-    private fun createInitialState(name: String?, macAddress: String) : GraphScreenState {
-        val types = DataType.entries.toList()
-        return GraphScreenState(
+    private fun createInitialState(name: String?, macAddress: String): GraphScreenState =
+        GraphScreenState(
             title = name ?: macAddress,
-            dataTypes = types,
-            selectedDataType = types[0]
+            dataTypes = DataType.entries,
+            selectedDataTypes = listOf(DataType.GRAVITY, DataType.TEMPERATURE, DataType.VELOCITY_MEASURED, DataType.ABV)
         )
+
+    private fun loadData() {
+        viewModelScope.launch {
+            repo.observeData(macAddress)
+                .collect { pillData ->
+                    val defaultIndex = pillData.lastIndex
+                    val insights = pillData.toInsights()
+                    dataPointsMap.clear()
+
+                    screenState = screenState.copy(
+                        selectedDataIndex = screenState.selectedDataIndex ?: defaultIndex,
+                        insights = insights,
+                        graphSeries = updateGraphSeries(
+                            dataTypes = screenState.selectedDataTypes,
+                            insights = insights,
+                        ),
+                    )
+                }
+        }
+    }
+
+    private fun updateGraphSeries(
+        dataTypes: List<DataType>,
+        insights: List<RaptPillInsights>,
+    ): List<GraphSeries> =
+        dataTypes.map { dataType ->
+            val dataPoints = dataPointsMap[dataType] ?: insights.toDataPoints(dataType).also {
+                dataPointsMap[dataType] = it
+            }
+
+            GraphSeries(
+                type = dataType,
+                data = dataPoints,
+            )
+        }
+
+    private fun onSelect(index: Int?) {
+        screenState = screenState.copy(selectedDataIndex = index)
+    }
+}
+
+private fun List<RaptPillInsights>.toDataPoints(dataType: DataType): List<DataPoint> =
+    mapIndexed { index, insights ->
+        DataPoint(
+            index = index,
+            x = insights.timestamp.epochSeconds.toFloat(),
+            y = insights.toY(dataType),
+            isOG = insights.isOG,
+            isFG = insights.isFG,
+        )
+    }
+
+private fun RaptPillInsights.toY(dataType: DataType): Float? =
+    when (dataType) {
+        DataType.GRAVITY -> gravity
+        DataType.TEMPERATURE -> temperature
+        DataType.BATTERY -> battery
+        DataType.TILT -> tilt
+        DataType.ABV -> abv
+        DataType.VELOCITY_MEASURED -> gravityVelocity
+        DataType.VELOCITY_COMPUTED -> calculatedVelocity
+    }?.value
+
+/**
+ * Interpolates y-values to the range [0, 1], for multiline chart plotting.
+ */
+private fun List<Float?>.normalize(): List<Float?> {
+    val listNotNull = filterNotNull()
+
+    if (listNotNull.isEmpty()) return emptyList()
+
+    // Find the minimum and maximum y-values
+    val min = listNotNull.min()
+    val max = listNotNull.max()
+
+    // Handle the case where all points have the same y-value to avoid division by zero
+    if (min == max) {
+        return List(size) { 0.5f } // Normalize to the middle of the target range
+    }
+
+    // Interpolate
+    return map {
+        it?.let { value ->
+            (value - min) / (max - min)
+        }
     }
 }
