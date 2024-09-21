@@ -39,9 +39,9 @@
     <string name="graph_data_label_battery">Battery</string>
     <string name="graph_data_label_tilt">Tilt</string>
     <string name="graph_data_label_abv">ABV</string>
-    <string name="graph_data_label_velocity_measured_short">M.Velocity</string>
+    <string name="graph_data_label_velocity_measured_short">M.Vel</string>
     <string name="graph_data_label_velocity_measured_full">Velocity (measured)</string>
-    <string name="graph_data_label_velocity_computed_short">C.Velocity</string>
+    <string name="graph_data_label_velocity_computed_short">C.Vel</string>
     <string name="graph_data_label_velocity_computed_full">Velocity (computed)</string>
     <string name="graph_data_duration_since_og">%s since OG</string>
     <string name="graph_data_duration_og">OG</string>

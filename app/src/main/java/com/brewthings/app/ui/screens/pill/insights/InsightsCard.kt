@@ -27,6 +27,7 @@ import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.IconAlign
 import com.brewthings.app.ui.components.TextWithIcon
+import com.brewthings.app.ui.screens.pill.graph.DataType
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
@@ -37,6 +38,7 @@ import kotlinx.datetime.Instant
 
 @Composable
 fun InsightsCard(
+    dataTypes: List<DataType>,
     data: RaptPillInsights,
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
@@ -54,6 +56,7 @@ fun InsightsCard(
             )
 
             InsightsRow(
+                isVisible = dataTypes.contains(DataType.GRAVITY),
                 icon = { InsightIcon(it, R.drawable.ic_gravity) },
                 label = { InsightLabel(it, R.string.graph_data_label_gravity) },
                 value = { InsightValue(it, R.string.pill_gravity, data.gravity.value) },
@@ -68,6 +71,7 @@ fun InsightsCard(
             )
 
             InsightsRow(
+                isVisible = dataTypes.contains(DataType.TEMPERATURE),
                 icon = { InsightIcon(it, R.drawable.ic_temperature) },
                 label = { InsightLabel(it, R.string.graph_data_label_temp_short) },
                 value = { InsightValue(it, R.string.pill_temperature, data.temperature.value) },
@@ -88,6 +92,7 @@ fun InsightsCard(
             )
 
             InsightsRow(
+                isVisible = dataTypes.contains(DataType.TILT),
                 icon = { InsightIcon(it, R.drawable.ic_tilt) },
                 label = { InsightLabel(it, R.string.graph_data_label_tilt) },
                 value = { InsightValue(it, R.string.pill_tilt, data.tilt.value) },
@@ -102,6 +107,7 @@ fun InsightsCard(
             )
 
             InsightsRow(
+                isVisible = dataTypes.contains(DataType.BATTERY),
                 icon = { BatteryLevelIndicator(data.battery.value) },
                 label = { InsightLabel(it, R.string.graph_data_label_battery) },
                 value = { InsightValue(it, R.string.pill_battery, data.battery.value) },
@@ -116,6 +122,7 @@ fun InsightsCard(
             )
 
             InsightsRow(
+                isVisible = dataTypes.contains(DataType.ABV),
                 icon = { InsightIcon(it, R.drawable.ic_abv) },
                 label = { InsightLabel(it, R.string.graph_data_label_abv) },
                 value = { InsightValue(it, R.string.pill_abv, data.abv?.value) },
@@ -123,8 +130,23 @@ fun InsightsCard(
             )
 
             InsightsRow(
+                isVisible = dataTypes.contains(DataType.VELOCITY_MEASURED),
                 icon = { InsightIcon(it, R.drawable.ic_velocity) },
-                label = { InsightLabel(it, R.string.graph_data_label_velocity) },
+                label = { InsightLabel(it, R.string.graph_data_label_velocity_measured_short) },
+                value = { InsightValue(it, R.string.pill_velocity, data.gravityVelocity?.value) },
+                fromPrevious = {
+                    InsightDelta(
+                        it,
+                        R.string.pill_velocity,
+                        data.gravityVelocity?.deltaFromPrevious
+                    )
+                },
+            )
+
+            InsightsRow(
+                isVisible = dataTypes.contains(DataType.VELOCITY_COMPUTED),
+                icon = { InsightIcon(it, R.drawable.ic_calculate) },
+                label = { InsightLabel(it, R.string.graph_data_label_velocity_computed_short) },
                 value = { InsightValue(it, R.string.pill_velocity, data.calculatedVelocity?.value) },
                 fromPrevious = {
                     InsightDelta(
@@ -212,12 +234,15 @@ fun InsightsTimeHeader(data: RaptPillInsights) {
 @Composable
 fun InsightsRow(
     modifier: Modifier = Modifier,
+    isVisible: Boolean = true,
     icon: @Composable (Modifier) -> Unit,
     label: @Composable (Modifier) -> Unit,
     value: @Composable (Modifier) -> Unit,
     fromPrevious: @Composable (Modifier) -> Unit,
     fromOG: @Composable (Modifier) -> Unit = { Spacer(it) },
 ) {
+    if (!isVisible) return
+
     Row(
         modifier = modifier.padding(top = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -324,6 +349,7 @@ fun InsightsCardPreview() {
     val timestampOG = Instant.parse("2024-05-26T00:00:00Z")
     BrewthingsTheme {
         InsightsCard(
+            dataTypes = DataType.entries,
             data = RaptPillInsights(
                 timestamp = timestamp,
                 temperature = Insight(

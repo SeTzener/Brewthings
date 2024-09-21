@@ -131,7 +131,8 @@ fun GraphScreen(
                     selectedDataIndex != null // Hide if no selected data
                 ) {
                     InsightsPager(
-                        state = insightsState,
+                        dataTypes = selectedDataTypes,
+                        insights = insights,
                         selectedIndex = selectedDataIndex,
                         onSelect = onPagerSelect,
                         setIsOG = setIsOG,
