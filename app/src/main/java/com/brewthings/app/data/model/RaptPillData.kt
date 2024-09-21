@@ -3,7 +3,9 @@ package com.brewthings.app.data.model
 import com.brewthings.app.data.domain.BrewStage
 import com.brewthings.app.data.domain.SensorWithTiltReadings
 import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class RaptPillData(
     override val timestamp: Instant,
     override val temperature: Float,
