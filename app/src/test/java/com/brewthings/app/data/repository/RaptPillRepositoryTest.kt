@@ -4,6 +4,7 @@ import com.brewthings.app.data.storage.RaptPillDao
 import com.brewthings.app.data.storage.RaptPillData
 import com.brewthings.app.data.storage.RaptPillReadings
 import com.brewthings.app.utils.shouldMatchSnapshot
+import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flow
@@ -18,7 +19,7 @@ class RaptPillRepositoryTest {
     private val repository = RaptPillRepository(scanner = mockk(), dao = dao)
 
     @Test
-    fun `Returns a list with a complete brew`(testInfo: TestInfo) {
+    fun `The user has a single complete brew`(testInfo: TestInfo) {
         // happy path
         coEvery { dao.getBrewEdges(any()) }.coAnswers {
             flow {
@@ -32,7 +33,7 @@ class RaptPillRepositoryTest {
     }
 
     @Test
-    fun `Returns a list with 3 complete brews`(testInfo: TestInfo) {
+    fun `The user has 3 complete brews`(testInfo: TestInfo) {
         // happy path
         coEvery { dao.getBrewEdges(any()) }.coAnswers {
             flow {
@@ -51,6 +52,20 @@ class RaptPillRepositoryTest {
         }
     }
 
+    @Test
+    fun `The user has no brews`(testInfo: TestInfo) {
+        coEvery { dao.getBrewEdges(any()) }.coAnswers {
+            flow {
+                emit(
+                    emptyList()
+                )
+            }
+        }
+
+        runBlocking {
+            repository.getBrews("macAddressTest") shouldBe emptyList()
+        }
+    }
 }
 
 // happy path senza FG finale
@@ -95,6 +110,24 @@ private fun createFG(day: String): RaptPillData {
             battery = 0.0f,
             isOG = null,
             isFG = true
+        )
+    )
+}
+
+private fun createMeasurment(day: String): RaptPillData {
+    return return RaptPillData(
+        pillId = 1234567890,
+        readings = RaptPillReadings(
+            timestamp = Instant.parse("2024-09-${day}T00:00:00Z"),
+            temperature = 0.0f,
+            gravity = 0.0f,
+            gravityVelocity = null,
+            x = 0.0f,
+            y = 0.0f,
+            z = 0.0f,
+            battery = 0.0f,
+            isOG = null,
+            isFG = null
         )
     )
 }

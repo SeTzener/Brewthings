@@ -9,10 +9,15 @@ import com.brewthings.app.data.storage.RaptPillDao
 import com.brewthings.app.data.storage.RaptPillReadings
 import com.brewthings.app.data.storage.toDaoItem
 import com.brewthings.app.data.storage.toModelItem
+import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder.Graph.macAddress
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMap
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Instant
 
 class RaptPillRepository(
@@ -36,6 +41,10 @@ class RaptPillRepository(
     suspend fun getBrews(macAddress: String): List<Brew> {
         val brews: MutableList<Brew> = mutableListOf()
         val edges = dao.getBrewEdges(macAddress)
+
+        if (edges.first().firstOrNull() == null ){
+            return emptyList()
+        }
         val lastMeasurement: RaptPillReadings = edges.map {
             it.takeIf { query ->
                 query.last().readings.isFG == true
