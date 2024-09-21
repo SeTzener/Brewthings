@@ -211,7 +211,7 @@ fun DataTypeSelector(
                                 checked = option in selectedDataTypes,
                                 onCheckedChange = null
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(16.dp))
                             Text(text = option.toLabel())
                         }
                     }

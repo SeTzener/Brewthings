@@ -33,7 +33,7 @@ class GraphScreenViewModel(
     }
 
     fun toggleDataType(dataType: DataType) {
-        val oldDataTypes = screenState.dataTypes
+        val oldDataTypes = screenState.selectedDataTypes
         val newDataTypes = if (oldDataTypes.contains(dataType)) {
             oldDataTypes - dataType
         } else {
