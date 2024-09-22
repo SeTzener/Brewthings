@@ -19,6 +19,7 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.github.mikephil.charting.utils.Utils
 import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Clock
 
@@ -53,6 +54,8 @@ class MpAndroidLineChart(
     }
 
     init {
+        Utils.init(context)
+
         data = chartData
         updateVisibleXRange()
         highlightIndex(selectedIndex, animated = false)
