@@ -52,6 +52,14 @@ interface RaptPillDao {
     @Query(
         "SELECT * FROM RaptPillData " +
                 "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+                "WHERE RaptPill.macAddress = :macAddress ORDER BY RaptPillData.pillId ASC " +
+                "LIMIT 1"
+    )
+    fun getFirstMeasurement(macAddress: String): Flow<RaptPillData>
+
+    @Query(
+        "SELECT * FROM RaptPillData " +
+                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
                 "WHERE RaptPill.macAddress = :macAddress " +
                 "AND RaptPillData.timestamp == :timestamp "
     )
