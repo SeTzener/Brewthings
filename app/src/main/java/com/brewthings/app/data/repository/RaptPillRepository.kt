@@ -40,53 +40,63 @@ class RaptPillRepository(
 
     suspend fun getBrews(macAddress: String): List<Brew> {
         val brews: MutableList<Brew> = mutableListOf()
-        val edges = dao.getBrewEdges(macAddress)
 
-        if (edges.first().firstOrNull() == null ){
+        // Collect the first list of edges from the flow
+        val edges = dao.getBrewEdges(macAddress).first()
+
+        // If edges is empty, return an empty list
+        if (edges.isEmpty()) {
             return emptyList()
         }
-        val lastMeasurement: RaptPillReadings = edges.map {
-            it.takeIf { query ->
-                query.last().readings.isFG == true
-            }?.first()?.readings
-        }.firstOrNull() ?: dao.getLastMeasurement(macAddress).first().readings
 
-        edges.collect { dataList ->
-            var currentOg: RaptPillData? = null
-            var secondOg: RaptPillData? = null
+        // Determine the last measurement: either the last FG or fallback to the last measurement from the database
+        val lastMeasurement: RaptPillReadings = if (edges.last().readings.isFG == true) {
+            edges.last().readings
+        } else {
+            dao.getLastMeasurement(macAddress).first().readings
+        }
 
-            dataList.forEach { measurement ->
-                if (measurement.readings.isOG == true) {
+        var currentOg: RaptPillData? = null
+        var lastFg: RaptPillData? = null
+
+        for (measurement in edges) {
+            when {
+                measurement.readings.isOG == true -> {
                     if (currentOg == null) {
-                        // First OG found
-                        currentOg = measurement.readings.toModelItem()
-                    } else if (secondOg == null) {
-                        // Second OG found, treat it as FG
-                        secondOg = measurement.readings.toModelItem()
-                        // Add brew with second OG as fgOrLast
-                        brews.add(Brew(og = currentOg!!, fgOrLast = secondOg!!, isCompleted = true))
-                        // Reset current OG for the next brew
-                        currentOg = null
-                        secondOg = null
+                        // Set the first OG found
+                        currentOg = measurement.toModelItem()
+                    } else {
+                        // Add an incomplete Brew if an OG is followed by another OG
+                        brews.add(Brew(og = currentOg, fgOrLast = lastFg ?: measurement.toModelItem(), isCompleted = false))
+                        // Update currentOg to the latest OG
+                        currentOg = measurement.toModelItem()
+                        lastFg = null
                     }
-                } else if (currentOg != null) {
-                    // FG found after OG
-                    brews.add(
-                        Brew(
-                            og = currentOg!!,
-                            fgOrLast = measurement.readings.toModelItem(),
-                            isCompleted = true
-                        )
-                    )
-                    // Reset current OG for the next brew
-                    currentOg = null
+                }
+
+                measurement.readings.isFG == true -> {
+                    if (currentOg != null) {
+                        // Complete the Brew when FG follows OG
+                        brews.add(Brew(og = currentOg, fgOrLast = measurement.toModelItem(), isCompleted = true))
+                        lastFg = measurement.toModelItem() // Update lastFg to the current FG
+                        currentOg = null // Reset currentOg after completion
+                    } else if (lastFg != null) {
+                        // Create incomplete Brew if FG appears consecutively
+                        brews.add(Brew(og = lastFg!!, fgOrLast = measurement.toModelItem(), isCompleted = false))
+                        lastFg = measurement.toModelItem() // Update lastFg to the current FG
+                    } else {
+                        // Create incomplete Brew if FG appears without a preceding OG
+                        val firstMeasurement = dao.getFirstMeasurement(macAddress).first()
+                        brews.add(Brew(og = firstMeasurement.toModelItem(), fgOrLast = measurement.toModelItem(), isCompleted = false))
+                        lastFg = measurement.toModelItem() // Update lastFg to the current FG
+                    }
                 }
             }
+        }
 
-            // If there's an uncompleted OG, pair it with the last measurement
-            if (currentOg != null && lastMeasurement != null) {
-                brews.add(Brew(og = currentOg!!, fgOrLast = lastMeasurement.toModelItem(), isCompleted = false))
-            }
+        // If there's an uncompleted OG, pair it with the last measurement
+        if (currentOg != null) {
+            brews.add(Brew(og = currentOg, fgOrLast = lastMeasurement.toModelItem(), isCompleted = false))
         }
 
         return brews
