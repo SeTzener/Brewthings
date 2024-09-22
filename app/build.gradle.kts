@@ -149,6 +149,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.kotest.junit5)
     testImplementation(libs.mockk)
+    testImplementation(libs.mockk.dsl)
     testImplementation(libs.karumi)
     testImplementation(libs.serialization.moshi)
     testImplementation(libs.serialization.moshi.kotlin)
