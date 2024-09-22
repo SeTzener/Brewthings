@@ -1,4 +1,6 @@
+@file:Suppress("IllegalIdentifier")
 package com.brewthings.app.data.repository
+
 
 import com.brewthings.app.data.storage.RaptPillDao
 import com.brewthings.app.data.storage.RaptPillData
@@ -54,6 +56,7 @@ class RaptPillRepositoryTest {
 
     @Test
     fun `The user has no brews`(testInfo: TestInfo) {
+        // Common for a new user
         coEvery { dao.getBrewEdges(any()) }.coAnswers {
             flow {
                 emit(
@@ -66,17 +69,131 @@ class RaptPillRepositoryTest {
             repository.getBrews("macAddressTest") shouldBe emptyList()
         }
     }
+
+    @Test
+    fun `The user has an unfinished brew`(testInfo: TestInfo) {
+        // Happy path
+        coEvery { dao.getBrewEdges(any()) }.coAnswers {
+            flow {
+                emit(
+                    listOf(
+                        createOG("01")
+                    )
+                )
+            }
+        }
+        coEvery { dao.getLastMeasurement(any()) }.coAnswers {
+            flow {
+                emit(
+                    createMeasurment("02")
+                )
+            }
+        }
+
+        runBlocking {
+            repository.getBrews("macAddressTest") shouldMatchSnapshot testInfo
+        }
+    }
+
+    @Test
+    fun `The user set two OGs and one FG`(testInfo: TestInfo) {
+        coEvery { dao.getBrewEdges(any()) }.coAnswers {
+            flow {
+                emit(
+                    listOf(
+                        createOG("01"),
+                        createOG("02"), createFG("03")
+                    )
+                )
+            }
+        }
+
+        runBlocking {
+            repository.getBrews("macAddressTest") shouldMatchSnapshot testInfo
+        }
+    }
+
+    @Test
+    fun `The user set many OGs and one FG`(testInfo: TestInfo) {
+        coEvery { dao.getBrewEdges(any()) }.coAnswers {
+            flow {
+                emit(
+                    listOf(
+                        createOG("01"),
+                        createOG("02"),
+                        createOG("03"),
+                        createOG("04"), createFG("05")
+                    )
+                )
+            }
+        }
+
+        runBlocking {
+            repository.getBrews("macAddressTest") shouldMatchSnapshot testInfo
+        }
+    }
+
+    @Test
+    fun `The user set one OG and two FG`(testInfo: TestInfo) {
+        coEvery { dao.getBrewEdges(any()) }.coAnswers {
+            flow {
+                emit(
+                    listOf(
+                        createOG("01"), createFG("02"),
+                                             createFG("03"),
+                    )
+                )
+            }
+        }
+
+        runBlocking {
+            repository.getBrews("macAddressTest") shouldMatchSnapshot testInfo
+        }
+    }
+
+    @Test
+    fun `The user set one OG and many FG`(testInfo: TestInfo) {
+        coEvery { dao.getBrewEdges(any()) }.coAnswers {
+            flow {
+                emit(
+                    listOf(
+                        createOG("01"), createFG("02"),
+                                             createFG("03"),
+                                             createFG("04"),
+                                             createFG("05"),
+                    )
+                )
+            }
+        }
+
+        runBlocking {
+            repository.getBrews("macAddressTest") shouldMatchSnapshot testInfo
+        }
+    }
+
+    @Test
+    fun `The user set the brew's end but not the beginning`(testInfo: TestInfo) {
+        coEvery { dao.getBrewEdges(any()) }.coAnswers {
+            flow {
+                emit(
+                    listOf(
+                        createFG("02")
+                    )
+                )
+            }
+        }
+        coEvery { dao.getFirstMeasurement(any()) }.coAnswers {
+            flow {
+                emit(
+                    createMeasurment("01")
+                )
+            }
+        }
+        runBlocking {
+            repository.getBrews("macAddressTest") shouldMatchSnapshot testInfo
+        }
+    }
 }
-
-// happy path senza FG finale
-
-// 2 OG accollati
-
-// 2 FG accollati
-
-// no og or fg
-
-// un solo punto
 
 private fun createOG(day: String): RaptPillData {
     return RaptPillData(
