@@ -4,8 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.ColorUtils
-import com.brewthings.app.ui.android.chart.ChartDataSet
+import com.brewthings.app.ui.android.chart.InvisibleDataSet
 import com.brewthings.app.ui.android.chart.MpAndroidLineChartData
+import com.brewthings.app.ui.android.chart.VisibleDataSet
 import com.brewthings.app.ui.screens.pill.toLabel
 import com.brewthings.app.ui.theme.DarkTurquoise
 import com.brewthings.app.ui.theme.Gold
@@ -16,6 +17,7 @@ import com.brewthings.app.ui.theme.SteelBlue
 import com.brewthings.app.ui.theme.Tomato
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
 @Composable
 fun List<GraphSeries>.toChartData(): MpAndroidLineChartData = LineData(
@@ -25,8 +27,8 @@ fun List<GraphSeries>.toChartData(): MpAndroidLineChartData = LineData(
 )
 
 @Composable
-private fun GraphSeries.toChartDataSet(): List<ChartDataSet> {
-    val chartDataSets = mutableListOf<ChartDataSet>()
+private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
+    val chartDataSets = mutableListOf<ILineDataSet>()
     val currentValidData = mutableListOf<Entry>()
     val currentInvalidData = mutableListOf<Entry>()
     var startedWithOG = false
@@ -41,7 +43,7 @@ private fun GraphSeries.toChartDataSet(): List<ChartDataSet> {
         if (currentValidData.isNotEmpty()) {
             val color = if (startedWithOG) lineColor else lineColor.alpha(0.2f)
             chartDataSets.add(
-                ChartDataSet.Valid(currentValidData, label, color, formatPattern)
+                VisibleDataSet(currentValidData, label, color, formatPattern)
             )
             currentValidData.clear()
             startedWithOG = false
@@ -52,7 +54,7 @@ private fun GraphSeries.toChartDataSet(): List<ChartDataSet> {
     fun finalizeInvalidSequence() {
         if (currentInvalidData.isNotEmpty()) {
             chartDataSets.add(
-                ChartDataSet.Invalid(currentInvalidData, label)
+                InvisibleDataSet(currentInvalidData, label)
             )
             currentInvalidData.clear()
         }
@@ -113,4 +115,4 @@ private fun DataType.toFormatPattern(): String = when (this) {
     DataType.VELOCITY_COMPUTED -> "#.#"
 }
 
-private fun Int.alpha(alpha: Float) : Int = ColorUtils.setAlphaComponent(this, (alpha * 255).toInt())
+private fun Int.alpha(alpha: Float): Int = ColorUtils.setAlphaComponent(this, (alpha * 255).toInt())

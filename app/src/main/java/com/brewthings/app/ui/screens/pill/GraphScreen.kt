@@ -122,7 +122,6 @@ fun GraphScreen(
                         selectedIndex = selectedDataIndex,
                         onSelect = onGraphSelect
                     )
-
                 }
             }
             item {
