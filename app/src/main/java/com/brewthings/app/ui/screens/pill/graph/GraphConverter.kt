@@ -29,8 +29,8 @@ fun List<GraphSeries>.toChartData(): MpAndroidChartData = LineData(
 @Composable
 private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
     val chartDataSets = mutableListOf<ILineDataSet>()
-    val currentValidData = mutableListOf<Entry>()
-    val currentInvalidData = mutableListOf<Entry>()
+    var currentValidData = mutableListOf<Entry>()
+    var currentInvalidData = mutableListOf<Entry>()
     var startedWithOG = false
 
     // Derive values from type
@@ -45,7 +45,7 @@ private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
             chartDataSets.add(
                 VisibleDataSet(currentValidData, label, color, formatPattern)
             )
-            currentValidData.clear()
+            currentValidData = mutableListOf()
             startedWithOG = false
         }
     }
@@ -56,7 +56,7 @@ private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
             chartDataSets.add(
                 InvisibleDataSet(currentInvalidData, label)
             )
-            currentInvalidData.clear()
+            currentInvalidData = mutableListOf()
         }
     }
 
