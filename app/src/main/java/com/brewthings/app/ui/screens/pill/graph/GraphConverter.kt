@@ -62,7 +62,7 @@ private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
 
     // Iterate through all data points
     for (dataPoint in data) {
-        val entry = Entry(dataPoint.x, dataPoint.y ?: 0f, dataPoint.y)
+        val entry = Entry(dataPoint.x, dataPoint.y ?: 0f, dataPoint.index)
 
         if (dataPoint.y == null) {
             // Data point is invalid, finalize any valid sequence and start invalid
