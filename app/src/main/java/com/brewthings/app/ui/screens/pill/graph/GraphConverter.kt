@@ -67,21 +67,32 @@ private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
         if (dataPoint.y == null) {
             // Data point is invalid, finalize any valid sequence and start invalid
             finalizeValidSequence()
+
+            // Add the entry to the current invalid sequence
             currentInvalidData.add(entry)
         } else {
             // Data point is valid
             finalizeInvalidSequence()
 
-            // Handle OG and FG cases
+            // Add the entry to the current valid sequence
+            currentValidData.add(entry)
+
+            // Handle OG
             if (dataPoint.isOG) {
                 finalizeValidSequence() // Close the previous valid sequence if any
+
+                // Add the entry to the new sequence
+                currentValidData.add(entry)
+
                 startedWithOG = true
             }
 
-            currentValidData.add(entry)
-
+            // Handle FG
             if (dataPoint.isFG) {
                 finalizeValidSequence() // Close the current valid sequence on FG
+
+                // Add the entry to the new sequence
+                currentValidData.add(entry)
             }
         }
     }
