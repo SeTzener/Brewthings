@@ -116,7 +116,7 @@ fun GraphScreen(
                 }
             }
             item {
-                if (graphSeries.isNotEmpty()) {
+                if (graphSeries != null) {
                     Graph(
                         series = graphSeries,
                         selectedIndex = selectedDataIndex,
@@ -126,7 +126,7 @@ fun GraphScreen(
             }
             item {
                 if (
-                    insights.isNotEmpty() &&
+                    insights != null &&
                     selectedDataIndex != null // Hide if no selected data
                 ) {
                     InsightsPager(

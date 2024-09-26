@@ -42,10 +42,12 @@ class GraphScreenViewModel(
 
         screenState = screenState.copy(
             selectedDataTypes = newDataTypes,
-            graphSeries = updateGraphSeries(
-                dataTypes = newDataTypes,
-                insights = screenState.insights,
-            ),
+            graphSeries = screenState.insights?.let { insights ->
+                updateGraphSeries(
+                    dataTypes = newDataTypes,
+                    insights = insights,
+                )
+            },
         )
     }
 

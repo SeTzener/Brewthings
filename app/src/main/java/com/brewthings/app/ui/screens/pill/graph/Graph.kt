@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.viewinterop.AndroidView
-import com.brewthings.app.ui.android.chart.MpAndroidLineChart
+import com.brewthings.app.ui.android.chart.MpAndroidChart
 import com.brewthings.app.ui.theme.Size
 
 @Composable
@@ -33,7 +33,7 @@ fun Graph(
             .height(Size.Graph.HEIGHT)
             .padding(bottom = Size.Graph.PADDING_BOTTOM),
         factory = { context ->
-            MpAndroidLineChart(
+            MpAndroidChart(
                 context = context,
                 chartData = chartData,
                 selectedIndex = selectedIndex,

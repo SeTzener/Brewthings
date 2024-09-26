@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.ColorUtils
 import com.brewthings.app.ui.android.chart.InvisibleDataSet
-import com.brewthings.app.ui.android.chart.MpAndroidLineChartData
+import com.brewthings.app.ui.android.chart.MpAndroidChartData
 import com.brewthings.app.ui.android.chart.VisibleDataSet
 import com.brewthings.app.ui.screens.pill.toLabel
 import com.brewthings.app.ui.theme.DarkTurquoise
@@ -20,7 +20,7 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
 @Composable
-fun List<GraphSeries>.toChartData(): MpAndroidLineChartData = LineData(
+fun List<GraphSeries>.toChartData(): MpAndroidChartData = LineData(
     map {
         it.toChartDataSet()
     }.flatten()

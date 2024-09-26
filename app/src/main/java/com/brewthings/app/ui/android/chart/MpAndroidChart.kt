@@ -23,14 +23,14 @@ import com.github.mikephil.charting.utils.Utils
 import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Clock
 
-typealias MpAndroidLineChartData = LineData
+typealias MpAndroidChartData = LineData
 
 @SuppressLint("ViewConstructor")
-class MpAndroidLineChart(
+class MpAndroidChart(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    chartData: MpAndroidLineChartData,
+    chartData: MpAndroidChartData?,
     selectedIndex: Int?,
     private val density: Density,
     private val textSize: TextUnit,
@@ -56,9 +56,11 @@ class MpAndroidLineChart(
     init {
         Utils.init(context)
 
-        data = chartData
-        updateVisibleXRange()
-        highlightIndex(selectedIndex, animated = false)
+        chartData?.also {
+            updateDatasets(chartData)
+            updateVisibleXRange()
+            highlightIndex(selectedIndex, animated = false)
+        }
 
         configureXAxis()
         configureYAxis()
@@ -78,7 +80,7 @@ class MpAndroidLineChart(
     }
 
     fun refresh(
-        chartData: MpAndroidLineChartData,
+        chartData: MpAndroidChartData?,
         selectedIndex: Int?,
         isDarkTheme: Boolean,
         textColor: Color,
@@ -88,8 +90,10 @@ class MpAndroidLineChart(
         this.textColor = textColor
         highlightedRenderer.primaryColor = primaryColor.toArgb()
 
+        if (chartData == null) return
+
         val wasEmpty = data?.dataSets?.isEmpty() ?: true
-        data = chartData
+        updateDatasets(chartData)
         data.notifyDataChanged()
         notifyDataSetChanged()
 
@@ -99,6 +103,10 @@ class MpAndroidLineChart(
 
         highlightIndex(selectedIndex, animated = true)
         invalidate()
+    }
+
+    private fun updateDatasets(chartData: MpAndroidChartData) {
+        data = chartData
     }
 
     private fun configureXAxis() {
@@ -112,8 +120,8 @@ class MpAndroidLineChart(
             setGridDashedLine(DashPathEffect(floatArrayOf(dashedLineLength, dashedLineLength), 0f))
             gridColor = Grey_Nevada.toArgb()
             setDrawAxisLine(false)
-            textColor = this@MpAndroidLineChart.textColor.toArgb()
-            textSize = this@MpAndroidLineChart.textSize.value
+            textColor = this@MpAndroidChart.textColor.toArgb()
+            textSize = this@MpAndroidChart.textSize.value
             position = XAxis.XAxisPosition.BOTTOM
             setXAxisRenderer(
                 XAxisLabelRenderer(

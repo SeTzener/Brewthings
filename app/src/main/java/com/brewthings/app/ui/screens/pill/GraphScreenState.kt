@@ -12,6 +12,6 @@ data class GraphScreenState(
     val selectedDataTypes: List<DataType>,
     val selectedDataIndex: Int? = null,
     // Data state
-    val graphSeries: List<GraphSeries> = emptyList(),
-    val insights: List<RaptPillInsights> = emptyList(),
+    val graphSeries: List<GraphSeries>? = null,
+    val insights: List<RaptPillInsights>? = null,
 )
