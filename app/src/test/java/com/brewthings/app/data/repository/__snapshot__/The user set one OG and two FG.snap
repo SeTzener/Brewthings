@@ -24,7 +24,12 @@
             "isOG": false,
             "isFG": true
         },
-        "isCompleted": true
+        "isCompleted": true,
+        "durationSinceOG": {
+            "from": "2024-09-01T00:00:00Z",
+            "to": "2024-09-02T00:00:00Z"
+        },
+        "abv": 0.0
     },
     {
         "og": {
@@ -51,6 +56,11 @@
             "isOG": false,
             "isFG": true
         },
-        "isCompleted": false
+        "isCompleted": false,
+        "durationSinceOG": {
+            "from": "2024-09-02T00:00:00Z",
+            "to": "2024-09-03T00:00:00Z"
+        },
+        "abv": 0.0
     }
 ]
