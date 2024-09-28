@@ -6,7 +6,9 @@ import com.brewthings.app.R
 import kotlin.math.abs
 import kotlin.time.Duration
 import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class TimeRange(val from: Instant, val to: Instant)
 
 @Composable

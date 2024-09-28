@@ -61,7 +61,7 @@ fun GraphScreen(
     )
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun GraphScreen(
     screenState: GraphScreenState,
