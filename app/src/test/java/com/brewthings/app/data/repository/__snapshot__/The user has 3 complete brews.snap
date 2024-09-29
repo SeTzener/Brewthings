@@ -24,12 +24,7 @@
             "isOG": false,
             "isFG": true
         },
-        "isCompleted": true,
-        "durationSinceOG": {
-            "from": "2024-09-01T00:00:00Z",
-            "to": "2024-09-02T00:00:00Z"
-        },
-        "abv": 0.0
+        "isCompleted": true
     },
     {
         "og": {
@@ -56,12 +51,7 @@
             "isOG": false,
             "isFG": true
         },
-        "isCompleted": true,
-        "durationSinceOG": {
-            "from": "2024-09-03T00:00:00Z",
-            "to": "2024-09-04T00:00:00Z"
-        },
-        "abv": 0.0
+        "isCompleted": true
     },
     {
         "og": {
@@ -88,11 +78,6 @@
             "isOG": false,
             "isFG": true
         },
-        "isCompleted": true,
-        "durationSinceOG": {
-            "from": "2024-09-05T00:00:00Z",
-            "to": "2024-09-06T00:00:00Z"
-        },
-        "abv": 0.0
+        "isCompleted": true
     }
 ]
