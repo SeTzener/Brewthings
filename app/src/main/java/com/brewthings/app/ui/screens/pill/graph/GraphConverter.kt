@@ -35,18 +35,17 @@ private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
 
     // Derive values from type
     val label = type.toLabel()
-    val lineColor = type.toLineColor().toArgb()
+    val lineColor = type.toLineColor()
     val formatPattern = type.toFormatPattern()
 
     // Helper function to finalize and add a valid dataset
     fun finalizeValidSequence() {
         if (currentValidData.isNotEmpty()) {
-            val color = if (startedWithOG) lineColor else lineColor.alpha(0.2f)
+            val color = lineColor.takeIf { startedWithOG } ?: lineColor.copy(alpha = 0.2f)
             chartDataSets.add(
-                VisibleDataSet(currentValidData, label, color, formatPattern)
+                VisibleDataSet(currentValidData, label, color.toArgb(), formatPattern)
             )
             currentValidData = mutableListOf()
-            startedWithOG = false
         }
     }
 
@@ -77,23 +76,21 @@ private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
             // Add the entry to the current valid sequence
             currentValidData.add(entry)
 
-            // Handle OG
-            if (dataPoint.isOG) {
-                finalizeValidSequence() // Close the previous valid sequence if any
-
-                // Add the entry to the new sequence
-                currentValidData.add(entry)
-
-                startedWithOG = true
-            }
-
-            // Handle FG
-            if (dataPoint.isFG) {
-                finalizeValidSequence() // Close the current valid sequence on FG
+            // Handle OG and FG
+            if (dataPoint.isOG || dataPoint.isFG) {
+                // Close the current valid sequence
+                finalizeValidSequence()
 
                 // Add the entry to the new sequence
                 currentValidData.add(entry)
             }
+        }
+
+        // Handle startedWithOG
+        startedWithOG = when {
+            dataPoint.isOG -> true
+            dataPoint.isFG -> false
+            else -> startedWithOG
         }
     }
 
