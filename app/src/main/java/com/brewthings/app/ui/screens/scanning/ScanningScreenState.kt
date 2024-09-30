@@ -18,7 +18,7 @@ data class ScanningScreenState(
     val scannedPillsCount: Int = 0,
     val scannedPills: List<ScannedRaptPill> = emptyList(),
     val savedPills: List<RaptPill> = emptyList(),
-    val brews: List<Brew> = listOf(testBrew, testBrew2)
+    val brews: List<Brew> = emptyList()
 )
 
 // TODO(Tano): Remove this once the brews logic is finished

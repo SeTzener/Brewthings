@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.brewthings.app.data.model.Brew
 import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.repository.RaptPillRepository
@@ -65,12 +66,25 @@ class ScanningScreenViewModel : ViewModel(), KoinComponent {
     }
 
     private fun observeDatabase() {
+        val pills = mutableListOf<String>()
         repo.fromDatabase()
             .onEach { raptPills ->
                 screenState = screenState.copy(savedPills = raptPills)
+                raptPills.onEach { pill -> pills.add(pill.macAddress) }
             }
             .launchIn(viewModelScope)
+
+        viewModelScope.launch {
+            val brews = mutableListOf<List<Brew>>()
+            pills.onEach { pill ->
+                brews.add(
+                    repo.getBrews(pill)
+                )
+            }
+            screenState = screenState.copy(brews = brews.flatten())
+        }
     }
+
 
     private fun observeBluetoothAvailability() {
         Bluetooth.availability
