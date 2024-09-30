@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -71,20 +70,22 @@ class ScanningScreenViewModel : ViewModel(), KoinComponent {
             .onEach { raptPills ->
                 screenState = screenState.copy(savedPills = raptPills)
                 raptPills.onEach { pill -> pills.add(pill.macAddress) }
+                observeBrews(pills)
             }
             .launchIn(viewModelScope)
+    }
 
+    private fun observeBrews(pills: MutableList<String>) {
+        val brews = mutableListOf<List<Brew>>()
         viewModelScope.launch {
-            val brews = mutableListOf<List<Brew>>()
             pills.onEach { pill ->
                 brews.add(
                     repo.getBrews(pill)
                 )
             }
-            screenState = screenState.copy(brews = brews.flatten())
+            screenState = screenState.copy(brews = brews.flatten().reversed())
         }
     }
-
 
     private fun observeBluetoothAvailability() {
         Bluetooth.availability

@@ -137,7 +137,7 @@ private fun ScanningScreen(
            }
        }
         items(brews, key = { "Brew_" + it.og.timestamp }) { brew ->
-            BrewCard(brew = brew, isExpanded = true)
+            BrewCard(brew = brew, isExpanded = brew == brews.first()) // TODO(Tano): Add a remember
 
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -676,7 +676,7 @@ fun <T : Any?> newOrCached(
 private fun isValidName(oldName: String?, newName: String?): Boolean =
     newName?.trim()?.let { it.isNotEmpty() && it != oldName } ?: false
 
-@Preview(apiLevel = 33) // workaround for AS Hedgehog and below
+@Preview(apiLevel = 35) // workaround for AS Hedgehog and below
 @Composable
 fun ScannedPillPreview() {
     BrewthingsTheme {
@@ -705,7 +705,7 @@ fun ScannedPillPreview() {
     }
 }
 
-@Preview(apiLevel = 33) // workaround for AS Hedgehog and below
+@Preview(apiLevel = 35) // workaround for AS Hedgehog and below
 @Composable
 fun PillPreview() {
     BrewthingsTheme {
