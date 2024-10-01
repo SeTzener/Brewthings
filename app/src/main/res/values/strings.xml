@@ -9,6 +9,11 @@
     <string name="scanning_result">[Unnamed]</string>
     <string name="scanning_saved">Previous data</string>
     <string name="unknown">Unknown</string>
+    <string name="brew_list">Brews</string>
+    <string name="brew_card_value_gravity">%.3f SG</string>
+    <string name="brew_card_value_abv">"%.2f\%%"</string>
+    <string name="brew_card_value_duration">%s</string>
+    <string name="brew_start_to_end">From: %s - To: %s</string>
     <string name="bluetooth_permissions_not_available_title">"Bluetooth permissions required"</string>
     <string name="bluetooth_permissions_not_available_desc">"Please, grant access on the Settings screen."</string>
     <string name="bluetooth_permissions_not_available_btn">"Open Settings"</string>

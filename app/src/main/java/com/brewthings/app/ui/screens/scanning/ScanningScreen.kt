@@ -70,6 +70,7 @@ import com.brewthings.app.ui.screens.navigation.legacy.Destination
 import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.ui.theme.Typography
+import com.brewthings.app.util.datetime.formatDateTime
 import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 
@@ -117,14 +118,68 @@ private fun ScanningScreen(
     LaunchedEffect(Unit) {
         onFirstLoad()
     }
-
     val scannedPills = newOrCached(state.scannedPills, emptyList())
     val savedPills = newOrCached(state.savedPills, emptyList())
+    val brews = newOrCached(data = state.brews, initialValue = emptyList())
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
     ) {
+       item {
+           if (brews.isNotEmpty()) {
+               Text(
+                   modifier = Modifier.padding(16.dp),
+                   text = stringResource(R.string.brew_list).uppercase(),
+                   color = MaterialTheme.colorScheme.onBackground,
+                   style = Typography.bodyMedium
+               )
+           }
+       }
+        items(brews, key = { "Brew_" + it.og.timestamp }) { brew ->
+            BrewCard(brew = brew, isExpanded = brew == brews.first()) // TODO(Tano): Add a remember
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        items(scannedPills, key = { "scanned_" + it.macAddress }) { pill ->
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = stringResource(R.string.scanning_results).uppercase(),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = Typography.bodyMedium
+            )
+
+            ScannedPill(
+                pill = pill,
+                isExpanded = scannedPills.size == 1,
+                isInScannedPills = state.scannedPills.contains(pill),
+                navGraph = navGraph,
+                savePill = savePill,
+                stopScan = stopScan,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        item {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = stringResource(R.string.scanning_saved).uppercase(),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = Typography.bodyMedium
+            )
+        }
+
+        items(savedPills, key = { "saved_" + it.macAddress }) { pill ->
+            Pill(
+                pill = pill,
+                navGraph = navGraph,
+                onPillUpdate = onPillUpdate,
+                stopScan = stopScan,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
         item {
             Text(
                 modifier = Modifier.padding(16.dp),
@@ -160,44 +215,6 @@ private fun ScanningScreen(
             }
 
             Spacer(modifier = Modifier.padding(vertical = 8.dp))
-
-            Text(
-                modifier = Modifier.padding(16.dp),
-                text = stringResource(R.string.scanning_results).uppercase(),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = Typography.bodyMedium
-            )
-        }
-
-        items(scannedPills, key = { "scanned_" + it.macAddress }) { pill ->
-            ScannedPill(
-                pill = pill,
-                isExpanded = scannedPills.size == 1,
-                isInScannedPills = state.scannedPills.contains(pill),
-                navGraph = navGraph,
-                savePill = savePill,
-                stopScan = stopScan,
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        item {
-            Text(
-                modifier = Modifier.padding(16.dp),
-                text = stringResource(R.string.scanning_saved).uppercase(),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = Typography.bodyMedium
-            )
-        }
-
-        items(savedPills, key = { "saved_" + it.macAddress }) { pill ->
-            Pill(
-                pill = pill,
-                navGraph = navGraph,
-                onPillUpdate = onPillUpdate,
-                stopScan = stopScan,
-            )
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -302,7 +319,12 @@ private fun ScannedPill(
                         floatingAngle = pill.data.tilt,
                         battery = pill.data.battery,
                     )
-                    PillFooter(name = pill.name, macAddress = pill.macAddress, navGraph = navGraph, stopScan = stopScan)
+                    PillFooter(
+                        name = pill.name,
+                        macAddress = pill.macAddress,
+                        navGraph = navGraph,
+                        stopScan = stopScan
+                    )
                 }
             }
         )
@@ -373,6 +395,30 @@ private fun ScannedPillTopContent(
 }
 
 @Composable
+fun BrewTopContent(startDate: Instant, endDate: Instant) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 5.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(vertical = 16.dp),
+        ) {
+            TextWithIcon(
+                iconResId = R.drawable.ic_calendar,
+                text = stringResource(
+                    id = R.string.brew_start_to_end,
+                    startDate.formatDateTime("MMM d, yyyy"),
+                    endDate.formatDateTime("MMM d, yyyy")
+                )
+            )
+        }
+    }
+}
+
+@Composable
 private fun Pill(
     pill: RaptPill,
     navGraph: NavController,
@@ -397,7 +443,12 @@ private fun Pill(
                 floatingAngle = data.tilt,
                 battery = data.battery,
             )
-            PillFooter(name = pill.name, macAddress = pill.macAddress, navGraph = navGraph, stopScan = stopScan)
+            PillFooter(
+                name = pill.name,
+                macAddress = pill.macAddress,
+                navGraph = navGraph,
+                stopScan = stopScan
+            )
         }
     }
 }
@@ -625,7 +676,7 @@ fun <T : Any?> newOrCached(
 private fun isValidName(oldName: String?, newName: String?): Boolean =
     newName?.trim()?.let { it.isNotEmpty() && it != oldName } ?: false
 
-@Preview(apiLevel = 33) // workaround for AS Hedgehog and below
+@Preview
 @Composable
 fun ScannedPillPreview() {
     BrewthingsTheme {
@@ -654,7 +705,7 @@ fun ScannedPillPreview() {
     }
 }
 
-@Preview(apiLevel = 33) // workaround for AS Hedgehog and below
+@Preview
 @Composable
 fun PillPreview() {
     BrewthingsTheme {

@@ -6,7 +6,9 @@ import com.brewthings.app.data.domain.Insight
 import com.brewthings.app.data.domain.SensorInsights
 import com.brewthings.app.util.datetime.TimeRange
 import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class RaptPillInsights(
     override val timestamp: Instant,
     override val temperature: Insight,
