@@ -11,9 +11,9 @@ import com.brewthings.app.ui.theme.DarkTurquoise
 import com.brewthings.app.ui.theme.Gold
 import com.brewthings.app.ui.theme.LimeGreen
 import com.brewthings.app.ui.theme.MediumPurple
-import com.brewthings.app.ui.theme.Orange
+import com.brewthings.app.ui.theme.Coral
 import com.brewthings.app.ui.theme.SteelBlue
-import com.brewthings.app.ui.theme.Tomato
+import com.brewthings.app.ui.theme.RedAlert
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
@@ -103,10 +103,10 @@ private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
 fun DataType.toLineColor(): Color = when (this) {
     DataType.GRAVITY -> SteelBlue
     DataType.TEMPERATURE -> MediumPurple
-    DataType.BATTERY -> Tomato
+    DataType.BATTERY -> RedAlert
     DataType.TILT -> DarkTurquoise
     DataType.ABV -> LimeGreen
-    DataType.VELOCITY_MEASURED -> Orange
+    DataType.VELOCITY_MEASURED -> Coral
     DataType.VELOCITY_COMPUTED -> Gold
 }
 

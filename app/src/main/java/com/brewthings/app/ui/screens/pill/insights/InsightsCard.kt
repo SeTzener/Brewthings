@@ -431,14 +431,14 @@ private fun Float.asArrowDropIcon(): Int? = when {
     else -> null
 }
 
-@Preview(apiLevel = 33) // workaround for AS Hedgehog and below
+@Preview
 @Composable
 fun InsightsCardPreview() {
     val timestamp = Instant.parse("2024-06-01T15:46:31Z")
     val timestampOG = Instant.parse("2024-05-26T00:00:00Z")
     BrewthingsTheme {
         InsightsCard(
-            dataTypes = DataType.entries,
+            dataTypes = listOf(DataType.GRAVITY),
             data = RaptPillInsights(
                 timestamp = timestamp,
                 temperature = Insight(
