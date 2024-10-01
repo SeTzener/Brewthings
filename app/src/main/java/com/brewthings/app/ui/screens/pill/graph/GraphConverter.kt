@@ -3,7 +3,6 @@ package com.brewthings.app.ui.screens.pill.graph
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.core.graphics.ColorUtils
 import com.brewthings.app.ui.android.chart.InvisibleDataSet
 import com.brewthings.app.ui.android.chart.MpAndroidChartData
 import com.brewthings.app.ui.android.chart.VisibleDataSet
@@ -122,5 +121,3 @@ private fun DataType.toFormatPattern(): String = when (this) {
     DataType.VELOCITY_MEASURED,
     DataType.VELOCITY_COMPUTED -> "#.#"
 }
-
-private fun Int.alpha(alpha: Float): Int = ColorUtils.setAlphaComponent(this, (alpha * 255).toInt())
