@@ -676,7 +676,7 @@ fun <T : Any?> newOrCached(
 private fun isValidName(oldName: String?, newName: String?): Boolean =
     newName?.trim()?.let { it.isNotEmpty() && it != oldName } ?: false
 
-@Preview(apiLevel = 35) // workaround for AS Hedgehog and below
+@Preview
 @Composable
 fun ScannedPillPreview() {
     BrewthingsTheme {
@@ -705,7 +705,7 @@ fun ScannedPillPreview() {
     }
 }
 
-@Preview(apiLevel = 35) // workaround for AS Hedgehog and below
+@Preview
 @Composable
 fun PillPreview() {
     BrewthingsTheme {
