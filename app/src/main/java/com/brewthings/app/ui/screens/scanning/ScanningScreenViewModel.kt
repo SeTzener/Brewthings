@@ -77,13 +77,18 @@ class ScanningScreenViewModel : ViewModel(), KoinComponent {
 
     private fun observeBrews(pills: MutableList<String>) {
         val brews = mutableListOf<List<Brew>>()
+            screenState = screenState.copy(brews = emptyList())
         viewModelScope.launch {
             pills.onEach { pill ->
                 brews.add(
                     repo.getBrews(pill)
                 )
             }
-            screenState = screenState.copy(brews = brews.flatten().reversed())
+            val uniqueBrews = brews.flatten()
+                .distinctBy { it.og.timestamp to it.fgOrLast.timestamp }
+                .reversed()
+
+            screenState = screenState.copy(brews = uniqueBrews)
         }
     }
 
