@@ -100,7 +100,7 @@ private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
 }
 
 @Composable
-private fun DataType.toLineColor(): Color = when (this) {
+fun DataType.toLineColor(): Color = when (this) {
     DataType.GRAVITY -> SteelBlue
     DataType.TEMPERATURE -> MediumPurple
     DataType.BATTERY -> Tomato

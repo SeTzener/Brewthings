@@ -30,6 +30,7 @@ import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.IconAlign
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.screens.pill.graph.DataType
+import com.brewthings.app.ui.screens.pill.graph.toLineColor
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
@@ -53,7 +54,13 @@ fun InsightsCard(
 
             InsightsValueRow(
                 isHighlighted = dataTypes.contains(DataType.GRAVITY),
-                icon = { InsightIcon(it, R.drawable.ic_gravity) },
+                icon = {
+                    InsightIcon(
+                        modifier = it,
+                        iconResId = R.drawable.ic_gravity,
+                        tint = highlightIconColor(dataTypes, DataType.GRAVITY),
+                    )
+                },
                 labelResId = R.string.graph_data_label_gravity,
                 valueFormatResId = R.string.pill_gravity,
                 insight = data.gravity,
@@ -61,7 +68,13 @@ fun InsightsCard(
 
             InsightsValueRow(
                 isHighlighted = dataTypes.contains(DataType.TEMPERATURE),
-                icon = { InsightIcon(it, R.drawable.ic_temperature) },
+                icon = {
+                    InsightIcon(
+                        modifier = it,
+                        iconResId = R.drawable.ic_temperature,
+                        tint = highlightIconColor(dataTypes, DataType.TEMPERATURE),
+                    )
+                },
                 labelResId = R.string.graph_data_label_temp_short,
                 valueFormatResId = R.string.pill_temperature,
                 insight = data.temperature,
@@ -69,7 +82,12 @@ fun InsightsCard(
 
             InsightsValueRow(
                 isHighlighted = dataTypes.contains(DataType.BATTERY),
-                icon = { BatteryLevelIndicator(data.battery.value) },
+                icon = {
+                    BatteryLevelIndicator(
+                        batteryPercentage = data.battery.value,
+                        tint = highlightIconColor(dataTypes, DataType.BATTERY),
+                    )
+                },
                 labelResId = R.string.graph_data_label_battery,
                 valueFormatResId = R.string.pill_battery,
                 insight = data.battery,
@@ -77,7 +95,13 @@ fun InsightsCard(
 
             InsightsValueRow(
                 isHighlighted = dataTypes.contains(DataType.TILT),
-                icon = { InsightIcon(it, R.drawable.ic_tilt) },
+                icon = {
+                    InsightIcon(
+                        modifier = it,
+                        iconResId = R.drawable.ic_tilt,
+                        tint = highlightIconColor(dataTypes, DataType.TILT),
+                    )
+                },
                 labelResId = R.string.graph_data_label_tilt,
                 valueFormatResId = R.string.pill_tilt,
                 insight = data.tilt,
@@ -85,7 +109,13 @@ fun InsightsCard(
 
             InsightsValueRow(
                 isHighlighted = dataTypes.contains(DataType.ABV),
-                icon = { InsightIcon(it, R.drawable.ic_abv) },
+                icon = {
+                    InsightIcon(
+                        modifier = it,
+                        iconResId = R.drawable.ic_abv,
+                        tint = highlightIconColor(dataTypes, DataType.ABV),
+                    )
+                },
                 labelResId = R.string.graph_data_label_abv,
                 valueFormatResId = R.string.pill_abv,
                 insight = data.abv,
@@ -93,7 +123,13 @@ fun InsightsCard(
 
             InsightsValueRow(
                 isHighlighted = dataTypes.contains(DataType.VELOCITY_MEASURED),
-                icon = { InsightIcon(it, R.drawable.ic_velocity) },
+                icon = {
+                    InsightIcon(
+                        modifier = it,
+                        iconResId = R.drawable.ic_velocity,
+                        tint = highlightIconColor(dataTypes, DataType.VELOCITY_MEASURED),
+                    )
+                },
                 labelResId = R.string.graph_data_label_velocity_measured_short,
                 valueFormatResId = R.string.pill_velocity,
                 insight = data.gravityVelocity,
@@ -101,7 +137,13 @@ fun InsightsCard(
 
             InsightsValueRow(
                 isHighlighted = dataTypes.contains(DataType.VELOCITY_COMPUTED),
-                icon = { InsightIcon(it, R.drawable.ic_calculate) },
+                icon = {
+                    InsightIcon(
+                        modifier = it,
+                        iconResId = R.drawable.ic_calculate,
+                        tint = highlightIconColor(dataTypes, DataType.VELOCITY_COMPUTED),
+                    )
+                },
                 labelResId = R.string.graph_data_label_velocity_computed_short,
                 valueFormatResId = R.string.pill_velocity,
                 insight = data.calculatedVelocity,
@@ -297,12 +339,13 @@ fun InsightsValueRow(
 fun InsightIcon(
     modifier: Modifier = Modifier,
     @DrawableRes iconResId: Int,
+    tint: Color = MaterialTheme.colorScheme.primary,
 ) {
     Icon(
         modifier = modifier.size(24.dp),
         painter = painterResource(id = iconResId),
         contentDescription = null,
-        tint = MaterialTheme.colorScheme.primary
+        tint = tint,
     )
 }
 
@@ -311,8 +354,21 @@ fun TextStyle.highlight(isHighlighted: Boolean): TextStyle =
     if (isHighlighted) copy(fontWeight = FontWeight.Bold) else this
 
 @Composable
-fun highlightColor(isHighlighted: Boolean): Color =
-    if (isHighlighted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+fun highlightColor(
+    isHighlighted: Boolean,
+    normalColor: Color = MaterialTheme.colorScheme.onSurface,
+    highlightColor: Color = MaterialTheme.colorScheme.primary,
+): Color = if (isHighlighted) highlightColor else normalColor
+
+@Composable
+fun highlightIconColor(
+    dataTypes: List<DataType>,
+    dataType: DataType,
+): Color = highlightColor(
+    isHighlighted = dataTypes.contains(dataType),
+    normalColor = MaterialTheme.colorScheme.primary,
+    highlightColor = dataType.toLineColor(),
+)
 
 @Composable
 fun InsightLabel(
