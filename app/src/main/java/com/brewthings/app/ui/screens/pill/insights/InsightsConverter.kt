@@ -7,7 +7,7 @@ import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.daysBetweenIgnoringTime
 import kotlin.math.abs
 
-fun List<RaptPillData>.toInsightsState(): InsightsState {
+fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
     val insights = mutableListOf<RaptPillInsights>()
     var ogData: RaptPillData? = null
     var previousData: RaptPillData? = null
@@ -29,7 +29,7 @@ fun List<RaptPillData>.toInsightsState(): InsightsState {
         previousData = data
     }
 
-    return InsightsState(insights)
+    return insights
 }
 
 private fun RaptPillData.toInsights(
@@ -105,6 +105,7 @@ private fun calculateABV(og: Float, fg: Float): Float {
     return (og - fg) * 131.25f
 }
 
+// TODO: FIXME
 private fun calculateVelocity(ogData: RaptPillData, fgData: RaptPillData): Float? {
     val gravityDrop = fgData.gravity - ogData.gravity
     val timeDifference = daysBetweenIgnoringTime(fgData.timestamp, ogData.timestamp).toFloat()
