@@ -16,14 +16,11 @@ import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.Utils
 import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Clock
-
-typealias MpAndroidChartData = LineData
 
 @SuppressLint("ViewConstructor")
 class MpAndroidChart(

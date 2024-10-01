@@ -15,11 +15,10 @@ import com.brewthings.app.ui.theme.Orange
 import com.brewthings.app.ui.theme.SteelBlue
 import com.brewthings.app.ui.theme.Tomato
 import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
 @Composable
-fun List<GraphSeries>.toChartData(): MpAndroidChartData = LineData(
+fun List<GraphSeries>.toChartData(): MpAndroidChartData = MpAndroidChartData(
     map {
         it.toChartDataSet()
     }.flatten()
