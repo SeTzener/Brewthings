@@ -10,6 +10,7 @@ import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.util.Logger
+import com.brewthings.app.util.onEachReverse
 import com.juul.kable.Bluetooth
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -75,11 +76,11 @@ class ScanningScreenViewModel : ViewModel(), KoinComponent {
             .launchIn(viewModelScope)
     }
 
-    private fun observeBrews(pills: MutableList<String>) {
+    private fun observeBrews(pills: List<String>) {
         val brews = mutableListOf<List<Brew>>()
             screenState = screenState.copy(brews = emptyList())
         viewModelScope.launch {
-            pills.onEach { pill ->
+            pills.onEachReverse { pill ->
                 brews.add(
                     repo.getBrews(pill)
                 )
