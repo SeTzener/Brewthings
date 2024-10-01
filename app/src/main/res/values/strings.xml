@@ -25,7 +25,7 @@
     <string name="pill_rssi">"%ddBm"</string>
     <string name="pill_gravity">"%.3f SG"</string>
     <string name="pill_temperature">"%.2f°C"</string>
-    <string name="pill_graph">"View graph"</string>
+    <string name="pill_graph">"Show history"</string>
     <string name="pill_battery">"%.1f\%%"</string>
     <string name="pill_tilt">"%.2f°"</string>
     <string name="pill_abv">"%.2f\%%"</string>
