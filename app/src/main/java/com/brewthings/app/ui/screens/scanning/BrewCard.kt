@@ -25,7 +25,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.model.Brew
+import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.ExpandableCard
+import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.util.datetime.format
 
 @Composable
@@ -66,83 +68,34 @@ private fun BrewData(
             .padding(start = 16.dp, top = 0.dp, bottom = 16.dp, end = 22.dp),
     ) {
         Column {
-            BrewRow(
-                icon = { BrewIcon(it, iconResId = R.drawable.ic_abv) },
-                label = { BrewLabel(it, labelResId = R.string.brew_card_label_abv) },
-                value = { BrewValue(it, textResId = R.string.brew_card_value_abv, value = brew.abv) },
+            TextWithIcon(
+                iconResId = R.drawable.ic_abv,
+                text = stringResource(id = R.string.pill_abv, brew.abv)
             )
-            BrewRow(
-                icon = { BrewIcon(it, iconResId = R.drawable.ic_calendar) },
-                label = { BrewLabel(it, labelResId = R.string.brew_card_label_duration) },
-                value = { BrewValue(it, textResId = R.string.brew_card_value_duration, value = brew.durationSinceOG.format())}
+
+            Spacer(modifier = Modifier.padding(8.dp))
+
+            TextWithIcon(
+                iconResId = R.drawable.ic_gravity,
+                text = stringResource(id = R.string.brew_card_value_gravity, brew.og.gravity)
             )
-            BrewRow(
-                icon = { BrewIcon(it, iconResId = R.drawable.ic_gravity) },
-                label = { BrewLabel(it, labelResId = R.string.brew_card_label_original_gravity) },
-                value = { BrewValue(it, textResId = R.string.brew_card_value_gravity, value = brew.og.gravity) },
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Column {
+
+            TextWithIcon(
+                iconResId = R.drawable.ic_calendar,
+                text = stringResource(id = R.string.brew_card_value_duration, brew.durationSinceOG.format())
             )
-            BrewRow(
-                icon = { BrewIcon(it, iconResId = R.drawable.ic_gravity) },
-                label = { BrewLabel(it, labelResId = R.string.brew_card_label_final_gravity) },
-                value = { BrewValue(it, textResId = R.string.brew_card_value_gravity, value = brew.fgOrLast.gravity) },
+
+            Spacer(modifier = Modifier.padding(8.dp))
+
+            TextWithIcon(
+                iconResId = R.drawable.ic_final_gravity,
+                text = stringResource(id = R.string.brew_card_value_gravity, brew.fgOrLast.gravity)
             )
         }
     }
-}
-
-@Composable
-private fun BrewRow(
-    modifier: Modifier = Modifier,
-    icon: @Composable (Modifier) -> Unit,
-    label: @Composable (Modifier) -> Unit,
-    value: @Composable (Modifier) -> Unit,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        icon(modifier)
-        Spacer(modifier = modifier.size(20.dp))
-        label(modifier.weight(1f))
-        Spacer(modifier = modifier.size(36.dp))
-        value(modifier.weight(1f))
-    }
-}
-
-@Composable
-private fun BrewIcon(
-    modifier: Modifier = Modifier,
-    @DrawableRes iconResId: Int,
-) {
-    Icon(
-        modifier = modifier.size(24.dp),
-        painter = painterResource(id = iconResId),
-        contentDescription = null,
-        tint = MaterialTheme.colorScheme.primary
-    )
-}
-
-@Composable
-private fun BrewLabel(
-    modifier: Modifier = Modifier,
-    @StringRes labelResId: Int,
-) {
-    Text(
-        modifier = modifier,
-        text = stringResource(id = labelResId),
-        style = MaterialTheme.typography.bodyMedium,
-    )
-}
-
-@Composable
-private fun BrewValue(
-    modifier: Modifier = Modifier,
-    @StringRes textResId: Int,
-    value: Any?,
-) {
-    Text(
-        modifier = modifier,
-        text = if (value != null) stringResource(id = textResId, value) else "",
-        textAlign = TextAlign.Start,
-        style = MaterialTheme.typography.bodyMedium,
-    )
 }
