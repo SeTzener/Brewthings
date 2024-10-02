@@ -16,7 +16,7 @@ class XAxisLabelRenderer(
     private val gridLinePadding: Float,
     viewPortHandler: ViewPortHandler,
     xAxis: XAxis,
-    transformer: Transformer
+    transformer: Transformer,
 ) : XAxisRenderer(viewPortHandler, xAxis, transformer) {
     /**
      * This function is an adapted version of [XAxisRenderer.drawGridLine] to fit the desired design.

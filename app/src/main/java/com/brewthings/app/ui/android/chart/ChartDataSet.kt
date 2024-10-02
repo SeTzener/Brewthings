@@ -11,7 +11,7 @@ class ChartDataSet(
     label: String,
     lineColor: Int,
     formatPattern: String,
-): LineDataSet(emptyList(), label) {
+) : LineDataSet(emptyList(), label) {
     init {
         color = lineColor
         circleColors = listOf(lineColor)

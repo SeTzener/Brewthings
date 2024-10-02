@@ -29,7 +29,6 @@ class RaptPillScanner {
         scanSettings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
             .build()
-
     }
 
     fun scan(): Flow<ScannedRaptPill> = scanner
@@ -43,7 +42,7 @@ class RaptPillScanner {
                     macAddress = advertisement.address,
                     name = advertisement.name,
                     rssi = advertisement.rssi,
-                    data = data
+                    data = data,
                 )
             }
         }

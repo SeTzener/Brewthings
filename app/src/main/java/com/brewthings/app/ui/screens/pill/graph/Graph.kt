@@ -57,9 +57,9 @@ fun Graph(
                 selectedIndex = selectedIndex,
                 isDarkTheme = isDarkTheme,
                 textColor = textColor,
-                primaryColor = primaryColor
+                primaryColor = primaryColor,
             )
-        }
+        },
     )
 }
 
@@ -69,8 +69,8 @@ private fun GraphState.toChartData(dataType: DataType): ChartData = ChartData(
         series.find { it.type == dataType }
             ?.data
             ?.toSegments()
-            ?.toDataSets(dataType)
-    )
+            ?.toDataSets(dataType),
+    ),
 )
 
 /**

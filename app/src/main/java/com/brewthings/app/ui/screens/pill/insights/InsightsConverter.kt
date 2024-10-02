@@ -6,7 +6,6 @@ import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.util.calculateABV
 import com.brewthings.app.util.calculateVelocity
 import com.brewthings.app.util.datetime.TimeRange
-import com.brewthings.app.util.datetime.daysBetweenIgnoringTime
 import kotlin.math.abs
 
 fun List<RaptPillData>.toInsightsState(): InsightsState {
@@ -36,7 +35,7 @@ fun List<RaptPillData>.toInsightsState(): InsightsState {
 
 private fun RaptPillData.toInsights(
     ogData: RaptPillData?,
-    previousData: RaptPillData?
+    previousData: RaptPillData?,
 ): RaptPillInsights {
     val pillData = this
     if (ogData == null || pillData == ogData) {

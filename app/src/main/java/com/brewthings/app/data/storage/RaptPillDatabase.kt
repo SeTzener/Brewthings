@@ -39,7 +39,7 @@ abstract class RaptPillDatabase : RoomDatabase() {
             return Room.databaseBuilder(
                 context,
                 RaptPillDatabase::class.java,
-                DATABASE_NAME
+                DATABASE_NAME,
             ).addMigrations(
                 MIGRATION_1_2,
                 MIGRATION_2_3,

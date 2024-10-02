@@ -6,5 +6,5 @@ data class ScannedRaptPill(
     override val macAddress: String,
     override val name: String?,
     val rssi: Int,
-    val data: ScannedRaptPillData
+    val data: ScannedRaptPillData,
 ) : Device

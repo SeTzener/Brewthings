@@ -13,14 +13,14 @@ fun SetupNavGraph(
     openAppDetails: () -> Unit,
     showLocationSettings: () -> Unit,
     enableBluetooth: () -> Unit,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     NavHost(
         navController = navController,
-        startDestination = Destination.Scanning
+        startDestination = Destination.Scanning,
     ) {
         composable(
-            route = Destination.Scanning
+            route = Destination.Scanning,
         ) {
             ScanningScreen(
                 navController = navController,
@@ -31,7 +31,7 @@ fun SetupNavGraph(
             )
         }
         composable(
-            route = Destination.Graph
+            route = Destination.Graph,
         ) {
             GraphScreen(navController = navController)
         }

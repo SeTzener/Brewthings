@@ -2,10 +2,8 @@ package com.brewthings.app.ui.screens.scanning
 
 import com.brewthings.app.data.model.Brew
 import com.brewthings.app.data.model.RaptPill
-import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.juul.kable.Bluetooth
-import kotlinx.datetime.Instant
 
 const val RSSI_THRESHOLD_RANGE_START = 0f
 const val RSSI_THRESHOLD_RANGE_END = -200f
@@ -18,5 +16,5 @@ data class ScanningScreenState(
     val scannedPillsCount: Int = 0,
     val scannedPills: List<ScannedRaptPill> = emptyList(),
     val savedPills: List<RaptPill> = emptyList(),
-    val brews: List<Brew> = emptyList()
+    val brews: List<Brew> = emptyList(),
 )

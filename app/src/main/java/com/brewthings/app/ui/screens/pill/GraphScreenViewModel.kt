@@ -57,7 +57,7 @@ class GraphScreenViewModel(
                     screenState = screenState.copy(
                         selectedDataIndex = screenState.selectedDataIndex ?: defaultIndex,
                         graphState = graphState,
-                        insightsState = insightsState
+                        insightsState = insightsState,
                     )
                 }
         }
@@ -79,12 +79,12 @@ class GraphScreenViewModel(
         }
     }
 
-    private fun createInitialState(name: String?, macAddress: String) : GraphScreenState {
+    private fun createInitialState(name: String?, macAddress: String): GraphScreenState {
         val types = DataType.entries.toList()
         return GraphScreenState(
             title = name ?: macAddress,
             dataTypes = types,
-            selectedDataType = types[0]
+            selectedDataType = types[0],
         )
     }
 }

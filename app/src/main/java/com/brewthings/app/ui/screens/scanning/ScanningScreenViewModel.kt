@@ -78,11 +78,11 @@ class ScanningScreenViewModel : ViewModel(), KoinComponent {
 
     private fun observeBrews(pills: List<String>) {
         val brews = mutableListOf<List<Brew>>()
-            screenState = screenState.copy(brews = emptyList())
+        screenState = screenState.copy(brews = emptyList())
         viewModelScope.launch {
             pills.onEachReverse { pill ->
                 brews.add(
-                    repo.getBrews(pill)
+                    repo.getBrews(pill),
                 )
             }
             val uniqueBrews = brews.flatten()
@@ -131,7 +131,7 @@ class ScanningScreenViewModel : ViewModel(), KoinComponent {
 
         screenState = screenState.copy(
             scannedPillsCount = scannedRaptPills.size,
-            scannedPills = filteredInstruments
+            scannedPills = filteredInstruments,
         )
     }
 

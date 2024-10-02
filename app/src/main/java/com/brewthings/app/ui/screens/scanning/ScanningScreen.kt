@@ -126,16 +126,16 @@ private fun ScanningScreen(
             .fillMaxSize()
             .padding(horizontal = 16.dp),
     ) {
-       item {
-           if (brews.isNotEmpty()) {
-               Text(
-                   modifier = Modifier.padding(16.dp),
-                   text = stringResource(R.string.brew_list).uppercase(),
-                   color = MaterialTheme.colorScheme.onBackground,
-                   style = Typography.bodyMedium
-               )
-           }
-       }
+        item {
+            if (brews.isNotEmpty()) {
+                Text(
+                    modifier = Modifier.padding(16.dp),
+                    text = stringResource(R.string.brew_list).uppercase(),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = Typography.bodyMedium,
+                )
+            }
+        }
         items(brews, key = { "Brew_" + it.og.timestamp }) { brew ->
             BrewCard(brew = brew, isExpanded = brew == brews.first()) // TODO(Tano): Add a remember
 
@@ -147,7 +147,7 @@ private fun ScanningScreen(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(R.string.scanning_results).uppercase(),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = Typography.bodyMedium
+                style = Typography.bodyMedium,
             )
 
             ScannedPill(
@@ -166,7 +166,7 @@ private fun ScanningScreen(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(R.string.scanning_saved).uppercase(),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = Typography.bodyMedium
+                style = Typography.bodyMedium,
             )
         }
 
@@ -185,15 +185,15 @@ private fun ScanningScreen(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(R.string.scanning_options).uppercase(),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = Typography.bodyMedium
+                style = Typography.bodyMedium,
             )
             Card(
                 border = BorderStroke(0.dp, Color.LightGray),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(16.dp),
             ) {
                 Column(
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     ExpandableCard(
                         topContent = { TopContent() },
@@ -202,7 +202,7 @@ private fun ScanningScreen(
                                 rssiThreshold = state.rssiThreshold,
                                 onRssiThresholdChanged = onRssiThresholdChanged,
                             )
-                        }
+                        },
                     )
 
                     ScanningState(
@@ -248,7 +248,8 @@ private fun RssiThreshold(
                 style = Typography.bodyMedium,
             )
         }
-        @Suppress("UnnecessaryParentheses") Slider(
+        @Suppress("UnnecessaryParentheses")
+        Slider(
             value = (rssiThreshold * -1).toFloat(),
             onValueChange = { onRssiThresholdChanged(it.toInt() * -1) },
             valueRange = RSSI_THRESHOLD_RANGE_START..(RSSI_THRESHOLD_RANGE_END * -1),
@@ -266,7 +267,7 @@ private fun ScanningState(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 4.dp, end = 16.dp, bottom = 4.dp)
+            .padding(start = 4.dp, end = 16.dp, bottom = 4.dp),
     ) {
         TextButton(
             modifier = Modifier.align(Alignment.CenterStart),
@@ -301,12 +302,12 @@ private fun ScannedPill(
     isInScannedPills: Boolean,
     navGraph: NavController,
     savePill: (ScannedRaptPill) -> Unit,
-    stopScan: () -> Unit
+    stopScan: () -> Unit,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         border = BorderStroke(0.dp, Color.LightGray),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
     ) {
         ExpandableCard(
             isExpanded = isExpanded,
@@ -323,10 +324,10 @@ private fun ScannedPill(
                         name = pill.name,
                         macAddress = pill.macAddress,
                         navGraph = navGraph,
-                        stopScan = stopScan
+                        stopScan = stopScan,
                     )
                 }
-            }
+            },
         )
     }
 }
@@ -335,7 +336,7 @@ private fun ScannedPill(
 private fun ScannedPillTopContent(
     pill: ScannedRaptPill,
     isInScannedPills: Boolean,
-    savePill: (ScannedRaptPill) -> Unit
+    savePill: (ScannedRaptPill) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -353,7 +354,7 @@ private fun ScannedPillTopContent(
                 text = pill.name ?: stringResource(R.string.scanning_result),
                 overflow = TextOverflow.Ellipsis,
                 style = Typography.bodyMedium,
-                maxLines = 1
+                maxLines = 1,
             )
 
             Spacer(modifier = Modifier.padding(4.dp))
@@ -366,7 +367,7 @@ private fun ScannedPillTopContent(
 
         Box(
             modifier = Modifier.weight(1f),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             if (isInScannedPills) {
                 Text(
@@ -411,8 +412,8 @@ fun BrewTopContent(startDate: Instant, endDate: Instant) {
                 text = stringResource(
                     id = R.string.brew_start_to_end,
                     startDate.formatDateTime("MMM d, yyyy"),
-                    endDate.formatDateTime("MMM d, yyyy")
-                )
+                    endDate.formatDateTime("MMM d, yyyy"),
+                ),
             )
         }
     }
@@ -423,12 +424,12 @@ private fun Pill(
     pill: RaptPill,
     navGraph: NavController,
     onPillUpdate: (RaptPill) -> Unit,
-    stopScan: () -> Unit
+    stopScan: () -> Unit,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         border = BorderStroke(0.dp, Color.LightGray),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
     ) {
         Row {
             Column {
@@ -447,7 +448,7 @@ private fun Pill(
                 name = pill.name,
                 macAddress = pill.macAddress,
                 navGraph = navGraph,
-                stopScan = stopScan
+                stopScan = stopScan,
             )
         }
     }
@@ -456,7 +457,7 @@ private fun Pill(
 @Composable
 private fun PillTopContent(
     pill: RaptPill,
-    onPillUpdate: (RaptPill) -> Unit
+    onPillUpdate: (RaptPill) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -473,7 +474,7 @@ private fun PillTopContent(
                 text = pill.name ?: stringResource(R.string.scanning_result),
                 overflow = TextOverflow.Ellipsis,
                 style = Typography.bodyMedium,
-                maxLines = 1
+                maxLines = 1,
             )
 
             Spacer(modifier = Modifier.padding(4.dp))
@@ -503,14 +504,14 @@ private fun PillData(
         Column {
             TextWithIcon(
                 iconResId = R.drawable.ic_gravity,
-                text = stringResource(id = R.string.pill_gravity, gravity)
+                text = stringResource(id = R.string.pill_gravity, gravity),
             )
 
             Spacer(modifier = Modifier.padding(8.dp))
 
             TextWithIcon(
                 iconResId = R.drawable.ic_temperature,
-                text = stringResource(id = R.string.pill_temperature, temperature)
+                text = stringResource(id = R.string.pill_temperature, temperature),
             )
         }
 
@@ -519,14 +520,14 @@ private fun PillData(
         Column {
             TextWithIcon(
                 iconResId = R.drawable.ic_tilt,
-                text = stringResource(id = R.string.pill_tilt, floatingAngle)
+                text = stringResource(id = R.string.pill_tilt, floatingAngle),
             )
 
             Spacer(modifier = Modifier.padding(8.dp))
 
             TextWithIcon(
                 icon = { BatteryLevelIndicator(battery) },
-                text = stringResource(id = R.string.pill_battery, battery)
+                text = stringResource(id = R.string.pill_battery, battery),
             )
         }
     }
@@ -538,7 +539,7 @@ private fun PillFooter(
     name: String?,
     macAddress: String,
     navGraph: NavController,
-    stopScan: () -> Unit
+    stopScan: () -> Unit,
 ) {
     TextButton(
         modifier = modifier.padding(bottom = 8.dp, start = 10.dp, end = 10.dp),
@@ -560,7 +561,7 @@ private fun PillFooter(
 @Composable
 private fun DropDownMenu(
     raptPill: RaptPill,
-    onPillUpdate: (RaptPill) -> Unit
+    onPillUpdate: (RaptPill) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) } // State to control bottom sheet visibility
@@ -568,7 +569,7 @@ private fun DropDownMenu(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentSize(Alignment.TopEnd)
+            .wrapContentSize(Alignment.TopEnd),
     ) {
         IconButton(onClick = { expanded = !expanded }) {
             Icon(
@@ -580,13 +581,13 @@ private fun DropDownMenu(
 
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             DropdownMenuItem(
                 text = { Text("Edit Name") },
                 onClick = {
                     showBottomSheet = true
-                }
+                },
             )
         }
 
@@ -597,7 +598,7 @@ private fun DropDownMenu(
                 sheetState = SheetState(skipPartiallyExpanded = true, density = Density(1f)),
                 pill = raptPill,
                 onDismiss = { showBottomSheet = false },
-                onPillUpdate = onPillUpdate
+                onPillUpdate = onPillUpdate,
             )
         }
     }
@@ -610,7 +611,7 @@ fun EditNameBottomSheet(
     sheetState: SheetState,
     pill: RaptPill,
     onDismiss: () -> Unit,
-    onPillUpdate: (newPill: RaptPill) -> Unit
+    onPillUpdate: (newPill: RaptPill) -> Unit,
 ) {
     var name by remember { mutableStateOf(pill.name) }
 
@@ -629,7 +630,7 @@ fun EditNameBottomSheet(
                     .fillMaxWidth()
                     .imePadding()
                     .padding(vertical = 32.dp, horizontal = 24.dp), // Inner padding,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 OutlinedTextField(
                     modifier = Modifier
@@ -642,8 +643,8 @@ fun EditNameBottomSheet(
                     shape = RoundedCornerShape(12.dp),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    )
+                        imeAction = ImeAction.Done,
+                    ),
                 )
 
                 OutlinedButton(
@@ -652,7 +653,7 @@ fun EditNameBottomSheet(
                         onDismiss()
                     },
                     content = { Text(text = stringResource(id = R.string.edit_name_btn)) },
-                    enabled = isValidName(oldName = pill.name, newName = name)
+                    enabled = isValidName(oldName = pill.name, newName = name),
                 )
             }
         }
@@ -662,7 +663,7 @@ fun EditNameBottomSheet(
 @Composable
 fun <T : Any?> newOrCached(
     data: T,
-    initialValue: T
+    initialValue: T,
 ): T {
     var previousData: T by remember { mutableStateOf(initialValue) }
     return if (data != null) {
@@ -693,14 +694,14 @@ fun ScannedPillPreview() {
                     x = 236.0625f,
                     y = 4049.375f,
                     z = 1008.9375f,
-                    battery = 100f
-                )
+                    battery = 100f,
+                ),
             ),
             isExpanded = true,
             isInScannedPills = true,
             navGraph = rememberNavController(),
             savePill = {},
-            stopScan = {}
+            stopScan = {},
         )
     }
 }
@@ -725,12 +726,12 @@ fun PillPreview() {
                         battery = 100f,
                         isOG = false,
                         isFG = false,
-                    )
-                )
+                    ),
+                ),
             ),
             navGraph = rememberNavController(),
             onPillUpdate = {},
-            stopScan = {}
+            stopScan = {},
         )
     }
 }

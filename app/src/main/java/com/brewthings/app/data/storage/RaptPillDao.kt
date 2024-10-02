@@ -17,51 +17,51 @@ interface RaptPillDao {
 
     @Query(
         "SELECT * FROM RaptPillData " +
-                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
-                "WHERE RaptPill.macAddress = :macAddress"
+            "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+            "WHERE RaptPill.macAddress = :macAddress",
     )
     fun observeData(macAddress: String): Flow<List<RaptPillData>>
 
     @Query(
         "SELECT * FROM RaptPillData " +
-                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
-                "WHERE RaptPill.macAddress = :macAddress " +
-                "AND RaptPillData.timestamp <= :timestamp " +
-                "ORDER BY RaptPillData.timestamp DESC LIMIT 2"
+            "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+            "WHERE RaptPill.macAddress = :macAddress " +
+            "AND RaptPillData.timestamp <= :timestamp " +
+            "ORDER BY RaptPillData.timestamp DESC LIMIT 2",
     )
     fun observeDataAndPrevious(macAddress: String, timestamp: Instant): Flow<List<RaptPillData>>
 
     @Query(
         "SELECT * FROM RaptPillData " +
-                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
-                "WHERE RaptPill.macAddress = :macAddress " +
-                "AND RaptPillData.isOG == 1 " +
-                "OR RaptPillData.isFG == 1 " +
-                "ORDER BY RaptPillData.timestamp ASC"
+            "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+            "WHERE RaptPill.macAddress = :macAddress " +
+            "AND RaptPillData.isOG == 1 " +
+            "OR RaptPillData.isFG == 1 " +
+            "ORDER BY RaptPillData.timestamp ASC",
     )
     fun getBrewEdges(macAddress: String): Flow<List<RaptPillData>>
 
     @Query(
         "SELECT * FROM RaptPillData " +
-                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
-                "WHERE RaptPill.macAddress = :macAddress ORDER BY RaptPillData.dataId DESC " +
-                "LIMIT 1"
+            "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+            "WHERE RaptPill.macAddress = :macAddress ORDER BY RaptPillData.dataId DESC " +
+            "LIMIT 1",
     )
     fun getLastMeasurement(macAddress: String): Flow<RaptPillData>
 
     @Query(
         "SELECT * FROM RaptPillData " +
-                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
-                "WHERE RaptPill.macAddress = :macAddress ORDER BY RaptPillData.dataId ASC " +
-                "LIMIT 1"
+            "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+            "WHERE RaptPill.macAddress = :macAddress ORDER BY RaptPillData.dataId ASC " +
+            "LIMIT 1",
     )
     fun getFirstMeasurement(macAddress: String): Flow<RaptPillData>
 
     @Query(
         "SELECT * FROM RaptPillData " +
-                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
-                "WHERE RaptPill.macAddress = :macAddress " +
-                "AND RaptPillData.timestamp == :timestamp "
+            "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+            "WHERE RaptPill.macAddress = :macAddress " +
+            "AND RaptPillData.timestamp == :timestamp ",
     )
     suspend fun getPillData(macAddress: String, timestamp: Instant): RaptPillData
 
@@ -70,8 +70,8 @@ interface RaptPillDao {
         val data = getPillData(macAddress, timestamp)
         insertData(
             data.copy(
-                readings = data.readings.copy(isOG = isOG)
-            )
+                readings = data.readings.copy(isOG = isOG),
+            ),
         )
     }
 
@@ -80,8 +80,8 @@ interface RaptPillDao {
         val data: RaptPillData = getPillData(macAddress, timestamp)
         insertData(
             data.copy(
-                readings = data.readings.copy(isFG = isFg)
-            )
+                readings = data.readings.copy(isFG = isFg),
+            ),
         )
     }
 

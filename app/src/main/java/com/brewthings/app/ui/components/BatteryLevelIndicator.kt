@@ -14,7 +14,7 @@ fun BatteryLevelIndicator(
     batteryPercentage: Float,
     colorPrimary: Color = MaterialTheme.colorScheme.primary,
     colorAlert: Color = Red_Alert,
-    ) {
+) {
     val batteryAsset = when {
         batteryPercentage <= 0f -> R.drawable.ic_battery_0
         batteryPercentage <= 0.125f -> R.drawable.ic_battery_1

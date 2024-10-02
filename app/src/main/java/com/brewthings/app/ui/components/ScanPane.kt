@@ -107,7 +107,8 @@ private fun PermissionGranted(
         is Bluetooth.Availability.Unavailable -> when (bluetooth.reason) {
             Reason.LocationServicesDisabled -> LocationServicesDisabled(showLocationSettings)
             Reason.Off,
-            Reason.TurningOff -> BluetoothDisabled(enableBluetooth)
+            Reason.TurningOff,
+            -> BluetoothDisabled(enableBluetooth)
 
             Reason.TurningOn -> Loading()
             null -> BluetoothUnavailable()
@@ -188,7 +189,7 @@ private fun ActionRequired(
     icon: ImageVector,
     title: String,
     description: String? = null,
-    buttonText: String ?= null,
+    buttonText: String? = null,
     onClick: () -> Unit = {},
 ) {
     Column(

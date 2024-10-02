@@ -32,8 +32,8 @@ import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toFormattedDate
-import kotlin.math.abs
 import kotlinx.datetime.Instant
+import kotlin.math.abs
 
 @Composable
 fun InsightsCard(
@@ -61,7 +61,7 @@ fun InsightsCard(
                     InsightDelta(
                         it,
                         R.string.pill_gravity,
-                        data.gravity.deltaFromPrevious
+                        data.gravity.deltaFromPrevious,
                     )
                 },
                 fromOG = { InsightDelta(it, R.string.pill_gravity, data.gravity.deltaFromOG) },
@@ -75,14 +75,14 @@ fun InsightsCard(
                     InsightDelta(
                         it,
                         R.string.pill_temperature,
-                        data.temperature.deltaFromPrevious
+                        data.temperature.deltaFromPrevious,
                     )
                 },
                 fromOG = {
                     InsightDelta(
                         it,
                         R.string.pill_temperature,
-                        data.temperature.deltaFromOG
+                        data.temperature.deltaFromOG,
                     )
                 },
             )
@@ -95,7 +95,7 @@ fun InsightsCard(
                     InsightDelta(
                         it,
                         R.string.pill_tilt,
-                        data.tilt.deltaFromPrevious
+                        data.tilt.deltaFromPrevious,
                     )
                 },
                 fromOG = { InsightDelta(it, R.string.pill_tilt, data.tilt.deltaFromOG) },
@@ -109,7 +109,7 @@ fun InsightsCard(
                     InsightDelta(
                         it,
                         R.string.pill_battery,
-                        data.battery.deltaFromPrevious
+                        data.battery.deltaFromPrevious,
                     )
                 },
                 fromOG = { InsightDelta(it, R.string.pill_battery, data.battery.deltaFromOG) },
@@ -130,13 +130,13 @@ fun InsightsCard(
                     InsightDelta(
                         it,
                         R.string.pill_velocity,
-                        data.calculatedVelocity?.deltaFromPrevious
+                        data.calculatedVelocity?.deltaFromPrevious,
                     )
                 },
             )
         }
         Row(
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 8.dp),
         ) {
             TextButton(
                 modifier = Modifier.padding(start = 7.dp),
@@ -147,7 +147,7 @@ fun InsightsCard(
                         stringResource(id = R.string.unset_OG)
                     } else {
                         stringResource(
-                            id = R.string.set_OG
+                            id = R.string.set_OG,
                         )
                     },
                     style = Typography.bodyMedium,
@@ -156,14 +156,14 @@ fun InsightsCard(
 
             TextButton(
                 modifier = Modifier.padding(start = 4.dp),
-                onClick = { setIsFG(data.timestamp, !data.isFG) }
+                onClick = { setIsFG(data.timestamp, !data.isFG) },
             ) {
                 Text(
                     text = if (data.isFG) {
                         stringResource(id = R.string.unset_FG)
                     } else {
                         stringResource(
-                            id = R.string.set_FG
+                            id = R.string.set_FG,
                         )
                     },
                     style = Typography.bodyMedium,
@@ -191,14 +191,14 @@ fun InsightsTimeHeader(data: RaptPillInsights) {
                 text = when {
                     data.isFG && data.durationSinceOG != null -> stringResource(
                         id = R.string.graph_data_duration_fg_since_og,
-                        data.durationSinceOG.format()
+                        data.durationSinceOG.format(),
                     )
 
                     data.isOG -> stringResource(id = R.string.graph_data_duration_og)
 
                     data.durationSinceOG != null -> stringResource(
                         id = R.string.graph_data_duration_since_og,
-                        data.durationSinceOG.format()
+                        data.durationSinceOG.format(),
                     )
 
                     else -> ""
@@ -244,7 +244,7 @@ fun InsightHeader(
         text = stringResource(id = headerResId),
         textAlign = TextAlign.Start,
         style = MaterialTheme.typography.bodyMedium.copy(
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         ),
     )
 }
@@ -258,7 +258,7 @@ fun InsightIcon(
         modifier = modifier.size(24.dp),
         painter = painterResource(id = iconResId),
         contentDescription = null,
-        tint = MaterialTheme.colorScheme.primary
+        tint = MaterialTheme.colorScheme.primary,
     )
 }
 
@@ -298,10 +298,14 @@ fun InsightDelta(
         modifier = modifier,
         iconResId = delta?.asArrowDropIcon(),
         iconSize = 16.dp,
-        text = if (delta != null && !delta.isNaN()) stringResource(
-            id = textResId,
-            abs(delta)
-        ) else "",
+        text = if (delta != null && !delta.isNaN()) {
+            stringResource(
+                id = textResId,
+                abs(delta),
+            )
+        } else {
+            ""
+        },
         iconPadding = 0.dp,
         iconColor = MaterialTheme.colorScheme.onSurface,
         textStyle = MaterialTheme.typography.bodySmall,

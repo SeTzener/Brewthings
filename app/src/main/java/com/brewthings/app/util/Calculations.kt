@@ -14,5 +14,7 @@ fun calculateVelocity(ogData: RaptPillData, fgData: RaptPillData): Float? {
     val velocity = gravityDrop / timeDifference
     return if (velocity.isInfinite() || velocity.isNaN()) {
         null
-    } else velocity
+    } else {
+        velocity
+    }
 }
