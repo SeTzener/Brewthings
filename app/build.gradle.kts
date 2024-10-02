@@ -8,12 +8,33 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.spotless)
 }
 
 val appId = stringProperty("app.id")
 val semanticVersioning = stringProperty("app.versionName")
 val buildVersion = intProperty("app.buildVersion")
 val target = intProperty("app.targetSdk")
+
+spotless {
+    kotlin {
+        target("**/*.kt")
+        ktlint().editorConfigOverride(
+            mapOf(
+                "indent_style" to "space",
+                "indent_size" to "4",
+                "ktlint_standard_comment-wrapping" to "disabled",
+            ),
+        )
+    }
+
+    kotlinGradle {
+        target("*.gradle.kts")
+        ktlint()
+    }
+
+    // Add configurations for other languages as needed
+}
 
 android {
     namespace = appId
@@ -56,7 +77,7 @@ android {
             isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
         debug {
