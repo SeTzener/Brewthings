@@ -12,17 +12,12 @@ import com.brewthings.app.data.storage.toModelItem
 import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder.Graph.macAddress
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flatMap
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.onEmpty
-import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Instant
 
 class RaptPillRepository(
     private val scanner: RaptPillScanner,
-    private val dao: RaptPillDao
+    private val dao: RaptPillDao,
 ) {
     fun fromBluetooth(): Flow<ScannedRaptPill> = scanner.scan()
 
@@ -33,7 +28,7 @@ class RaptPillRepository(
                 name = db.pill.name,
                 data = db.data.map { data ->
                     data.toModelItem()
-                }
+                },
             )
         }
     }
@@ -120,7 +115,7 @@ class RaptPillRepository(
         dao.setIsFG(
             macAddress = macAddress,
             timestamp = timestamp,
-            isFg = isOg
+            isFg = isOg,
         )
     }
 

@@ -9,7 +9,7 @@ class RaptPillParserTest {
         val hexString = "5054020001C01D9DBD95AB44BA0232FC8BC52112796400"
         val byteArray = hexStringToByteArray(hexString)
         val data = RaptPillParser.parse(byteArray)
-        with (data){
+        with(data) {
             assertTrue(gravityVelocity == -2.4627526f)
             assertTrue(temperature == 26.185938f)
             assertTrue(gravity == 1.4880686f)
@@ -17,7 +17,6 @@ class RaptPillParserTest {
             assertTrue(y == 3154.0625f)
             assertTrue(z == 295.5625f)
             assertTrue(battery.toDouble() == 100.0)
-
         }
     }
     private fun hexStringToByteArray(s: String): ByteArray {

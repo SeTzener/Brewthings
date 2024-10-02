@@ -28,21 +28,21 @@ fun BrewCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         border = BorderStroke(0.dp, Color.LightGray),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
     ) {
         ExpandableCard(
             isExpanded = isExpanded,
             topContent = {
                 BrewTopContent(
                     startDate = brew.og.timestamp,
-                    endDate = brew.fgOrLast.timestamp
+                    endDate = brew.fgOrLast.timestamp,
                 )
             },
             expandedContent = {
                 Column {
                     BrewData(brew)
                 }
-            }
+            },
         )
     }
 }
@@ -60,31 +60,30 @@ private fun BrewData(
         Column {
             TextWithIcon(
                 iconResId = R.drawable.ic_abv,
-                text = stringResource(id = R.string.pill_abv, brew.abv)
+                text = stringResource(id = R.string.pill_abv, brew.abv),
             )
 
             Spacer(modifier = Modifier.padding(8.dp))
 
             TextWithIcon(
                 iconResId = R.drawable.ic_gravity,
-                text = stringResource(id = R.string.brew_card_value_gravity, brew.og.gravity)
+                text = stringResource(id = R.string.brew_card_value_gravity, brew.og.gravity),
             )
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
         Column {
-
             TextWithIcon(
                 iconResId = R.drawable.ic_calendar,
-                text = stringResource(id = R.string.brew_card_value_duration, brew.durationSinceOG.format())
+                text = stringResource(id = R.string.brew_card_value_duration, brew.durationSinceOG.format()),
             )
 
             Spacer(modifier = Modifier.padding(8.dp))
 
             TextWithIcon(
                 iconResId = R.drawable.ic_final_gravity,
-                text = stringResource(id = R.string.brew_card_value_gravity, brew.fgOrLast.gravity)
+                text = stringResource(id = R.string.brew_card_value_gravity, brew.fgOrLast.gravity),
             )
         }
     }

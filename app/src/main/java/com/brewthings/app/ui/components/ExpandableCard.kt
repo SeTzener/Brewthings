@@ -29,15 +29,15 @@ fun ExpandableCard(
     val expandedState = remember { mutableStateOf(isExpanded) }
     Column(
         modifier = Modifier.animateContentSize(
-            finishedListener = { _, _ -> onAnimationFinished?.invoke(expandedState.value) }
-        )
+            finishedListener = { _, _ -> onAnimationFinished?.invoke(expandedState.value) },
+        ),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable(onClick = { expandedState.value = !expandedState.value })
                 .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(modifier = Modifier.weight(1f)) {
                 topContent()

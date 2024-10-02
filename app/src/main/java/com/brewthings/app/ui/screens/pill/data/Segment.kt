@@ -11,7 +11,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
 data class Segment(
     val isValid: Boolean,
-    val entries: List<Entry>
+    val entries: List<Entry>,
 )
 
 fun List<DataPoint>.toSegments(): List<Segment> {
@@ -35,7 +35,6 @@ fun List<DataPoint>.toSegments(): List<Segment> {
     }
 
     return result
-
 }
 
 @Composable
@@ -59,10 +58,11 @@ private fun DataType.toLineColor(): Color = when (this) {
 private fun DataType.toFormatPattern(): String = when (this) {
     DataType.GRAVITY -> "0.000"
     DataType.TEMPERATURE,
-    DataType.BATTERY -> "#.#"
+    DataType.BATTERY,
+    -> "#.#"
 }
 
 private fun List<DataPoint>.toSegment(): Segment = Segment(
     isValid = first().isOG,
-    entries = map { Entry(it.x, it.y, it.data) }
+    entries = map { Entry(it.x, it.y, it.data) },
 )

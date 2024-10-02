@@ -11,5 +11,5 @@ data class DataPoint(
     val y: Float,
     val isOG: Boolean,
     val isFG: Boolean,
-    val data: Any?
+    val data: Any?,
 )

@@ -85,7 +85,7 @@ fun GraphScreen(
             GraphTopBar(
                 scrollBehavior = scrollBehavior,
                 title = screenState.title,
-                onBackClick = onBackClick
+                onBackClick = onBackClick,
             )
         },
     ) { paddingValues ->
@@ -116,9 +116,8 @@ fun GraphScreen(
                         state = graphState,
                         dataType = selectedType,
                         selectedIndex = selectedIndex,
-                        onSelect = onGraphSelect
+                        onSelect = onGraphSelect,
                     )
-
                 }
             }
             item {
@@ -143,13 +142,13 @@ fun GraphScreen(
 fun GraphTopBar(
     scrollBehavior: TopAppBarScrollBehavior,
     title: String,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     TopAppBar(
         title = {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
             )
         },
         navigationIcon = {
@@ -182,13 +181,13 @@ fun DataTypeSelector(
             Icon(
                 modifier = Modifier.padding(start = 4.dp),
                 imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = null
+                contentDescription = null,
             )
         }
 
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             // Each DropdownMenuItem represents an option in the dropdown
             options.forEach { option ->
@@ -199,7 +198,7 @@ fun DataTypeSelector(
                     },
                     text = {
                         Text(text = option.toLabel())
-                    }
+                    },
                 )
             }
         }

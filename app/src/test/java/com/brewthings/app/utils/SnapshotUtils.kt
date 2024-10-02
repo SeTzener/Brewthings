@@ -15,7 +15,7 @@ inline infix fun <reified T> T.shouldMatchSnapshot(testInfo: TestInfo) {
         snapshotsFolder = pathForTest(className.qualifiedName),
     ).matchWithSnapshot(
         value = serialized,
-        snapshotName = testInfo.testMethod.get().name
+        snapshotName = testInfo.testMethod.get().name,
     )
 }
 

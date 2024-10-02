@@ -1,14 +1,14 @@
 package com.brewthings.app.util.datetime
 
-import java.time.format.DateTimeFormatter
-import kotlin.math.roundToLong
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.hours
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.math.roundToLong
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 
 fun daysBetweenIgnoringTime(instant1: Instant, instant2: Instant): Int {
     val timeZone = TimeZone.UTC
@@ -22,7 +22,7 @@ fun daysBetweenIgnoringTime(instant1: Instant, instant2: Instant): Int {
 
 fun Instant.formatDateTime(
     dateTimePattern: String,
-    timeZone: TimeZone = TimeZone.currentSystemDefault()
+    timeZone: TimeZone = TimeZone.currentSystemDefault(),
 ): String {
     val localDate = toLocalDateTime(timeZone)
     val formatter = DateTimeFormatter.ofPattern(dateTimePattern)

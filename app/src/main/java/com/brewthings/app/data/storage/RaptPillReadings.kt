@@ -13,9 +13,9 @@ import kotlinx.datetime.Instant
             entity = RaptPillData::class,
             parentColumns = arrayOf("dataId"),
             childColumns = arrayOf("dataId"),
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
 )
 data class RaptPillReadings(
     override val timestamp: Instant,
@@ -27,5 +27,5 @@ data class RaptPillReadings(
     override val z: Float,
     override val battery: Float,
     val isOG: Boolean?,
-    val isFG: Boolean?
+    val isFG: Boolean?,
 ) : SensorWithTiltReadings

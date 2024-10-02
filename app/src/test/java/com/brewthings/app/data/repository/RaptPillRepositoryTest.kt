@@ -1,6 +1,6 @@
 @file:Suppress("IllegalIdentifier")
-package com.brewthings.app.data.repository
 
+package com.brewthings.app.data.repository
 
 import com.brewthings.app.data.storage.RaptPillDao
 import com.brewthings.app.data.storage.RaptPillData
@@ -41,10 +41,13 @@ class RaptPillRepositoryTest {
             flow {
                 emit(
                     listOf(
-                        createOG("01"), createFG("02"),
-                        createOG("03"), createFG("04"),
-                        createOG("05"), createFG("06")
-                    )
+                        createOG("01"),
+                        createFG("02"),
+                        createOG("03"),
+                        createFG("04"),
+                        createOG("05"),
+                        createFG("06"),
+                    ),
                 )
             }
         }
@@ -60,7 +63,7 @@ class RaptPillRepositoryTest {
         coEvery { dao.getBrewEdges(any()) }.coAnswers {
             flow {
                 emit(
-                    emptyList()
+                    emptyList(),
                 )
             }
         }
@@ -77,15 +80,15 @@ class RaptPillRepositoryTest {
             flow {
                 emit(
                     listOf(
-                        createOG("01")
-                    )
+                        createOG("01"),
+                    ),
                 )
             }
         }
         coEvery { dao.getLastMeasurement(any()) }.coAnswers {
             flow {
                 emit(
-                    createMeasurment("02")
+                    createMeasurment("02"),
                 )
             }
         }
@@ -102,8 +105,9 @@ class RaptPillRepositoryTest {
                 emit(
                     listOf(
                         createOG("01"),
-                        createOG("02"), createFG("03")
-                    )
+                        createOG("02"),
+                        createFG("03"),
+                    ),
                 )
             }
         }
@@ -122,8 +126,9 @@ class RaptPillRepositoryTest {
                         createOG("01"),
                         createOG("02"),
                         createOG("03"),
-                        createOG("04"), createFG("05")
-                    )
+                        createOG("04"),
+                        createFG("05"),
+                    ),
                 )
             }
         }
@@ -139,9 +144,10 @@ class RaptPillRepositoryTest {
             flow {
                 emit(
                     listOf(
-                        createOG("01"), createFG("02"),
-                                             createFG("03"),
-                    )
+                        createOG("01"),
+                        createFG("02"),
+                        createFG("03"),
+                    ),
                 )
             }
         }
@@ -157,11 +163,12 @@ class RaptPillRepositoryTest {
             flow {
                 emit(
                     listOf(
-                        createOG("01"), createFG("02"),
-                                             createFG("03"),
-                                             createFG("04"),
-                                             createFG("05"),
-                    )
+                        createOG("01"),
+                        createFG("02"),
+                        createFG("03"),
+                        createFG("04"),
+                        createFG("05"),
+                    ),
                 )
             }
         }
@@ -177,15 +184,15 @@ class RaptPillRepositoryTest {
             flow {
                 emit(
                     listOf(
-                        createFG("02")
-                    )
+                        createFG("02"),
+                    ),
                 )
             }
         }
         coEvery { dao.getFirstMeasurement(any()) }.coAnswers {
             flow {
                 emit(
-                    createMeasurment("01")
+                    createMeasurment("01"),
                 )
             }
         }
@@ -208,8 +215,8 @@ private fun createOG(day: String): RaptPillData {
             z = 0.0f,
             battery = 0.0f,
             isOG = true,
-            isFG = null
-        )
+            isFG = null,
+        ),
     )
 }
 
@@ -226,8 +233,8 @@ private fun createFG(day: String): RaptPillData {
             z = 0.0f,
             battery = 0.0f,
             isOG = null,
-            isFG = true
-        )
+            isFG = true,
+        ),
     )
 }
 
@@ -244,7 +251,7 @@ private fun createMeasurment(day: String): RaptPillData {
             z = 0.0f,
             battery = 0.0f,
             isOG = null,
-            isFG = null
-        )
+            isFG = null,
+        ),
     )
 }

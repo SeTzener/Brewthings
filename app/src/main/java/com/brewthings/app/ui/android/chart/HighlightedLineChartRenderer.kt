@@ -48,7 +48,7 @@ class HighlightedLineChartRenderer(
                     with(density) { Size.Graph.CIRCLE_RADIUS.toPx() * 4 },
                     0f,
                     0f,
-                    dataSet.color
+                    dataSet.color,
                 )
 
                 dataSet.getEntriesForXValue(high.x)?.firstOrNull()?.also { entry ->
@@ -59,9 +59,11 @@ class HighlightedLineChartRenderer(
                         dottedLinePaint.color = primaryColor
                         // Drawing a vertical dotted line at the highlighted points
                         c.drawLine(
-                            pts[0], mViewPortHandler.contentTop() + highlighterPadding,
-                            pts[0], mViewPortHandler.contentBottom() - highlighterPadding,
-                            dottedLinePaint
+                            pts[0],
+                            mViewPortHandler.contentTop() + highlighterPadding,
+                            pts[0],
+                            mViewPortHandler.contentBottom() - highlighterPadding,
+                            dottedLinePaint,
                         )
                     }
 
