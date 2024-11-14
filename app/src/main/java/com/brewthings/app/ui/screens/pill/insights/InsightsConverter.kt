@@ -4,7 +4,6 @@ import com.brewthings.app.data.domain.Insight
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.util.datetime.TimeRange
-import com.brewthings.app.util.datetime.daysBetweenIgnoringTime
 import kotlin.math.abs
 
 fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
@@ -54,7 +53,7 @@ private fun RaptPillData.toInsights(
     }
 
     val abv = calculateABV(ogData.gravity, pillData.gravity)
-    val velocity = calculateVelocity(ogData, pillData)?.let { abs(it) }
+    val velocity = calculateVelocity(previousData, pillData)?.let { abs(it) }
     return RaptPillInsights(
         timestamp = pillData.timestamp,
         temperature = Insight(
@@ -105,11 +104,13 @@ private fun calculateABV(og: Float, fg: Float): Float {
     return (og - fg) * 131.25f
 }
 
-// TODO: FIXME
-private fun calculateVelocity(ogData: RaptPillData, fgData: RaptPillData): Float? {
-    val gravityDrop = fgData.gravity - ogData.gravity
-    val timeDifference = daysBetweenIgnoringTime(fgData.timestamp, ogData.timestamp).toFloat()
-    val velocity = gravityDrop / timeDifference
+// This can be improved by using a more sophisticated algorithm.
+private fun calculateVelocity(previousData: RaptPillData?, fgData: RaptPillData): Float? {
+    if (previousData == null) return null
+
+    val gravityDrop = fgData.gravity - previousData.gravity
+    val timeDifference = (fgData.timestamp.epochSeconds - previousData.timestamp.epochSeconds).toFloat()
+    val velocity = gravityDrop / timeDifference * 100_000_000f
     return if (velocity.isInfinite() || velocity.isNaN()) {
         null
     } else velocity
