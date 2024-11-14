@@ -3,8 +3,8 @@ package com.brewthings.app.ui.screens.pill.insights
 import com.brewthings.app.data.domain.Insight
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.RaptPillInsights
+import com.brewthings.app.data.storage.sanitizeVelocity
 import com.brewthings.app.util.datetime.TimeRange
-import kotlin.math.abs
 
 fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
     val insights = mutableListOf<RaptPillInsights>()
@@ -53,7 +53,7 @@ private fun RaptPillData.toInsights(
     }
 
     val abv = calculateABV(ogData.gravity, pillData.gravity)
-    val velocity = calculateVelocity(previousData, pillData)?.let { abs(it) }
+    val velocity = calculateVelocity(previousData, pillData)
     return RaptPillInsights(
         timestamp = pillData.timestamp,
         temperature = Insight(
@@ -111,7 +111,5 @@ private fun calculateVelocity(previousData: RaptPillData?, fgData: RaptPillData)
     val gravityDrop = fgData.gravity - previousData.gravity
     val timeDifference = (fgData.timestamp.epochSeconds - previousData.timestamp.epochSeconds).toFloat()
     val velocity = gravityDrop / timeDifference * 100_000_000f
-    return if (velocity.isInfinite() || velocity.isNaN()) {
-        null
-    } else velocity
+    return velocity.sanitizeVelocity()
 }

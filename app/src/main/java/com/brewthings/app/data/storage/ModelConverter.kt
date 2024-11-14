@@ -10,7 +10,7 @@ fun RaptPillData.toModelItem() = com.brewthings.app.data.model.RaptPillData(
     timestamp = readings.timestamp,
     temperature = readings.temperature,
     gravity = readings.gravity,
-    gravityVelocity = readings.gravityVelocity?.let { -1 * it }, // Invert the sign, to make it more intuitive.
+    gravityVelocity = readings.gravityVelocity?.sanitizeVelocity(),
     x = readings.x,
     y = readings.y,
     z = readings.z,
@@ -18,3 +18,10 @@ fun RaptPillData.toModelItem() = com.brewthings.app.data.model.RaptPillData(
     isOG = readings.isOG == true,
     isFG = readings.isFG == true,
 )
+
+fun Float.sanitizeVelocity(): Float? =
+    if (isInfinite() || isNaN() || this > 0 || this < -100) {
+        null // Invalid velocity.
+    } else {
+        -1 * this // Invert the sign, to make it more intuitive.
+    }
