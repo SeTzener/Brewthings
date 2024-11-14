@@ -108,8 +108,8 @@ private fun calculateABV(og: Float, fg: Float): Float {
 private fun calculateVelocity(previousData: RaptPillData?, fgData: RaptPillData): Float? {
     if (previousData == null) return null
 
-    val gravityDrop = fgData.gravity - previousData.gravity
-    val timeDifference = (fgData.timestamp.epochSeconds - previousData.timestamp.epochSeconds).toFloat()
-    val velocity = gravityDrop / timeDifference * 100_000_000f
+    val gpDrop = (fgData.gravity - previousData.gravity) * 1000f
+    val daysBetween = (fgData.timestamp.epochSeconds - previousData.timestamp.epochSeconds).toFloat() / 86_400f
+    val velocity = gpDrop / daysBetween
     return velocity.sanitizeVelocity()
 }
