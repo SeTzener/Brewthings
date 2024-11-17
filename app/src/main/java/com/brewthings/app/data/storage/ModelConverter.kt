@@ -1,22 +1,52 @@
 package com.brewthings.app.data.storage
 
-fun com.brewthings.app.data.model.RaptPill.toDataItem() = RaptPill(
+import com.brewthings.app.data.model.ScannedRaptPill
+import com.brewthings.app.data.model.ScannedRaptPillData
+
+typealias ModelRaptPill = com.brewthings.app.data.model.RaptPill
+typealias ModelRaptPillData = com.brewthings.app.data.model.RaptPillData
+
+typealias DaoRaptPill = RaptPill
+typealias DaoRaptPillData = RaptPillData
+typealias DaoRaptPillReadings = RaptPillReadings
+
+fun ModelRaptPill.toDaoItem(): DaoRaptPill = DaoRaptPill(
     macAddress = macAddress,
     name = name,
 )
 
-fun RaptPillData.toModelItem() = com.brewthings.app.data.model.RaptPillData(
-    timestamp = readings.timestamp,
-    temperature = readings.temperature,
-    gravity = readings.gravity,
-    gravityVelocity = readings.gravityVelocity?.sanitizeVelocity(),
-    x = readings.x,
-    y = readings.y,
-    z = readings.z,
-    battery = readings.battery,
-    isOG = readings.isOG == true,
-    isFG = readings.isFG == true,
+fun ScannedRaptPill.toDaoItem(): DaoRaptPill = DaoRaptPill(
+    macAddress = macAddress,
+    name = name,
 )
+
+fun ScannedRaptPillData.toDaoItem(): DaoRaptPillReadings = DaoRaptPillReadings(
+    timestamp = timestamp,
+    temperature = temperature,
+    gravity = gravity,
+    gravityVelocity = gravityVelocity,
+    x = x,
+    y = y,
+    z = z,
+    battery = battery,
+    isOG = null,
+    isFG = null,
+)
+
+fun DaoRaptPillReadings.toModelItem(): ModelRaptPillData = ModelRaptPillData(
+    timestamp = timestamp,
+    temperature = temperature,
+    gravity = gravity,
+    gravityVelocity = gravityVelocity?.sanitizeVelocity(),
+    x = x,
+    y = y,
+    z = z,
+    battery = battery,
+    isOG = isOG == true,
+    isFG = isFG == true,
+)
+
+fun DaoRaptPillData.toModelItem() = readings.toModelItem()
 
 fun Float.sanitizeVelocity(): Float? =
     if (isInfinite() || isNaN() || this > 0 || this < -100) {
