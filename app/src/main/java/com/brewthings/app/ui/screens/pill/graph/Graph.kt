@@ -10,18 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.viewinterop.AndroidView
-import com.brewthings.app.ui.android.chart.ChartData
-import com.brewthings.app.ui.android.chart.MpAndroidLineChart
-import com.brewthings.app.ui.screens.pill.data.DataType
-import com.brewthings.app.ui.screens.pill.data.toDataSets
-import com.brewthings.app.ui.screens.pill.data.toSegments
+import com.brewthings.app.ui.android.chart.MpAndroidChart
 import com.brewthings.app.ui.theme.Size
-import com.github.mikephil.charting.data.LineData
 
 @Composable
 fun Graph(
-    state: GraphState,
-    dataType: DataType,
+    series: List<GraphSeries>,
     selectedIndex: Int?,
     onSelect: (Int?) -> Unit,
 ) {
@@ -31,7 +25,7 @@ fun Graph(
     val textColor = MaterialTheme.colorScheme.onBackground
     val primaryColor = MaterialTheme.colorScheme.primary
 
-    val chartData = state.toChartData(dataType)
+    val chartData = series.toChartData()
 
     AndroidView(
         modifier = Modifier
@@ -39,7 +33,7 @@ fun Graph(
             .height(Size.Graph.HEIGHT)
             .padding(bottom = Size.Graph.PADDING_BOTTOM),
         factory = { context ->
-            MpAndroidLineChart(
+            MpAndroidChart(
                 context = context,
                 chartData = chartData,
                 selectedIndex = selectedIndex,
@@ -62,23 +56,3 @@ fun Graph(
         },
     )
 }
-
-@Composable
-private fun GraphState.toChartData(dataType: DataType): ChartData = ChartData(
-    data = LineData(
-        series.find { it.type == dataType }
-            ?.data
-            ?.toSegments()
-            ?.toDataSets(dataType),
-    ),
-)
-
-/**
- * Transform the data using z-score normalization so that each sensor's readings are centered around the mean with a
- * standard deviation of 1 (for multiline chart plotting).
- */
-/*private fun List<DataPoint>.standardize(): List<Entry> {
-    val mean = map { it.y }.average().toFloat()
-    val stdDev = sqrt(map { (it.y - mean).pow(2) }.average().toFloat())
-    return map { Entry(it.x, (it.y - mean) / stdDev, it.data) }
-}*/

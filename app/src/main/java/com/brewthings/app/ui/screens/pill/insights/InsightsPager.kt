@@ -14,13 +14,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.screens.pill.GraphScreenLogger
+import com.brewthings.app.ui.screens.pill.graph.DataType
 import kotlinx.datetime.Instant
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun InsightsPager(
-    state: InsightsState,
+    dataTypes: List<DataType>,
+    insights: List<RaptPillInsights>,
     selectedIndex: Int,
     onSelect: (Int) -> Unit,
     setIsOG: (Instant, Boolean) -> Unit,
@@ -28,7 +31,7 @@ fun InsightsPager(
 ) {
     val pagerState = rememberPagerState(
         initialPage = selectedIndex,
-        pageCount = { state.insights.count() },
+        pageCount = { insights.count() },
     )
 
     LaunchedEffect(pagerState) {
@@ -48,7 +51,8 @@ fun InsightsPager(
                 .padding(8.dp),
         ) {
             InsightsCard(
-                data = state.insights[index],
+                dataTypes = dataTypes,
+                data = insights[index],
                 setIsOG = setIsOG,
                 setIsFG = setIsFG,
             )

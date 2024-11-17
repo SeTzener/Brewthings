@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -127,29 +126,25 @@ private fun ScanningScreen(
             .padding(horizontal = 16.dp),
     ) {
         item {
-            if (brews.isNotEmpty()) {
-                Text(
-                    modifier = Modifier.padding(16.dp),
-                    text = stringResource(R.string.brew_list).uppercase(),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = Typography.bodyMedium,
-                )
-            }
+            SectionTitle(title = stringResource(R.string.scanning_advanced_options))
         }
-        items(brews, key = { "Brew_" + it.og.timestamp }) { brew ->
-            BrewCard(brew = brew, isExpanded = brew == brews.first()) // TODO(Tano): Add a remember
 
-            Spacer(modifier = Modifier.height(16.dp))
+        item {
+            ScanningOptions(
+                state = state,
+                onRssiThresholdChanged = onRssiThresholdChanged,
+                toggleScan = toggleScan,
+            )
+            VerticalSpace()
+        }
+
+        if (scannedPills.isNotEmpty()) {
+            item {
+                SectionTitle(title = stringResource(R.string.scanning_results))
+            }
         }
 
         items(scannedPills, key = { "scanned_" + it.macAddress }) { pill ->
-            Text(
-                modifier = Modifier.padding(16.dp),
-                text = stringResource(R.string.scanning_results).uppercase(),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = Typography.bodyMedium,
-            )
-
             ScannedPill(
                 pill = pill,
                 isExpanded = scannedPills.size == 1,
@@ -158,16 +153,11 @@ private fun ScanningScreen(
                 savePill = savePill,
                 stopScan = stopScan,
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            VerticalSpace()
         }
 
         item {
-            Text(
-                modifier = Modifier.padding(16.dp),
-                text = stringResource(R.string.scanning_saved).uppercase(),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = Typography.bodyMedium,
-            )
+            SectionTitle(title = stringResource(R.string.scanning_saved))
         }
 
         items(savedPills, key = { "saved_" + it.macAddress }) { pill ->
@@ -177,46 +167,67 @@ private fun ScanningScreen(
                 onPillUpdate = onPillUpdate,
                 stopScan = stopScan,
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            VerticalSpace()
         }
 
         item {
-            Text(
-                modifier = Modifier.padding(16.dp),
-                text = stringResource(R.string.scanning_options).uppercase(),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = Typography.bodyMedium,
-            )
-            Card(
-                border = BorderStroke(0.dp, Color.LightGray),
-                shape = RoundedCornerShape(16.dp),
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    ExpandableCard(
-                        topContent = { TopContent() },
-                        expandedContent = {
-                            RssiThreshold(
-                                rssiThreshold = state.rssiThreshold,
-                                onRssiThresholdChanged = onRssiThresholdChanged,
-                            )
-                        },
-                    )
+            SectionTitle(title = stringResource(R.string.brew_list))
+        }
 
-                    ScanningState(
-                        scannedPillCount = state.scannedPillsCount,
-                        filteredPillsCount = state.scannedPills.size,
-                        scanning = state.scanning,
-                        onScanButtonClicked = toggleScan,
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.padding(vertical = 8.dp))
+        items(brews, key = { "Brew_" + it.og.timestamp }) { brew ->
+            BrewCard(brew = brew, isExpanded = brew == brews.first()) // TODO(Tano): Add a remember
+            VerticalSpace()
         }
     }
+}
+
+@Composable
+private fun SectionTitle(title: String) {
+    Text(
+        modifier = Modifier.padding(16.dp),
+        text = title.uppercase(),
+        color = MaterialTheme.colorScheme.onBackground,
+        style = Typography.bodyMedium,
+    )
+}
+
+@Composable
+private fun ScanningOptions(
+    state: ScanningScreenState,
+    onRssiThresholdChanged: (Int) -> Unit,
+    toggleScan: () -> Unit,
+) {
+    Card(
+        border = BorderStroke(0.dp, Color.LightGray),
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            ExpandableCard(
+                topContent = { TopContent() },
+                expandedContent = {
+                    RssiThreshold(
+                        rssiThreshold = state.rssiThreshold,
+                        onRssiThresholdChanged = onRssiThresholdChanged,
+                    )
+                },
+            )
+
+            ScanningState(
+                scannedPillCount = state.scannedPillsCount,
+                filteredPillsCount = state.scannedPills.size,
+                scanning = state.scanning,
+                onScanButtonClicked = toggleScan,
+            )
+        }
+    }
+}
+
+@Composable
+private fun VerticalSpace() {
+    Spacer(modifier = Modifier.size(16.dp))
 }
 
 @Composable

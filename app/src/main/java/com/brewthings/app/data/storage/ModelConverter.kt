@@ -33,13 +33,11 @@ fun ScannedRaptPillData.toDaoItem(): DaoRaptPillReadings = DaoRaptPillReadings(
     isFG = null,
 )
 
-fun DaoRaptPillData.toModelItem(): ModelRaptPillData = readings.toModelItem()
-
 fun DaoRaptPillReadings.toModelItem(): ModelRaptPillData = ModelRaptPillData(
     timestamp = timestamp,
     temperature = temperature,
     gravity = gravity,
-    gravityVelocity = gravityVelocity,
+    gravityVelocity = gravityVelocity?.sanitizeVelocity(),
     x = x,
     y = y,
     z = z,
@@ -47,3 +45,12 @@ fun DaoRaptPillReadings.toModelItem(): ModelRaptPillData = ModelRaptPillData(
     isOG = isOG == true,
     isFG = isFG == true,
 )
+
+fun DaoRaptPillData.toModelItem() = readings.toModelItem()
+
+fun Float.sanitizeVelocity(): Float? =
+    if (isInfinite() || isNaN() || this > 0 || this < -100) {
+        null // Invalid velocity.
+    } else {
+        -1 * this // Invert the sign, to make it more intuitive.
+    }

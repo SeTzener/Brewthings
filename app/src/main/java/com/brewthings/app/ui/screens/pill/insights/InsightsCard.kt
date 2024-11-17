@@ -15,8 +15,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,6 +29,8 @@ import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.IconAlign
 import com.brewthings.app.ui.components.TextWithIcon
+import com.brewthings.app.ui.screens.pill.graph.DataType
+import com.brewthings.app.ui.screens.pill.graph.toLineColor
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
@@ -37,6 +41,7 @@ import kotlin.math.abs
 
 @Composable
 fun InsightsCard(
+    dataTypes: List<DataType>,
     data: RaptPillInsights,
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
@@ -45,94 +50,103 @@ fun InsightsCard(
         Column(modifier = Modifier.padding(16.dp)) {
             InsightsTimeHeader(data)
 
-            InsightsRow(
-                icon = { Spacer(modifier = Modifier.size(24.dp)) },
-                label = { InsightHeader(it, R.string.graph_header_name) },
-                value = { InsightHeader(it, R.string.graph_header_value) },
-                fromPrevious = { InsightHeader(it, R.string.graph_header_from_previous) },
-                fromOG = { InsightHeader(it, R.string.graph_header_from_og) },
-            )
+            InsightsHeaderRow()
 
-            InsightsRow(
-                icon = { InsightIcon(it, R.drawable.ic_gravity) },
-                label = { InsightLabel(it, R.string.graph_data_label_gravity) },
-                value = { InsightValue(it, R.string.pill_gravity, data.gravity.value) },
-                fromPrevious = {
-                    InsightDelta(
-                        it,
-                        R.string.pill_gravity,
-                        data.gravity.deltaFromPrevious,
+            InsightsValueRow(
+                isHighlighted = dataTypes.contains(DataType.GRAVITY),
+                icon = {
+                    InsightIcon(
+                        modifier = it,
+                        iconResId = R.drawable.ic_gravity,
+                        tint = highlightIconColor(dataTypes, DataType.GRAVITY),
                     )
                 },
-                fromOG = { InsightDelta(it, R.string.pill_gravity, data.gravity.deltaFromOG) },
+                labelResId = R.string.graph_data_label_gravity,
+                valueFormatResId = R.string.pill_gravity,
+                insight = data.gravity,
             )
 
-            InsightsRow(
-                icon = { InsightIcon(it, R.drawable.ic_temperature) },
-                label = { InsightLabel(it, R.string.graph_data_label_temp_short) },
-                value = { InsightValue(it, R.string.pill_temperature, data.temperature.value) },
-                fromPrevious = {
-                    InsightDelta(
-                        it,
-                        R.string.pill_temperature,
-                        data.temperature.deltaFromPrevious,
+            InsightsValueRow(
+                isHighlighted = dataTypes.contains(DataType.TEMPERATURE),
+                icon = {
+                    InsightIcon(
+                        modifier = it,
+                        iconResId = R.drawable.ic_temperature,
+                        tint = highlightIconColor(dataTypes, DataType.TEMPERATURE),
                     )
                 },
-                fromOG = {
-                    InsightDelta(
-                        it,
-                        R.string.pill_temperature,
-                        data.temperature.deltaFromOG,
-                    )
-                },
+                labelResId = R.string.graph_data_label_temp_short,
+                valueFormatResId = R.string.pill_temperature,
+                insight = data.temperature,
             )
 
-            InsightsRow(
-                icon = { InsightIcon(it, R.drawable.ic_tilt) },
-                label = { InsightLabel(it, R.string.graph_data_label_tilt) },
-                value = { InsightValue(it, R.string.pill_tilt, data.tilt.value) },
-                fromPrevious = {
-                    InsightDelta(
-                        it,
-                        R.string.pill_tilt,
-                        data.tilt.deltaFromPrevious,
+            InsightsValueRow(
+                isHighlighted = dataTypes.contains(DataType.BATTERY),
+                icon = {
+                    BatteryLevelIndicator(
+                        batteryPercentage = data.battery.value,
+                        tint = highlightIconColor(dataTypes, DataType.BATTERY),
                     )
                 },
-                fromOG = { InsightDelta(it, R.string.pill_tilt, data.tilt.deltaFromOG) },
+                labelResId = R.string.graph_data_label_battery,
+                valueFormatResId = R.string.pill_battery,
+                insight = data.battery,
             )
 
-            InsightsRow(
-                icon = { BatteryLevelIndicator(data.battery.value) },
-                label = { InsightLabel(it, R.string.graph_data_label_battery) },
-                value = { InsightValue(it, R.string.pill_battery, data.battery.value) },
-                fromPrevious = {
-                    InsightDelta(
-                        it,
-                        R.string.pill_battery,
-                        data.battery.deltaFromPrevious,
+            InsightsValueRow(
+                isHighlighted = dataTypes.contains(DataType.TILT),
+                icon = {
+                    InsightIcon(
+                        modifier = it,
+                        iconResId = R.drawable.ic_tilt,
+                        tint = highlightIconColor(dataTypes, DataType.TILT),
                     )
                 },
-                fromOG = { InsightDelta(it, R.string.pill_battery, data.battery.deltaFromOG) },
+                labelResId = R.string.graph_data_label_tilt,
+                valueFormatResId = R.string.pill_tilt,
+                insight = data.tilt,
             )
 
-            InsightsRow(
-                icon = { InsightIcon(it, R.drawable.ic_abv) },
-                label = { InsightLabel(it, R.string.graph_data_label_abv) },
-                value = { InsightValue(it, R.string.pill_abv, data.abv?.value) },
-                fromPrevious = { InsightDelta(it, R.string.pill_abv, data.abv?.deltaFromPrevious) },
-            )
-
-            InsightsRow(
-                icon = { InsightIcon(it, R.drawable.ic_velocity) },
-                label = { InsightLabel(it, R.string.graph_data_label_velocity) },
-                value = { InsightValue(it, R.string.pill_velocity, data.calculatedVelocity?.value) },
-                fromPrevious = {
-                    InsightDelta(
-                        it,
-                        R.string.pill_velocity,
-                        data.calculatedVelocity?.deltaFromPrevious,
+            InsightsValueRow(
+                isHighlighted = dataTypes.contains(DataType.ABV),
+                icon = {
+                    InsightIcon(
+                        modifier = it,
+                        iconResId = R.drawable.ic_abv,
+                        tint = highlightIconColor(dataTypes, DataType.ABV),
                     )
                 },
+                labelResId = R.string.graph_data_label_abv,
+                valueFormatResId = R.string.pill_abv,
+                insight = data.abv,
+            )
+
+            InsightsValueRow(
+                isHighlighted = dataTypes.contains(DataType.VELOCITY_MEASURED),
+                icon = {
+                    InsightIcon(
+                        modifier = it,
+                        iconResId = R.drawable.ic_velocity,
+                        tint = highlightIconColor(dataTypes, DataType.VELOCITY_MEASURED),
+                    )
+                },
+                labelResId = R.string.graph_data_label_velocity_measured_short,
+                valueFormatResId = R.string.pill_velocity,
+                insight = data.gravityVelocity,
+            )
+
+            InsightsValueRow(
+                isHighlighted = dataTypes.contains(DataType.VELOCITY_COMPUTED),
+                icon = {
+                    InsightIcon(
+                        modifier = it,
+                        iconResId = R.drawable.ic_calculate,
+                        tint = highlightIconColor(dataTypes, DataType.VELOCITY_COMPUTED),
+                    )
+                },
+                labelResId = R.string.graph_data_label_velocity_computed_short,
+                valueFormatResId = R.string.pill_velocity,
+                insight = data.calculatedVelocity,
             )
         }
         Row(
@@ -235,6 +249,20 @@ fun InsightsRow(
 }
 
 @Composable
+fun InsightsHeaderRow(
+    modifier: Modifier = Modifier,
+) {
+    InsightsRow(
+        modifier = modifier,
+        icon = { Spacer(modifier = Modifier.size(24.dp)) },
+        label = { InsightHeader(it, R.string.graph_header_name) },
+        value = { InsightHeader(it, R.string.graph_header_value) },
+        fromPrevious = { InsightHeader(it, R.string.graph_header_from_previous) },
+        fromOG = { InsightHeader(it, R.string.graph_header_from_og) },
+    )
+}
+
+@Composable
 fun InsightHeader(
     modifier: Modifier = Modifier,
     @StringRes headerResId: Int,
@@ -250,33 +278,116 @@ fun InsightHeader(
 }
 
 @Composable
+fun InsightsValueRow(
+    modifier: Modifier = Modifier,
+    isHighlighted: Boolean,
+    icon: @Composable (Modifier) -> Unit,
+    @StringRes labelResId: Int,
+    @StringRes valueFormatResId: Int,
+    insight: Insight?,
+) {
+    InsightsRow(
+        modifier = modifier,
+        icon = icon,
+        label = {
+            InsightLabel(
+                modifier = it,
+                isHighlighted = isHighlighted,
+                labelResId = labelResId,
+            )
+        },
+        value = {
+            if (insight?.value != null) {
+                InsightValue(
+                    modifier = it,
+                    isHighlighted = isHighlighted,
+                    textResId = valueFormatResId,
+                    value = insight.value,
+                )
+            } else {
+                Spacer(it)
+            }
+        },
+        fromPrevious = {
+            if (insight?.deltaFromPrevious != null) {
+                InsightDelta(
+                    modifier = it,
+                    isHighlighted = isHighlighted,
+                    textResId = valueFormatResId,
+                    delta = insight.deltaFromPrevious,
+                )
+            } else {
+                Spacer(it)
+            }
+        },
+        fromOG = {
+            if (insight?.deltaFromOG != null) {
+                InsightDelta(
+                    modifier = it,
+                    isHighlighted = isHighlighted,
+                    textResId = valueFormatResId,
+                    delta = insight.deltaFromOG,
+                )
+            } else {
+                Spacer(it)
+            }
+        },
+    )
+}
+
+@Composable
 fun InsightIcon(
     modifier: Modifier = Modifier,
     @DrawableRes iconResId: Int,
+    tint: Color = MaterialTheme.colorScheme.primary,
 ) {
     Icon(
         modifier = modifier.size(24.dp),
         painter = painterResource(id = iconResId),
         contentDescription = null,
-        tint = MaterialTheme.colorScheme.primary,
+        tint = tint,
     )
 }
 
 @Composable
+fun TextStyle.highlight(isHighlighted: Boolean): TextStyle =
+    if (isHighlighted) copy(fontWeight = FontWeight.Bold) else this
+
+@Composable
+fun highlightColor(
+    isHighlighted: Boolean,
+    normalColor: Color = MaterialTheme.colorScheme.onSurface,
+    highlightColor: Color = MaterialTheme.colorScheme.primary,
+): Color = if (isHighlighted) highlightColor else normalColor
+
+@Composable
+fun highlightIconColor(
+    dataTypes: List<DataType>,
+    dataType: DataType,
+): Color = highlightColor(
+    isHighlighted = dataTypes.contains(dataType),
+    normalColor = MaterialTheme.colorScheme.primary,
+    highlightColor = dataType.toLineColor(),
+)
+
+@Composable
 fun InsightLabel(
     modifier: Modifier = Modifier,
+    isHighlighted: Boolean,
     @StringRes labelResId: Int,
 ) {
     Text(
         modifier = modifier,
         text = stringResource(id = labelResId),
-        style = MaterialTheme.typography.bodyMedium,
+        style = MaterialTheme.typography.bodyMedium.highlight(isHighlighted),
+        color = highlightColor(isHighlighted),
     )
 }
 
 @Composable
 fun InsightValue(
     modifier: Modifier = Modifier,
+    isHighlighted: Boolean,
     @StringRes textResId: Int,
     value: Float?,
 ) {
@@ -284,13 +395,15 @@ fun InsightValue(
         modifier = modifier,
         text = if (value != null && !value.isNaN()) stringResource(id = textResId, value) else "",
         textAlign = TextAlign.Start,
-        style = MaterialTheme.typography.bodyMedium,
+        style = MaterialTheme.typography.bodyMedium.highlight(isHighlighted),
+        color = highlightColor(isHighlighted),
     )
 }
 
 @Composable
 fun InsightDelta(
     modifier: Modifier = Modifier,
+    isHighlighted: Boolean,
     @StringRes textResId: Int,
     delta: Float?,
 ) {
@@ -307,8 +420,9 @@ fun InsightDelta(
             ""
         },
         iconPadding = 0.dp,
-        iconColor = MaterialTheme.colorScheme.onSurface,
-        textStyle = MaterialTheme.typography.bodySmall,
+        iconColor = highlightColor(isHighlighted),
+        textStyle = MaterialTheme.typography.bodySmall.highlight(isHighlighted),
+        textColor = highlightColor(isHighlighted),
         iconAlign = IconAlign.End,
         textAlign = TextAlign.Start,
     )
@@ -321,13 +435,14 @@ private fun Float.asArrowDropIcon(): Int? = when {
     else -> null
 }
 
-@Preview(apiLevel = 33) // workaround for AS Hedgehog and below
+@Preview
 @Composable
 fun InsightsCardPreview() {
     val timestamp = Instant.parse("2024-06-01T15:46:31Z")
     val timestampOG = Instant.parse("2024-05-26T00:00:00Z")
     BrewthingsTheme {
         InsightsCard(
+            dataTypes = listOf(DataType.GRAVITY),
             data = RaptPillInsights(
                 timestamp = timestamp,
                 temperature = Insight(

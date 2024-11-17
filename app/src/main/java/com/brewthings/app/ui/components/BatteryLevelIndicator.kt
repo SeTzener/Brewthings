@@ -1,19 +1,17 @@
 package com.brewthings.app.ui.components
 
-import androidx.compose.material.Icon
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import com.brewthings.app.R
-import com.brewthings.app.ui.theme.Red_Alert
 
 @Composable
 fun BatteryLevelIndicator(
     batteryPercentage: Float,
-    colorPrimary: Color = MaterialTheme.colorScheme.primary,
-    colorAlert: Color = Red_Alert,
+    tint: Color = MaterialTheme.colorScheme.primary,
 ) {
     val batteryAsset = when {
         batteryPercentage <= 0f -> R.drawable.ic_battery_0
@@ -26,11 +24,9 @@ fun BatteryLevelIndicator(
         else -> R.drawable.ic_battery_7
     }
 
-    val batteryTint = if (batteryPercentage <= 0.375f) colorAlert else colorPrimary
-
     Icon(
         imageVector = ImageVector.vectorResource(id = batteryAsset),
         contentDescription = null,
-        tint = batteryTint,
+        tint = tint,
     )
 }

@@ -18,15 +18,16 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.github.mikephil.charting.utils.Utils
 import kotlinx.datetime.Clock
 import kotlin.time.Duration.Companion.days
 
 @SuppressLint("ViewConstructor")
-class MpAndroidLineChart(
+class MpAndroidChart(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    chartData: ChartData?,
+    chartData: MpAndroidChartData?,
     selectedIndex: Int?,
     private val density: Density,
     private val textSize: TextUnit,
@@ -50,6 +51,8 @@ class MpAndroidLineChart(
     }
 
     init {
+        Utils.init(context)
+
         chartData?.also {
             updateDatasets(chartData)
             updateVisibleXRange()
@@ -74,7 +77,7 @@ class MpAndroidLineChart(
     }
 
     fun refresh(
-        chartData: ChartData?,
+        chartData: MpAndroidChartData?,
         selectedIndex: Int?,
         isDarkTheme: Boolean,
         textColor: Color,
@@ -99,8 +102,8 @@ class MpAndroidLineChart(
         invalidate()
     }
 
-    private fun updateDatasets(chartData: ChartData) {
-        data = chartData.data
+    private fun updateDatasets(chartData: MpAndroidChartData) {
+        data = chartData
     }
 
     private fun configureXAxis() {
@@ -114,8 +117,8 @@ class MpAndroidLineChart(
             setGridDashedLine(DashPathEffect(floatArrayOf(dashedLineLength, dashedLineLength), 0f))
             gridColor = Grey_Nevada.toArgb()
             setDrawAxisLine(false)
-            textColor = this@MpAndroidLineChart.textColor.toArgb()
-            textSize = this@MpAndroidLineChart.textSize.value
+            textColor = this@MpAndroidChart.textColor.toArgb()
+            textSize = this@MpAndroidChart.textSize.value
             position = XAxis.XAxisPosition.BOTTOM
             setXAxisRenderer(
                 XAxisLabelRenderer(

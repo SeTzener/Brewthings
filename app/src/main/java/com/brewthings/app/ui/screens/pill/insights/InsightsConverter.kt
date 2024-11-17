@@ -3,12 +3,10 @@ package com.brewthings.app.ui.screens.pill.insights
 import com.brewthings.app.data.domain.Insight
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.RaptPillInsights
-import com.brewthings.app.util.calculateABV
-import com.brewthings.app.util.calculateVelocity
+import com.brewthings.app.data.storage.sanitizeVelocity
 import com.brewthings.app.util.datetime.TimeRange
-import kotlin.math.abs
 
-fun List<RaptPillData>.toInsightsState(): InsightsState {
+fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
     val insights = mutableListOf<RaptPillInsights>()
     var ogData: RaptPillData? = null
     var previousData: RaptPillData? = null
@@ -30,7 +28,7 @@ fun List<RaptPillData>.toInsightsState(): InsightsState {
         previousData = data
     }
 
-    return InsightsState(insights)
+    return insights
 }
 
 private fun RaptPillData.toInsights(
@@ -55,7 +53,7 @@ private fun RaptPillData.toInsights(
     }
 
     val abv = calculateABV(ogData.gravity, pillData.gravity)
-    val velocity = calculateVelocity(ogData, pillData)?.let { abs(it) }
+    val velocity = calculateVelocity(previousData, pillData)
     return RaptPillInsights(
         timestamp = pillData.timestamp,
         temperature = Insight(
@@ -99,4 +97,19 @@ private fun RaptPillData.toInsights(
         isOG = pillData.isOG,
         isFG = pillData.isFG,
     )
+}
+
+private fun calculateABV(og: Float, fg: Float): Float {
+    if (og <= 1.0 || fg <= 1.0) return 0f
+    return (og - fg) * 131.25f
+}
+
+// This can be improved by using a more sophisticated algorithm.
+private fun calculateVelocity(previousData: RaptPillData?, fgData: RaptPillData): Float? {
+    if (previousData == null) return null
+
+    val gpDrop = (fgData.gravity - previousData.gravity) * 1000f
+    val daysBetween = (fgData.timestamp.epochSeconds - previousData.timestamp.epochSeconds).toFloat() / 86_400f
+    val velocity = gpDrop / daysBetween
+    return velocity.sanitizeVelocity()
 }
