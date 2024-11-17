@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
                     openAppDetails = ::openAppDetails,
                     showLocationSettings = ::showLocationSettings,
                     enableBluetooth = ::enableBluetooth,
-                    navController = navController
+                    navController = navController,
                 )
             }
         }
@@ -47,13 +47,14 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun openAppDetails() {
-        startActivity(Intent().apply {
-            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-            addCategory(Intent.CATEGORY_DEFAULT)
-            data = Uri.parse("package:$packageName")
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-        })
+        startActivity(
+            Intent().apply {
+                action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                addCategory(Intent.CATEGORY_DEFAULT)
+                data = Uri.parse("package:$packageName")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+            },
+        )
     }
-
 }

@@ -7,8 +7,17 @@ fun ByteArray.asHexString(prefix: String = "0x"): String = joinToString(
     separator = "",
     transform = {
         it.asHexString("")
-    }
+    },
 )
 
 fun Byte.asHexString(prefix: String = "0x"): String =
     "$prefix${String.format(Locale.ENGLISH, "%02X", this)}"
+
+inline fun <T, C : List<T>> C.onEachReverse(
+    action: (T) -> Unit,
+): C {
+    for (i in this.indices.reversed()) {
+        action(this[i])
+    }
+    return this
+}

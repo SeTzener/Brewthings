@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import com.brewthings.app.data.domain.Device
 
 @Entity(
-    indices = [Index(value = ["macAddress"], unique = true)]
+    indices = [Index(value = ["macAddress"], unique = true)],
 )
 data class RaptPill(
     @PrimaryKey(autoGenerate = true) val pillId: Long = 0,

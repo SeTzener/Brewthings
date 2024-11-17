@@ -1,0 +1,29 @@
+[
+    {
+        "og": {
+            "timestamp": "2024-09-01T00:00:00Z",
+            "temperature": 0.0,
+            "gravity": 0.0,
+            "gravityVelocity": null,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "battery": 0.0,
+            "isOG": true,
+            "isFG": false
+        },
+        "fgOrLast": {
+            "timestamp": "2024-09-02T00:00:00Z",
+            "temperature": 0.0,
+            "gravity": 0.0,
+            "gravityVelocity": null,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "battery": 0.0,
+            "isOG": false,
+            "isFG": false
+        },
+        "isCompleted": false
+    }
+]

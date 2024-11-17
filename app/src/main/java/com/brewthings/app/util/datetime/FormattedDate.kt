@@ -3,16 +3,16 @@ package com.brewthings.app.util.datetime
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.brewthings.app.R
-import kotlin.math.abs
-import kotlin.time.Duration
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
+import kotlin.math.abs
+import kotlin.time.Duration
 
 @Composable
 fun Instant.toFormattedDate(
     clock: Clock = Clock.System,
-    timeZone: TimeZone = TimeZone.currentSystemDefault()
+    timeZone: TimeZone = TimeZone.currentSystemDefault(),
 ): String {
     val now = clock.now()
     val date = this
@@ -45,13 +45,13 @@ fun Instant.toFormattedDate(
 
         // Days, hours and minutes have passed since now.
         days != 0L -> {
-            when  {
+            when {
                 isYesterday(date = date, now = now, timeZone = timeZone) -> return date.toFormatYesterday(timeZone)
 
                 daysBetweenIgnoringTime(date, now) in -1 downTo -6 -> {
                     val lastWeekday = stringResource(
                         id = R.string.formatted_date_last_weekday,
-                        date.formatDateTime("EEEE", timeZone)
+                        date.formatDateTime("EEEE", timeZone),
                     )
                     return "$lastWeekday, ${date.formatDateTime("MMM d, HH:mm", timeZone)}"
                 }
@@ -65,4 +65,4 @@ fun Instant.toFormattedDate(
 
 @Composable
 private fun Instant.toFormatYesterday(timeZone: TimeZone) =
-   "${stringResource(id = R.string.formatted_date_yesterday)}, ${formatDateTime("MMM d, HH:mm", timeZone)}"
+    "${stringResource(id = R.string.formatted_date_yesterday)}, ${formatDateTime("MMM d, HH:mm", timeZone)}"

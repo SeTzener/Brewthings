@@ -22,5 +22,5 @@ class Logger(private val tag: String) {
         throwable?.also { Firebase.crashlytics.recordException(it) }
     }
 
-    private fun composeFirebaseLog(tag: String, level: String, message: String) : String = "[$tag] $level: $message"
+    private fun composeFirebaseLog(tag: String, level: String, message: String): String = "[$tag] $level: $message"
 }

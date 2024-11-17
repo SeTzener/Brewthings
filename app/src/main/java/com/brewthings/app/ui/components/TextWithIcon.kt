@@ -40,7 +40,7 @@ fun TextWithIcon(
             Arrangement.Start
         } else {
             Arrangement.End
-        }
+        },
     ) {
         if (iconAlign == IconAlign.Start) {
             icon()
@@ -51,7 +51,7 @@ fun TextWithIcon(
             text = text,
             textAlign = textAlign,
             style = textStyle,
-            color = textColor
+            color = textColor,
         )
 
         if (iconAlign == IconAlign.End) {
@@ -88,11 +88,11 @@ fun TextWithIcon(
                     modifier = Modifier.size(iconSize),
                     painter = painterResource(id = iconResId),
                     contentDescription = null,
-                    tint = iconColor
+                    tint = iconColor,
                 )
             } else {
                 Spacer(modifier = Modifier.size(iconSize))
             }
-        }
+        },
     )
 }

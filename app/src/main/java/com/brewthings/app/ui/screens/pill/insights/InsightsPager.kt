@@ -48,7 +48,7 @@ fun InsightsPager(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(8.dp),
         ) {
             InsightsCard(
                 dataTypes = dataTypes,
@@ -63,7 +63,7 @@ fun InsightsPager(
         GraphScreenLogger.logPager(selectedIndex, animated = true)
         pagerState.animateScrollToPage(
             page = selectedIndex,
-            animationSpec = tween(500, easing = LinearEasing)
+            animationSpec = tween(500, easing = LinearEasing),
         )
     }
 }

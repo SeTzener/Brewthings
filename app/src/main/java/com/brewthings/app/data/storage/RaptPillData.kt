@@ -13,12 +13,12 @@ import androidx.room.PrimaryKey
             entity = RaptPill::class,
             parentColumns = arrayOf("pillId"),
             childColumns = arrayOf("pillId"),
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
 )
 data class RaptPillData(
     @PrimaryKey(autoGenerate = true) val dataId: Long = 0,
     val pillId: Long,
-    @Embedded val readings: RaptPillReadings
+    @Embedded val readings: RaptPillReadings,
 )

@@ -8,12 +8,33 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.spotless)
 }
 
 val appId = stringProperty("app.id")
 val semanticVersioning = stringProperty("app.versionName")
 val buildVersion = intProperty("app.buildVersion")
 val target = intProperty("app.targetSdk")
+
+spotless {
+    kotlin {
+        target("**/*.kt")
+        ktlint().editorConfigOverride(
+            mapOf(
+                "indent_style" to "space",
+                "indent_size" to "4",
+                "ktlint_standard_comment-wrapping" to "disabled",
+            ),
+        )
+    }
+
+    kotlinGradle {
+        target("*.gradle.kts")
+        ktlint()
+    }
+
+    // Add configurations for other languages as needed
+}
 
 android {
     namespace = appId
@@ -46,7 +67,6 @@ android {
         targetSdk = target
         versionCode = generateVersionCode(semanticVersioning, buildVersion)
         versionName = semanticVersioning
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -57,7 +77,7 @@ android {
             isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
         debug {
@@ -145,8 +165,18 @@ dependencies {
     ksp(libs.room.compiler)
 
     // Unit Testing
-    testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.kotest.junit5)
     testImplementation(libs.mockk)
+    testImplementation(libs.mockk.dsl)
+    testImplementation(libs.karumi)
+    testImplementation(libs.serialization.moshi)
+    testImplementation(libs.serialization.moshi.kotlin)
+}
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 fun generateVersionCode(versionName: String, buildVersion: Int): Int {

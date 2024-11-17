@@ -5,17 +5,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.brewthings.app.data.model.Brew
 import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.util.Logger
+import com.brewthings.app.util.onEachReverse
 import com.juul.kable.Bluetooth
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -65,11 +66,31 @@ class ScanningScreenViewModel : ViewModel(), KoinComponent {
     }
 
     private fun observeDatabase() {
+        val pills = mutableListOf<String>()
         repo.fromDatabase()
             .onEach { raptPills ->
                 screenState = screenState.copy(savedPills = raptPills)
+                raptPills.onEach { pill -> pills.add(pill.macAddress) }
+                observeBrews(pills)
             }
             .launchIn(viewModelScope)
+    }
+
+    private fun observeBrews(pills: List<String>) {
+        val brews = mutableListOf<List<Brew>>()
+        screenState = screenState.copy(brews = emptyList())
+        viewModelScope.launch {
+            pills.onEachReverse { pill ->
+                brews.add(
+                    repo.getBrews(pill),
+                )
+            }
+            val uniqueBrews = brews.flatten()
+                .distinctBy { it.og.timestamp to it.fgOrLast.timestamp }
+                .reversed()
+
+            screenState = screenState.copy(brews = uniqueBrews)
+        }
     }
 
     private fun observeBluetoothAvailability() {
@@ -110,7 +131,7 @@ class ScanningScreenViewModel : ViewModel(), KoinComponent {
 
         screenState = screenState.copy(
             scannedPillsCount = scannedRaptPills.size,
-            scannedPills = filteredInstruments
+            scannedPills = filteredInstruments,
         )
     }
 

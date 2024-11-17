@@ -7,7 +7,7 @@ data class RaptPillWithData(
     @Embedded val pill: RaptPill,
     @Relation(
         parentColumn = "pillId",
-        entityColumn = "pillId"
+        entityColumn = "pillId",
     )
-    val data: List<RaptPillData>
+    val data: List<RaptPillData>,
 )
