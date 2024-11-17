@@ -33,7 +33,7 @@ fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
 
 private fun RaptPillData.toInsights(
     ogData: RaptPillData?,
-    previousData: RaptPillData?
+    previousData: RaptPillData?,
 ): RaptPillInsights {
     val pillData = this
     if (ogData == null || pillData == ogData) {

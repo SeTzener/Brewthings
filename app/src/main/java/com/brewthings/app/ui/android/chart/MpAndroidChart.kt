@@ -19,8 +19,8 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.Utils
-import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Clock
+import kotlin.time.Duration.Companion.days
 
 @SuppressLint("ViewConstructor")
 class MpAndroidChart(
@@ -126,7 +126,7 @@ class MpAndroidChart(
                     viewPortHandler = viewPortHandler,
                     xAxis = this,
                     transformer = getTransformer(YAxis.AxisDependency.LEFT),
-                )
+                ),
             )
         }
     }

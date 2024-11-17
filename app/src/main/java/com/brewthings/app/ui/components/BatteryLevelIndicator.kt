@@ -11,8 +11,8 @@ import com.brewthings.app.R
 @Composable
 fun BatteryLevelIndicator(
     batteryPercentage: Float,
-    tint : Color = MaterialTheme.colorScheme.primary
-    ) {
+    tint: Color = MaterialTheme.colorScheme.primary,
+) {
     val batteryAsset = when {
         batteryPercentage <= 0f -> R.drawable.ic_battery_0
         batteryPercentage <= 0.125f -> R.drawable.ic_battery_1

@@ -7,13 +7,13 @@ import com.brewthings.app.ui.android.chart.InvisibleDataSet
 import com.brewthings.app.ui.android.chart.MpAndroidChartData
 import com.brewthings.app.ui.android.chart.VisibleDataSet
 import com.brewthings.app.ui.screens.pill.toLabel
+import com.brewthings.app.ui.theme.Coral
 import com.brewthings.app.ui.theme.DarkTurquoise
 import com.brewthings.app.ui.theme.Gold
 import com.brewthings.app.ui.theme.LimeGreen
 import com.brewthings.app.ui.theme.MediumPurple
-import com.brewthings.app.ui.theme.Coral
-import com.brewthings.app.ui.theme.SteelBlue
 import com.brewthings.app.ui.theme.RedAlert
+import com.brewthings.app.ui.theme.SteelBlue
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
@@ -21,7 +21,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 fun List<GraphSeries>.toChartData(): MpAndroidChartData = MpAndroidChartData(
     map {
         it.toChartDataSet()
-    }.flatten()
+    }.flatten(),
 )
 
 @Composable
@@ -41,7 +41,7 @@ private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
         if (currentValidData.isNotEmpty()) {
             val color = lineColor.takeIf { startedWithOG } ?: lineColor.copy(alpha = 0.2f)
             chartDataSets.add(
-                VisibleDataSet(currentValidData, label, color.toArgb(), formatPattern)
+                VisibleDataSet(currentValidData, label, color.toArgb(), formatPattern),
             )
             currentValidData = mutableListOf()
         }
@@ -51,7 +51,7 @@ private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
     fun finalizeInvalidSequence() {
         if (currentInvalidData.isNotEmpty()) {
             chartDataSets.add(
-                InvisibleDataSet(currentInvalidData, label)
+                InvisibleDataSet(currentInvalidData, label),
             )
             currentInvalidData = mutableListOf()
         }
@@ -118,5 +118,6 @@ private fun DataType.toFormatPattern(): String = when (this) {
     DataType.TILT,
     DataType.ABV,
     DataType.VELOCITY_MEASURED,
-    DataType.VELOCITY_COMPUTED -> "#.#"
+    DataType.VELOCITY_COMPUTED,
+    -> "#.#"
 }

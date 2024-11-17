@@ -86,7 +86,7 @@ class GraphScreenViewModel(
         GraphScreenState(
             title = name ?: macAddress,
             dataTypes = DataType.entries,
-            selectedDataTypes = listOf(DataType.GRAVITY)
+            selectedDataTypes = listOf(DataType.GRAVITY),
         )
 
     private fun loadData() {

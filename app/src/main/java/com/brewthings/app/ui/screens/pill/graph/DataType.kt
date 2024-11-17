@@ -7,5 +7,5 @@ enum class DataType {
     TILT,
     ABV,
     VELOCITY_MEASURED,
-    VELOCITY_COMPUTED
+    VELOCITY_COMPUTED,
 }

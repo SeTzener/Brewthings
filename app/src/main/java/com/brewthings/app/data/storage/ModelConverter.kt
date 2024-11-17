@@ -1,6 +1,5 @@
 package com.brewthings.app.data.storage
 
-
 fun com.brewthings.app.data.model.RaptPill.toDataItem() = RaptPill(
     macAddress = macAddress,
     name = name,

@@ -51,8 +51,8 @@ fun Graph(
                 selectedIndex = selectedIndex,
                 isDarkTheme = isDarkTheme,
                 textColor = textColor,
-                primaryColor = primaryColor
+                primaryColor = primaryColor,
             )
-        }
+        },
     )
 }

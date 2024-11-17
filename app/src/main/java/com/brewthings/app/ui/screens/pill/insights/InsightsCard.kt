@@ -36,8 +36,8 @@ import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toFormattedDate
-import kotlin.math.abs
 import kotlinx.datetime.Instant
+import kotlin.math.abs
 
 @Composable
 fun InsightsCard(
@@ -150,7 +150,7 @@ fun InsightsCard(
             )
         }
         Row(
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 8.dp),
         ) {
             TextButton(
                 modifier = Modifier.padding(start = 7.dp),
@@ -161,7 +161,7 @@ fun InsightsCard(
                         stringResource(id = R.string.unset_OG)
                     } else {
                         stringResource(
-                            id = R.string.set_OG
+                            id = R.string.set_OG,
                         )
                     },
                     style = Typography.bodyMedium,
@@ -170,14 +170,14 @@ fun InsightsCard(
 
             TextButton(
                 modifier = Modifier.padding(start = 4.dp),
-                onClick = { setIsFG(data.timestamp, !data.isFG) }
+                onClick = { setIsFG(data.timestamp, !data.isFG) },
             ) {
                 Text(
                     text = if (data.isFG) {
                         stringResource(id = R.string.unset_FG)
                     } else {
                         stringResource(
-                            id = R.string.set_FG
+                            id = R.string.set_FG,
                         )
                     },
                     style = Typography.bodyMedium,
@@ -205,14 +205,14 @@ fun InsightsTimeHeader(data: RaptPillInsights) {
                 text = when {
                     data.isFG && data.durationSinceOG != null -> stringResource(
                         id = R.string.graph_data_duration_fg_since_og,
-                        data.durationSinceOG.format()
+                        data.durationSinceOG.format(),
                     )
 
                     data.isOG -> stringResource(id = R.string.graph_data_duration_og)
 
                     data.durationSinceOG != null -> stringResource(
                         id = R.string.graph_data_duration_since_og,
-                        data.durationSinceOG.format()
+                        data.durationSinceOG.format(),
                     )
 
                     else -> ""
@@ -272,7 +272,7 @@ fun InsightHeader(
         text = stringResource(id = headerResId),
         textAlign = TextAlign.Start,
         style = MaterialTheme.typography.bodyMedium.copy(
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         ),
     )
 }
@@ -411,10 +411,14 @@ fun InsightDelta(
         modifier = modifier,
         iconResId = delta?.asArrowDropIcon(),
         iconSize = 16.dp,
-        text = if (delta != null && !delta.isNaN()) stringResource(
-            id = textResId,
-            abs(delta)
-        ) else "",
+        text = if (delta != null && !delta.isNaN()) {
+            stringResource(
+                id = textResId,
+                abs(delta),
+            )
+        } else {
+            ""
+        },
         iconPadding = 0.dp,
         iconColor = highlightColor(isHighlighted),
         textStyle = MaterialTheme.typography.bodySmall.highlight(isHighlighted),

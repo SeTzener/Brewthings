@@ -13,7 +13,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
  * is added before any visible datasets.
  */
 class MpAndroidChartData(
-    dataSets: List<ILineDataSet>
+    dataSets: List<ILineDataSet>,
 ) : LineData(
-    dataSets.sortedBy { it !is InvisibleDataSet }
+    dataSets.sortedBy { it !is InvisibleDataSet },
 )

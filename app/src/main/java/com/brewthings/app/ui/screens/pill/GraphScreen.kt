@@ -90,7 +90,7 @@ fun GraphScreen(
             GraphTopBar(
                 scrollBehavior = scrollBehavior,
                 title = screenState.title,
-                onBackClick = onBackClick
+                onBackClick = onBackClick,
             )
         },
     ) { paddingValues ->
@@ -120,7 +120,7 @@ fun GraphScreen(
                     Graph(
                         series = graphSeries,
                         selectedIndex = selectedDataIndex,
-                        onSelect = onGraphSelect
+                        onSelect = onGraphSelect,
                     )
                 }
             }
@@ -147,13 +147,13 @@ fun GraphScreen(
 fun GraphTopBar(
     scrollBehavior: TopAppBarScrollBehavior,
     title: String,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     TopAppBar(
         title = {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
             )
         },
         navigationIcon = {
@@ -180,20 +180,20 @@ fun DataTypeSelector(
         OutlinedButton(
             modifier = Modifier.wrapContentSize(),
             contentPadding = PaddingValues(start = 16.dp, end = 8.dp),
-            onClick = { expanded = !expanded }
+            onClick = { expanded = !expanded },
         ) {
             Text(text = stringResource(id = R.string.graph_data_label_data_types))
 
             Icon(
                 modifier = Modifier.padding(start = 4.dp),
                 imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = null
+                contentDescription = null,
             )
         }
 
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             // Each DropdownMenuItem represents an option in the dropdown
             options.forEach { option ->
@@ -204,22 +204,21 @@ fun DataTypeSelector(
                     text = {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             Checkbox(
                                 checked = option in selectedDataTypes,
-                                onCheckedChange = null
+                                onCheckedChange = null,
                             )
                             Spacer(modifier = Modifier.width(16.dp))
                             Text(text = option.toLabel())
                         }
-                    }
+                    },
                 )
             }
         }
     }
 }
-
 
 @Composable
 fun DataType.toLabel(): String = when (this) {
