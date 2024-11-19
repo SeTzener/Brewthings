@@ -82,10 +82,10 @@ class GraphScreenViewModel(
         }
     }
 
-    fun setFeeding(timestamp: Instant, newGravity: Float, isFeeding: Boolean?) {
+    fun setFeeding(timestamp: Instant, isFeeding: Boolean?) {
         viewModelScope.launch {
             if (isFeeding != null) {
-                repo.setFeeding(macAddress = macAddress, timestamp = timestamp, newGravity = newGravity, isFeeding = isFeeding)
+                repo.setFeeding(macAddress = macAddress, timestamp = timestamp, isFeeding = isFeeding)
             }
         }
     }

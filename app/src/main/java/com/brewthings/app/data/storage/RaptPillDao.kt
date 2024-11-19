@@ -86,11 +86,11 @@ interface RaptPillDao {
     }
 
     @Transaction
-    suspend fun setFeeding(macAddress: String, timestamp: Instant, newGravity: Float, isFeeding: Boolean?) {
+    suspend fun setFeeding(macAddress: String, timestamp: Instant, isFeeding: Boolean?) {
         val data = getPillData(macAddress, timestamp)
         insertData(
             data.copy(
-                readings = data.readings.copy(gravity = newGravity, isFeeding = isFeeding),
+                readings = data.readings.copy(isFeeding = isFeeding),
             ),
         )
     }

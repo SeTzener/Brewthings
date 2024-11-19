@@ -28,7 +28,7 @@ fun InsightsPager(
     onSelect: (Int) -> Unit,
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
-    setFeeding: (Instant, Float, Boolean) -> Unit,
+    setFeeding: (Instant, Boolean) -> Unit,
 ) {
     val pagerState = rememberPagerState(
         initialPage = selectedIndex,

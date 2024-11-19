@@ -45,7 +45,7 @@ fun InsightsCard(
     data: RaptPillInsights,
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
-    setFeeding: (Instant, Float, Boolean) -> Unit,
+    setFeeding: (Instant, Boolean) -> Unit,
 ) {
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -171,7 +171,7 @@ fun InsightsCard(
             if (true /* data.gravity > previousGravity */ || data.isFeeding) {
                 TextButton(
                     modifier = Modifier.padding(start = 4.dp),
-                    onClick = { setFeeding(data.timestamp, /* TBD */ 0.0F, !data.isFeeding) },
+                    onClick = { setFeeding(data.timestamp, !data.isFeeding) },
                 ) {
                     Text(
                         text = if (false/*data.isFeeding*/) {
@@ -497,7 +497,7 @@ fun InsightsCardPreview() {
             ),
             setIsOG = { _, _ -> },
             setIsFG = { _, _ -> },
-            setFeeding = { _, _, _ -> },
+            setFeeding = { _, _ -> },
         )
     }
 }
