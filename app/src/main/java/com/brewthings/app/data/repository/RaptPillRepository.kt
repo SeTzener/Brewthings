@@ -127,4 +127,13 @@ class RaptPillRepository(
         dao.observeData(macAddress).map { data ->
             data.map { it.toModelItem() }
         }
+
+    suspend fun setFeeding(macAddress: String, timestamp: Instant, newGravity: Float, isFeeding: Boolean) {
+        dao.setFeeding(
+            macAddress = macAddress,
+            timestamp = timestamp,
+            newGravity = newGravity,
+            isFeeding = isFeeding,
+        )
+    }
 }

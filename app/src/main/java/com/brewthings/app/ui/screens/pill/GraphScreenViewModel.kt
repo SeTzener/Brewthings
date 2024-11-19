@@ -82,6 +82,14 @@ class GraphScreenViewModel(
         }
     }
 
+    fun setFeeding(timestamp: Instant, newGravity: Float, isFeeding: Boolean?) {
+        viewModelScope.launch {
+            if (isFeeding != null) {
+                repo.setFeeding(macAddress = macAddress, timestamp = timestamp, newGravity = newGravity, isFeeding = isFeeding)
+            }
+        }
+    }
+
     private fun createInitialState(name: String?, macAddress: String): GraphScreenState =
         GraphScreenState(
             title = name ?: macAddress,

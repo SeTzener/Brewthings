@@ -63,6 +63,7 @@ fun GraphScreen(
         viewModel::onPagerSelect,
         viewModel::setIsOG,
         viewModel::setIsFG,
+        viewModel::setFeeding,
     )
 }
 
@@ -76,6 +77,7 @@ fun GraphScreen(
     onPagerSelect: (Int) -> Unit,
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
+    setFeeding: (Instant, Float, Boolean) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -136,6 +138,7 @@ fun GraphScreen(
                         onSelect = onPagerSelect,
                         setIsOG = setIsOG,
                         setIsFG = setIsFG,
+                        setFeeding = setFeeding,
                     )
                 }
             }
