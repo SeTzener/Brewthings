@@ -17,4 +17,5 @@ data class RaptPillData(
     override val battery: Float,
     override val isOG: Boolean,
     override val isFG: Boolean,
+    override val isFeeding: Boolean,
 ) : SensorWithTiltReadings, BrewStage

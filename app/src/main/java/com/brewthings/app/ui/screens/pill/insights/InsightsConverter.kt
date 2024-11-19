@@ -46,6 +46,7 @@ private fun RaptPillData.toInsights(
             tilt = Insight(value = pillData.tilt),
             isOG = pillData.isOG,
             isFG = pillData.isFG,
+            isFeeding = pillData.isFeeding,
             durationSinceOG = null,
             calculatedVelocity = null,
             abv = null,
@@ -96,6 +97,7 @@ private fun RaptPillData.toInsights(
         durationSinceOG = TimeRange(ogData.timestamp, pillData.timestamp),
         isOG = pillData.isOG,
         isFG = pillData.isFG,
+        isFeeding = pillData.isFeeding
     )
 }
 

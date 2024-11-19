@@ -737,6 +737,7 @@ fun PillPreview() {
                         battery = 100f,
                         isOG = false,
                         isFG = false,
+                        isFeeding = true,
                     ),
                 ),
             ),
