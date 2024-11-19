@@ -10,7 +10,7 @@ import com.brewthings.app.R
 import com.brewthings.app.data.utils.ReadScript
 import com.brewthings.app.util.Logger
 
-@Database(entities = [RaptPill::class, RaptPillData::class], version = 3)
+@Database(entities = [RaptPill::class, RaptPillData::class], version = 2)
 @androidx.room.TypeConverters(TypeConverter::class)
 abstract class RaptPillDatabase : RoomDatabase() {
     abstract fun raptPillDao(): RaptPillDao
@@ -25,13 +25,8 @@ abstract class RaptPillDatabase : RoomDatabase() {
                 // Adding new columns to the RaptPillReadings table
                 db.execSQL("ALTER TABLE RaptPillData ADD COLUMN isOG INTEGER")
                 db.execSQL("ALTER TABLE RaptPillData ADD COLUMN isFG INTEGER")
-            }
-        }
-
-        private val MIGRATION_2_3 = object : Migration(2, 3) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                // Adding new columns to the RaptPillReadings table
                 db.execSQL("ALTER TABLE RaptPillData ADD COLUMN gravityVelocity REAL")
+                db.execSQL("ALTER TABLE RaptPillData ADD COLUMN isFeeding INTEGER")
             }
         }
 
@@ -42,7 +37,6 @@ abstract class RaptPillDatabase : RoomDatabase() {
                 DATABASE_NAME,
             ).addMigrations(
                 MIGRATION_1_2,
-                MIGRATION_2_3,
             ).addCallback(object : Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
