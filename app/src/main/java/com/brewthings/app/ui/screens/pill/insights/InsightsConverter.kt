@@ -97,7 +97,7 @@ private fun RaptPillData.toInsights(
         durationSinceOG = TimeRange(ogData.timestamp, pillData.timestamp),
         isOG = pillData.isOG,
         isFG = pillData.isFG,
-        isFeeding = pillData.isFeeding
+        isFeeding = pillData.isFeeding,
     )
 }
 

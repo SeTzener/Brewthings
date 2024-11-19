@@ -493,7 +493,7 @@ fun InsightsCardPreview() {
                 durationSinceOG = TimeRange(timestampOG, timestamp),
                 isOG = false,
                 isFG = false,
-                isFeeding = true
+                isFeeding = true,
             ),
             setIsOG = { _, _ -> },
             setIsFG = { _, _ -> },

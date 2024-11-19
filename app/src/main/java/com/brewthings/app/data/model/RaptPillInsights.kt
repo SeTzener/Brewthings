@@ -21,5 +21,5 @@ data class RaptPillInsights(
     override val durationSinceOG: TimeRange?,
     override val isOG: Boolean,
     override val isFG: Boolean,
-    override val isFeeding: Boolean
+    override val isFeeding: Boolean,
 ) : SensorInsights, BrewInsights, BrewStage
