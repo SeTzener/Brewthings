@@ -12,13 +12,14 @@ fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
     var ogData: RaptPillData? = null
     var previousData: RaptPillData? = null
     var feeding = 0.0f
+    var previousFeeding = feeding
 
     for (data in this) {
         if (data.isFeeding) {
             feeding += calculateFeeding(previousData?.gravity, data.gravity)
         }
         // Add the insights for the current data point.
-        insights.add(data.toInsights(ogData = ogData, previousData = previousData, feeding = feeding))
+        insights.add(data.toInsights(ogData = ogData, previousData = previousData, feeding = feeding, previousFeeding = previousFeeding))
 
         if (data.isFG) {
             // Invalidate the OG data for the next data point.
@@ -31,6 +32,7 @@ fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
         }
 
         previousData = data
+        previousFeeding = feeding
     }
 
     return insights
@@ -39,7 +41,8 @@ fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
 private fun RaptPillData.toInsights(
     ogData: RaptPillData?,
     previousData: RaptPillData?,
-    feeding: Float
+    feeding: Float,
+    previousFeeding: Float,
 ): RaptPillInsights {
     val pillData = this
     if (ogData == null || pillData == ogData) {
@@ -85,7 +88,7 @@ private fun RaptPillData.toInsights(
         ),
         abv = Insight(
             value = abv,
-            deltaFromPrevious = previousData?.let { abv - calculateABV(ogData.gravity, it.gravity) },
+            deltaFromPrevious = previousData?.let { abv - calculateABV(ogData.gravity, it.gravity.minus(previousFeeding)) },
         ),
         gravityVelocity = pillData.gravityVelocity?.let { value ->
             Insight(
