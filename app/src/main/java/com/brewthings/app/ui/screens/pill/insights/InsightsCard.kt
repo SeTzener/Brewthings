@@ -168,13 +168,14 @@ fun InsightsCard(
                     style = Typography.bodyMedium,
                 )
             }
+            //TODO(Tano): Fix this
             if (true /* data.gravity > previousGravity */ || data.isFeeding) {
                 TextButton(
                     modifier = Modifier.padding(start = 4.dp),
                     onClick = { setFeeding(data.timestamp, !data.isFeeding) },
                 ) {
                     Text(
-                        text = if (false/*data.isFeeding*/) {
+                        text = if (data.isFeeding) {
                             stringResource(id = R.string.unfeeding)
                         } else {
                             stringResource(id = R.string.feeding)

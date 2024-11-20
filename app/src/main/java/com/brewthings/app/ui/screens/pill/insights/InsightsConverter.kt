@@ -10,10 +10,14 @@ fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
     val insights = mutableListOf<RaptPillInsights>()
     var ogData: RaptPillData? = null
     var previousData: RaptPillData? = null
+    var feeding = 0.0f
 
     for (data in this) {
+        if (data.isFeeding) {
+            feeding += calculateFeeding(previousData?.gravity, data.gravity)
+        }
         // Add the insights for the current data point.
-        insights.add(data.toInsights(ogData = ogData, previousData = previousData))
+        insights.add(data.toInsights(ogData = ogData, previousData = previousData, feeding = feeding))
 
         if (data.isFG) {
             // Invalidate the OG data for the next data point.
@@ -34,6 +38,7 @@ fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
 private fun RaptPillData.toInsights(
     ogData: RaptPillData?,
     previousData: RaptPillData?,
+    feeding: Float
 ): RaptPillInsights {
     val pillData = this
     if (ogData == null || pillData == ogData) {
@@ -53,7 +58,7 @@ private fun RaptPillData.toInsights(
         )
     }
 
-    val abv = calculateABV(ogData.gravity, pillData.gravity)
+    val abv = calculateABV(ogData.gravity, pillData.gravity.minus(feeding))
     val velocity = calculateVelocity(previousData, pillData)
     return RaptPillInsights(
         timestamp = pillData.timestamp,
@@ -79,7 +84,7 @@ private fun RaptPillData.toInsights(
         ),
         abv = Insight(
             value = abv,
-            deltaFromPrevious = previousData?.let { abv - calculateABV(ogData.gravity, it.gravity) },
+            deltaFromPrevious = previousData?.let { abv - calculateABV(ogData.gravity, it.gravity.minus(feeding)) },
         ),
         gravityVelocity = pillData.gravityVelocity?.let { value ->
             Insight(
@@ -99,6 +104,13 @@ private fun RaptPillData.toInsights(
         isFG = pillData.isFG,
         isFeeding = pillData.isFeeding,
     )
+}
+
+private fun calculateFeeding(previousGravity: Float?, actualGravity: Float): Float {
+    if (previousGravity == null) {
+        return 0.0f
+    }
+    return actualGravity.minus(previousGravity)
 }
 
 private fun calculateABV(og: Float, fg: Float): Float {
