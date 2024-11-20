@@ -58,7 +58,7 @@ private fun RaptPillData.toInsights(
         )
     }
 
-    val abv = calculateABV(ogData.gravity, pillData.gravity.minus(feeding))
+    val abv = calculateABV(ogData.gravity.plus(feeding), pillData.gravity)
     val velocity = calculateVelocity(previousData, pillData)
     return RaptPillInsights(
         timestamp = pillData.timestamp,
@@ -84,7 +84,7 @@ private fun RaptPillData.toInsights(
         ),
         abv = Insight(
             value = abv,
-            deltaFromPrevious = previousData?.let { abv - calculateABV(ogData.gravity, it.gravity.minus(feeding)) },
+            deltaFromPrevious = previousData?.let { abv - calculateABV(ogData.gravity.plus(feeding), it.gravity) },
         ),
         gravityVelocity = pillData.gravityVelocity?.let { value ->
             Insight(
