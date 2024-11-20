@@ -5,6 +5,7 @@ import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.data.storage.sanitizeVelocity
 import com.brewthings.app.util.datetime.TimeRange
+import kotlin.math.absoluteValue
 
 fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
     val insights = mutableListOf<RaptPillInsights>()
@@ -58,7 +59,7 @@ private fun RaptPillData.toInsights(
         )
     }
 
-    val abv = calculateABV(ogData.gravity.plus(feeding), pillData.gravity)
+    val abv = calculateABV(ogData.gravity, pillData.gravity.minus(feeding))
     val velocity = calculateVelocity(previousData, pillData)
     return RaptPillInsights(
         timestamp = pillData.timestamp,
@@ -84,7 +85,7 @@ private fun RaptPillData.toInsights(
         ),
         abv = Insight(
             value = abv,
-            deltaFromPrevious = previousData?.let { abv - calculateABV(ogData.gravity.plus(feeding), it.gravity) },
+            deltaFromPrevious = previousData?.let { abv - calculateABV(ogData.gravity, it.gravity) },
         ),
         gravityVelocity = pillData.gravityVelocity?.let { value ->
             Insight(
@@ -110,7 +111,7 @@ private fun calculateFeeding(previousGravity: Float?, actualGravity: Float): Flo
     if (previousGravity == null) {
         return 0.0f
     }
-    return actualGravity.minus(previousGravity)
+    return previousGravity.minus(actualGravity).absoluteValue
 }
 
 private fun calculateABV(og: Float, fg: Float): Float {
