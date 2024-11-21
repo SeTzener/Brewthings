@@ -114,7 +114,7 @@ private fun calculateFeeding(previousGravity: Float?, actualGravity: Float): Flo
     if (previousGravity == null) {
         return 0.0f
     }
-    return previousGravity.minus(actualGravity).absoluteValue
+    return actualGravity.minus(previousGravity)
 }
 
 private fun calculateABV(og: Float, fg: Float): Float {

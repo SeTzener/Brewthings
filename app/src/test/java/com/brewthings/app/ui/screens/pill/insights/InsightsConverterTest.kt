@@ -34,7 +34,15 @@ class InsightsConverterTest {
                 RaptPillData(
                     timestamp = Instant.parse("2024-09-0${i}T00:00:00Z"),
                     temperature = 20f,
-                    gravity = gravity,
+                    gravity = when(feedings) {
+                        Feedings.NO_FEEDING -> gravity
+                        Feedings.JUST_ONCE -> if(i % 5 == 0) {gravity + 0.020f} else { gravity }
+                        Feedings.TWICE -> when(i) {
+                            4 -> gravity + 0.020f
+                            8 -> gravity + 0.040f
+                            else -> gravity
+                        }
+                    },
                     battery = 100.0f,
                     gravityVelocity = 1f,
                     x = 100f,
