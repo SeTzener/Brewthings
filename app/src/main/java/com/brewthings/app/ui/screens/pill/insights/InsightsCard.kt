@@ -43,6 +43,7 @@ import kotlin.math.abs
 fun InsightsCard(
     dataTypes: List<DataType>,
     data: RaptPillInsights,
+    feedings: List<Instant>,
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
     setFeeding: (Instant, Boolean) -> Unit,
@@ -168,21 +169,26 @@ fun InsightsCard(
                     style = Typography.bodyMedium,
                 )
             }
-            //TODO(Tano): Fix this
-            if (true /* data.gravity > previousGravity */ || data.isFeeding) {
-                TextButton(
-                    modifier = Modifier.padding(start = 4.dp),
-                    onClick = { setFeeding(data.timestamp, !data.isFeeding) },
-                ) {
-                    Text(
-                        text = if (data.isFeeding) {
+            TextButton(
+                modifier = Modifier.padding(start = 4.dp),
+                onClick = { setFeeding(data.timestamp, !data.isFeeding) },
+            ) {
+                Text(
+                    text = if (feedings.contains(data.timestamp)) {
+                        if (data.isFeeding) {
                             stringResource(id = R.string.unfeeding)
                         } else {
                             stringResource(id = R.string.feeding)
-                        },
-                        style = Typography.bodyMedium,
-                    )
-                }
+                        }
+                    } else {
+                        if (data.isFeeding) {
+                            stringResource(id = R.string.undiluting)
+                        } else {
+                            stringResource(id = R.string.diluting)
+                        }
+                    },
+                    style = Typography.bodyMedium,
+                )
             }
             TextButton(
                 modifier = Modifier.padding(start = 4.dp),
@@ -496,6 +502,7 @@ fun InsightsCardPreview() {
                 isFG = false,
                 isFeeding = true,
             ),
+            feedings = emptyList(),
             setIsOG = { _, _ -> },
             setIsFG = { _, _ -> },
             setFeeding = { _, _ -> },

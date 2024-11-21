@@ -90,6 +90,12 @@ class GraphScreenViewModel(
         }
     }
 
+    private fun getFeedings() {
+        viewModelScope.launch {
+            screenState = screenState.copy(feedings = repo.getFeedings(macAddress))
+        }
+    }
+
     private fun createInitialState(name: String?, macAddress: String): GraphScreenState =
         GraphScreenState(
             title = name ?: macAddress,
@@ -104,7 +110,6 @@ class GraphScreenViewModel(
                     val defaultIndex = pillData.lastIndex
                     val insights = pillData.toInsights()
                     dataPointsMap.clear()
-
                     screenState = screenState.copy(
                         selectedDataIndex = screenState.selectedDataIndex ?: defaultIndex,
                         insights = insights,
@@ -112,6 +117,7 @@ class GraphScreenViewModel(
                             dataTypes = screenState.selectedDataTypes,
                             insights = insights,
                         ),
+                        feedings = repo.getFeedings(macAddress)
                     )
                 }
         }

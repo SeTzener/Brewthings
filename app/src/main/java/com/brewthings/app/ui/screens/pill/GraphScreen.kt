@@ -83,6 +83,7 @@ fun GraphScreen(
 
     val graphSeries = screenState.graphSeries
     val insights = screenState.insights
+    val feedings = screenState.feedings
     val selectedDataTypes = screenState.selectedDataTypes
     val selectedDataIndex = screenState.selectedDataIndex
 
@@ -134,6 +135,7 @@ fun GraphScreen(
                     InsightsPager(
                         dataTypes = selectedDataTypes,
                         insights = insights,
+                        feedings = feedings,
                         selectedIndex = selectedDataIndex,
                         onSelect = onPagerSelect,
                         setIsOG = setIsOG,

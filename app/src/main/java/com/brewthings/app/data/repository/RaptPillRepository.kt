@@ -11,7 +11,9 @@ import com.brewthings.app.data.storage.toDaoItem
 import com.brewthings.app.data.storage.toModelItem
 import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder.Graph.macAddress
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 
@@ -62,7 +64,13 @@ class RaptPillRepository(
                         currentOg = measurement.toModelItem()
                     } else {
                         // Add an incomplete Brew if an OG is followed by another OG
-                        brews.add(Brew(og = currentOg, fgOrLast = lastFg ?: measurement.toModelItem(), isCompleted = false))
+                        brews.add(
+                            Brew(
+                                og = currentOg,
+                                fgOrLast = lastFg ?: measurement.toModelItem(),
+                                isCompleted = false
+                            )
+                        )
                         // Update currentOg to the latest OG
                         currentOg = measurement.toModelItem()
                         lastFg = null
@@ -72,17 +80,35 @@ class RaptPillRepository(
                 measurement.readings.isFG == true -> {
                     if (currentOg != null) {
                         // Complete the Brew when FG follows OG
-                        brews.add(Brew(og = currentOg, fgOrLast = measurement.toModelItem(), isCompleted = true))
+                        brews.add(
+                            Brew(
+                                og = currentOg,
+                                fgOrLast = measurement.toModelItem(),
+                                isCompleted = true
+                            )
+                        )
                         lastFg = measurement.toModelItem() // Update lastFg to the current FG
                         currentOg = null // Reset currentOg after completion
                     } else if (lastFg != null) {
                         // Create incomplete Brew if FG appears consecutively
-                        brews.add(Brew(og = lastFg!!, fgOrLast = measurement.toModelItem(), isCompleted = false))
+                        brews.add(
+                            Brew(
+                                og = lastFg!!,
+                                fgOrLast = measurement.toModelItem(),
+                                isCompleted = false
+                            )
+                        )
                         lastFg = measurement.toModelItem() // Update lastFg to the current FG
                     } else {
                         // Create incomplete Brew if FG appears without a preceding OG
                         val firstMeasurement = dao.getFirstMeasurement(macAddress).first()
-                        brews.add(Brew(og = firstMeasurement.toModelItem(), fgOrLast = measurement.toModelItem(), isCompleted = false))
+                        brews.add(
+                            Brew(
+                                og = firstMeasurement.toModelItem(),
+                                fgOrLast = measurement.toModelItem(),
+                                isCompleted = false
+                            )
+                        )
                         lastFg = measurement.toModelItem() // Update lastFg to the current FG
                     }
                 }
@@ -91,10 +117,25 @@ class RaptPillRepository(
 
         // If there's an uncompleted OG, pair it with the last measurement
         if (currentOg != null) {
-            brews.add(Brew(og = currentOg, fgOrLast = lastMeasurement.toModelItem(), isCompleted = false))
+            brews.add(
+                Brew(
+                    og = currentOg,
+                    fgOrLast = lastMeasurement.toModelItem(),
+                    isCompleted = false
+                )
+            )
         }
 
         return brews
+    }
+
+    suspend fun getFeedings(macAddress: String): List<Instant> {
+        val data = dao.observeData(macAddress).first()
+
+        return data.filterIndexed { index, item ->
+            if (index == 0) false
+            else item.readings.gravity > data[index - 1].readings.gravity
+        }.map { it.readings.timestamp }
     }
 
     suspend fun save(scannedRaptPill: ScannedRaptPill) {
