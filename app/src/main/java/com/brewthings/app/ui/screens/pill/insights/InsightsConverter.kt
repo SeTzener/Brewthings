@@ -5,7 +5,6 @@ import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.data.storage.sanitizeVelocity
 import com.brewthings.app.util.datetime.TimeRange
-import kotlin.math.absoluteValue
 
 fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
     val insights = mutableListOf<RaptPillInsights>()

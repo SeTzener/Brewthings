@@ -58,7 +58,7 @@ fun InsightsPager(
                 setIsOG = setIsOG,
                 setIsFG = setIsFG,
                 setFeeding = setFeeding,
-                feedings = feedings
+                feedings = feedings,
             )
         }
     }

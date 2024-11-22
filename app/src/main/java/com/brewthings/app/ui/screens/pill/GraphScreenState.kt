@@ -15,5 +15,5 @@ data class GraphScreenState(
     // Data state
     val graphSeries: List<GraphSeries>? = null,
     val insights: List<RaptPillInsights>? = null,
-    val feedings: List<Instant> = emptyList()
+    val feedings: List<Instant> = emptyList(),
 )

@@ -90,12 +90,6 @@ class GraphScreenViewModel(
         }
     }
 
-    private fun getFeedings() {
-        viewModelScope.launch {
-            screenState = screenState.copy(feedings = repo.getFeedings(macAddress))
-        }
-    }
-
     private fun createInitialState(name: String?, macAddress: String): GraphScreenState =
         GraphScreenState(
             title = name ?: macAddress,
@@ -117,12 +111,11 @@ class GraphScreenViewModel(
                             dataTypes = screenState.selectedDataTypes,
                             insights = insights,
                         ),
-                        feedings = repo.getFeedings(macAddress)
+                        feedings = repo.getFeedingsTimestamp(macAddress),
                     )
                 }
         }
     }
-
     private fun updateGraphSeries(
         dataTypes: List<DataType>,
         insights: List<RaptPillInsights>,

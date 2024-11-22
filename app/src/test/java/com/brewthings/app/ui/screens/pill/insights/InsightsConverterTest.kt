@@ -34,10 +34,10 @@ class InsightsConverterTest {
                 RaptPillData(
                     timestamp = Instant.parse("2024-09-0${i}T00:00:00Z"),
                     temperature = 20f,
-                    gravity = when(feedings) {
+                    gravity = when (feedings) {
                         Feedings.NO_FEEDING -> gravity
-                        Feedings.JUST_ONCE -> if(i % 5 == 0) {gravity + 0.020f} else { gravity }
-                        Feedings.TWICE -> when(i) {
+                        Feedings.JUST_ONCE -> if (i % 5 == 0) { gravity + 0.020f } else { gravity }
+                        Feedings.TWICE -> when (i) {
                             4 -> gravity + 0.020f
                             8 -> gravity + 0.040f
                             else -> gravity
@@ -50,12 +50,12 @@ class InsightsConverterTest {
                     z = 300f,
                     isOG = i == 1,
                     isFG = false,
-                    isFeeding = when (feedings){
+                    isFeeding = when (feedings) {
                         Feedings.NO_FEEDING -> false
                         Feedings.JUST_ONCE -> i % 5 == 0
                         Feedings.TWICE -> i % 4 == 0
-                    }
-                )
+                    },
+                ),
             )
         }
         return result
@@ -64,6 +64,6 @@ class InsightsConverterTest {
     private enum class Feedings {
         NO_FEEDING,
         JUST_ONCE,
-        TWICE
+        TWICE,
     }
 }
