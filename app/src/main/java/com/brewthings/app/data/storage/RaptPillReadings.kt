@@ -28,4 +28,5 @@ data class RaptPillReadings(
     override val battery: Float,
     val isOG: Boolean?,
     val isFG: Boolean?,
+    val isFeeding: Boolean?,
 ) : SensorWithTiltReadings

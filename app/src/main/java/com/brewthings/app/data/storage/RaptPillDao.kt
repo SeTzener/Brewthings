@@ -85,6 +85,16 @@ interface RaptPillDao {
         )
     }
 
+    @Transaction
+    suspend fun setFeeding(macAddress: String, timestamp: Instant, isFeeding: Boolean?) {
+        val data = getPillData(macAddress, timestamp)
+        insertData(
+            data.copy(
+                readings = data.readings.copy(isFeeding = isFeeding),
+            ),
+        )
+    }
+
     @Query("SELECT pillId FROM RaptPill WHERE macAddress = :macAddress")
     suspend fun getPillIdByMacAddress(macAddress: String): Long?
 

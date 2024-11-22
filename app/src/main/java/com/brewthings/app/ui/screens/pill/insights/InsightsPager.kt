@@ -25,9 +25,11 @@ fun InsightsPager(
     dataTypes: List<DataType>,
     insights: List<RaptPillInsights>,
     selectedIndex: Int,
+    feedings: List<Instant>,
     onSelect: (Int) -> Unit,
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
+    setFeeding: (Instant, Boolean) -> Unit,
 ) {
     val pagerState = rememberPagerState(
         initialPage = selectedIndex,
@@ -55,6 +57,8 @@ fun InsightsPager(
                 data = insights[index],
                 setIsOG = setIsOG,
                 setIsFG = setIsFG,
+                setFeeding = setFeeding,
+                feedings = feedings,
             )
         }
     }
