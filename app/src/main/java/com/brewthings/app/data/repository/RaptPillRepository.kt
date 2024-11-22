@@ -71,7 +71,7 @@ class RaptPillRepository(
                                     macAddress = macAddress,
                                     startDate = currentOg.timestamp,
                                     endDate = lastFg?.timestamp
-                                        ?: measurement.toModelItem().timestamp
+                                        ?: measurement.toModelItem().timestamp,
                                 ),
                                 fgOrLast = lastFg ?: measurement.toModelItem(),
                                 isCompleted = false,
@@ -92,7 +92,7 @@ class RaptPillRepository(
                                 feedings = getFeedingsAndDiluting(
                                     macAddress = macAddress,
                                     startDate = currentOg.timestamp,
-                                    endDate = measurement.toModelItem().timestamp
+                                    endDate = measurement.toModelItem().timestamp,
                                 ),
                                 fgOrLast = measurement.toModelItem(),
                                 isCompleted = true,
@@ -108,7 +108,7 @@ class RaptPillRepository(
                                 feedings = getFeedingsAndDiluting(
                                     macAddress = macAddress,
                                     startDate = lastFg.timestamp,
-                                    endDate = measurement.toModelItem().timestamp
+                                    endDate = measurement.toModelItem().timestamp,
                                 ),
                                 fgOrLast = measurement.toModelItem(),
                                 isCompleted = false,
@@ -124,7 +124,7 @@ class RaptPillRepository(
                                 feedings = getFeedingsAndDiluting(
                                     macAddress = macAddress,
                                     startDate = firstMeasurement.toModelItem().timestamp,
-                                    endDate = measurement.toModelItem().timestamp
+                                    endDate = measurement.toModelItem().timestamp,
                                 ),
                                 fgOrLast = measurement.toModelItem(),
                                 isCompleted = false,
@@ -144,7 +144,7 @@ class RaptPillRepository(
                     feedings = getFeedingsAndDiluting(
                         macAddress = macAddress,
                         startDate = currentOg.timestamp,
-                        endDate = lastMeasurement.toModelItem().timestamp
+                        endDate = lastMeasurement.toModelItem().timestamp,
                     ),
                     fgOrLast = lastMeasurement.toModelItem(),
                     isCompleted = false,
@@ -167,7 +167,7 @@ class RaptPillRepository(
     suspend fun getFeedingsAndDiluting(
         macAddress: String,
         startDate: Instant,
-        endDate: Instant
+        endDate: Instant,
     ): Float {
         val data = dao.observeData(macAddress).first()
             .filter { it.readings.timestamp in startDate..endDate }
