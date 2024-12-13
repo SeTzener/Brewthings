@@ -117,9 +117,6 @@ dependencies {
     // AndroidX AppCompat
     implementation(libs.app.compat)
 
-    // Google Material Components
-    implementation(libs.material)
-
     // AndroidX Lifecycle
     implementation(libs.lifecycle.runtime.ktx)
 
@@ -141,7 +138,6 @@ dependencies {
     implementation(libs.navigation.fragment)
 
     // Material
-    implementation(libs.compose.material)
     implementation(libs.compose.material3)
 
     // Kable
