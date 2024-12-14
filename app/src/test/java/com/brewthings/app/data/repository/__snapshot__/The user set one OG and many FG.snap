@@ -10,7 +10,8 @@
             "z": 0.0,
             "battery": 0.0,
             "isOG": true,
-            "isFG": false
+            "isFG": false,
+            "isFeeding": false
         },
         "fgOrLast": {
             "timestamp": "2024-09-02T00:00:00Z",
@@ -22,7 +23,8 @@
             "z": 0.0,
             "battery": 0.0,
             "isOG": false,
-            "isFG": true
+            "isFG": true,
+            "isFeeding": false
         },
         "isCompleted": true
     },
@@ -37,7 +39,8 @@
             "z": 0.0,
             "battery": 0.0,
             "isOG": false,
-            "isFG": true
+            "isFG": true,
+            "isFeeding": false
         },
         "fgOrLast": {
             "timestamp": "2024-09-03T00:00:00Z",
@@ -49,7 +52,8 @@
             "z": 0.0,
             "battery": 0.0,
             "isOG": false,
-            "isFG": true
+            "isFG": true,
+            "isFeeding": false
         },
         "isCompleted": false
     },
@@ -64,7 +68,8 @@
             "z": 0.0,
             "battery": 0.0,
             "isOG": false,
-            "isFG": true
+            "isFG": true,
+            "isFeeding": false
         },
         "fgOrLast": {
             "timestamp": "2024-09-04T00:00:00Z",
@@ -76,7 +81,8 @@
             "z": 0.0,
             "battery": 0.0,
             "isOG": false,
-            "isFG": true
+            "isFG": true,
+            "isFeeding": false
         },
         "isCompleted": false
     },
@@ -91,7 +97,8 @@
             "z": 0.0,
             "battery": 0.0,
             "isOG": false,
-            "isFG": true
+            "isFG": true,
+            "isFeeding": false
         },
         "fgOrLast": {
             "timestamp": "2024-09-05T00:00:00Z",
@@ -103,7 +110,8 @@
             "z": 0.0,
             "battery": 0.0,
             "isOG": false,
-            "isFG": true
+            "isFG": true,
+            "isFeeding": false
         },
         "isCompleted": false
     }

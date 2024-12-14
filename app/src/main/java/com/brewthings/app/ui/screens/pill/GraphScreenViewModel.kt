@@ -82,6 +82,14 @@ class GraphScreenViewModel(
         }
     }
 
+    fun setFeeding(timestamp: Instant, isFeeding: Boolean?) {
+        viewModelScope.launch {
+            if (isFeeding != null) {
+                repo.setFeeding(macAddress = macAddress, timestamp = timestamp, isFeeding = isFeeding)
+            }
+        }
+    }
+
     private fun createInitialState(name: String?, macAddress: String): GraphScreenState =
         GraphScreenState(
             title = name ?: macAddress,
@@ -96,7 +104,6 @@ class GraphScreenViewModel(
                     val defaultIndex = pillData.lastIndex
                     val insights = pillData.toInsights()
                     dataPointsMap.clear()
-
                     screenState = screenState.copy(
                         selectedDataIndex = screenState.selectedDataIndex ?: defaultIndex,
                         insights = insights,
@@ -104,11 +111,11 @@ class GraphScreenViewModel(
                             dataTypes = screenState.selectedDataTypes,
                             insights = insights,
                         ),
+                        feedings = repo.getFeedingsTimestamp(macAddress),
                     )
                 }
         }
     }
-
     private fun updateGraphSeries(
         dataTypes: List<DataType>,
         insights: List<RaptPillInsights>,

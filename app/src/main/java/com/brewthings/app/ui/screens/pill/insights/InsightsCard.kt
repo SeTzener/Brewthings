@@ -43,8 +43,10 @@ import kotlin.math.abs
 fun InsightsCard(
     dataTypes: List<DataType>,
     data: RaptPillInsights,
+    feedings: List<Instant>,
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
+    setFeeding: (Instant, Boolean) -> Unit,
 ) {
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -167,7 +169,27 @@ fun InsightsCard(
                     style = Typography.bodyMedium,
                 )
             }
-
+            TextButton(
+                modifier = Modifier.padding(start = 4.dp),
+                onClick = { setFeeding(data.timestamp, !data.isFeeding) },
+            ) {
+                Text(
+                    text = if (feedings.contains(data.timestamp)) {
+                        if (data.isFeeding) {
+                            stringResource(id = R.string.unfeeding)
+                        } else {
+                            stringResource(id = R.string.feeding)
+                        }
+                    } else {
+                        if (data.isFeeding) {
+                            stringResource(id = R.string.undiluting)
+                        } else {
+                            stringResource(id = R.string.diluting)
+                        }
+                    },
+                    style = Typography.bodyMedium,
+                )
+            }
             TextButton(
                 modifier = Modifier.padding(start = 4.dp),
                 onClick = { setIsFG(data.timestamp, !data.isFG) },
@@ -478,9 +500,12 @@ fun InsightsCardPreview() {
                 durationSinceOG = TimeRange(timestampOG, timestamp),
                 isOG = false,
                 isFG = false,
+                isFeeding = true,
             ),
+            feedings = emptyList(),
             setIsOG = { _, _ -> },
             setIsFG = { _, _ -> },
+            setFeeding = { _, _ -> },
         )
     }
 }
