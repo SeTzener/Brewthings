@@ -31,6 +31,7 @@ fun ScannedRaptPillData.toDaoItem(): DaoRaptPillReadings = DaoRaptPillReadings(
     battery = battery,
     isOG = null,
     isFG = null,
+    isFeeding = null,
 )
 
 fun DaoRaptPillReadings.toModelItem(): ModelRaptPillData = ModelRaptPillData(
@@ -44,6 +45,7 @@ fun DaoRaptPillReadings.toModelItem(): ModelRaptPillData = ModelRaptPillData(
     battery = battery,
     isOG = isOG == true,
     isFG = isFG == true,
+    isFeeding = isFeeding == true,
 )
 
 fun DaoRaptPillData.toModelItem() = readings.toModelItem()

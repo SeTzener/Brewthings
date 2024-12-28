@@ -216,6 +216,7 @@ private fun createOG(day: String): RaptPillData {
             battery = 0.0f,
             isOG = true,
             isFG = null,
+            isFeeding = null,
         ),
     )
 }
@@ -234,6 +235,7 @@ private fun createFG(day: String): RaptPillData {
             battery = 0.0f,
             isOG = null,
             isFG = true,
+            isFeeding = null,
         ),
     )
 }
@@ -252,6 +254,7 @@ private fun createMeasurment(day: String): RaptPillData {
             battery = 0.0f,
             isOG = null,
             isFG = null,
+            isFeeding = null,
         ),
     )
 }

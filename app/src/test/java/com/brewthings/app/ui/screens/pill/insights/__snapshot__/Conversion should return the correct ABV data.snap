@@ -1,0 +1,396 @@
+[
+    {
+        "timestamp": "2024-09-01T00:00:00Z",
+        "temperature": {
+            "value": 20.0,
+            "deltaFromPrevious": null,
+            "deltaFromOG": null
+        },
+        "gravity": {
+            "value": 1.1,
+            "deltaFromPrevious": null,
+            "deltaFromOG": null
+        },
+        "gravityVelocity": {
+            "value": 1.0,
+            "deltaFromPrevious": null,
+            "deltaFromOG": null
+        },
+        "tilt": {
+            "value": 36.699223,
+            "deltaFromPrevious": null,
+            "deltaFromOG": null
+        },
+        "battery": {
+            "value": 100.0,
+            "deltaFromPrevious": null,
+            "deltaFromOG": null
+        },
+        "abv": null,
+        "calculatedVelocity": null,
+        "durationSinceOG": null,
+        "isOG": true,
+        "isFG": false,
+        "isFeeding": false
+    },
+    {
+        "timestamp": "2024-09-02T00:00:00Z",
+        "temperature": {
+            "value": 20.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "gravity": {
+            "value": 1.09,
+            "deltaFromPrevious": -0.00999999,
+            "deltaFromOG": -0.00999999
+        },
+        "gravityVelocity": {
+            "value": 1.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "tilt": {
+            "value": 36.699223,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "battery": {
+            "value": 100.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "abv": {
+            "value": 1.3124988,
+            "deltaFromPrevious": 1.3124988,
+            "deltaFromOG": null
+        },
+        "calculatedVelocity": {
+            "value": 9.99999,
+            "deltaFromPrevious": 9.99999,
+            "deltaFromOG": null
+        },
+        "durationSinceOG": {
+            "from": "2024-09-01T00:00:00Z",
+            "to": "2024-09-02T00:00:00Z"
+        },
+        "isOG": false,
+        "isFG": false,
+        "isFeeding": false
+    },
+    {
+        "timestamp": "2024-09-03T00:00:00Z",
+        "temperature": {
+            "value": 20.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "gravity": {
+            "value": 1.08,
+            "deltaFromPrevious": -0.00999999,
+            "deltaFromOG": -0.01999998
+        },
+        "gravityVelocity": {
+            "value": 1.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "tilt": {
+            "value": 36.699223,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "battery": {
+            "value": 100.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "abv": {
+            "value": 2.6249976,
+            "deltaFromPrevious": 1.3124988,
+            "deltaFromOG": null
+        },
+        "calculatedVelocity": {
+            "value": 9.99999,
+            "deltaFromPrevious": 9.99999,
+            "deltaFromOG": null
+        },
+        "durationSinceOG": {
+            "from": "2024-09-01T00:00:00Z",
+            "to": "2024-09-03T00:00:00Z"
+        },
+        "isOG": false,
+        "isFG": false,
+        "isFeeding": false
+    },
+    {
+        "timestamp": "2024-09-04T00:00:00Z",
+        "temperature": {
+            "value": 20.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "gravity": {
+            "value": 1.07,
+            "deltaFromPrevious": -0.00999999,
+            "deltaFromOG": -0.029999971
+        },
+        "gravityVelocity": {
+            "value": 1.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "tilt": {
+            "value": 36.699223,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "battery": {
+            "value": 100.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "abv": {
+            "value": 3.9374962,
+            "deltaFromPrevious": 1.3124986,
+            "deltaFromOG": null
+        },
+        "calculatedVelocity": {
+            "value": 9.99999,
+            "deltaFromPrevious": 9.99999,
+            "deltaFromOG": null
+        },
+        "durationSinceOG": {
+            "from": "2024-09-01T00:00:00Z",
+            "to": "2024-09-04T00:00:00Z"
+        },
+        "isOG": false,
+        "isFG": false,
+        "isFeeding": false
+    },
+    {
+        "timestamp": "2024-09-05T00:00:00Z",
+        "temperature": {
+            "value": 20.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "gravity": {
+            "value": 1.0600001,
+            "deltaFromPrevious": -0.00999999,
+            "deltaFromOG": -0.03999996
+        },
+        "gravityVelocity": {
+            "value": 1.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "tilt": {
+            "value": 36.699223,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "battery": {
+            "value": 100.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "abv": {
+            "value": 5.249995,
+            "deltaFromPrevious": 1.312499,
+            "deltaFromOG": null
+        },
+        "calculatedVelocity": {
+            "value": 9.99999,
+            "deltaFromPrevious": 9.99999,
+            "deltaFromOG": null
+        },
+        "durationSinceOG": {
+            "from": "2024-09-01T00:00:00Z",
+            "to": "2024-09-05T00:00:00Z"
+        },
+        "isOG": false,
+        "isFG": false,
+        "isFeeding": false
+    },
+    {
+        "timestamp": "2024-09-06T00:00:00Z",
+        "temperature": {
+            "value": 20.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "gravity": {
+            "value": 1.0500001,
+            "deltaFromPrevious": -0.00999999,
+            "deltaFromOG": -0.049999952
+        },
+        "gravityVelocity": {
+            "value": 1.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "tilt": {
+            "value": 36.699223,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "battery": {
+            "value": 100.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "abv": {
+            "value": 6.562494,
+            "deltaFromPrevious": 1.3124986,
+            "deltaFromOG": null
+        },
+        "calculatedVelocity": {
+            "value": 9.99999,
+            "deltaFromPrevious": 9.99999,
+            "deltaFromOG": null
+        },
+        "durationSinceOG": {
+            "from": "2024-09-01T00:00:00Z",
+            "to": "2024-09-06T00:00:00Z"
+        },
+        "isOG": false,
+        "isFG": false,
+        "isFeeding": false
+    },
+    {
+        "timestamp": "2024-09-07T00:00:00Z",
+        "temperature": {
+            "value": 20.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "gravity": {
+            "value": 1.0400001,
+            "deltaFromPrevious": -0.00999999,
+            "deltaFromOG": -0.059999943
+        },
+        "gravityVelocity": {
+            "value": 1.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "tilt": {
+            "value": 36.699223,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "battery": {
+            "value": 100.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "abv": {
+            "value": 7.8749924,
+            "deltaFromPrevious": 1.3124986,
+            "deltaFromOG": null
+        },
+        "calculatedVelocity": {
+            "value": 9.99999,
+            "deltaFromPrevious": 9.99999,
+            "deltaFromOG": null
+        },
+        "durationSinceOG": {
+            "from": "2024-09-01T00:00:00Z",
+            "to": "2024-09-07T00:00:00Z"
+        },
+        "isOG": false,
+        "isFG": false,
+        "isFeeding": false
+    },
+    {
+        "timestamp": "2024-09-08T00:00:00Z",
+        "temperature": {
+            "value": 20.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "gravity": {
+            "value": 1.0300001,
+            "deltaFromPrevious": -0.00999999,
+            "deltaFromOG": -0.06999993
+        },
+        "gravityVelocity": {
+            "value": 1.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "tilt": {
+            "value": 36.699223,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "battery": {
+            "value": 100.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "abv": {
+            "value": 9.187491,
+            "deltaFromPrevious": 1.312499,
+            "deltaFromOG": null
+        },
+        "calculatedVelocity": {
+            "value": 9.99999,
+            "deltaFromPrevious": 9.99999,
+            "deltaFromOG": null
+        },
+        "durationSinceOG": {
+            "from": "2024-09-01T00:00:00Z",
+            "to": "2024-09-08T00:00:00Z"
+        },
+        "isOG": false,
+        "isFG": false,
+        "isFeeding": false
+    },
+    {
+        "timestamp": "2024-09-09T00:00:00Z",
+        "temperature": {
+            "value": 20.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "gravity": {
+            "value": 1.0200001,
+            "deltaFromPrevious": -0.00999999,
+            "deltaFromOG": -0.07999992
+        },
+        "gravityVelocity": {
+            "value": 1.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "tilt": {
+            "value": 36.699223,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "battery": {
+            "value": 100.0,
+            "deltaFromPrevious": 0.0,
+            "deltaFromOG": 0.0
+        },
+        "abv": {
+            "value": 10.49999,
+            "deltaFromPrevious": 1.312499,
+            "deltaFromOG": null
+        },
+        "calculatedVelocity": {
+            "value": 9.99999,
+            "deltaFromPrevious": 9.99999,
+            "deltaFromOG": null
+        },
+        "durationSinceOG": {
+            "from": "2024-09-01T00:00:00Z",
+            "to": "2024-09-09T00:00:00Z"
+        },
+        "isOG": false,
+        "isFG": false,
+        "isFeeding": false
+    }
+]

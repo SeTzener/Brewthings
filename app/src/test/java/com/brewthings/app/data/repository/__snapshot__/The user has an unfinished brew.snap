@@ -10,7 +10,8 @@
             "z": 0.0,
             "battery": 0.0,
             "isOG": true,
-            "isFG": false
+            "isFG": false,
+            "isFeeding": false
         },
         "fgOrLast": {
             "timestamp": "2024-09-02T00:00:00Z",
@@ -22,7 +23,8 @@
             "z": 0.0,
             "battery": 0.0,
             "isOG": false,
-            "isFG": false
+            "isFG": false,
+            "isFeeding": false
         },
         "isCompleted": false
     }

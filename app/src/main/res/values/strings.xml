@@ -67,6 +67,10 @@
     <string name="formatted_duration_hours">%d hours</string>
     <string name="formatted_duration_day">One day</string>
     <string name="formatted_duration_days">%d days</string>
+    <string name="diluting">Diluting</string>
+    <string name="undiluting">Undiluting</string>
+    <string name="feeding">Feeding</string>
+    <string name="unfeeding">Unfeeding</string>
     <string name="set_OG">Set OG</string>
     <string name="unset_OG">Unset OG</string>
     <string name="unset_FG">Unset FG</string>

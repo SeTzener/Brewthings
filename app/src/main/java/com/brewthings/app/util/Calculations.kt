@@ -3,9 +3,9 @@ package com.brewthings.app.util
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.util.datetime.daysBetweenIgnoringTime
 
-fun calculateABV(og: Float, fg: Float): Float {
+fun calculateABV(og: Float, fg: Float, feedings: Float): Float {
     if (og <= 1.0 || fg <= 1.0) return 0f
-    return (og - fg) * 131.25f
+    return (og.plus(feedings) - fg) * 131.25f
 }
 
 fun calculateVelocity(ogData: RaptPillData, fgData: RaptPillData): Float? {
