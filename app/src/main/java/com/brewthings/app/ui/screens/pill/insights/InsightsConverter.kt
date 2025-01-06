@@ -3,6 +3,8 @@ package com.brewthings.app.ui.screens.pill.insights
 import com.brewthings.app.data.domain.Insight
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.RaptPillInsights
+import com.brewthings.app.util.calculateABV
+import com.brewthings.app.util.calculateFeeding
 import com.brewthings.app.util.calculateVelocity
 import com.brewthings.app.util.datetime.TimeRange
 
@@ -10,15 +12,22 @@ fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
     val insights = mutableListOf<RaptPillInsights>()
     var ogData: RaptPillData? = null
     var previousData: RaptPillData? = null
-    var feeding = 0.0f
-    var previousFeeding = feeding
+    val previousFeedings = mutableListOf<Float>()
 
     for (data in this) {
-        if (data.isFeeding) {
-            feeding += calculateFeeding(previousData?.gravity, data.gravity)
-        }
+        val feeding = if (data.isFeeding && previousData != null) {
+            calculateFeeding(previousData.gravity, data.gravity)
+        } else null
+
         // Add the insights for the current data point.
-        insights.add(data.toInsights(ogData = ogData, previousData = previousData, feeding = feeding, previousFeeding = previousFeeding))
+        insights.add(
+            data.toInsights(
+                ogData = ogData,
+                previousData = previousData,
+                currentFeeding = feeding,
+                previousFeedings = previousFeedings,
+            )
+        )
 
         if (data.isFG) {
             // Invalidate the OG data for the next data point.
@@ -31,7 +40,9 @@ fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
         }
 
         previousData = data
-        previousFeeding = feeding
+        feeding?.also {
+            previousFeedings.add(it)
+        }
     }
 
     return insights
@@ -40,8 +51,8 @@ fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
 private fun RaptPillData.toInsights(
     ogData: RaptPillData?,
     previousData: RaptPillData?,
-    feeding: Float,
-    previousFeeding: Float,
+    currentFeeding: Float?,
+    previousFeedings: List<Float>,
 ): RaptPillInsights {
     val pillData = this
     if (ogData == null || pillData == ogData) {
@@ -61,8 +72,11 @@ private fun RaptPillData.toInsights(
         )
     }
 
-    val abv = calculateABV(ogData.gravity, pillData.gravity.minus(feeding))
+    val feedings = currentFeeding?.let { previousFeedings + it } ?: previousFeedings
+    val abv = calculateABV(ogData.gravity, pillData.gravity, feedings)
+
     val velocity = calculateVelocity(previousData, pillData)
+
     return RaptPillInsights(
         timestamp = pillData.timestamp,
         temperature = Insight(
@@ -85,10 +99,14 @@ private fun RaptPillData.toInsights(
             deltaFromPrevious = previousData?.let { pillData.tilt - it.tilt },
             deltaFromOG = pillData.tilt - ogData.tilt,
         ),
-        abv = Insight(
-            value = abv,
-            deltaFromPrevious = previousData?.let { abv - calculateABV(ogData.gravity, it.gravity.minus(previousFeeding)) },
-        ),
+        abv = abv?.let { value ->
+            Insight(
+                value = value,
+                deltaFromPrevious = previousData?.let {
+                    calculateABV(it.gravity, pillData.gravity, previousFeedings)
+                },
+            )
+        },
         gravityVelocity = pillData.gravityVelocity?.let { value ->
             Insight(
                 value = value,
@@ -107,16 +125,4 @@ private fun RaptPillData.toInsights(
         isFG = pillData.isFG,
         isFeeding = pillData.isFeeding,
     )
-}
-
-private fun calculateFeeding(previousGravity: Float?, actualGravity: Float): Float {
-    if (previousGravity == null) {
-        return 0.0f
-    }
-    return actualGravity.minus(previousGravity)
-}
-
-private fun calculateABV(og: Float, fg: Float): Float {
-    if (og <= 1.0 || fg <= 1.0) return 0f
-    return (og - fg) * 131.25f
 }
