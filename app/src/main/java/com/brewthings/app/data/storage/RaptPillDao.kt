@@ -39,7 +39,17 @@ interface RaptPillDao {
             "OR RaptPillData.isFG == 1 " +
             "ORDER BY RaptPillData.timestamp ASC",
     )
-    fun getBrewEdges(macAddress: String): Flow<List<RaptPillData>>
+    suspend fun getBrewEdges(macAddress: String): List<RaptPillData>
+
+    @Query(
+        "SELECT * FROM RaptPillData " +
+                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+                "WHERE RaptPill.macAddress = :macAddress " +
+                "AND RaptPillData.timestamp >= :startDate " +
+                "AND RaptPillData.timestamp <= :endDate " +
+                "ORDER BY RaptPillData.timestamp ASC",
+    )
+    suspend fun getBrewData(macAddress: String, startDate: Instant, endDate: Instant): List<RaptPillData>
 
     @Query(
         "SELECT * FROM RaptPillData " +
