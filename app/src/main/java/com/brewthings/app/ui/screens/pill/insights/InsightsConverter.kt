@@ -3,7 +3,7 @@ package com.brewthings.app.ui.screens.pill.insights
 import com.brewthings.app.data.domain.Insight
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.RaptPillInsights
-import com.brewthings.app.data.storage.sanitizeVelocity
+import com.brewthings.app.util.calculateVelocity
 import com.brewthings.app.util.datetime.TimeRange
 
 fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
@@ -119,14 +119,4 @@ private fun calculateFeeding(previousGravity: Float?, actualGravity: Float): Flo
 private fun calculateABV(og: Float, fg: Float): Float {
     if (og <= 1.0 || fg <= 1.0) return 0f
     return (og - fg) * 131.25f
-}
-
-// This can be improved by using a more sophisticated algorithm.
-private fun calculateVelocity(previousData: RaptPillData?, fgData: RaptPillData): Float? {
-    if (previousData == null) return null
-
-    val gpDrop = (fgData.gravity - previousData.gravity) * 1000f
-    val daysBetween = (fgData.timestamp.epochSeconds - previousData.timestamp.epochSeconds).toFloat() / 86_400f
-    val velocity = gpDrop / daysBetween
-    return velocity.sanitizeVelocity()
 }

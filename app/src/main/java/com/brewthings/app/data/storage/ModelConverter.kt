@@ -2,6 +2,7 @@ package com.brewthings.app.data.storage
 
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.model.ScannedRaptPillData
+import com.brewthings.app.util.sanitizeVelocity
 
 typealias ModelRaptPill = com.brewthings.app.data.model.RaptPill
 typealias ModelRaptPillData = com.brewthings.app.data.model.RaptPillData
@@ -49,10 +50,3 @@ fun DaoRaptPillReadings.toModelItem(): ModelRaptPillData = ModelRaptPillData(
 )
 
 fun DaoRaptPillData.toModelItem() = readings.toModelItem()
-
-fun Float.sanitizeVelocity(): Float? =
-    if (isInfinite() || isNaN() || this > 0 || this < -100) {
-        null // Invalid velocity.
-    } else {
-        -1 * this // Invert the sign, to make it more intuitive.
-    }
