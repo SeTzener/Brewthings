@@ -17,10 +17,10 @@ fun SetupNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Destination.Scanning,
+        startDestination = Destination.SCANNING,
     ) {
         composable(
-            route = Destination.Scanning,
+            route = Destination.SCANNING,
         ) {
             ScanningScreen(
                 navController = navController,
@@ -31,7 +31,7 @@ fun SetupNavGraph(
             )
         }
         composable(
-            route = Destination.Graph,
+            route = Destination.SCANNING_GRAPH,
         ) {
             GraphScreen(navController = navController)
         }

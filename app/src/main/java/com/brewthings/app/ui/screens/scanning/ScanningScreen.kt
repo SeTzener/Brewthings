@@ -558,7 +558,7 @@ private fun PillFooter(
             stopScan()
             ParameterHolder.Graph.name = name
             ParameterHolder.Graph.macAddress = macAddress
-            navGraph.navigate(route = Destination.Graph)
+            navGraph.navigate(route = Destination.SCANNING_GRAPH)
         },
     ) {
         Text(
