@@ -1,20 +1,27 @@
 package com.brewthings.app.util
 
 import com.brewthings.app.data.model.RaptPillData
-import com.brewthings.app.util.datetime.daysBetweenIgnoringTime
 
-fun calculateABV(og: Float, fg: Float, feedings: Float): Float {
-    if (og <= 1.0 || fg <= 1.0) return 0f
-    return (og.plus(feedings) - fg) * 131.25f
+fun calculateFeeding(previousGravity: Float, actualGravity: Float): Float =
+    actualGravity.minus(previousGravity)
+
+fun calculateABV(og: Float, fg: Float, feedings: List<Float>): Float? {
+    if (og <= 1.0 || fg <= 1.0) return null
+    return (og.sumAll(feedings) - fg) * 131.25f
 }
 
-fun calculateVelocity(ogData: RaptPillData, fgData: RaptPillData): Float? {
-    val gravityDrop = fgData.gravity - ogData.gravity
-    val timeDifference = daysBetweenIgnoringTime(fgData.timestamp, ogData.timestamp).toFloat()
-    val velocity = gravityDrop / timeDifference
-    return if (velocity.isInfinite() || velocity.isNaN()) {
-        null
+fun calculateVelocity(previousData: RaptPillData?, fgData: RaptPillData): Float? {
+    if (previousData == null) return null
+
+    val gpDrop = (fgData.gravity - previousData.gravity) * 1000f
+    val daysBetween = (fgData.timestamp.epochSeconds - previousData.timestamp.epochSeconds).toFloat() / 86_400f
+    val velocity = gpDrop / daysBetween
+    return velocity.sanitizeVelocity()
+}
+
+fun Float.sanitizeVelocity(): Float? =
+    if (isInfinite() || isNaN() || this > 0 || this < -100) {
+        null // Invalid velocity.
     } else {
-        velocity
+        -1 * this // Invert the sign, to make it more intuitive.
     }
-}

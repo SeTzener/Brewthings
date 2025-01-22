@@ -9,6 +9,7 @@ import com.brewthings.app.data.storage.RaptPillDao
 import com.brewthings.app.data.storage.RaptPillReadings
 import com.brewthings.app.data.storage.toDaoItem
 import com.brewthings.app.data.storage.toModelItem
+import com.brewthings.app.util.calculateFeeding
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -36,12 +37,7 @@ class RaptPillRepository(
         val brews: MutableList<Brew> = mutableListOf()
 
         // Collect the first list of edges from the flow
-        val edges = dao.getBrewEdges(macAddress).first()
-
-        // Collect all the feedings and diluting
-        val feedings = getFeedingsTimestamp(macAddress)
-
-        // If edges is empty, return an empty list
+        val edges = dao.getBrewEdges(macAddress)
         if (edges.isEmpty()) {
             return emptyList()
         }
@@ -65,15 +61,10 @@ class RaptPillRepository(
                     } else {
                         // Add an incomplete Brew if an OG is followed by another OG
                         brews.add(
-                            Brew(
-                                og = currentOg,
-                                feedings = getFeedingsAndDiluting(
-                                    macAddress = macAddress,
-                                    startDate = currentOg.timestamp,
-                                    endDate = lastFg?.timestamp
-                                        ?: measurement.toModelItem().timestamp,
-                                ),
-                                fgOrLast = lastFg ?: measurement.toModelItem(),
+                            createBrew(
+                                macAddress = macAddress,
+                                start = currentOg,
+                                end = lastFg ?: measurement.toModelItem(),
                                 isCompleted = false,
                             ),
                         )
@@ -87,14 +78,10 @@ class RaptPillRepository(
                     if (currentOg != null) {
                         // Complete the Brew when FG follows OG
                         brews.add(
-                            Brew(
-                                og = currentOg,
-                                feedings = getFeedingsAndDiluting(
-                                    macAddress = macAddress,
-                                    startDate = currentOg.timestamp,
-                                    endDate = measurement.toModelItem().timestamp,
-                                ),
-                                fgOrLast = measurement.toModelItem(),
+                            createBrew(
+                                macAddress = macAddress,
+                                start = currentOg,
+                                end = measurement.toModelItem(),
                                 isCompleted = true,
                             ),
                         )
@@ -103,14 +90,10 @@ class RaptPillRepository(
                     } else if (lastFg != null) {
                         // Create incomplete Brew if FG appears consecutively
                         brews.add(
-                            Brew(
-                                og = lastFg,
-                                feedings = getFeedingsAndDiluting(
-                                    macAddress = macAddress,
-                                    startDate = lastFg.timestamp,
-                                    endDate = measurement.toModelItem().timestamp,
-                                ),
-                                fgOrLast = measurement.toModelItem(),
+                            createBrew(
+                                macAddress = macAddress,
+                                start = lastFg,
+                                end = measurement.toModelItem(),
                                 isCompleted = false,
                             ),
                         )
@@ -119,14 +102,10 @@ class RaptPillRepository(
                         // Create incomplete Brew if FG appears without a preceding OG
                         val firstMeasurement = dao.getFirstMeasurement(macAddress).first()
                         brews.add(
-                            Brew(
-                                og = firstMeasurement.toModelItem(),
-                                feedings = getFeedingsAndDiluting(
-                                    macAddress = macAddress,
-                                    startDate = firstMeasurement.toModelItem().timestamp,
-                                    endDate = measurement.toModelItem().timestamp,
-                                ),
-                                fgOrLast = measurement.toModelItem(),
+                            createBrew(
+                                macAddress = macAddress,
+                                start = firstMeasurement.toModelItem(),
+                                end = measurement.toModelItem(),
                                 isCompleted = false,
                             ),
                         )
@@ -164,15 +143,14 @@ class RaptPillRepository(
         }.map { it.readings.timestamp }
     }
 
-    suspend fun getFeedingsAndDiluting(
+    private suspend fun getFeedingsAndDiluting(
         macAddress: String,
         startDate: Instant,
         endDate: Instant,
-    ): Float {
-        val data = dao.observeData(macAddress).first()
-            .filter { it.readings.timestamp in startDate..endDate }
-        var previousGravity = 0.0f
-        var result = 0.0f
+    ): List<Float> {
+        val data = dao.getBrewData(macAddress, startDate, endDate)
+        var previousGravity: Float? = null
+        val result = mutableListOf<Float>()
 
         for (item in data) {
             if (previousGravity == 0f) {
@@ -180,8 +158,8 @@ class RaptPillRepository(
                 continue
             }
 
-            if (item.readings.isFeeding == true) {
-                result += item.readings.gravity.minus(previousGravity)
+            if (item.readings.isFeeding == true && previousGravity != null) {
+                result += calculateFeeding(previousGravity, item.readings.gravity)
             }
 
             previousGravity = item.readings.gravity
@@ -189,6 +167,18 @@ class RaptPillRepository(
 
         return result
     }
+
+    private suspend fun createBrew(macAddress: String, start: RaptPillData, end: RaptPillData, isCompleted: Boolean) =
+        Brew(
+            og = start,
+            feedings = getFeedingsAndDiluting(
+                macAddress = macAddress,
+                startDate = start.timestamp,
+                endDate = end.timestamp,
+            ),
+            fgOrLast = end,
+            isCompleted = isCompleted,
+        )
 
     suspend fun save(scannedRaptPill: ScannedRaptPill) {
         val pill = scannedRaptPill.toDaoItem()

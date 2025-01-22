@@ -21,3 +21,5 @@ inline fun <T, C : List<T>> C.onEachReverse(
     }
     return this
 }
+
+fun Float.sumAll(others: Collection<Float>): Float = this + others.sum()

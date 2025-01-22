@@ -36,8 +36,8 @@ import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toFormattedDate
-import kotlinx.datetime.Instant
 import kotlin.math.abs
+import kotlinx.datetime.Instant
 
 @Composable
 fun InsightsCard(
@@ -224,24 +224,42 @@ fun InsightsTimeHeader(data: RaptPillInsights) {
             )
             Text(
                 modifier = Modifier.padding(top = 4.dp),
-                text = when {
-                    data.isFG && data.durationSinceOG != null -> stringResource(
-                        id = R.string.graph_data_duration_fg_since_og,
-                        data.durationSinceOG.format(),
-                    )
-
-                    data.isOG -> stringResource(id = R.string.graph_data_duration_og)
-
-                    data.durationSinceOG != null -> stringResource(
-                        id = R.string.graph_data_duration_since_og,
-                        data.durationSinceOG.format(),
-                    )
-
-                    else -> ""
-                },
+                text = data.getInfoText(),
                 style = MaterialTheme.typography.bodySmall,
             )
         }
+    }
+}
+
+@Composable
+private fun RaptPillInsights.getInfoText(): String {
+    val timeText = when {
+        isFG && durationSinceOG != null -> stringResource(
+            id = R.string.graph_data_duration_fg_since_og,
+            durationSinceOG.format(),
+        )
+
+        isOG -> stringResource(id = R.string.graph_data_duration_og)
+
+        durationSinceOG != null -> stringResource(
+            id = R.string.graph_data_duration_since_og,
+            durationSinceOG.format(),
+        )
+
+        else -> ""
+    }
+
+    val feedingText = when {
+        isFeeding -> stringResource(id = R.string.feeding)
+        isFG -> stringResource(id = R.string.diluting)
+        else -> ""
+    }
+
+    return when {
+        timeText.isNotEmpty() && feedingText.isNotEmpty() -> "$timeText, $feedingText"
+        timeText.isNotEmpty() -> timeText
+        feedingText.isNotEmpty() -> feedingText
+        else -> ""
     }
 }
 
