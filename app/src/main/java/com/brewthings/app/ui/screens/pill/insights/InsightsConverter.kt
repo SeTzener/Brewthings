@@ -12,7 +12,7 @@ fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
     val insights = mutableListOf<RaptPillInsights>()
     var ogData: RaptPillData? = null
     var previousData: RaptPillData? = null
-    val previousFeedings = mutableListOf<Float>()
+    var previousFeedings = mutableListOf<Float>()
 
     for (data in this) {
         val feeding = if (data.isFeeding && previousData != null) {
@@ -37,6 +37,7 @@ fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
         if (data.isOG) {
             // Remember the OG data for the next data point.
             ogData = data
+            previousFeedings = mutableListOf()
         }
 
         previousData = data
