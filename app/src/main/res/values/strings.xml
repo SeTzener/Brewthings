@@ -9,7 +9,6 @@
     <string name="scanning_result">[Unnamed]</string>
     <string name="scanning_saved">Previous data</string>
     <string name="unknown">Unknown</string>
-    <string name="brew_list">Brews</string>
     <string name="tab_brews">Brews</string>
     <string name="tab_scanning">Scan</string>
     <string name="brew_card_value_gravity">%.3f SG</string>

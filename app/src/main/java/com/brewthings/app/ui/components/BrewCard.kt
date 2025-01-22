@@ -1,4 +1,4 @@
-package com.brewthings.app.ui.screens.scanning
+package com.brewthings.app.ui.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
@@ -10,15 +10,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.model.Brew
-import com.brewthings.app.ui.components.ExpandableCard
-import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.util.datetime.format
+import com.brewthings.app.util.datetime.formatDateTime
+import kotlinx.datetime.Instant
 
 @Composable
 fun BrewCard(
@@ -44,6 +45,30 @@ fun BrewCard(
                 }
             },
         )
+    }
+}
+
+@Composable
+private fun BrewTopContent(startDate: Instant, endDate: Instant) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 5.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(vertical = 16.dp),
+        ) {
+            TextWithIcon(
+                iconResId = R.drawable.ic_calendar,
+                text = stringResource(
+                    id = R.string.brew_start_to_end,
+                    startDate.formatDateTime("MMM d, yyyy"),
+                    endDate.formatDateTime("MMM d, yyyy"),
+                ),
+            )
+        }
     }
 }
 

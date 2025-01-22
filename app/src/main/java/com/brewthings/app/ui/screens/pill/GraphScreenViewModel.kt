@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.data.repository.RaptPillRepository
-import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder
+import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolders
 import com.brewthings.app.ui.screens.pill.graph.DataPoint
 import com.brewthings.app.ui.screens.pill.graph.DataType
 import com.brewthings.app.ui.screens.pill.graph.GraphSeries
@@ -18,8 +18,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class GraphScreenViewModel(
-    val macAddress: String = ParameterHolder.Graph.macAddress ?: error("macAddress is required"),
-    name: String? = ParameterHolder.Graph.name,
+    val macAddress: String = ParameterHolders.PillGraph.macAddress ?: error("macAddress is required"),
+    name: String? = ParameterHolders.PillGraph.name,
 ) : ViewModel(), KoinComponent {
     var screenState: GraphScreenState by mutableStateOf(createInitialState(name, macAddress))
         private set

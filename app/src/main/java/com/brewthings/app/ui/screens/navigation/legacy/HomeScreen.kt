@@ -82,7 +82,7 @@ fun HomeScreen(
                 )
             }
             composable(Destination.Tab.BREWS) {
-                BrewsScreen()
+                BrewsScreen(navController = outerNavController)
             }
         }
     }

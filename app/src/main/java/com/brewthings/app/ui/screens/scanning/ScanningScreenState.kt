@@ -1,6 +1,5 @@
 package com.brewthings.app.ui.screens.scanning
 
-import com.brewthings.app.data.model.Brew
 import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.juul.kable.Bluetooth
@@ -16,5 +15,4 @@ data class ScanningScreenState(
     val scannedPillsCount: Int = 0,
     val scannedPills: List<ScannedRaptPill> = emptyList(),
     val savedPills: List<RaptPill> = emptyList(),
-    val brews: List<Brew> = emptyList(),
 )

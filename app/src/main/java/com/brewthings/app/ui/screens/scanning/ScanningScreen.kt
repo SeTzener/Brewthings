@@ -55,7 +55,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.brewthings.app.R
 import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.RaptPillData
@@ -65,12 +64,14 @@ import com.brewthings.app.ui.ActivityCallbacks
 import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.ExpandableCard
 import com.brewthings.app.ui.components.ScanPane
+import com.brewthings.app.ui.components.SectionTitle
 import com.brewthings.app.ui.components.TextWithIcon
+import com.brewthings.app.ui.components.VerticalSpace
 import com.brewthings.app.ui.screens.navigation.legacy.Destination
-import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolder
+import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolders
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.ui.theme.Typography
-import com.brewthings.app.util.datetime.formatDateTime
+import com.brewthings.app.util.newOrCached
 import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 
@@ -89,13 +90,15 @@ fun ScanningScreen(
         ) {
             ScanningScreen(
                 state = viewModel.screenState,
-                navGraph = navController,
                 onRssiThresholdChanged = viewModel::onRssiThresholdChanged,
                 onFirstLoad = viewModel::onFirstLoad,
                 toggleScan = viewModel::toggleScan,
-                stopScan = viewModel::stopScan,
                 savePill = viewModel::savePill,
                 onPillUpdate = viewModel::onPillUpdate,
+                openGraph = { name, macAddress ->
+                    viewModel.stopScan()
+                    navController.openPillGraph(name, macAddress)
+                },
             )
         }
     }
@@ -105,20 +108,18 @@ fun ScanningScreen(
 @Composable
 private fun ScanningScreen(
     state: ScanningScreenState,
-    navGraph: NavController,
     onFirstLoad: () -> Unit,
     toggleScan: () -> Unit,
-    stopScan: () -> Unit,
     onRssiThresholdChanged: (Int) -> Unit,
     savePill: (ScannedRaptPill) -> Unit,
     onPillUpdate: (RaptPill) -> Unit,
+    openGraph: (name: String?, macAddress: String) -> Unit,
 ) {
     LaunchedEffect(Unit) {
         onFirstLoad()
     }
     val scannedPills = newOrCached(state.scannedPills, emptyList())
     val savedPills = newOrCached(state.savedPills, emptyList())
-    val brews = newOrCached(data = state.brews, initialValue = emptyList())
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -148,9 +149,8 @@ private fun ScanningScreen(
                 pill = pill,
                 isExpanded = scannedPills.size == 1,
                 isInScannedPills = state.scannedPills.contains(pill),
-                navGraph = navGraph,
                 savePill = savePill,
-                stopScan = stopScan,
+                openGraph = openGraph,
             )
             VerticalSpace()
         }
@@ -162,32 +162,12 @@ private fun ScanningScreen(
         items(savedPills, key = { "saved_" + it.macAddress }) { pill ->
             Pill(
                 pill = pill,
-                navGraph = navGraph,
                 onPillUpdate = onPillUpdate,
-                stopScan = stopScan,
+                openGraph = openGraph,
             )
             VerticalSpace()
         }
-
-        item {
-            SectionTitle(title = stringResource(R.string.brew_list))
-        }
-
-        items(brews, key = { "Brew_" + it.og.timestamp }) { brew ->
-            BrewCard(brew = brew, isExpanded = brew == brews.first()) // TODO(Tano): Add a remember
-            VerticalSpace()
-        }
     }
-}
-
-@Composable
-private fun SectionTitle(title: String) {
-    Text(
-        modifier = Modifier.padding(16.dp),
-        text = title.uppercase(),
-        color = MaterialTheme.colorScheme.onBackground,
-        style = Typography.bodyMedium,
-    )
 }
 
 @Composable
@@ -222,11 +202,6 @@ private fun ScanningOptions(
             )
         }
     }
-}
-
-@Composable
-private fun VerticalSpace() {
-    Spacer(modifier = Modifier.size(16.dp))
 }
 
 @Composable
@@ -310,9 +285,8 @@ private fun ScannedPill(
     pill: ScannedRaptPill,
     isExpanded: Boolean,
     isInScannedPills: Boolean,
-    navGraph: NavController,
     savePill: (ScannedRaptPill) -> Unit,
-    stopScan: () -> Unit,
+    openGraph: (name: String?, macAddress: String) -> Unit,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -333,8 +307,7 @@ private fun ScannedPill(
                     PillFooter(
                         name = pill.name,
                         macAddress = pill.macAddress,
-                        navGraph = navGraph,
-                        stopScan = stopScan,
+                        openGraph = openGraph,
                     )
                 }
             },
@@ -406,35 +379,10 @@ private fun ScannedPillTopContent(
 }
 
 @Composable
-fun BrewTopContent(startDate: Instant, endDate: Instant) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(end = 5.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(vertical = 16.dp),
-        ) {
-            TextWithIcon(
-                iconResId = R.drawable.ic_calendar,
-                text = stringResource(
-                    id = R.string.brew_start_to_end,
-                    startDate.formatDateTime("MMM d, yyyy"),
-                    endDate.formatDateTime("MMM d, yyyy"),
-                ),
-            )
-        }
-    }
-}
-
-@Composable
 private fun Pill(
     pill: RaptPill,
-    navGraph: NavController,
     onPillUpdate: (RaptPill) -> Unit,
-    stopScan: () -> Unit,
+    openGraph: (name: String?, macAddress: String) -> Unit,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -457,8 +405,7 @@ private fun Pill(
             PillFooter(
                 name = pill.name,
                 macAddress = pill.macAddress,
-                navGraph = navGraph,
-                stopScan = stopScan,
+                openGraph = openGraph,
             )
         }
     }
@@ -548,16 +495,12 @@ private fun PillFooter(
     modifier: Modifier = Modifier,
     name: String?,
     macAddress: String,
-    navGraph: NavController,
-    stopScan: () -> Unit,
+    openGraph: (name: String?, macAddress: String) -> Unit,
 ) {
     TextButton(
         modifier = modifier.padding(bottom = 8.dp, start = 10.dp, end = 10.dp),
         onClick = {
-            stopScan()
-            ParameterHolder.Graph.name = name
-            ParameterHolder.Graph.macAddress = macAddress
-            navGraph.navigate(route = Destination.PILL_GRAPH)
+            openGraph(name, macAddress)
         },
     ) {
         Text(
@@ -670,22 +613,14 @@ fun EditNameBottomSheet(
     }
 }
 
-@Composable
-fun <T : Any?> newOrCached(
-    data: T,
-    initialValue: T,
-): T {
-    var previousData: T by remember { mutableStateOf(initialValue) }
-    return if (data != null) {
-        previousData = data
-        data
-    } else {
-        previousData
-    }
-}
-
 private fun isValidName(oldName: String?, newName: String?): Boolean =
     newName?.trim()?.let { it.isNotEmpty() && it != oldName } ?: false
+
+private fun NavController.openPillGraph(name: String?, macAddress: String) {
+    ParameterHolders.PillGraph.name = name
+    ParameterHolders.PillGraph.macAddress = macAddress
+    navigate(route = Destination.PILL_GRAPH)
+}
 
 @Preview
 @Composable
@@ -709,9 +644,8 @@ fun ScannedPillPreview() {
             ),
             isExpanded = true,
             isInScannedPills = true,
-            navGraph = rememberNavController(),
             savePill = {},
-            stopScan = {},
+            openGraph = { _, _ -> },
         )
     }
 }
@@ -740,9 +674,8 @@ fun PillPreview() {
                     ),
                 ),
             ),
-            navGraph = rememberNavController(),
             onPillUpdate = {},
-            stopScan = {},
+            openGraph = { _, _ -> },
         )
     }
 }
