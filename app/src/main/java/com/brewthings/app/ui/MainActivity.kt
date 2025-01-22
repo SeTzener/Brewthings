@@ -25,9 +25,7 @@ class MainActivity : ComponentActivity(), ActivityCallbacks {
         super.onCreate(savedInstanceState)
         setContent {
             BrewthingsTheme {
-                MainNavGraph(
-                    activityCallbacks = this,
-                )
+                MainNavGraph(activityCallbacks = this)
             }
         }
     }

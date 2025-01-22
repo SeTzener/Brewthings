@@ -13,7 +13,7 @@ fun MainNavGraph(activityCallbacks: ActivityCallbacks) {
 
     NavHost(
         navController = outerNavController,
-        startDestination = Destination.SCANNING,
+        startDestination = Destination.HOME,
     ) {
         composable(Destination.HOME) {
             HomeScreen(
@@ -22,6 +22,7 @@ fun MainNavGraph(activityCallbacks: ActivityCallbacks) {
             )
         }
 
+        /* Entry point for supporting deep linking to a specific tab
         composable("${Destination.HOME}/{tab}") { backStackEntry ->
             val tab = backStackEntry.arguments?.getString("tab")
             HomeScreen(
@@ -30,6 +31,7 @@ fun MainNavGraph(activityCallbacks: ActivityCallbacks) {
                 startDestination = tab,
             )
         }
+        */
 
         composable(Destination.PILL_GRAPH) {
             GraphScreen(navController = outerNavController)
