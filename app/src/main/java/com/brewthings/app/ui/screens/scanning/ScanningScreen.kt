@@ -61,6 +61,7 @@ import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.model.ScannedRaptPillData
+import com.brewthings.app.ui.ActivityCallbacks
 import com.brewthings.app.ui.components.BatteryLevelIndicator
 import com.brewthings.app.ui.components.ExpandableCard
 import com.brewthings.app.ui.components.ScanPane
@@ -76,17 +77,15 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ScanningScreen(
     navController: NavController,
+    activityCallbacks: ActivityCallbacks,
     viewModel: ScanningScreenViewModel = koinViewModel(),
-    openAppDetails: () -> Unit,
-    showLocationSettings: () -> Unit,
-    enableBluetooth: () -> Unit,
 ) {
     Surface(color = MaterialTheme.colorScheme.background) {
         ScanPane(
             bluetooth = viewModel.screenState.bluetooth,
-            openAppDetails = openAppDetails,
-            showLocationSettings = showLocationSettings,
-            enableBluetooth = enableBluetooth,
+            openAppDetails = activityCallbacks::openAppDetails,
+            showLocationSettings = activityCallbacks::showLocationSettings,
+            enableBluetooth = activityCallbacks::enableBluetooth,
         ) {
             ScanningScreen(
                 state = viewModel.screenState,
@@ -558,7 +557,7 @@ private fun PillFooter(
             stopScan()
             ParameterHolder.Graph.name = name
             ParameterHolder.Graph.macAddress = macAddress
-            navGraph.navigate(route = Destination.SCANNING_GRAPH)
+            navGraph.navigate(route = Destination.PILL_GRAPH)
         },
     ) {
         Text(

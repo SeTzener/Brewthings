@@ -9,27 +9,24 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.brewthings.app.ui.screens.navigation.legacy.SetupNavGraph
+import com.brewthings.app.ui.screens.navigation.legacy.MainNavGraph
 import com.brewthings.app.ui.theme.BrewthingsTheme
 
-object RequestCode {
-    const val EnableBluetooth = 55001
+private const val REQUEST_CODE_ENABLE_BLUETOOTH = 55001
+
+interface ActivityCallbacks {
+    fun enableBluetooth()
+    fun showLocationSettings()
+    fun openAppDetails()
 }
 
-class MainActivity : ComponentActivity() {
-    private lateinit var navController: NavHostController
+class MainActivity : ComponentActivity(), ActivityCallbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            navController = rememberNavController()
             BrewthingsTheme {
-                SetupNavGraph(
-                    openAppDetails = ::openAppDetails,
-                    showLocationSettings = ::showLocationSettings,
-                    enableBluetooth = ::enableBluetooth,
-                    navController = navController,
+                MainNavGraph(
+                    activityCallbacks = this,
                 )
             }
         }
@@ -38,15 +35,15 @@ class MainActivity : ComponentActivity() {
     /** @throws SecurityException if [BLUETOOTH_CONNECT] permission has not been granted on Android 12 (API 31) or newer. */
     @Suppress("DEPRECATION")
     @SuppressLint("MissingPermission")
-    private fun enableBluetooth() {
-        startActivityForResult(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), RequestCode.EnableBluetooth)
+    override fun enableBluetooth() {
+        startActivityForResult(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_CODE_ENABLE_BLUETOOTH)
     }
 
-    private fun showLocationSettings() {
+    override fun showLocationSettings() {
         startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
     }
 
-    private fun openAppDetails() {
+    override fun openAppDetails() {
         startActivity(
             Intent().apply {
                 action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
