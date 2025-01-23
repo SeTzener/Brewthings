@@ -113,6 +113,7 @@ dependencies {
 
     // Accompanist
     implementation(libs.accompanist.permissions)
+    implementation(libs.accompanist.systemuicontroller)
 
     // AndroidX AppCompat
     implementation(libs.app.compat)

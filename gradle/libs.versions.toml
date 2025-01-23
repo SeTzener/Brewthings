@@ -49,6 +49,7 @@ kotlin-android = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin"
 
 # Accompanist
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
+accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 
 # AndroidX AppCompat
 app-compat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appCompat" }

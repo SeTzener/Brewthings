@@ -21,6 +21,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.brewthings.app.R
 import com.brewthings.app.ui.ActivityCallbacks
+import com.brewthings.app.ui.components.BackgroundStatusBar
+import com.brewthings.app.ui.components.ElevatedNavigationBar
 import com.brewthings.app.ui.screens.brews.BrewsScreen
 import com.brewthings.app.ui.screens.scanning.ScanningScreen
 import kotlinx.coroutines.flow.map
@@ -34,6 +36,9 @@ fun HomeScreen(
     startDestination: String? = null,
 ) {
     val innerNavController = rememberNavController()
+
+    BackgroundStatusBar()
+    ElevatedNavigationBar()
 
     val defaultTab = startDestination ?: DEFAULT_TAB
 
