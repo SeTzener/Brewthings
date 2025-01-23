@@ -44,8 +44,9 @@ fun BrewsScreen(
                SectionTitle(title = brews.batchName)
            }
 
-           items(brews.data, key = { "Brew_" + it.og.timestamp }) { brew ->
-               BrewCard(brew = brew, isExpanded = brew == brews.data.first()) // TODO(Tano): Add a remember
+           val brewsList = brews.data.reversed()
+           items(brewsList, key = { "Brew_" + it.og.timestamp }) { brew ->
+               BrewCard(brew = brew, isExpanded = brew == brewsList.first()) // TODO(Tano): Add a remember
                VerticalSpace()
            }
        }
