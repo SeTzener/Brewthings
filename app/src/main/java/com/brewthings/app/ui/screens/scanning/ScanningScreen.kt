@@ -33,7 +33,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Slider
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -81,26 +80,24 @@ fun ScanningScreen(
     activityCallbacks: ActivityCallbacks,
     viewModel: ScanningScreenViewModel = koinViewModel(),
 ) {
-    Surface(color = MaterialTheme.colorScheme.background) {
-        ScanPane(
-            bluetooth = viewModel.screenState.bluetooth,
-            openAppDetails = activityCallbacks::openAppDetails,
-            showLocationSettings = activityCallbacks::showLocationSettings,
-            enableBluetooth = activityCallbacks::enableBluetooth,
-        ) {
-            ScanningScreen(
-                state = viewModel.screenState,
-                onRssiThresholdChanged = viewModel::onRssiThresholdChanged,
-                onFirstLoad = viewModel::onFirstLoad,
-                toggleScan = viewModel::toggleScan,
-                savePill = viewModel::savePill,
-                onPillUpdate = viewModel::onPillUpdate,
-                openGraph = { name, macAddress ->
-                    viewModel.stopScan()
-                    navController.openPillGraph(name, macAddress)
-                },
-            )
-        }
+    ScanPane(
+        bluetooth = viewModel.screenState.bluetooth,
+        openAppDetails = activityCallbacks::openAppDetails,
+        showLocationSettings = activityCallbacks::showLocationSettings,
+        enableBluetooth = activityCallbacks::enableBluetooth,
+    ) {
+        ScanningScreen(
+            state = viewModel.screenState,
+            onRssiThresholdChanged = viewModel::onRssiThresholdChanged,
+            onFirstLoad = viewModel::onFirstLoad,
+            toggleScan = viewModel::toggleScan,
+            savePill = viewModel::savePill,
+            onPillUpdate = viewModel::onPillUpdate,
+            openGraph = { name, macAddress ->
+                viewModel.stopScan()
+                navController.openPillGraph(name, macAddress)
+            },
+        )
     }
 }
 
