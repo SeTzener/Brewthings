@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.brewthings.app.data.model.Brew
-import com.brewthings.app.ui.components.BrewCard
 import com.brewthings.app.ui.components.SectionTitle
 import com.brewthings.app.ui.components.VerticalSpace
 import com.brewthings.app.ui.screens.navigation.legacy.Destination

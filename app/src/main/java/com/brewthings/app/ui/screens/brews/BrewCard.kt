@@ -1,4 +1,4 @@
-package com.brewthings.app.ui.components
+package com.brewthings.app.ui.screens.brews
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
@@ -17,6 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.model.Brew
+import com.brewthings.app.ui.components.ExpandableCard
+import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.formatDateTime
 import kotlinx.datetime.Instant
