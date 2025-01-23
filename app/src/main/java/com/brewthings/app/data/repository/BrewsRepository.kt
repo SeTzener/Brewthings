@@ -7,6 +7,7 @@ import com.brewthings.app.data.storage.RaptPillDao
 import com.brewthings.app.data.storage.RaptPillReadings
 import com.brewthings.app.data.storage.toModelItem
 import com.brewthings.app.util.calculateFeeding
+import com.google.common.annotations.VisibleForTesting
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -28,7 +29,8 @@ class BrewsRepository(
         }
     }
 
-    private suspend fun getBrews(macAddress: String): List<Brew> {
+    @VisibleForTesting
+    suspend fun getBrews(macAddress: String): List<Brew> {
         val brews: MutableList<Brew> = mutableListOf()
 
         // Collect the first list of edges from the flow
