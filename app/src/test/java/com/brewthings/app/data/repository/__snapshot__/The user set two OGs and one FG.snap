@@ -26,7 +26,8 @@
             "isFG": false,
             "isFeeding": false
         },
-        "isCompleted": false
+        "isCompleted": false,
+        "feedings": []
     },
     {
         "og": {
@@ -55,6 +56,7 @@
             "isFG": true,
             "isFeeding": false
         },
-        "isCompleted": true
+        "isCompleted": true,
+        "feedings": []
     }
 ]

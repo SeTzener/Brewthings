@@ -15,6 +15,9 @@ interface RaptPillDao {
     @Query("SELECT * FROM RaptPill")
     fun observeAll(): Flow<List<RaptPillWithData>>
 
+    @Query("SELECT * FROM RaptPill")
+    fun observePills(): Flow<List<RaptPill>>
+
     @Query(
         "SELECT * FROM RaptPillData " +
             "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +

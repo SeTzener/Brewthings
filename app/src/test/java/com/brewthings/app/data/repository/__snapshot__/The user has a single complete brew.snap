@@ -26,6 +26,7 @@
             "isFG": true,
             "isFeeding": false
         },
-        "isCompleted": true
+        "isCompleted": true,
+        "feedings": []
     }
 ]

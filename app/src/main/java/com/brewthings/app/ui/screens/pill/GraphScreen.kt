@@ -44,6 +44,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.brewthings.app.R
+import com.brewthings.app.ui.components.BackgroundNavigationBar
+import com.brewthings.app.ui.components.BackgroundStatusBar
 import com.brewthings.app.ui.screens.pill.graph.DataType
 import com.brewthings.app.ui.screens.pill.graph.Graph
 import com.brewthings.app.ui.screens.pill.insights.InsightsPager
@@ -79,6 +81,9 @@ fun GraphScreen(
     setIsFG: (Instant, Boolean) -> Unit,
     setFeeding: (Instant, Boolean) -> Unit,
 ) {
+    BackgroundStatusBar()
+    BackgroundNavigationBar()
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     val graphSeries = screenState.graphSeries
