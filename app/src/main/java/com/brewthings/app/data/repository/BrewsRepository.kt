@@ -29,6 +29,15 @@ class BrewsRepository(
         }
     }
 
+    fun observeBrewData(brew: Brew): Flow<List<RaptPillData>> =
+        dao.observeBrewData(
+            macAddress = brew.macAddress,
+            startDate = brew.og.timestamp,
+            endDate = brew.fgOrLast.timestamp
+        ).map { data ->
+            data.map { it.toModelItem() }
+        }
+
     @VisibleForTesting
     suspend fun getBrews(macAddress: String): List<Brew> {
         val brews: MutableList<Brew> = mutableListOf()
@@ -116,6 +125,7 @@ class BrewsRepository(
         if (currentOg != null) {
             brews.add(
                 Brew(
+                    macAddress = macAddress,
                     og = currentOg,
                     feedings = getFeedingsAndDiluting(
                         macAddress = macAddress,
@@ -158,6 +168,7 @@ class BrewsRepository(
 
     private suspend fun createBrew(macAddress: String, start: RaptPillData, end: RaptPillData, isCompleted: Boolean) =
         Brew(
+            macAddress = macAddress,
             og = start,
             feedings = getFeedingsAndDiluting(
                 macAddress = macAddress,

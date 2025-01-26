@@ -21,14 +21,14 @@ fun BrewsScreen(
 ) {
     BrewsScreen(
         state = viewModel.screenState,
-        onBrewClick = { brew -> router.goToBrewGraph(brew) },
+        openGraph = { brew -> router.goToBrewGraph(brew) },
     )
 }
 
 @Composable
 fun BrewsScreen(
     state: BrewsScreenState,
-    onBrewClick: (Brew) -> Unit, // TODO(walt): wire it in
+    openGraph: (Brew) -> Unit,
 ) {
     val lockedBrews = newOrCached(state.brews, emptyList())
     LazyColumn(
@@ -43,7 +43,11 @@ fun BrewsScreen(
 
             val brewsList = brews.data.reversed()
             items(brewsList, key = { "Brew_" + it.og.timestamp }) { brew ->
-                BrewCard(brew = brew, isExpanded = brew == brewsList.first()) // TODO(Tano): Add a remember
+                BrewCard(
+                    brew = brew,
+                    isExpanded = brew == brewsList.first(), // TODO(Tano): Add a remember
+                    openGraph = openGraph,
+                )
                 VerticalSpace()
             }
         }

@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Brew(
+    val macAddress: String,
     val og: RaptPillData,
     val fgOrLast: RaptPillData,
     val isCompleted: Boolean,

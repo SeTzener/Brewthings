@@ -33,5 +33,9 @@ fun MainNavGraph(activityCallbacks: ActivityCallbacks) {
         composable(Destination.PILL_GRAPH) {
             GraphScreen(router, Destination.PILL_GRAPH)
         }
+
+        composable(Destination.BREWS_GRAPH) {
+            GraphScreen(router, Destination.BREWS_GRAPH)
+        }
     }
 }

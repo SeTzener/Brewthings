@@ -5,8 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.brewthings.app.data.model.Brew
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.RaptPillInsights
+import com.brewthings.app.data.repository.BrewsRepository
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.ui.component.graph.DataPoint
 import com.brewthings.app.ui.component.graph.DataType
@@ -26,8 +28,6 @@ abstract class GraphScreenViewModel(
 ) : ViewModel(), KoinComponent {
     var screenState: GraphScreenState by mutableStateOf(createInitialState())
         private set
-
-    protected val repo: RaptPillRepository by inject()
 
     private val dataPointsMap = mutableMapOf<DataType, List<DataPoint>>()
     private val logger = Logger("GraphScreenViewModel")
@@ -190,6 +190,8 @@ class PillGraphScreenViewModel(
     screenTitle = name ?: macAddress,
     showInsightsCardActions = true,
 ) {
+    private val repo: RaptPillRepository by inject()
+
     init {
         // Can't be moved to the superclass, or else the params won't be initialized.
         loadData()
@@ -220,4 +222,32 @@ class PillGraphScreenViewModel(
     }
 
     override fun observeRaptPillData(): Flow<List<RaptPillData>> = repo.observeData(macAddress)
+}
+
+class BrewsGraphScreenViewModel(
+    val brew: Brew = ParameterHolders.BrewGraph.brew ?: error("brew is required")
+) : GraphScreenViewModel(
+    screenTitle = brew.macAddress, // TODO(walt): change
+    showInsightsCardActions = false,
+) {
+    private val repo: BrewsRepository by inject()
+
+    init {
+        // Can't be moved to the superclass, or else the params won't be initialized.
+        loadData()
+    }
+
+    override fun setIsOG(timestamp: Instant, isOg: Boolean?) {
+        // TODO(walt): hidden for now
+    }
+
+    override fun setIsFG(timestamp: Instant, isFg: Boolean?) {
+        // TODO(walt): hidden for now
+    }
+
+    override fun setFeeding(timestamp: Instant, isFeeding: Boolean?) {
+        // TODO(walt): hidden for now
+    }
+
+    override fun observeRaptPillData(): Flow<List<RaptPillData>> = repo.observeBrewData(brew)
 }

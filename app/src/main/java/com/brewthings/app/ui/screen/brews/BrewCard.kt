@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +21,7 @@ import com.brewthings.app.R
 import com.brewthings.app.data.model.Brew
 import com.brewthings.app.ui.component.ExpandableCard
 import com.brewthings.app.ui.component.TextWithIcon
+import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.formatDateTime
 import kotlinx.datetime.Instant
@@ -27,6 +30,7 @@ import kotlinx.datetime.Instant
 fun BrewCard(
     brew: Brew,
     isExpanded: Boolean,
+    openGraph: (Brew) -> Unit,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -44,6 +48,7 @@ fun BrewCard(
             expandedContent = {
                 Column {
                     BrewData(brew)
+                    BrewFooter(brew, openGraph)
                 }
             },
         )
@@ -76,9 +81,7 @@ private fun BrewTopContent(startDate: Instant, endDate: Instant) {
 
 @SuppressLint("ResourceType")
 @Composable
-private fun BrewData(
-    brew: Brew,
-) {
+private fun BrewData(brew: Brew) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -113,5 +116,23 @@ private fun BrewData(
                 text = stringResource(id = R.string.brew_card_value_gravity, brew.fgOrLast.gravity),
             )
         }
+    }
+}
+
+@Composable
+fun BrewFooter(
+    brew: Brew,
+    openGraph: (Brew) -> Unit,
+) {
+    TextButton(
+        modifier = Modifier.padding(bottom = 8.dp, start = 10.dp, end = 10.dp),
+        onClick = {
+            openGraph(brew)
+        },
+    ) {
+        Text(
+            text = stringResource(id = R.string.pill_graph),
+            style = Typography.bodyMedium,
+        )
     }
 }
