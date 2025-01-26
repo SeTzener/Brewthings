@@ -34,7 +34,7 @@ fun MainNavGraph(activityCallbacks: ActivityCallbacks) {
         */
 
         composable(Destination.PILL_GRAPH) {
-            GraphScreen(navController = outerNavController)
+            GraphScreen(Router(outerNavController))
         }
     }
 }

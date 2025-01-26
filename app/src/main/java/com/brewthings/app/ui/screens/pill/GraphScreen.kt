@@ -46,6 +46,7 @@ import androidx.navigation.NavController
 import com.brewthings.app.R
 import com.brewthings.app.ui.components.BackgroundNavigationBar
 import com.brewthings.app.ui.components.BackgroundStatusBar
+import com.brewthings.app.ui.screens.navigation.legacy.Router
 import com.brewthings.app.ui.screens.pill.graph.DataType
 import com.brewthings.app.ui.screens.pill.graph.Graph
 import com.brewthings.app.ui.screens.pill.insights.InsightsPager
@@ -54,12 +55,12 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun GraphScreen(
-    navController: NavController,
+    router: Router,
     viewModel: GraphScreenViewModel = koinViewModel(),
 ) {
     GraphScreen(
         screenState = viewModel.screenState,
-        onBackClick = { navController.popBackStack() },
+        onBackClick = { router.back() },
         viewModel::toggleDataType,
         viewModel::onGraphSelect,
         viewModel::onPagerSelect,
