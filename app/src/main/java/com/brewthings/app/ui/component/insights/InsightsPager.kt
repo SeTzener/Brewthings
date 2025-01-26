@@ -11,12 +11,15 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.data.model.RaptPillInsights
-import com.brewthings.app.ui.screen.graph.GraphScreenLogger
 import com.brewthings.app.ui.component.graph.DataType
+import com.brewthings.app.util.Logger
 import kotlinx.datetime.Instant
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -31,13 +34,15 @@ fun InsightsPager(
     setIsFG: (Instant, Boolean) -> Unit,
     setFeeding: (Instant, Boolean) -> Unit,
 ) {
+    val logger by remember { mutableStateOf(Logger("InsightsPager")) }
+
     val pagerState = rememberPagerState(
         initialPage = selectedIndex,
         pageCount = { insights.count() },
     )
 
     LaunchedEffect(pagerState) {
-        GraphScreenLogger.logPager(selectedIndex, animated = false)
+        logger.info("Pager: index=$selectedIndex animated=false")
         snapshotFlow { pagerState.targetPage }.collect { page ->
             onSelect(page)
         }
@@ -64,7 +69,7 @@ fun InsightsPager(
     }
 
     LaunchedEffect(selectedIndex) {
-        GraphScreenLogger.logPager(selectedIndex, animated = true)
+        logger.info("Pager: index=$selectedIndex animated=true")
         pagerState.animateScrollToPage(
             page = selectedIndex,
             animationSpec = tween(500, easing = LinearEasing),

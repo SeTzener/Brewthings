@@ -7,11 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.data.repository.RaptPillRepository
-import com.brewthings.app.ui.navigation.legacy.ParameterHolders
 import com.brewthings.app.ui.component.graph.DataPoint
 import com.brewthings.app.ui.component.graph.DataType
 import com.brewthings.app.ui.component.graph.GraphSeries
 import com.brewthings.app.ui.component.insights.toInsights
+import com.brewthings.app.ui.navigation.legacy.ParameterHolders
+import com.brewthings.app.util.Logger
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
@@ -27,6 +28,7 @@ class GraphScreenViewModel(
     private val repo: RaptPillRepository by inject()
 
     private val dataPointsMap = mutableMapOf<DataType, List<DataPoint>>()
+    private val logger = Logger("GraphScreenViewModel")
 
     init {
         loadData()
@@ -57,12 +59,12 @@ class GraphScreenViewModel(
     }
 
     fun onGraphSelect(index: Int?) {
-        GraphScreenLogger.logGraphSelect(index)
+        logger.info("GraphSelect: index=$index")
         onSelect(index)
     }
 
     fun onPagerSelect(index: Int) {
-        GraphScreenLogger.logPagerSelect(index)
+        logger.info("PagerSelect: index=$index")
         onSelect(index)
     }
 
