@@ -7,23 +7,21 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.brewthings.app.data.model.Brew
 import com.brewthings.app.ui.components.SectionTitle
 import com.brewthings.app.ui.components.VerticalSpace
-import com.brewthings.app.ui.screens.navigation.legacy.Destination
-import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolders
+import com.brewthings.app.ui.screens.navigation.legacy.Router
 import com.brewthings.app.util.newOrCached
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun BrewsScreen(
-    navController: NavController,
+    router: Router,
     viewModel: BrewsScreenViewModel = koinViewModel(),
 ) {
     BrewsScreen(
         state = viewModel.screenState,
-        onBrewClick = { brew -> navController.openBrewGraph(brew) }
+        onBrewClick = { brew -> router.goToBrewGraph(brew) }
     )
 }
 
@@ -50,9 +48,4 @@ fun BrewsScreen(
            }
        }
     }
-}
-
-private fun NavController.openBrewGraph(brew: Brew) {
-    ParameterHolders.BrewGraph.brew = brew
-    navigate(route = Destination.BREW_GRAPH)
 }
