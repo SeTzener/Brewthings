@@ -36,14 +36,15 @@ import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toFormattedDate
-import kotlinx.datetime.Instant
 import kotlin.math.abs
+import kotlinx.datetime.Instant
 
 @Composable
 fun InsightsCard(
     dataTypes: List<DataType>,
     data: RaptPillInsights,
     feedings: List<Instant>,
+    showActions: Boolean,
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
     setFeeding: (Instant, Boolean) -> Unit,
@@ -151,60 +152,78 @@ fun InsightsCard(
                 insight = data.calculatedVelocity,
             )
         }
-        Row(
-            modifier = Modifier.padding(bottom = 8.dp),
+        if (showActions) {
+            InsightsActionRow(
+                data = data,
+                feedings = feedings,
+                setIsOG = setIsOG,
+                setIsFG = setIsFG,
+                setFeeding = setFeeding,
+            )
+        }
+    }
+}
+
+@Composable fun InsightsActionRow(
+    data: RaptPillInsights,
+    feedings: List<Instant>,
+    setIsOG: (Instant, Boolean) -> Unit,
+    setIsFG: (Instant, Boolean) -> Unit,
+    setFeeding: (Instant, Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier.padding(bottom = 8.dp),
+    ) {
+        TextButton(
+            modifier = Modifier.padding(start = 7.dp),
+            onClick = { setIsOG(data.timestamp, !data.isOG) },
         ) {
-            TextButton(
-                modifier = Modifier.padding(start = 7.dp),
-                onClick = { setIsOG(data.timestamp, !data.isOG) },
-            ) {
-                Text(
-                    text = if (data.isOG) {
-                        stringResource(id = R.string.unset_OG)
+            Text(
+                text = if (data.isOG) {
+                    stringResource(id = R.string.unset_OG)
+                } else {
+                    stringResource(
+                        id = R.string.set_OG,
+                    )
+                },
+                style = Typography.bodyMedium,
+            )
+        }
+        TextButton(
+            modifier = Modifier.padding(start = 4.dp),
+            onClick = { setFeeding(data.timestamp, !data.isFeeding) },
+        ) {
+            Text(
+                text = if (feedings.contains(data.timestamp)) {
+                    if (data.isFeeding) {
+                        stringResource(id = R.string.unfeeding)
                     } else {
-                        stringResource(
-                            id = R.string.set_OG,
-                        )
-                    },
-                    style = Typography.bodyMedium,
-                )
-            }
-            TextButton(
-                modifier = Modifier.padding(start = 4.dp),
-                onClick = { setFeeding(data.timestamp, !data.isFeeding) },
-            ) {
-                Text(
-                    text = if (feedings.contains(data.timestamp)) {
-                        if (data.isFeeding) {
-                            stringResource(id = R.string.unfeeding)
-                        } else {
-                            stringResource(id = R.string.feeding)
-                        }
+                        stringResource(id = R.string.feeding)
+                    }
+                } else {
+                    if (data.isFeeding) {
+                        stringResource(id = R.string.undiluting)
                     } else {
-                        if (data.isFeeding) {
-                            stringResource(id = R.string.undiluting)
-                        } else {
-                            stringResource(id = R.string.diluting)
-                        }
-                    },
-                    style = Typography.bodyMedium,
-                )
-            }
-            TextButton(
-                modifier = Modifier.padding(start = 4.dp),
-                onClick = { setIsFG(data.timestamp, !data.isFG) },
-            ) {
-                Text(
-                    text = if (data.isFG) {
-                        stringResource(id = R.string.unset_FG)
-                    } else {
-                        stringResource(
-                            id = R.string.set_FG,
-                        )
-                    },
-                    style = Typography.bodyMedium,
-                )
-            }
+                        stringResource(id = R.string.diluting)
+                    }
+                },
+                style = Typography.bodyMedium,
+            )
+        }
+        TextButton(
+            modifier = Modifier.padding(start = 4.dp),
+            onClick = { setIsFG(data.timestamp, !data.isFG) },
+        ) {
+            Text(
+                text = if (data.isFG) {
+                    stringResource(id = R.string.unset_FG)
+                } else {
+                    stringResource(
+                        id = R.string.set_FG,
+                    )
+                },
+                style = Typography.bodyMedium,
+            )
         }
     }
 }
@@ -521,6 +540,7 @@ fun InsightsCardPreview() {
                 isFeeding = true,
             ),
             feedings = emptyList(),
+            showActions = true,
             setIsOG = { _, _ -> },
             setIsFG = { _, _ -> },
             setFeeding = { _, _ -> },

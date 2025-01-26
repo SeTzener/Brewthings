@@ -9,6 +9,8 @@ data class GraphScreenState(
     // Immutable state
     val title: String,
     val dataTypes: List<DataType>,
+    // Graph customizations
+    val showInsightsCardActions: Boolean,
     // Selection state
     val selectedDataTypes: List<DataType>,
     val selectedDataIndex: Int? = null,

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.ui.component.graph.DataPoint
@@ -13,26 +14,23 @@ import com.brewthings.app.ui.component.graph.GraphSeries
 import com.brewthings.app.ui.component.insights.toInsights
 import com.brewthings.app.ui.navigation.legacy.ParameterHolders
 import com.brewthings.app.util.Logger
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class GraphScreenViewModel(
-    val macAddress: String = ParameterHolders.PillGraph.macAddress ?: error("macAddress is required"),
-    name: String? = ParameterHolders.PillGraph.name,
+abstract class GraphScreenViewModel(
+    private val screenTitle: String,
+    private val showInsightsCardActions: Boolean,
 ) : ViewModel(), KoinComponent {
-    var screenState: GraphScreenState by mutableStateOf(createInitialState(name, macAddress))
+    var screenState: GraphScreenState by mutableStateOf(createInitialState())
         private set
 
-    private val repo: RaptPillRepository by inject()
+    protected val repo: RaptPillRepository by inject()
 
     private val dataPointsMap = mutableMapOf<DataType, List<DataPoint>>()
     private val logger = Logger("GraphScreenViewModel")
-
-    init {
-        loadData()
-    }
 
     fun toggleDataType(dataType: DataType) {
         val oldDataTypes = screenState.selectedDataTypes
@@ -68,41 +66,27 @@ class GraphScreenViewModel(
         onSelect(index)
     }
 
-    fun setIsOG(timestamp: Instant, isOg: Boolean?) {
-        viewModelScope.launch {
-            if (isOg != null) {
-                repo.setIsOG(macAddress = macAddress, timestamp = timestamp, isOg = isOg)
-            }
-        }
-    }
+    abstract fun setIsOG(timestamp: Instant, isOg: Boolean?)
 
-    fun setIsFG(timestamp: Instant, isFg: Boolean?) {
-        viewModelScope.launch {
-            if (isFg != null) {
-                repo.setIsFG(macAddress = macAddress, timestamp = timestamp, isOg = isFg)
-            }
-        }
-    }
+    abstract fun setIsFG(timestamp: Instant, isFg: Boolean?)
 
-    fun setFeeding(timestamp: Instant, isFeeding: Boolean?) {
-        viewModelScope.launch {
-            if (isFeeding != null) {
-                repo.setFeeding(macAddress = macAddress, timestamp = timestamp, isFeeding = isFeeding)
-            }
-        }
-    }
+    abstract fun setFeeding(timestamp: Instant, isFeeding: Boolean?)
 
-    private fun createInitialState(name: String?, macAddress: String): GraphScreenState =
+    abstract fun observeRaptPillData(): Flow<List<RaptPillData>>
+
+    private fun createInitialState(): GraphScreenState =
         GraphScreenState(
-            title = name ?: macAddress,
+            title = screenTitle,
+            showInsightsCardActions = showInsightsCardActions,
             dataTypes = DataType.entries,
             selectedDataTypes = listOf(DataType.GRAVITY),
         )
 
-    private fun loadData() {
+    protected fun loadData() {
         viewModelScope.launch {
-            repo.observeData(macAddress)
+            observeRaptPillData()
                 .collect { pillData ->
+                    val feedings = pillData.toFeedingTimestamps()
                     val defaultIndex = pillData.lastIndex
                     val insights = pillData.toInsights()
                     dataPointsMap.clear()
@@ -113,11 +97,12 @@ class GraphScreenViewModel(
                             dataTypes = screenState.selectedDataTypes,
                             insights = insights,
                         ),
-                        feedings = repo.getFeedingsTimestamp(macAddress),
+                        feedings = feedings,
                     )
                 }
         }
     }
+
     private fun updateGraphSeries(
         dataTypes: List<DataType>,
         insights: List<RaptPillInsights>,
@@ -136,6 +121,13 @@ class GraphScreenViewModel(
     private fun onSelect(index: Int?) {
         screenState = screenState.copy(selectedDataIndex = index)
     }
+
+    private fun List<RaptPillData>.toFeedingTimestamps(): List<Instant> =
+        filterIndexed { index, item ->
+            if (index == 0) {
+                false
+            } else item.gravity > this[index - 1].gravity
+        }.map { it.timestamp }
 }
 
 private fun List<RaptPillInsights>.toDataPoints(dataType: DataType): List<DataPoint> {
@@ -189,4 +181,43 @@ private fun List<Float?>.normalize(): List<Float?> {
             (it - min) / (max - min)
         }
     }
+}
+
+class PillGraphScreenViewModel(
+    val macAddress: String = ParameterHolders.PillGraph.macAddress ?: error("macAddress is required"),
+    name: String? = ParameterHolders.PillGraph.name,
+) : GraphScreenViewModel(
+    screenTitle = name ?: macAddress,
+    showInsightsCardActions = true,
+) {
+    init {
+        // Can't be moved to the superclass, or else the params won't be initialized.
+        loadData()
+    }
+
+    override fun setIsOG(timestamp: Instant, isOg: Boolean?) {
+        viewModelScope.launch {
+            if (isOg != null) {
+                repo.setIsOG(macAddress = macAddress, timestamp = timestamp, isOg = isOg)
+            }
+        }
+    }
+
+    override fun setIsFG(timestamp: Instant, isFg: Boolean?) {
+        viewModelScope.launch {
+            if (isFg != null) {
+                repo.setIsFG(macAddress = macAddress, timestamp = timestamp, isOg = isFg)
+            }
+        }
+    }
+
+    override fun setFeeding(timestamp: Instant, isFeeding: Boolean?) {
+        viewModelScope.launch {
+            if (isFeeding != null) {
+                repo.setFeeding(macAddress = macAddress, timestamp = timestamp, isFeeding = isFeeding)
+            }
+        }
+    }
+
+    override fun observeRaptPillData(): Flow<List<RaptPillData>> = repo.observeData(macAddress)
 }

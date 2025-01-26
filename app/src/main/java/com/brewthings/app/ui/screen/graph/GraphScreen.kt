@@ -51,11 +51,13 @@ import com.brewthings.app.ui.component.insights.InsightsPager
 import com.brewthings.app.ui.navigation.legacy.Router
 import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.qualifier.named
 
 @Composable
 fun GraphScreen(
     router: Router,
-    viewModel: GraphScreenViewModel = koinViewModel(),
+    destination: String,
+    viewModel: GraphScreenViewModel = koinViewModel(qualifier = named(destination)),
 ) {
     GraphScreen(
         screenState = viewModel.screenState,
@@ -146,6 +148,7 @@ fun GraphScreen(
                         setIsOG = setIsOG,
                         setIsFG = setIsFG,
                         setFeeding = setFeeding,
+                        showCardActions = screenState.showInsightsCardActions,
                     )
                 }
             }

@@ -8,7 +8,6 @@ import com.brewthings.app.data.storage.RaptPillDao
 import com.brewthings.app.data.storage.toDaoItem
 import com.brewthings.app.data.storage.toModelItem
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 
@@ -67,14 +66,5 @@ class RaptPillRepository(
             timestamp = timestamp,
             isFeeding = isFeeding,
         )
-    }
-
-    suspend fun getFeedingsTimestamp(macAddress: String): List<Instant> {
-        val data = dao.observeData(macAddress).first()
-        return data.filterIndexed { index, item ->
-            if (index == 0) {
-                false
-            } else item.readings.gravity > data[index - 1].readings.gravity
-        }.map { it.readings.timestamp }
     }
 }

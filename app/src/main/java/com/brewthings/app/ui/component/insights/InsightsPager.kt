@@ -28,6 +28,7 @@ fun InsightsPager(
     dataTypes: List<DataType>,
     insights: List<RaptPillInsights>,
     selectedIndex: Int,
+    showCardActions: Boolean,
     feedings: List<Instant>,
     onSelect: (Int) -> Unit,
     setIsOG: (Instant, Boolean) -> Unit,
@@ -60,6 +61,7 @@ fun InsightsPager(
             InsightsCard(
                 dataTypes = dataTypes,
                 data = insights[index],
+                showActions = showCardActions,
                 setIsOG = setIsOG,
                 setIsFG = setIsFG,
                 setFeeding = setFeeding,
