@@ -1,11 +1,11 @@
 package com.brewthings.app.utils
 
 import com.karumi.kotlinsnapshot.KotlinSnapshot
-import java.nio.file.Paths
-import kotlin.reflect.KClass
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import org.junit.jupiter.api.TestInfo
+import java.nio.file.Paths
+import kotlin.reflect.KClass
 
 inline infix fun <reified T> T.shouldMatchSnapshot(testInfo: TestInfo) {
     val className: KClass<out Any> = testInfo.testClass.get().kotlin

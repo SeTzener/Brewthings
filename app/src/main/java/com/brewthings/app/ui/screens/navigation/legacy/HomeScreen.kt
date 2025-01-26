@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -31,7 +30,7 @@ private const val DEFAULT_TAB = Destination.Tab.SCANNING
 
 @Composable
 fun HomeScreen(
-    outerNavController: NavController,
+    router: Router,
     activityCallbacks: ActivityCallbacks,
     startDestination: String? = null,
 ) {
@@ -69,25 +68,25 @@ fun HomeScreen(
                             }
                         },
                         icon = { Icon(ImageVector.vectorResource(tab.iconResId), contentDescription = label) },
-                        label = { Text(label) }
+                        label = { Text(label) },
                     )
                 }
             }
-        }
+        },
     ) { innerPadding ->
         NavHost(
             navController = innerNavController,
             startDestination = defaultTab,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         ) {
             composable(Destination.Tab.SCANNING) {
                 ScanningScreen(
-                    navController = outerNavController,
-                    activityCallbacks = activityCallbacks
+                    router = router,
+                    activityCallbacks = activityCallbacks,
                 )
             }
             composable(Destination.Tab.BREWS) {
-                BrewsScreen(navController = outerNavController)
+                BrewsScreen(router = router)
             }
         }
     }

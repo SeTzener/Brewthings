@@ -41,7 +41,7 @@ private fun UpdateSystemNavigationBarColor(color: Color, isDarkTheme: Boolean) {
     LaunchedEffect(color, isDarkTheme) {
         systemUiController.setNavigationBarColor(
             color = color,
-            darkIcons = !isDarkTheme
+            darkIcons = !isDarkTheme,
         )
     }
 }
@@ -54,7 +54,7 @@ private fun UpdateSystemStatusBarColor(color: Color, isDarkTheme: Boolean) {
     LaunchedEffect(color, isDarkTheme) {
         systemUiController.setStatusBarColor(
             color = color,
-            darkIcons = !isDarkTheme
+            darkIcons = !isDarkTheme,
         )
     }
 }

@@ -53,7 +53,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.brewthings.app.R
 import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.RaptPillData
@@ -66,8 +65,7 @@ import com.brewthings.app.ui.components.ScanPane
 import com.brewthings.app.ui.components.SectionTitle
 import com.brewthings.app.ui.components.TextWithIcon
 import com.brewthings.app.ui.components.VerticalSpace
-import com.brewthings.app.ui.screens.navigation.legacy.Destination
-import com.brewthings.app.ui.screens.navigation.legacy.ParameterHolders
+import com.brewthings.app.ui.screens.navigation.legacy.Router
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.newOrCached
@@ -76,7 +74,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ScanningScreen(
-    navController: NavController,
+    router: Router,
     activityCallbacks: ActivityCallbacks,
     viewModel: ScanningScreenViewModel = koinViewModel(),
 ) {
@@ -95,7 +93,7 @@ fun ScanningScreen(
             onPillUpdate = viewModel::onPillUpdate,
             openGraph = { name, macAddress ->
                 viewModel.stopScan()
-                navController.openPillGraph(name, macAddress)
+                router.goToPillGraph(name, macAddress)
             },
         )
     }
@@ -612,12 +610,6 @@ fun EditNameBottomSheet(
 
 private fun isValidName(oldName: String?, newName: String?): Boolean =
     newName?.trim()?.let { it.isNotEmpty() && it != oldName } ?: false
-
-private fun NavController.openPillGraph(name: String?, macAddress: String) {
-    ParameterHolders.PillGraph.name = name
-    ParameterHolders.PillGraph.macAddress = macAddress
-    navigate(route = Destination.PILL_GRAPH)
-}
 
 @Preview
 @Composable
