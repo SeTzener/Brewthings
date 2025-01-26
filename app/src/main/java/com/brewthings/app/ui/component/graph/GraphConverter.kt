@@ -40,7 +40,7 @@ private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
 
     // Helper function to finalize and add a valid dataset
     fun finalizeValidSequence() {
-        if (currentValidData.isNotEmpty()) {
+        if (currentValidData.isSequence()) {
             val color = lineColor.takeIf { startedWithOG } ?: lineColor.copy(alpha = 0.2f)
             chartDataSets.add(
                 VisibleDataSet(currentValidData, label, color.toArgb(), formatPattern),
@@ -51,7 +51,7 @@ private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
 
     // Helper function to finalize and add an invalid dataset
     fun finalizeInvalidSequence() {
-        if (currentInvalidData.isNotEmpty()) {
+        if (currentInvalidData.isSequence()) {
             chartDataSets.add(
                 InvisibleDataSet(currentInvalidData, label),
             )
@@ -100,6 +100,8 @@ private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
 
     return chartDataSets
 }
+
+fun List<Entry>.isSequence(): Boolean = size > 1
 
 @Composable
 fun DataType.toLineColor(): Color = when (this) {
