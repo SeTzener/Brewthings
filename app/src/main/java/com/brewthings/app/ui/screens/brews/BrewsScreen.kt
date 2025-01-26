@@ -21,7 +21,7 @@ fun BrewsScreen(
 ) {
     BrewsScreen(
         state = viewModel.screenState,
-        onBrewClick = { brew -> router.goToBrewGraph(brew) }
+        onBrewClick = { brew -> router.goToBrewGraph(brew) },
     )
 }
 
@@ -36,16 +36,16 @@ fun BrewsScreen(
             .fillMaxSize()
             .padding(horizontal = 16.dp),
     ) {
-       lockedBrews.forEach { brews ->
-           item {
-               SectionTitle(title = brews.batchName)
-           }
+        lockedBrews.forEach { brews ->
+            item {
+                SectionTitle(title = brews.batchName)
+            }
 
-           val brewsList = brews.data.reversed()
-           items(brewsList, key = { "Brew_" + it.og.timestamp }) { brew ->
-               BrewCard(brew = brew, isExpanded = brew == brewsList.first()) // TODO(Tano): Add a remember
-               VerticalSpace()
-           }
-       }
+            val brewsList = brews.data.reversed()
+            items(brewsList, key = { "Brew_" + it.og.timestamp }) { brew ->
+                BrewCard(brew = brew, isExpanded = brew == brewsList.first()) // TODO(Tano): Add a remember
+                VerticalSpace()
+            }
+        }
     }
 }

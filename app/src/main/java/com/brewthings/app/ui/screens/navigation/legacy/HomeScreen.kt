@@ -68,21 +68,21 @@ fun HomeScreen(
                             }
                         },
                         icon = { Icon(ImageVector.vectorResource(tab.iconResId), contentDescription = label) },
-                        label = { Text(label) }
+                        label = { Text(label) },
                     )
                 }
             }
-        }
+        },
     ) { innerPadding ->
         NavHost(
             navController = innerNavController,
             startDestination = defaultTab,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         ) {
             composable(Destination.Tab.SCANNING) {
                 ScanningScreen(
                     router = router,
-                    activityCallbacks = activityCallbacks
+                    activityCallbacks = activityCallbacks,
                 )
             }
             composable(Destination.Tab.BREWS) {

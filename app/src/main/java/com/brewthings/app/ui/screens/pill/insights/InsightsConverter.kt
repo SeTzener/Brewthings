@@ -17,7 +17,9 @@ fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
     for (data in this) {
         val feeding = if (data.isFeeding && previousData != null) {
             calculateFeeding(previousData.gravity, data.gravity)
-        } else null
+        } else {
+            null
+        }
 
         // Add the insights for the current data point.
         insights.add(
@@ -26,7 +28,7 @@ fun List<RaptPillData>.toInsights(): List<RaptPillInsights> {
                 previousData = previousData,
                 currentFeeding = feeding,
                 previousFeedings = previousFeedings,
-            )
+            ),
         )
 
         if (data.isFG) {

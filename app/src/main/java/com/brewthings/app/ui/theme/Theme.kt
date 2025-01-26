@@ -28,7 +28,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun BrewthingsTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
-    isDynamicColoringEnabled: Boolean = true, //TODO(walt): wire it with a setting from the app
+    isDynamicColoringEnabled: Boolean = true, // TODO(walt): wire it with a setting from the app
     content: @Composable () -> Unit,
 ) {
     val colorScheme = getColorScheme(isDynamicColoringEnabled, isDarkTheme)
@@ -42,10 +42,11 @@ fun BrewthingsTheme(
 
 @Composable
 private fun getColorScheme(isDynamicColoringEnabled: Boolean, isDarkTheme: Boolean): ColorScheme =
-    if (isDynamicColoringEnabled && isDynamicColoringSupported())
+    if (isDynamicColoringEnabled && isDynamicColoringSupported()) {
         getDynamicColorScheme(isDarkTheme)
-    else
+    } else {
         getAppColorScheme(isDarkTheme)
+    }
 
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
 private fun isDynamicColoringSupported() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
