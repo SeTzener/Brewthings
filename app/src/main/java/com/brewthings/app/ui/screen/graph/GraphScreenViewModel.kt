@@ -12,6 +12,7 @@ import com.brewthings.app.data.repository.BrewsRepository
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.ui.component.graph.DataPoint
 import com.brewthings.app.ui.component.graph.DataType
+import com.brewthings.app.ui.component.graph.GraphData
 import com.brewthings.app.ui.component.graph.GraphSeries
 import com.brewthings.app.ui.component.insights.toInsights
 import com.brewthings.app.ui.navigation.legacy.ParameterHolders
@@ -47,8 +48,8 @@ abstract class GraphScreenViewModel(
 
         screenState = screenState.copy(
             selectedDataTypes = newDataTypes,
-            graphSeries = screenState.insights?.let { insights ->
-                updateGraphSeries(
+            graphData = screenState.insights?.let { insights ->
+                updateGraphData(
                     dataTypes = newDataTypes,
                     insights = insights,
                 )
@@ -93,7 +94,7 @@ abstract class GraphScreenViewModel(
                     screenState = screenState.copy(
                         selectedDataIndex = screenState.selectedDataIndex ?: defaultIndex,
                         insights = insights,
-                        graphSeries = updateGraphSeries(
+                        graphData = updateGraphData(
                             dataTypes = screenState.selectedDataTypes,
                             insights = insights,
                         ),
@@ -103,20 +104,24 @@ abstract class GraphScreenViewModel(
         }
     }
 
-    private fun updateGraphSeries(
+    private fun updateGraphData(
         dataTypes: List<DataType>,
         insights: List<RaptPillInsights>,
-    ): List<GraphSeries> =
-        dataTypes.map { dataType ->
-            val dataPoints = dataPointsMap[dataType] ?: insights.toDataPoints(dataType).also {
-                dataPointsMap[dataType] = it
-            }
+    ): GraphData =
+        GraphData(
+            from = insights.first().timestamp,
+            to = insights.last().timestamp,
+            series = dataTypes.map { dataType ->
+                val dataPoints = dataPointsMap[dataType] ?: insights.toDataPoints(dataType).also {
+                    dataPointsMap[dataType] = it
+                }
 
-            GraphSeries(
-                type = dataType,
-                data = dataPoints,
-            )
-        }
+                GraphSeries(
+                    type = dataType,
+                    data = dataPoints,
+                )
+            }
+        )
 
     private fun onSelect(index: Int?) {
         screenState = screenState.copy(selectedDataIndex = index)
@@ -225,7 +230,7 @@ class PillGraphScreenViewModel(
 }
 
 class BrewsGraphScreenViewModel(
-    val brew: Brew = ParameterHolders.BrewGraph.brew ?: error("brew is required")
+    private val brew: Brew = ParameterHolders.BrewGraph.brew ?: error("brew is required")
 ) : GraphScreenViewModel(
     screenTitle = brew.macAddress, // TODO(walt): change
     showInsightsCardActions = false,

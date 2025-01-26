@@ -2,6 +2,7 @@ package com.brewthings.app.ui.component.graph.mpandroid
 
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import kotlinx.datetime.Instant
 
 /**
  * A [LineData] that sorts the data sets by visibility.
@@ -13,6 +14,8 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
  * is added before any visible datasets.
  */
 class MpAndroidChartData(
+    val from: Instant,
+    val to: Instant,
     dataSets: List<ILineDataSet>,
 ) : LineData(
     dataSets.sortedBy { it !is InvisibleDataSet },

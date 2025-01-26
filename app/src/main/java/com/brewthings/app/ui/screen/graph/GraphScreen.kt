@@ -88,7 +88,7 @@ fun GraphScreen(
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    val graphSeries = screenState.graphSeries
+    val graphData = screenState.graphData
     val insights = screenState.insights
     val feedings = screenState.feedings
     val selectedDataTypes = screenState.selectedDataTypes
@@ -126,9 +126,9 @@ fun GraphScreen(
                 }
             }
             item {
-                if (graphSeries != null) {
+                if (graphData != null) {
                     Graph(
-                        series = graphSeries,
+                        data = graphData,
                         selectedIndex = selectedDataIndex,
                         onSelect = onGraphSelect,
                     )

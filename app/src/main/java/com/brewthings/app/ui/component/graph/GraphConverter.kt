@@ -18,8 +18,10 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
 @Composable
-fun List<GraphSeries>.toChartData(): MpAndroidChartData = MpAndroidChartData(
-    map {
+fun GraphData.toChartData(): MpAndroidChartData = MpAndroidChartData(
+    from = from,
+    to = to,
+    dataSets = series.map {
         it.toChartDataSet()
     }.flatten(),
 )

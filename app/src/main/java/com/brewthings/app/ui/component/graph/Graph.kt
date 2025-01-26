@@ -15,7 +15,7 @@ import com.brewthings.app.ui.theme.Size
 
 @Composable
 fun Graph(
-    series: List<GraphSeries>,
+    data: GraphData,
     selectedIndex: Int?,
     onSelect: (Int?) -> Unit,
 ) {
@@ -25,7 +25,7 @@ fun Graph(
     val textColor = MaterialTheme.colorScheme.onBackground
     val primaryColor = MaterialTheme.colorScheme.primary
 
-    val chartData = series.toChartData()
+    val chartData = data.toChartData()
 
     AndroidView(
         modifier = Modifier

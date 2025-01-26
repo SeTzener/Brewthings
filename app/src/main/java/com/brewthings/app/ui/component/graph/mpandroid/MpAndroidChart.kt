@@ -20,7 +20,6 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.Utils
 import kotlin.time.Duration.Companion.days
-import kotlinx.datetime.Clock
 
 @SuppressLint("ViewConstructor")
 class MpAndroidChart(
@@ -56,7 +55,7 @@ class MpAndroidChart(
 
         chartData?.also {
             updateDatasets(chartData)
-            updateVisibleXRange()
+            updateVisibleXRange(chartData)
             highlightIndex(selectedIndex, animated = false)
         }
 
@@ -96,7 +95,7 @@ class MpAndroidChart(
         notifyDataSetChanged()
 
         if (wasEmpty) {
-            updateVisibleXRange()
+            updateVisibleXRange(chartData)
         }
 
         highlightIndex(selectedIndex, animated = true)
@@ -137,9 +136,12 @@ class MpAndroidChart(
         axisLeft.isEnabled = false
     }
 
-    private fun updateVisibleXRange() {
-        val endDate = Clock.System.now()
-        val startDate = endDate - 7.days
+    private fun updateVisibleXRange(chartData: MpAndroidChartData) {
+        val endDate = chartData.to
+        val startDate = maxOf(
+            chartData.from,
+            endDate - 7.days
+        )
         val visibleGraphTimePeriod = (endDate.epochSeconds - startDate.epochSeconds).toFloat()
         setVisibleXRange(visibleGraphTimePeriod, visibleGraphTimePeriod)
     }
