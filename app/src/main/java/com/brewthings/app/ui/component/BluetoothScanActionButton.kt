@@ -1,0 +1,205 @@
+package com.brewthings.app.ui.component
+
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.brewthings.app.R
+import com.brewthings.app.ui.theme.BrewthingsTheme
+
+@Composable
+fun BluetoothScanActionButton(
+    scanState: BluetoothScanState,
+    onClick: () -> Unit
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(48.dp) // Standard action button size
+    ) {
+        BluetoothScanIcon(scanState, onClick)
+    }
+}
+
+@Composable
+fun ScanningEffect(color: Color) {
+    val transition = rememberInfiniteTransition()
+    val scale by transition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        )
+    )
+    val alpha by transition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        drawIntoCanvas {
+            scale(scale) {
+                drawCircle(color.copy(alpha = alpha))
+            }
+        }
+    }
+}
+
+@Composable
+fun ErrorShakeEffect(content: @Composable (Modifier) -> Unit) {
+    val infiniteTransition = rememberInfiniteTransition(label = "ShakeTransition")
+
+    val offsetX by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 80, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "ShakeAnimation",
+    )
+
+    Box(modifier = Modifier.offset(x = offsetX.dp)) {
+        content(Modifier)
+    }
+}
+
+@Composable
+fun BluetoothScanErrorIcon(onClick: () -> Unit) {
+    val buttonColor = MaterialTheme.colorScheme.onSurface
+    ErrorShakeEffect {
+        OutlinedIconButton(
+            onClick = onClick,
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape),
+            border = BorderStroke(2.dp, buttonColor),
+            colors = IconButtonDefaults.outlinedIconButtonColors(
+                containerColor = Color.Transparent,
+                contentColor = buttonColor,
+            )
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_bluetooth_disabled),
+                contentDescription = stringResource(R.string.a11y_bluetooth_scan_error),
+                tint = buttonColor,
+            )
+        }
+    }
+}
+
+@Composable
+fun BluetoothScanIdleIcon(onClick: () -> Unit) {
+    val buttonColor = MaterialTheme.colorScheme.primary
+    OutlinedIconButton(
+        onClick = onClick,
+        modifier = Modifier
+            .size(40.dp)
+            .clip(CircleShape),
+        border = BorderStroke(2.dp, buttonColor),
+        colors = IconButtonDefaults.outlinedIconButtonColors(
+            containerColor = Color.Transparent,
+            contentColor = buttonColor,
+        )
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_bluetooth),
+            contentDescription = stringResource(R.string.a11y_bluetooth_scan_idle),
+            tint = buttonColor,
+        )
+    }
+}
+
+@Composable
+fun BluetoothScanScanningIcon(onClick: () -> Unit) {
+    val buttonColor = MaterialTheme.colorScheme.primary
+
+    ScanningEffect(color = buttonColor)
+
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier
+            .size(40.dp)
+            .clip(CircleShape),
+        colors = IconButtonDefaults.iconButtonColors(containerColor = buttonColor)
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_bluetooth_scan),
+            contentDescription = stringResource(R.string.a11y_bluetooth_scan_scanning),
+            tint = MaterialTheme.colorScheme.onPrimary
+        )
+    }
+}
+
+@Composable
+fun BluetoothScanIcon(
+    scanState: BluetoothScanState,
+    onClick: () -> Unit,
+) {
+    when (scanState) {
+        BluetoothScanState.Error -> BluetoothScanErrorIcon(onClick)
+        BluetoothScanState.Idle -> BluetoothScanIdleIcon(onClick)
+        BluetoothScanState.Scanning -> BluetoothScanScanningIcon(onClick)
+    }
+}
+
+@Preview
+@Composable
+fun BluetoothScanActionButtonPreview() {
+    var scanState by remember { mutableStateOf(BluetoothScanState.Error) }
+    val onClick = {
+        scanState = when (scanState) {
+            BluetoothScanState.Error -> BluetoothScanState.Idle
+            BluetoothScanState.Idle -> BluetoothScanState.Scanning
+            BluetoothScanState.Scanning -> BluetoothScanState.Error
+        }
+    }
+
+    BrewthingsTheme {
+        Box(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            BluetoothScanActionButton(scanState, onClick)
+        }
+    }
+}
+
+enum class BluetoothScanState {
+    Scanning, Idle, Error
+}

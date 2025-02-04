@@ -76,4 +76,7 @@
     <string name="unset_OG">Unset OG</string>
     <string name="unset_FG">Unset FG</string>
     <string name="set_FG">Set FG</string>
+    <string name="a11y_bluetooth_scan_error">Fix Bluetooth Scan</string>
+    <string name="a11y_bluetooth_scan_idle">Start Bluetooth Scan</string>
+    <string name="a11y_bluetooth_scan_scanning">Stop Bluetooth Scan</string>
 </resources>
