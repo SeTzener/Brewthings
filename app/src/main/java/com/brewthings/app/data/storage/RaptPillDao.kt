@@ -52,6 +52,16 @@ interface RaptPillDao {
             "AND RaptPillData.timestamp <= :endDate " +
             "ORDER BY RaptPillData.timestamp ASC",
     )
+    fun observeBrewData(macAddress: String, startDate: Instant, endDate: Instant): Flow<List<RaptPillData>>
+
+    @Query(
+        "SELECT * FROM RaptPillData " +
+                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+                "WHERE RaptPill.macAddress = :macAddress " +
+                "AND RaptPillData.timestamp >= :startDate " +
+                "AND RaptPillData.timestamp <= :endDate " +
+                "ORDER BY RaptPillData.timestamp ASC",
+    )
     suspend fun getBrewData(macAddress: String, startDate: Instant, endDate: Instant): List<RaptPillData>
 
     @Query(
