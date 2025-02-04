@@ -74,7 +74,7 @@ fun GraphScreen(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GraphScreen(
-    screenState: GraphScreenState,
+    screenState: GraphState,
     onBackClick: () -> Unit,
     toggleDataType: (DataType) -> Unit,
     onGraphSelect: (Int?) -> Unit,

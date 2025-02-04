@@ -17,7 +17,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun BrewsScreen(
     router: Router,
-    viewModel: BrewsScreenViewModel = koinViewModel(),
+    viewModel: BrewsViewModel = koinViewModel(),
 ) {
     BrewsScreen(
         state = viewModel.screenState,
@@ -27,7 +27,7 @@ fun BrewsScreen(
 
 @Composable
 fun BrewsScreen(
-    state: BrewsScreenState,
+    state: BrewsState,
     openGraph: (Brew) -> Unit,
 ) {
     val lockedBrews = newOrCached(state.brews, emptyList())

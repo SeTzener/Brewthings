@@ -9,7 +9,7 @@ import org.koin.androidx.compose.koinViewModel
 fun ScanScreen(
     router: Router,
     activityCallbacks: ActivityCallbacks,
-    viewModel: ScanScreenViewModel = koinViewModel(),
+    viewModel: ScanViewModel = koinViewModel(),
 ) {
 
 }

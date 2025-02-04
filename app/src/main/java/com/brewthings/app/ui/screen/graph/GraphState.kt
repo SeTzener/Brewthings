@@ -5,7 +5,7 @@ import com.brewthings.app.ui.component.graph.DataType
 import com.brewthings.app.ui.component.graph.GraphData
 import kotlinx.datetime.Instant
 
-data class GraphScreenState(
+data class GraphState(
     // Immutable state
     val title: String,
     val dataTypes: List<DataType>,

@@ -27,7 +27,7 @@ abstract class GraphScreenViewModel(
     private val screenTitle: String,
     private val showInsightsCardActions: Boolean,
 ) : ViewModel(), KoinComponent {
-    var screenState: GraphScreenState by mutableStateOf(createInitialState())
+    var screenState: GraphState by mutableStateOf(createInitialState())
         private set
 
     private val dataPointsMap = mutableMapOf<DataType, List<DataPoint>>()
@@ -75,8 +75,8 @@ abstract class GraphScreenViewModel(
 
     abstract fun observeRaptPillData(): Flow<List<RaptPillData>>
 
-    private fun createInitialState(): GraphScreenState =
-        GraphScreenState(
+    private fun createInitialState(): GraphState =
+        GraphState(
             title = screenTitle,
             showInsightsCardActions = showInsightsCardActions,
             dataTypes = DataType.entries,

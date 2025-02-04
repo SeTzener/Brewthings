@@ -12,8 +12,8 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class BrewsScreenViewModel : ViewModel(), KoinComponent {
-    var screenState: BrewsScreenState by mutableStateOf(BrewsScreenState())
+class BrewsViewModel : ViewModel(), KoinComponent {
+    var screenState: BrewsState by mutableStateOf(BrewsState())
         private set
 
     private val repo: BrewsRepository by inject()
