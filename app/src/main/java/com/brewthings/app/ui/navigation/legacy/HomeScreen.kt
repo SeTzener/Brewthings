@@ -23,7 +23,7 @@ import com.brewthings.app.ui.ActivityCallbacks
 import com.brewthings.app.ui.component.BackgroundStatusBar
 import com.brewthings.app.ui.component.ElevatedNavigationBar
 import com.brewthings.app.ui.screen.brews.BrewsScreen
-import com.brewthings.app.ui.screen.scanning.ScanningScreen
+import com.brewthings.app.ui.screen.scan.ScanScreen
 import kotlinx.coroutines.flow.map
 
 private const val DEFAULT_TAB = Destination.Tab.SCANNING
@@ -80,7 +80,7 @@ fun HomeScreen(
             modifier = Modifier.padding(innerPadding),
         ) {
             composable(Destination.Tab.SCANNING) {
-                ScanningScreen(
+                ScanScreen(
                     router = router,
                     activityCallbacks = activityCallbacks,
                 )
