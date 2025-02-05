@@ -73,7 +73,7 @@
     <string name="a11y_bluetooth_scan_error">Fix Bluetooth Scan</string>
     <string name="a11y_bluetooth_scan_idle">Start Bluetooth Scan</string>
     <string name="a11y_bluetooth_scan_scanning">Stop Bluetooth Scan</string>
-
+    <string name="pill_reading_footer">previously: %s %s</string>
     <string name="unit_gravity">"SG"</string>
     <string name="unit_temperature_celsius">"°C"</string>
     <string name="unit_battery">"\%%"</string>

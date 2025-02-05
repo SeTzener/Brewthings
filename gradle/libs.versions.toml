@@ -9,6 +9,7 @@ appCompat = "1.6.1"
 composeBom = "2024.05.00"
 composeMaterial = "1.6.7"
 composeMaterial3 = "1.2.1"
+composeConstraintLayout = "1.1.0"
 coreKtx = "1.13.1"
 firebase = "33.1.0"
 firebaseCrashlytics = "3.0.1"
@@ -68,6 +69,9 @@ compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = 
 compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "composeMaterial" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "composeMaterial" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "composeMaterial" }
+
+# ConstraintLayout
+compose-constraintLayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "composeConstraintLayout" }
 
 # Navigation Components
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation"}

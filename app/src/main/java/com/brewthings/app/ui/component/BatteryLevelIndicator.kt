@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import com.brewthings.app.data.domain.DataType
-import com.brewthings.app.ui.converter.toIconDrawable
+import com.brewthings.app.ui.converter.toIconRes
 
 @Composable
 fun BatteryLevelIndicator(
@@ -16,7 +16,7 @@ fun BatteryLevelIndicator(
 ) {
     Icon(
         imageVector = ImageVector.vectorResource(
-            id = DataType.BATTERY.toIconDrawable(batteryPercentage)
+            id = DataType.BATTERY.toIconRes(batteryPercentage)
         ),
         contentDescription = null,
         tint = tint,

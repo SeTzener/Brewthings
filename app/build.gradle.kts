@@ -133,6 +133,9 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.tooling)
 
+    // ConstraintLayout
+    implementation(libs.compose.constraintLayout)
+
     // Navigation Compose
     implementation(libs.navigation.ui)
     implementation(libs.navigation.compose)

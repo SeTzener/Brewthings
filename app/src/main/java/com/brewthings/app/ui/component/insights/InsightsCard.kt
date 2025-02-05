@@ -30,7 +30,7 @@ import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.component.BatteryLevelIndicator
 import com.brewthings.app.ui.component.IconAlign
 import com.brewthings.app.ui.component.TextWithIcon
-import com.brewthings.app.ui.component.graph.toLineColor
+import com.brewthings.app.ui.converter.toColor
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
@@ -129,7 +129,7 @@ fun InsightsCard(
                 icon = {
                     InsightIcon(
                         modifier = it,
-                        iconResId = R.drawable.ic_velocity,
+                        iconResId = R.drawable.ic_velocity_measured,
                         tint = highlightIconColor(dataTypes, DataType.VELOCITY_MEASURED),
                     )
                 },
@@ -426,7 +426,7 @@ fun highlightIconColor(
 ): Color = highlightColor(
     isHighlighted = dataTypes.contains(dataType),
     normalColor = MaterialTheme.colorScheme.primary,
-    highlightColor = dataType.toLineColor(),
+    highlightColor = dataType.toColor(),
 )
 
 @Composable

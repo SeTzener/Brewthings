@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.DataType
+import com.brewthings.app.data.domain.Trend
 import com.brewthings.app.ui.theme.Coral
 import com.brewthings.app.ui.theme.DarkTurquoise
 import com.brewthings.app.ui.theme.Gold
@@ -31,6 +32,13 @@ fun DataType.toIconRes(optionalValue: Float? = null): Int = when (this) {
         optionalValue < 1f -> R.drawable.ic_battery_6
         else -> R.drawable.ic_battery_7
     }
+}
+
+@Composable
+fun Trend.toIconRes(): Int? = when (this) {
+    Trend.Upwards -> R.drawable.ic_trending_up
+    Trend.Downwards -> R.drawable.ic_trending_down
+    Trend.Stationary -> null
 }
 
 @Composable
