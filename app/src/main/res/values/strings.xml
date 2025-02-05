@@ -28,14 +28,8 @@
     <string name="bluetooth_disabled_desc">"Please, grant access to it."</string>
     <string name="bluetooth_disabled_btn">"Enable"</string>
     <string name="bluetooth_unavailable">"Bluetooth is not available"</string>
-    <string name="pill_rssi">"%ddBm"</string>
-    <string name="pill_gravity">"%.3f SG"</string>
-    <string name="pill_temperature">"%.2f°C"</string>
     <string name="pill_graph">"Show history"</string>
-    <string name="pill_battery">"%.1f\%%"</string>
-    <string name="pill_tilt">"%.2f°"</string>
-    <string name="pill_abv">"%.2f\%%"</string>
-    <string name="pill_velocity">"%.3f"</string>
+    <string name="pill_rssi">"%ddBm"</string>
     <string name="edit_name_tooltip">Pill Name</string>
     <string name="edit_name_btn">Save</string>
     <string name="graph_data_label_data_types">Measurements</string>
@@ -79,4 +73,19 @@
     <string name="a11y_bluetooth_scan_error">Fix Bluetooth Scan</string>
     <string name="a11y_bluetooth_scan_idle">Start Bluetooth Scan</string>
     <string name="a11y_bluetooth_scan_scanning">Stop Bluetooth Scan</string>
+
+    <string name="unit_gravity">"SG"</string>
+    <string name="unit_temperature_celsius">"°C"</string>
+    <string name="unit_battery">"\%%"</string>
+    <string name="unit_tilt">"°"</string>
+    <string name="unit_abv">"%"</string>
+    <string name="unit_velocity">"SG/d"</string>
+
+    <!-- delete me! -->
+    <string name="pill_gravity">"%.3f SG"</string>
+    <string name="pill_temperature">"%.2f°C"</string>
+    <string name="pill_battery">"%.1f\%%"</string>
+    <string name="pill_tilt">"%.2f°"</string>
+    <string name="pill_abv">"%.2f\%%"</string>
+    <string name="pill_velocity">"%.3f"</string>
 </resources>

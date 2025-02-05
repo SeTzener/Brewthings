@@ -1,5 +1,6 @@
 package com.brewthings.app.ui.component.graph
 
+import com.brewthings.app.data.domain.DataType
 import kotlinx.datetime.Instant
 
 data class GraphData(

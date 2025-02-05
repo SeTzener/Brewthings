@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.ui.component.BackgroundNavigationBar
 import com.brewthings.app.ui.component.BackgroundStatusBar
-import com.brewthings.app.ui.component.graph.DataType
+import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.ui.component.graph.Graph
 import com.brewthings.app.ui.component.insights.InsightsPager
 import com.brewthings.app.ui.navigation.legacy.Router

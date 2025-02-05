@@ -1,4 +1,4 @@
-package com.brewthings.app.ui.component.graph
+package com.brewthings.app.data.domain
 
 enum class DataType {
     GRAVITY,

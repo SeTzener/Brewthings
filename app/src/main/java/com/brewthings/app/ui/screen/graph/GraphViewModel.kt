@@ -11,7 +11,7 @@ import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.data.repository.BrewsRepository
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.ui.component.graph.DataPoint
-import com.brewthings.app.ui.component.graph.DataType
+import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.ui.component.graph.GraphData
 import com.brewthings.app.ui.component.graph.GraphSeries
 import com.brewthings.app.ui.component.insights.toInsights

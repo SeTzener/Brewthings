@@ -24,12 +24,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
+import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.domain.Insight
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.component.BatteryLevelIndicator
 import com.brewthings.app.ui.component.IconAlign
 import com.brewthings.app.ui.component.TextWithIcon
-import com.brewthings.app.ui.component.graph.DataType
 import com.brewthings.app.ui.component.graph.toLineColor
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.ui.theme.Typography
@@ -143,7 +143,7 @@ fun InsightsCard(
                 icon = {
                     InsightIcon(
                         modifier = it,
-                        iconResId = R.drawable.ic_calculate,
+                        iconResId = R.drawable.ic_velocity_computed,
                         tint = highlightIconColor(dataTypes, DataType.VELOCITY_COMPUTED),
                     )
                 },
