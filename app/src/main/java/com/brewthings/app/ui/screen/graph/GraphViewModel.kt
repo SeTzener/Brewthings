@@ -5,13 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.model.Brew
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.data.repository.BrewsRepository
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.ui.component.graph.DataPoint
-import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.ui.component.graph.GraphData
 import com.brewthings.app.ui.component.graph.GraphSeries
 import com.brewthings.app.ui.component.insights.toInsights
@@ -22,6 +22,15 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+
+val graphDataTypes = listOf(
+    DataType.GRAVITY,
+    DataType.TEMPERATURE,
+    DataType.BATTERY,
+    DataType.ABV,
+    DataType.VELOCITY_MEASURED,
+    DataType.VELOCITY_COMPUTED,
+)
 
 abstract class GraphScreenViewModel(
     private val screenTitle: String,
@@ -79,7 +88,7 @@ abstract class GraphScreenViewModel(
         GraphState(
             title = screenTitle,
             showInsightsCardActions = showInsightsCardActions,
-            dataTypes = DataType.entries,
+            dataTypes = graphDataTypes,
             selectedDataTypes = listOf(DataType.GRAVITY),
         )
 

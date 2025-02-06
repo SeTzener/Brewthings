@@ -2,13 +2,13 @@ package com.brewthings.app.ui.component
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -36,14 +36,29 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 
 @Composable
-fun PillReadingCard(
-    dataType: DataType,
-    value: Float,
-    previousValue: Float?,
+fun PillReadingsGrid(
+    modifier: Modifier = Modifier,
+    readings: List<PillReading>,
 ) {
+    LazyVerticalGrid(
+        modifier = modifier,
+        columns = GridCells.Fixed(2),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        items(readings) {
+            PillReadingCard(it)
+        }
+    }
+}
+
+@Composable
+private fun PillReadingCard(reading: PillReading) {
+    val (dataType, value, previousValue) = reading
     val unit = dataType.toUnit()
     val symbols = DecimalFormatSymbols().apply { percent = 0.toChar() } // Disable %
     val formatter = DecimalFormat(dataType.toFormatPattern(), symbols)
+
     PillReadingCard(
         backgroundColor = dataType.toColor(),
         textColor = Color.White,
@@ -59,7 +74,7 @@ fun PillReadingCard(
 }
 
 @Composable
-fun PillReadingCard(
+private fun PillReadingCard(
     backgroundColor: Color,
     textColor: Color,
     @DrawableRes headerIconRes: Int,
@@ -182,28 +197,18 @@ fun PillReadingCard(
 
 @Preview
 @Composable
-fun PillReadingCardPreview() {
-    val card: LazyGridScope.(DataType, Float, Float?) -> Unit = { dataType, value, previousValue ->
-        item {
-            PillReadingCard(
-                dataType = dataType,
-                value = value,
-                previousValue = previousValue,
-            )
-        }
-    }
-
+fun PillReadingGridPreview() {
     BrewthingsTheme {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            card(DataType.GRAVITY, 1.056f, 1.060f)
-            card(DataType.TEMPERATURE, 18.25f, 18.25f)
-            card(DataType.VELOCITY_MEASURED, 1.575f, 0.617f)
-            card(DataType.BATTERY, 0.58f, 0.5825f)
-        }
+        PillReadingsGrid(
+            modifier = Modifier.width(360.dp),
+            readings = listOf(
+                PillReading(DataType.GRAVITY, 1.056f, 1.060f),
+                PillReading(DataType.TEMPERATURE, 18.25f, 18.25f),
+                PillReading(DataType.VELOCITY_MEASURED, 1.575f, 0.617f),
+                PillReading(DataType.BATTERY, 0.58f, 0.5825f),
+            )
+        )
     }
 }
+
+data class PillReading(val dataType: DataType, val value: Float, val previousValue: Float?)

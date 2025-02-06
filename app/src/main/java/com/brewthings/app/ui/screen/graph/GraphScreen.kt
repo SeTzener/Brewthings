@@ -43,11 +43,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
+import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.ui.component.BackgroundNavigationBar
 import com.brewthings.app.ui.component.BackgroundStatusBar
-import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.ui.component.graph.Graph
 import com.brewthings.app.ui.component.insights.InsightsPager
+import com.brewthings.app.ui.converter.toLabel
 import com.brewthings.app.ui.navigation.legacy.Router
 import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
@@ -231,15 +232,4 @@ fun DataTypeSelector(
             }
         }
     }
-}
-
-@Composable
-fun DataType.toLabel(): String = when (this) {
-    DataType.TEMPERATURE -> stringResource(id = R.string.graph_data_label_temp_full)
-    DataType.GRAVITY -> stringResource(id = R.string.graph_data_label_gravity)
-    DataType.BATTERY -> stringResource(id = R.string.graph_data_label_battery)
-    DataType.TILT -> stringResource(id = R.string.graph_data_label_tilt)
-    DataType.ABV -> stringResource(id = R.string.graph_data_label_abv)
-    DataType.VELOCITY_MEASURED -> stringResource(id = R.string.graph_data_label_velocity_measured_full)
-    DataType.VELOCITY_COMPUTED -> stringResource(id = R.string.graph_data_label_velocity_computed_full)
 }
