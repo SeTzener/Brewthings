@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.domain.Trend
@@ -73,10 +74,12 @@ fun PillReadingCard(
             containerColor = backgroundColor,
         ),
     ) {
-        ConstraintLayout(modifier = Modifier.padding(vertical = 16.dp)) {
-            val horizontalPadding = 16.dp
-            val interVertical = 4.dp
-            val interHorizontalPadding = 8.dp
+        val verticalPadding = 16.dp
+        val horizontalPadding = 16.dp
+        val interVertical = 4.dp
+        val interHorizontalPadding = 8.dp
+
+        ConstraintLayout(modifier = Modifier.padding(vertical = verticalPadding)) {
             val (headerIconRef, headerRef, valueRef, unitRef, trendIconRef, footerRef) = createRefs()
 
             Icon(
@@ -85,10 +88,7 @@ fun PillReadingCard(
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                     }
-                    .padding(
-                        start = 4.dp,
-                        bottom = 4.dp
-                    )
+                    .padding(start = 4.dp) // TODO(walt): replace icons, then remove this
                     .size(86.dp),
                 painter = painterResource(id = headerIconRes),
                 contentDescription = null,
@@ -101,7 +101,11 @@ fun PillReadingCard(
                         top.linkTo(headerIconRef.bottom)
                         start.linkTo(parent.start)
                     }
-                    .padding(horizontal = horizontalPadding)
+                    .padding(
+                        start = horizontalPadding,
+                        end = horizontalPadding,
+                        top = interVertical,
+                    )
                     .fillMaxWidth(),
                 text = header,
                 style = MaterialTheme.typography.titleMedium,
@@ -119,7 +123,7 @@ fun PillReadingCard(
                         top = interVertical,
                     ),
                 text = formattedValue,
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.headlineMedium,
                 color = textColor,
             )
 
@@ -131,25 +135,28 @@ fun PillReadingCard(
                     }
                     .padding(start = interHorizontalPadding),
                 text = unit,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleSmall,
                 color = textColor,
             )
 
             if (trendIconRes != null) {
-                Icon(
+                ScalableIcon(
                     modifier = Modifier
                         .constrainAs(trendIconRef) {
-                            bottom.linkTo(unitRef.bottom)
+                            bottom.linkTo(valueRef.bottom)
                             start.linkTo(unitRef.end)
+                            end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
                         }
                         .padding(
                             start = interHorizontalPadding,
+                            top = interVertical,
                             end = horizontalPadding,
-                        )
-                        .size(36.dp),
+                        ),
                     painter = painterResource(id = trendIconRes),
                     contentDescription = null,
                     tint = textColor,
+                    maxSize = 36.dp
                 )
             }
 
@@ -161,6 +168,7 @@ fun PillReadingCard(
                     }
                     .padding(
                         start = horizontalPadding,
+                        end = horizontalPadding,
                         top = interVertical,
                     )
                     .fillMaxWidth(),
