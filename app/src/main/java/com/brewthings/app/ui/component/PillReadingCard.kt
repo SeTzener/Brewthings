@@ -1,9 +1,14 @@
 package com.brewthings.app.ui.component
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -27,6 +32,7 @@ import com.brewthings.app.ui.converter.toLabel
 import com.brewthings.app.ui.converter.toUnit
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 
 @Composable
 fun PillReadingCard(
@@ -35,7 +41,8 @@ fun PillReadingCard(
     previousValue: Float?,
 ) {
     val unit = dataType.toUnit()
-    val formatter = DecimalFormat(dataType.toFormatPattern())
+    val symbols = DecimalFormatSymbols().apply { percent = 0.toChar() } // Disable %
+    val formatter = DecimalFormat(dataType.toFormatPattern(), symbols)
     PillReadingCard(
         backgroundColor = dataType.toColor(),
         textColor = Color.White,
@@ -78,7 +85,11 @@ fun PillReadingCard(
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                     }
-                    .size(96.dp),
+                    .padding(
+                        start = 4.dp,
+                        bottom = 4.dp
+                    )
+                    .size(86.dp),
                 painter = painterResource(id = headerIconRes),
                 contentDescription = null,
                 tint = textColor,
@@ -128,14 +139,14 @@ fun PillReadingCard(
                 Icon(
                     modifier = Modifier
                         .constrainAs(trendIconRef) {
-                            centerVerticallyTo(valueRef)
+                            bottom.linkTo(unitRef.bottom)
                             start.linkTo(unitRef.end)
                         }
                         .padding(
                             start = interHorizontalPadding,
                             end = horizontalPadding,
                         )
-                        .size(48.dp),
+                        .size(36.dp),
                     painter = painterResource(id = trendIconRes),
                     contentDescription = null,
                     tint = textColor,
@@ -164,11 +175,27 @@ fun PillReadingCard(
 @Preview
 @Composable
 fun PillReadingCardPreview() {
+    val card: LazyGridScope.(DataType, Float, Float?) -> Unit = { dataType, value, previousValue ->
+        item {
+            PillReadingCard(
+                dataType = dataType,
+                value = value,
+                previousValue = previousValue,
+            )
+        }
+    }
+
     BrewthingsTheme {
-        PillReadingCard(
-            dataType = DataType.GRAVITY,
-            value = 1.056f,
-            previousValue = 1.060f,
-        )
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            contentPadding = PaddingValues(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            card(DataType.GRAVITY, 1.056f, 1.060f)
+            card(DataType.TEMPERATURE, 18.25f, 18.25f)
+            card(DataType.VELOCITY_MEASURED, 1.575f, 0.617f)
+            card(DataType.BATTERY, 0.58f, 0.5825f)
+        }
     }
 }

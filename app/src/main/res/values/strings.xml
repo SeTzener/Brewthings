@@ -40,9 +40,9 @@
     <string name="graph_data_label_tilt">Tilt</string>
     <string name="graph_data_label_abv">ABV</string>
     <string name="graph_data_label_velocity_measured_short">M.Vel.</string>
-    <string name="graph_data_label_velocity_measured_full">Velocity (measured)</string>
+    <string name="graph_data_label_velocity_measured_full">M. Velocity</string>
     <string name="graph_data_label_velocity_computed_short">C.Vel.</string>
-    <string name="graph_data_label_velocity_computed_full">Velocity (computed)</string>
+    <string name="graph_data_label_velocity_computed_full">C. Velocity</string>
     <string name="graph_data_duration_since_og">%s since OG</string>
     <string name="graph_data_duration_og">OG</string>
     <string name="graph_data_duration_fg_since_og">%s at FG</string>
@@ -76,7 +76,7 @@
     <string name="pill_reading_footer">previously: %s %s</string>
     <string name="unit_gravity">"SG"</string>
     <string name="unit_temperature_celsius">"°C"</string>
-    <string name="unit_battery">"\%%"</string>
+    <string name="unit_battery">"%"</string>
     <string name="unit_tilt">"°"</string>
     <string name="unit_abv">"%"</string>
     <string name="unit_velocity">"SG/d"</string>
