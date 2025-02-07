@@ -13,6 +13,8 @@ import com.brewthings.app.ui.theme.LimeGreen
 import com.brewthings.app.ui.theme.MediumPurple
 import com.brewthings.app.ui.theme.RedAlert
 import com.brewthings.app.ui.theme.SteelBlue
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 
 @Composable
 fun DataType.toIconRes(optionalValue: Float? = null): Int = when (this) {
@@ -107,3 +109,10 @@ fun DataType.toLabel(isShortened: Boolean = false): String = stringResource(
             R.string.graph_data_label_velocity_computed_full
     }
 )
+
+
+@Composable
+fun DataType.toValueFormatter(): DecimalFormat {
+    val symbols = DecimalFormatSymbols().apply { percent = 0.toChar() } // Disable %
+    return DecimalFormat(toFormatPattern(), symbols)
+}

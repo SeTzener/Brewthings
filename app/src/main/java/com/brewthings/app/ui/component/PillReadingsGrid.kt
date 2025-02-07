@@ -27,13 +27,11 @@ import com.brewthings.app.R
 import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.domain.Trend
 import com.brewthings.app.ui.converter.toColor
-import com.brewthings.app.ui.converter.toFormatPattern
 import com.brewthings.app.ui.converter.toIconRes
 import com.brewthings.app.ui.converter.toLabel
 import com.brewthings.app.ui.converter.toUnit
+import com.brewthings.app.ui.converter.toValueFormatter
 import com.brewthings.app.ui.theme.BrewthingsTheme
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
 
 @Composable
 fun PillReadingsGrid(
@@ -56,9 +54,7 @@ fun PillReadingsGrid(
 private fun PillReadingCard(reading: PillReading) {
     val (dataType, value, previousValue) = reading
     val unit = dataType.toUnit()
-    val symbols = DecimalFormatSymbols().apply { percent = 0.toChar() } // Disable %
-    val formatter = DecimalFormat(dataType.toFormatPattern(), symbols)
-
+    val formatter = dataType.toValueFormatter()
     PillReadingCard(
         backgroundColor = dataType.toColor(),
         textColor = Color.White,
@@ -74,7 +70,7 @@ private fun PillReadingCard(reading: PillReading) {
 }
 
 @Composable
-private fun PillReadingCard(
+fun PillReadingCard(
     backgroundColor: Color,
     textColor: Color,
     @DrawableRes headerIconRes: Int,

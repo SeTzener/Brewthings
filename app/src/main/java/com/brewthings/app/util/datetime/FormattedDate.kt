@@ -3,11 +3,12 @@ package com.brewthings.app.util.datetime
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.brewthings.app.R
+import kotlin.math.abs
+import kotlin.time.Duration
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
-import kotlin.math.abs
-import kotlin.time.Duration
+import kotlinx.datetime.toLocalDateTime
 
 @Composable
 fun Instant.toFormattedDate(
@@ -61,6 +62,18 @@ fun Instant.toFormattedDate(
 
     // Covering both dates older than 1 week ago and dates in the future.
     return date.formatDateTime("MMM d, yyyy, HH:mm", timeZone)
+}
+
+@Composable
+fun Instant.toSimpleFormattedDate(
+    clock: Clock = Clock.System,
+    timeZone: TimeZone = TimeZone.currentSystemDefault(),
+): String {
+    val now = clock.now().toLocalDateTime(timeZone)
+    val date = toLocalDateTime(timeZone)
+
+    val format = if (date.year == now.year) "MMM d" else "MMM d, yyyy"
+    return formatDateTime(format, timeZone)
 }
 
 @Composable
