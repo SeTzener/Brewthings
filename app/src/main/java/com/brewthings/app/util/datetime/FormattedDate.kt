@@ -61,7 +61,7 @@ fun Instant.toFormattedDate(
     }
 
     // Covering both dates older than 1 week ago and dates in the future.
-    return date.formatDateTime("MMM d, yyyy, HH:mm", timeZone)
+    return date.formatDateTime("MMM d yyyy, HH:mm", timeZone)
 }
 
 @Composable
@@ -72,7 +72,7 @@ fun Instant.toSimpleFormattedDate(
     val now = clock.now().toLocalDateTime(timeZone)
     val date = toLocalDateTime(timeZone)
 
-    val format = if (date.year == now.year) "MMM d" else "MMM d, yyyy"
+    val format = if (date.year == now.year) "MMM d" else "MMM d yyyy"
     return formatDateTime(format, timeZone)
 }
 

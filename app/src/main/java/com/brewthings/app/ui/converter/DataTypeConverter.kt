@@ -58,11 +58,11 @@ fun DataType.toColor(): Color = when (this) {
 fun DataType.toFormatPattern(): String = when (this) {
     DataType.GRAVITY -> "0.000"
     DataType.BATTERY -> "0.##%"
+    DataType.ABV -> "0.00"
     DataType.TEMPERATURE,
     DataType.TILT,
-    DataType.ABV,
     DataType.VELOCITY_MEASURED,
-    DataType.VELOCITY_COMPUTED -> "#.##"
+    DataType.VELOCITY_COMPUTED -> "0.##"
 }
 
 @Composable
