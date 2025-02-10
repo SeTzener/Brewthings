@@ -1,5 +1,7 @@
 package com.brewthings.app.ui.component
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -8,8 +10,11 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,11 +59,29 @@ fun BluetoothScanActionButton(
 }
 
 @Composable
+fun BluetoothScanBox() {
+    val color = MaterialTheme.colorScheme.primary
+
+    ScanningEffect(color = color)
+
+    Box(
+        modifier = Modifier
+            .clip(CircleShape)
+            .background(color)
+            .fillMaxWidth(fraction = 0.4f)
+            .aspectRatio(1f),
+        contentAlignment = Alignment.Center
+    ) {
+        BluetoothScanProgressIcon()
+    }
+}
+
+@Composable
 fun ScanningEffect(color: Color) {
     val transition = rememberInfiniteTransition()
     val scale by transition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.8f,
+        initialValue = 0.7f,
+        targetValue = 1.4f,
         animationSpec = infiniteRepeatable(
             animation = tween(1000, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
@@ -101,7 +125,7 @@ fun ErrorShakeEffect(content: @Composable (Modifier) -> Unit) {
 }
 
 @Composable
-fun BluetoothScanErrorIcon(onClick: () -> Unit) {
+fun BluetoothScanErrorButton(onClick: () -> Unit) {
     val buttonColor = MaterialTheme.colorScheme.onSurface
     ErrorShakeEffect {
         OutlinedIconButton(
@@ -115,17 +139,17 @@ fun BluetoothScanErrorIcon(onClick: () -> Unit) {
                 contentColor = buttonColor,
             )
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_bluetooth_disabled),
-                contentDescription = stringResource(R.string.a11y_bluetooth_scan_error),
-                tint = buttonColor,
+            BluetoothScanDisabledIcon(
+                imageResId = R.drawable.ic_bluetooth_disabled,
+                descriptionResId = R.string.a11y_bluetooth_scan_error,
+                buttonColor = buttonColor,
             )
         }
     }
 }
 
 @Composable
-fun BluetoothScanIdleIcon(onClick: () -> Unit) {
+fun BluetoothScanIdleButton(onClick: () -> Unit) {
     val buttonColor = MaterialTheme.colorScheme.primary
     OutlinedIconButton(
         onClick = onClick,
@@ -138,16 +162,16 @@ fun BluetoothScanIdleIcon(onClick: () -> Unit) {
             contentColor = buttonColor,
         )
     ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_bluetooth),
-            contentDescription = stringResource(R.string.a11y_bluetooth_scan_idle),
-            tint = buttonColor,
+        BluetoothScanDisabledIcon(
+            imageResId = R.drawable.ic_bluetooth,
+            descriptionResId = R.string.a11y_bluetooth_scan_idle,
+            buttonColor = buttonColor,
         )
     }
 }
 
 @Composable
-fun BluetoothScanScanningIcon(onClick: () -> Unit) {
+fun BluetoothScanProgressButton(onClick: () -> Unit) {
     val buttonColor = MaterialTheme.colorScheme.primary
 
     ScanningEffect(color = buttonColor)
@@ -159,12 +183,32 @@ fun BluetoothScanScanningIcon(onClick: () -> Unit) {
             .clip(CircleShape),
         colors = IconButtonDefaults.iconButtonColors(containerColor = buttonColor)
     ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_bluetooth_scan),
-            contentDescription = stringResource(R.string.a11y_bluetooth_scan_scanning),
-            tint = MaterialTheme.colorScheme.onPrimary
-        )
+        BluetoothScanProgressIcon()
     }
+}
+
+@Composable
+fun BluetoothScanDisabledIcon(
+    @DrawableRes imageResId: Int,
+    @StringRes descriptionResId: Int,
+    buttonColor: Color,
+) {
+    Icon(
+        modifier = Modifier.fillMaxSize(fraction = 0.5f),
+        imageVector = ImageVector.vectorResource(imageResId),
+        contentDescription = stringResource(descriptionResId),
+        tint = buttonColor,
+    )
+}
+
+@Composable
+fun BluetoothScanProgressIcon() {
+    Icon(
+        modifier = Modifier.fillMaxSize(fraction = 0.5f),
+        imageVector = ImageVector.vectorResource(R.drawable.ic_bluetooth_scan),
+        contentDescription = stringResource(R.string.a11y_bluetooth_scan_scanning),
+        tint = MaterialTheme.colorScheme.onPrimary
+    )
 }
 
 @Composable
@@ -173,9 +217,9 @@ fun BluetoothScanIcon(
     onClick: () -> Unit,
 ) {
     when (scanState) {
-        BluetoothScanState.Error -> BluetoothScanErrorIcon(onClick)
-        BluetoothScanState.Idle -> BluetoothScanIdleIcon(onClick)
-        BluetoothScanState.Scanning -> BluetoothScanScanningIcon(onClick)
+        BluetoothScanState.Error -> BluetoothScanErrorButton(onClick)
+        BluetoothScanState.Idle -> BluetoothScanIdleButton(onClick)
+        BluetoothScanState.Scanning -> BluetoothScanProgressButton(onClick)
     }
 }
 
@@ -196,6 +240,23 @@ fun BluetoothScanActionButtonPreview() {
             modifier = Modifier.padding(16.dp)
         ) {
             BluetoothScanActionButton(scanState, onClick)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun BluetoothScanBoxPreview() {
+    BrewthingsTheme {
+        Scaffold { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                BluetoothScanBox()
+            }
         }
     }
 }
