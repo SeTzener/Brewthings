@@ -82,6 +82,7 @@
     <string name="unit_tilt">"°"</string>
     <string name="unit_abv">"%"</string>
     <string name="unit_velocity">"SG/d"</string>
+    <string name="dropdown_add_device">"Add new"</string>
 
     <!-- delete me! -->
     <string name="pill_gravity">"%.3f SG"</string>

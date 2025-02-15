@@ -3,6 +3,7 @@ package com.brewthings.app.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val Grey_Nevada = Color(0xff616f77)
+val Grey_Light = Color(0xffced3d8) // Grey 300
 
 val Darkmode_Primary = Color(0xBB86FCFF)
 val Darkmode_PrimaryVariant = Color(0x3700B3FF)
