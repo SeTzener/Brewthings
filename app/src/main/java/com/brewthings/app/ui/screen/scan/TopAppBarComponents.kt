@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.Device
 import com.brewthings.app.data.domain.MockDevice
+import com.brewthings.app.ui.component.BluetoothScanActionButton
+import com.brewthings.app.ui.component.BluetoothScanState
 import com.brewthings.app.ui.component.IconAlign
 import com.brewthings.app.ui.component.TextWithIcon
 import com.brewthings.app.ui.theme.BrewthingsTheme
@@ -111,6 +113,16 @@ private fun FullTopAppBarPreview() {
         MockDevice(name = "Pillolone", macAddress = "AB:CD:EF:BA"),
     )
     var selectedDevice: Device by remember { mutableStateOf(devices[1]) }
+
+    var scanState by remember { mutableStateOf(BluetoothScanState.Error) }
+    val onScanClick = {
+        scanState = when (scanState) {
+            BluetoothScanState.Error -> BluetoothScanState.Idle
+            BluetoothScanState.Idle -> BluetoothScanState.Scanning
+            BluetoothScanState.Scanning -> BluetoothScanState.Error
+        }
+    }
+
     BrewthingsTheme {
         Scaffold(
             topBar = {
@@ -122,6 +134,9 @@ private fun FullTopAppBarPreview() {
                             onSelect = { selectedDevice = it },
                             onAddDevice = {},
                         )
+                    },
+                    actions = {
+                        BluetoothScanActionButton(scanState, onScanClick)
                     }
                 )
             },

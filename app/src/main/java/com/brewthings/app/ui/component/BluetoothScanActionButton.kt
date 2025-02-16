@@ -225,27 +225,6 @@ fun BluetoothScanIcon(
 
 @Preview
 @Composable
-fun BluetoothScanActionButtonPreview() {
-    var scanState by remember { mutableStateOf(BluetoothScanState.Error) }
-    val onClick = {
-        scanState = when (scanState) {
-            BluetoothScanState.Error -> BluetoothScanState.Idle
-            BluetoothScanState.Idle -> BluetoothScanState.Scanning
-            BluetoothScanState.Scanning -> BluetoothScanState.Error
-        }
-    }
-
-    BrewthingsTheme {
-        Box(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            BluetoothScanActionButton(scanState, onClick)
-        }
-    }
-}
-
-@Preview
-@Composable
 fun BluetoothScanBoxPreview() {
     BrewthingsTheme {
         Scaffold { paddingValues ->
