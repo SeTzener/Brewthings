@@ -12,10 +12,9 @@ import kotlinx.datetime.toLocalDateTime
 
 @Composable
 fun Instant.toFormattedDate(
-    clock: Clock = Clock.System,
+    now: Instant = Clock.System.now(),
     timeZone: TimeZone = TimeZone.currentSystemDefault(),
 ): String {
-    val now = clock.now()
     val date = this
 
     // Diff will have negative values for past dates, positive values for future dates.
