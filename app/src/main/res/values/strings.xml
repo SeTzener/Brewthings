@@ -82,6 +82,10 @@
     <string name="settings_change_rssi">"Change RSSI"</string>
     <string name="settings_rename_device">"Rename device"</string>
     <string name="onboarding_add_device">"Add a device"</string>
+    <string name="scan_section_title_last_measurements">"Last measurements"</string>
+    <string name="scan_section_title_current_brew">"In current brew"</string>
+    <string name="scan_section_action_current_device_graph">"All data"</string>
+    <string name="scan_section_action_current_brew_graph">"Brew data"</string>
 
     <!-- delete me! -->
     <string name="pill_gravity">"%.3f SG"</string>
