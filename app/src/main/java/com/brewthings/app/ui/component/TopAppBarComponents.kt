@@ -1,6 +1,6 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 
-package com.brewthings.app.ui.screen.scan
+package com.brewthings.app.ui.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -33,12 +33,21 @@ import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.Device
 import com.brewthings.app.data.domain.MockDevice
-import com.brewthings.app.ui.component.BluetoothScanActionButton
-import com.brewthings.app.ui.component.BluetoothScanState
-import com.brewthings.app.ui.component.IconAlign
-import com.brewthings.app.ui.component.TextWithIcon
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.ui.theme.Grey_Light
+
+@Composable
+fun TopAppBarTitle(title: String) {
+    Box(
+        modifier = Modifier.height(56.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+        )
+    }
+}
 
 @Composable
 fun ScannedDevicesDropdown(
@@ -115,7 +124,7 @@ fun ScannedDevicesDropdown(
 }
 
 @Composable
-fun SettingsDropDown(items: List<SettingsItem>) {
+fun SettingsDropdown(items: List<SettingsItem>) {
     var expanded by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
@@ -152,8 +161,19 @@ fun SettingsDropDown(items: List<SettingsItem>) {
     }
 }
 
-@Composable
 @Preview
+@Composable
+private fun OnboardingTopAppBarPreview() {
+    BrewthingsTheme {
+        TopAppBar(
+            title = { TopAppBarTitle(stringResource(R.string.onboarding_add_device)) },
+            actions = { SettingsDropdown(emptyList())  }
+        )
+    }
+}
+
+@Preview
+@Composable
 private fun FullTopAppBarPreview() {
     val devices = listOf(
         MockDevice(name = "Rapt Pill", macAddress = "AB:CD:EF:AA"),
@@ -185,7 +205,7 @@ private fun FullTopAppBarPreview() {
                     },
                     actions = {
                         BluetoothScanActionButton(scanState, onScanClick)
-                        SettingsDropDown(
+                        SettingsDropdown(
                             listOf(
                                 SettingsItem(stringResource(R.string.settings_change_rssi)) {},
                                 SettingsItem(stringResource(R.string.settings_rename_device)) {},
