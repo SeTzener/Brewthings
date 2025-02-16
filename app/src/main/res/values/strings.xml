@@ -2,9 +2,6 @@
     <string name="app_name">Brewthings</string>
     <string name="scanning_options">Options</string>
     <string name="scanning_advanced_options">Advanced Options</string>
-    <string name="scanning_start">Start Scanning</string>
-    <string name="scanning_rssi">RSSI</string>
-    <string name="scanning_stop">Stop Scanning</string>
     <string name="scanning_results">Results</string>
     <string name="scanning_result">[Unnamed]</string>
     <string name="scanning_saved">Previous data</string>
@@ -30,7 +27,6 @@
     <string name="bluetooth_unavailable">"Bluetooth is not available"</string>
     <string name="pill_graph">"Show history"</string>
     <string name="pill_rssi">"%ddBm"</string>
-    <string name="edit_name_tooltip">Pill Name</string>
     <string name="edit_name_btn">Save</string>
     <string name="graph_data_label_data_types">Measurements</string>
     <string name="graph_data_label_gravity">Gravity</string>
@@ -83,6 +79,8 @@
     <string name="unit_abv">"%"</string>
     <string name="unit_velocity">"SG/d"</string>
     <string name="dropdown_add_device">"Add new"</string>
+    <string name="settings_change_rssi">"Change RSSI"</string>
+    <string name="settings_rename_device">"Rename device"</string>
 
     <!-- delete me! -->
     <string name="pill_gravity">"%.3f SG"</string>
@@ -91,4 +89,8 @@
     <string name="pill_tilt">"%.2f°"</string>
     <string name="pill_abv">"%.2f\%%"</string>
     <string name="pill_velocity">"%.3f"</string>
+    <string name="edit_name_tooltip">Pill Name</string>
+    <string name="scanning_start">Start Scanning</string>
+    <string name="scanning_stop">Stop Scanning</string>
+    <string name="scanning_rssi">RSSI</string>
 </resources>

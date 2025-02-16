@@ -6,14 +6,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,7 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
@@ -37,7 +42,6 @@ import com.brewthings.app.ui.theme.Grey_Light
 
 @Composable
 fun ScannedDevicesDropdown(
-    modifier: Modifier = Modifier,
     selectedDevice: Device,
     devices: List<Device>,
     onSelect: (Device) -> Unit,
@@ -45,7 +49,7 @@ fun ScannedDevicesDropdown(
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box(
-        modifier = modifier
+        modifier = Modifier
             .height(56.dp)
             .clickable { expanded = true },
         contentAlignment = Alignment.Center,
@@ -111,6 +115,44 @@ fun ScannedDevicesDropdown(
 }
 
 @Composable
+fun SettingsDropDown(items: List<SettingsItem>) {
+    var expanded by remember { mutableStateOf(false) }
+    Box(
+        modifier = Modifier
+            .size(48.dp)
+            .clickable { expanded = true },
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_settings),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurface
+        )
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            items.forEach { item ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            modifier = Modifier.padding(end = 16.dp),
+                            text = item.name,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    },
+                    onClick = {
+                        item.onSelect()
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
 @Preview
 private fun FullTopAppBarPreview() {
     val devices = listOf(
@@ -143,6 +185,12 @@ private fun FullTopAppBarPreview() {
                     },
                     actions = {
                         BluetoothScanActionButton(scanState, onScanClick)
+                        SettingsDropDown(
+                            listOf(
+                                SettingsItem(stringResource(R.string.settings_change_rssi)) {},
+                                SettingsItem(stringResource(R.string.settings_rename_device)) {},
+                            )
+                        )
                     }
                 )
             },
@@ -152,3 +200,5 @@ private fun FullTopAppBarPreview() {
         )
     }
 }
+
+data class SettingsItem(val name: String, val onSelect: () -> Unit)
