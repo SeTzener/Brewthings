@@ -10,6 +10,7 @@ import com.brewthings.app.ui.screen.graph.BrewsGraphScreenViewModel
 import com.brewthings.app.ui.screen.graph.GraphScreenViewModel
 import com.brewthings.app.ui.screen.graph.PillGraphScreenViewModel
 import com.brewthings.app.ui.screen.scan.ScanViewModel
+import com.brewthings.app.ui.screen.scanning.ScanningScreenViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
@@ -23,7 +24,7 @@ val appModule = module {
     factory { RaptPillRepository(scanner = get(), dao = get()) }
     factory { BrewsRepository(dao = get()) }
 
-    // viewModel { ScanningScreenViewModel() }
+    viewModel { ScanningScreenViewModel() } // TODO(walt): Remove me
     viewModel { ScanViewModel() }
     viewModel { BrewsViewModel() }
     viewModel<GraphScreenViewModel>(qualifier = named(Destination.PILL_GRAPH)) { PillGraphScreenViewModel() }
