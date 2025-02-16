@@ -27,7 +27,7 @@
     <string name="bluetooth_unavailable">"Bluetooth is not available"</string>
     <string name="pill_graph">"Show history"</string>
     <string name="pill_rssi">"%ddBm"</string>
-    <string name="edit_name_btn">Save</string>
+    <string name="button_save">Save</string>
     <string name="graph_data_label_data_types">Measurements</string>
     <string name="graph_data_label_gravity">Gravity</string>
     <string name="graph_data_label_temp_short">Temp</string>

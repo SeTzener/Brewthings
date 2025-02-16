@@ -600,7 +600,7 @@ fun EditNameBottomSheet(
                         onPillUpdate(pill.copy(name = name))
                         onDismiss()
                     },
-                    content = { Text(text = stringResource(id = R.string.edit_name_btn)) },
+                    content = { Text(text = stringResource(id = R.string.button_save)) },
                     enabled = isValidName(oldName = pill.name, newName = name),
                 )
             }
