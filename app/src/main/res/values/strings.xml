@@ -69,7 +69,7 @@
     <string name="a11y_bluetooth_scan_error">Fix Bluetooth Scan</string>
     <string name="a11y_bluetooth_scan_idle">Start Bluetooth Scan</string>
     <string name="a11y_bluetooth_scan_scanning">Stop Bluetooth Scan</string>
-    <string name="pill_reading_footer">previously: %s %s</string>
+    <string name="sensor_measurement_footer">previously: %s %s</string>
     <string name="brew_time_header">"Time since OG"</string>
     <string name="brew_time_footer">"started on %s"</string>
     <string name="unit_gravity">"SG"</string>

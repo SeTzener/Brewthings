@@ -23,7 +23,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.DataType
-import com.brewthings.app.data.domain.Trend
+import com.brewthings.app.data.domain.Measurement
 import com.brewthings.app.ui.converter.toIconRes
 import com.brewthings.app.ui.converter.toLabel
 import com.brewthings.app.ui.converter.toUnit
@@ -38,10 +38,10 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 
 @Composable
-fun BrewReadingsGrid(
+fun BrewMeasurementsGrid(
     modifier: Modifier = Modifier,
     timeRange: TimeRange,
-    readings: List<PillReading>,
+    measurements: List<Measurement>,
 ) {
     LazyVerticalGrid(
         modifier = modifier,
@@ -50,28 +50,28 @@ fun BrewReadingsGrid(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item { BrewTimeCard(timeRange) }
-        items(readings) { BrewReadingCard(it) }
+        items(measurements) { BrewMeasurementCard(it) }
     }
 }
 
 @Composable
-fun BrewReadingCard(reading: PillReading) {
-    val unit = reading.dataType.toUnit()
-    val formatter = reading.dataType.toValueFormatter()
+fun BrewMeasurementCard(measurement: Measurement) {
+    val unit = measurement.dataType.toUnit()
+    val formatter = measurement.dataType.toValueFormatter()
     BrewCard(
-        headerIconResId = reading.dataType.toIconRes(reading.value),
-        header = reading.dataType.toLabel(),
+        headerIconResId = measurement.dataType.toIconRes(measurement.value),
+        header = measurement.dataType.toLabel(),
         content = { modifier, textColor ->
             ValueRow(
                 modifier = modifier,
                 textColor = textColor,
-                formattedValue = formatter.format(reading.value),
+                formattedValue = formatter.format(measurement.value),
                 unit = unit,
-                trendIconRes = Trend.get(reading.previousValue, reading.value).toIconRes(),
+                trendIconRes = measurement.trend.toIconRes(),
             )
         },
-        footer = reading.previousValue?.let {
-            stringResource(R.string.pill_reading_footer, formatter.format(it), unit)
+        footer = measurement.previousValue?.let {
+            stringResource(R.string.sensor_measurement_footer, formatter.format(it), unit)
         } ?: "",
     )
 }
@@ -225,17 +225,17 @@ private fun FooterRow(
 
 @Preview
 @Composable
-fun BrewReadingsGridPreview() {
+fun BrewMeasurementsGridPreview() {
     BrewthingsTheme {
         val startDate = LocalDate(2024, 12, 26).atStartOfDayIn(TimeZone.UTC)
-        BrewReadingsGrid(
+        BrewMeasurementsGrid(
             modifier = Modifier.width(360.dp),
             timeRange = TimeRange(
                 from = startDate,
                 to = startDate + 6.days,
             ),
-            readings = listOf(
-                PillReading(DataType.ABV, 1.20f, 1.09f)
+            measurements = listOf(
+                Measurement(DataType.ABV, 1.20f, 1.09f)
             )
         )
     }

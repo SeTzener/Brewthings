@@ -25,7 +25,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.DataType
-import com.brewthings.app.data.domain.Trend
+import com.brewthings.app.data.domain.Measurement
 import com.brewthings.app.ui.converter.toColor
 import com.brewthings.app.ui.converter.toIconRes
 import com.brewthings.app.ui.converter.toLabel
@@ -34,9 +34,9 @@ import com.brewthings.app.ui.converter.toValueFormatter
 import com.brewthings.app.ui.theme.BrewthingsTheme
 
 @Composable
-fun PillReadingsGrid(
+fun SensorMeasurementsGrid(
     modifier: Modifier = Modifier,
-    readings: List<PillReading>,
+    measurements: List<Measurement>,
 ) {
     LazyVerticalGrid(
         modifier = modifier,
@@ -44,33 +44,33 @@ fun PillReadingsGrid(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        items(readings) {
-            PillReadingCard(it)
+        items(measurements) {
+            SensorMeasurementCard(it)
         }
     }
 }
 
 @Composable
-private fun PillReadingCard(reading: PillReading) {
-    val (dataType, value, previousValue) = reading
+private fun SensorMeasurementCard(measurement: Measurement) {
+    val (dataType, value, previousValue) = measurement
     val unit = dataType.toUnit()
     val formatter = dataType.toValueFormatter()
-    PillReadingCard(
+    SensorMeasurementCard(
         backgroundColor = dataType.toColor(),
         textColor = Color.White,
         headerIconRes = dataType.toIconRes(value),
         header = dataType.toLabel(),
         formattedValue = formatter.format(value),
         unit = unit,
-        trendIconRes = Trend.get(previousValue, value).toIconRes(),
+        trendIconRes = measurement.trend.toIconRes(),
         footer = previousValue?.let {
-            stringResource(R.string.pill_reading_footer, formatter.format(it), unit)
+            stringResource(R.string.sensor_measurement_footer, formatter.format(it), unit)
         } ?: ""
     )
 }
 
 @Composable
-fun PillReadingCard(
+fun SensorMeasurementCard(
     backgroundColor: Color,
     textColor: Color,
     @DrawableRes headerIconRes: Int,
@@ -193,18 +193,16 @@ fun PillReadingCard(
 
 @Preview
 @Composable
-fun PillReadingGridPreview() {
+fun SensorMeasurementGridPreview() {
     BrewthingsTheme {
-        PillReadingsGrid(
+        SensorMeasurementsGrid(
             modifier = Modifier.width(360.dp),
-            readings = listOf(
-                PillReading(DataType.GRAVITY, 1.056f, 1.060f),
-                PillReading(DataType.TEMPERATURE, 18.25f, 18.25f),
-                PillReading(DataType.VELOCITY_MEASURED, 1.575f, 0.617f),
-                PillReading(DataType.BATTERY, 0.58f, 0.5825f),
+            measurements = listOf(
+                Measurement(DataType.GRAVITY, 1.056f, 1.060f),
+                Measurement(DataType.TEMPERATURE, 18.25f, 18.25f),
+                Measurement(DataType.VELOCITY_MEASURED, 1.575f, 0.617f),
+                Measurement(DataType.BATTERY, 0.58f, 0.5825f),
             )
         )
     }
 }
-
-data class PillReading(val dataType: DataType, val value: Float, val previousValue: Float?)
