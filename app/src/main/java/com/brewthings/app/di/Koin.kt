@@ -1,5 +1,9 @@
 package com.brewthings.app.di
 
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.brewthings.app.data.ble.RaptPillScanner
 import com.brewthings.app.data.repository.BrewsRepository
 import com.brewthings.app.data.repository.RaptPillRepository
@@ -16,12 +20,15 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("settings")
+
 val appModule = module {
     single { RaptPillDatabase.create(context = androidContext()) }
+    factory { androidContext().dataStore }
 
     factory { RaptPillScanner() }
     factory { get<RaptPillDatabase>().raptPillDao() }
-    factory { RaptPillRepository(scanner = get(), dao = get()) }
+    factory { RaptPillRepository(scanner = get(), dao = get(), dataStore = get()) }
     factory { BrewsRepository(dao = get()) }
 
     viewModel { ScanningScreenViewModel() } // TODO(walt): Remove me

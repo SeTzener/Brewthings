@@ -116,10 +116,13 @@ dependencies {
     implementation(libs.accompanist.systemuicontroller)
 
     // AndroidX AppCompat
-    implementation(libs.app.compat)
+    implementation(libs.androidx.appcompat)
 
     // AndroidX Lifecycle
-    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    // AndroidX DataStore
+    implementation(libs.androidx.datastore.preferences)
 
     // Firebase
     implementation(platform(libs.firebase.bom))

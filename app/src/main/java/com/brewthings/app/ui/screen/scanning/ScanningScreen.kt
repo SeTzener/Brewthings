@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.RaptPillData
+import com.brewthings.app.data.model.RaptPillWithData
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.model.ScannedRaptPillData
 import com.brewthings.app.ui.ActivityCallbacks
@@ -107,7 +108,7 @@ private fun ScanningScreen(
     toggleScan: () -> Unit,
     onRssiThresholdChanged: (Int) -> Unit,
     savePill: (ScannedRaptPill) -> Unit,
-    onPillUpdate: (RaptPill) -> Unit,
+    onPillUpdate: (RaptPillWithData) -> Unit,
     openGraph: (name: String?, macAddress: String) -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -154,7 +155,7 @@ private fun ScanningScreen(
             SectionTitle(title = stringResource(R.string.scanning_saved))
         }
 
-        items(savedPills, key = { "saved_" + it.macAddress }) { pill ->
+        items(savedPills, key = { "saved_" + it.raptPill.macAddress }) { pill ->
             Pill(
                 pill = pill,
                 onPillUpdate = onPillUpdate,
@@ -375,8 +376,8 @@ private fun ScannedPillTopContent(
 
 @Composable
 private fun Pill(
-    pill: RaptPill,
-    onPillUpdate: (RaptPill) -> Unit,
+    pill: RaptPillWithData,
+    onPillUpdate: (RaptPillWithData) -> Unit,
     openGraph: (name: String?, macAddress: String) -> Unit,
 ) {
     Card(
@@ -398,8 +399,8 @@ private fun Pill(
                 battery = data.battery,
             )
             PillFooter(
-                name = pill.name,
-                macAddress = pill.macAddress,
+                name = pill.raptPill.name,
+                macAddress = pill.raptPill.macAddress,
                 openGraph = openGraph,
             )
         }
@@ -408,8 +409,8 @@ private fun Pill(
 
 @Composable
 private fun PillTopContent(
-    pill: RaptPill,
-    onPillUpdate: (RaptPill) -> Unit,
+    pill: RaptPillWithData,
+    onPillUpdate: (RaptPillWithData) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -423,7 +424,7 @@ private fun PillTopContent(
                 .padding(vertical = 16.dp),
         ) {
             Text(
-                text = pill.name ?: stringResource(R.string.scanning_result),
+                text = pill.raptPill.name ?: stringResource(R.string.scanning_result),
                 overflow = TextOverflow.Ellipsis,
                 style = Typography.bodyMedium,
                 maxLines = 1,
@@ -432,7 +433,7 @@ private fun PillTopContent(
             Spacer(modifier = Modifier.padding(4.dp))
 
             Text(
-                text = pill.macAddress,
+                text = pill.raptPill.macAddress,
                 style = Typography.bodySmall,
             )
         }
@@ -508,8 +509,8 @@ private fun PillFooter(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DropDownMenu(
-    raptPill: RaptPill,
-    onPillUpdate: (RaptPill) -> Unit,
+    raptPill: RaptPillWithData,
+    onPillUpdate: (RaptPillWithData) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) } // State to control bottom sheet visibility
@@ -557,11 +558,11 @@ private fun DropDownMenu(
 fun EditNameBottomSheet(
     isBottomSheetVisible: Boolean,
     sheetState: SheetState,
-    pill: RaptPill,
+    pill: RaptPillWithData,
     onDismiss: () -> Unit,
-    onPillUpdate: (newPill: RaptPill) -> Unit,
+    onPillUpdate: (newPill: RaptPillWithData) -> Unit,
 ) {
-    var name by remember { mutableStateOf(pill.name) }
+    var name by remember { mutableStateOf(pill.raptPill.name) }
 
     if (isBottomSheetVisible) {
         ModalBottomSheet(
@@ -597,11 +598,11 @@ fun EditNameBottomSheet(
 
                 OutlinedButton(
                     onClick = {
-                        onPillUpdate(pill.copy(name = name))
+                        onPillUpdate(pill.copy(raptPill = pill.raptPill.copy(name = name)))
                         onDismiss()
                     },
                     content = { Text(text = stringResource(id = R.string.button_save)) },
-                    enabled = isValidName(oldName = pill.name, newName = name),
+                    enabled = isValidName(oldName = pill.raptPill.name, newName = name),
                 )
             }
         }
@@ -644,9 +645,11 @@ fun ScannedPillPreview() {
 fun PillPreview() {
     BrewthingsTheme {
         Pill(
-            pill = RaptPill(
-                name = "Pill Name",
-                macAddress = "00:00:00:00:00:00",
+            pill = RaptPillWithData(
+                raptPill = RaptPill(
+                    name = "Pill Name",
+                    macAddress = "00:00:00:00:00:00",
+                ),
                 data = listOf(
                     RaptPillData(
                         timestamp = Instant.DISTANT_PAST,

@@ -1,8 +1,14 @@
 package com.brewthings.app.data.repository
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.brewthings.app.data.ble.RaptPillScanner
+import com.brewthings.app.data.model.MacAddress
 import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.RaptPillData
+import com.brewthings.app.data.model.RaptPillWithData
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.storage.RaptPillDao
 import com.brewthings.app.data.storage.toDaoItem
@@ -11,17 +17,22 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 
+private val SELECTED_PILL = stringPreferencesKey("selected_pill")
+
 class RaptPillRepository(
     private val scanner: RaptPillScanner,
     private val dao: RaptPillDao,
+    private val dataStore: DataStore<Preferences>,
 ) {
     fun fromBluetooth(): Flow<ScannedRaptPill> = scanner.scan()
 
-    fun fromDatabase(): Flow<List<RaptPill>> = dao.observeAll().map { query ->
+    fun fromDatabase(): Flow<List<RaptPillWithData>> = dao.observeAll().map { query ->
         query.map { db ->
-            RaptPill(
-                macAddress = db.pill.macAddress,
-                name = db.pill.name,
+            RaptPillWithData(
+                raptPill = RaptPill(
+                    macAddress = db.pill.macAddress,
+                    name = db.pill.name,
+                ),
                 data = db.data.map { data ->
                     data.toModelItem()
                 },
@@ -35,7 +46,7 @@ class RaptPillRepository(
         dao.insertReadings(pill, readings)
     }
 
-    suspend fun setIsOG(macAddress: String, timestamp: Instant, isOg: Boolean) {
+    suspend fun setIsOG(macAddress: MacAddress, timestamp: Instant, isOg: Boolean) {
         dao.setIsOG(
             macAddress = macAddress,
             timestamp = timestamp,
@@ -43,7 +54,7 @@ class RaptPillRepository(
         )
     }
 
-    suspend fun setIsFG(macAddress: String, timestamp: Instant, isOg: Boolean) {
+    suspend fun setIsFG(macAddress: MacAddress, timestamp: Instant, isOg: Boolean) {
         dao.setIsFG(
             macAddress = macAddress,
             timestamp = timestamp,
@@ -51,20 +62,37 @@ class RaptPillRepository(
         )
     }
 
-    suspend fun updatePill(raptPill: RaptPill) {
-        dao.updatePillData(raptPill = raptPill.toDaoItem())
+    suspend fun updatePill(raptPill: RaptPillWithData) {
+        dao.updatePillData(raptPill = raptPill.raptPill.toDaoItem())
     }
 
-    fun observeData(macAddress: String): Flow<List<RaptPillData>> =
+    fun observeData(macAddress: MacAddress): Flow<List<RaptPillData>> =
         dao.observeData(macAddress).map { data ->
             data.map { it.toModelItem() }
         }
 
-    suspend fun setFeeding(macAddress: String, timestamp: Instant, isFeeding: Boolean) {
+    suspend fun setFeeding(macAddress: MacAddress, timestamp: Instant, isFeeding: Boolean) {
         dao.setFeeding(
             macAddress = macAddress,
             timestamp = timestamp,
             isFeeding = isFeeding,
         )
+    }
+
+    fun observePills(): Flow<List<RaptPill>> = dao.observePills().map { pills ->
+        pills.map { pill ->
+            RaptPill(
+                macAddress = pill.macAddress,
+                name = pill.name,
+            )
+        }
+    }
+    
+    fun observeSelectedPill() : Flow<MacAddress?> = dataStore.data.map { preferences ->
+        preferences[SELECTED_PILL]
+    }
+
+    suspend fun selectPill(macAddress: MacAddress) = dataStore.edit { preferences ->
+        preferences[SELECTED_PILL] = macAddress
     }
 }
