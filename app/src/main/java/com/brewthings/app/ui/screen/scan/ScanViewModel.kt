@@ -41,9 +41,17 @@ class ScanViewModel : ViewModel(), KoinComponent {
     private val pills: RaptPillRepository by inject()
     private val brews: BrewsRepository by inject()
 
+    // State & Flows
+    private var latestScanResult: ScannedRaptPill? = null
+
     private val bluetoothIsScanning = MutableStateFlow(false)
 
-    private var latestScanResult: ScannedRaptPill? = null
+    private val bluetoothAvailability: Flow<Bluetooth.Availability> = Bluetooth.availability
+
+    val bluetoothScanState: StateFlow<BluetoothScanState> = bluetoothAvailability
+        .combine(bluetoothIsScanning) { availability, isScanning ->
+            availability.toBluetoothScanState(isScanning)
+        }.stateIn(viewModelScope, SharingStarted.Lazily, BluetoothScanState.Unavailable(reason = Reason.Unknown))
 
     val devices: StateFlow<List<Device>> = pills.observePills()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
@@ -54,13 +62,6 @@ class ScanViewModel : ViewModel(), KoinComponent {
         .combine(selectedMacAddress) { devices, selectedMacAddress ->
             devices.find { it.macAddress == selectedMacAddress }
         }.stateIn(viewModelScope, SharingStarted.Lazily, null)
-
-    private val bluetoothAvailability: Flow<Bluetooth.Availability> = Bluetooth.availability
-
-    val bluetoothScanState: StateFlow<BluetoothScanState> = bluetoothAvailability
-        .combine(bluetoothIsScanning) { availability, isScanning ->
-            availability.toBluetoothScanState(isScanning)
-        }.stateIn(viewModelScope, SharingStarted.Lazily, BluetoothScanState.Unavailable(reason = Reason.Unknown))
 
     private val savedReadings: Flow<SensorReadings?> = selectedMacAddress
         .flatMapLatest { selected: MacAddress? ->
@@ -93,6 +94,11 @@ class ScanViewModel : ViewModel(), KoinComponent {
             }
         }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
+    val canSave: StateFlow<Boolean> = scannedReadings
+        .combine(savedReadings) { scanned, saved ->
+            if (scanned == null) false else SensorReadings.compare(scanned, saved) != 0
+        }.stateIn(viewModelScope, SharingStarted.Lazily, false)
+
     private val savedCurrentBrew: Flow<Brew?> = selectedMacAddress
         .flatMapLatest { selected: MacAddress? ->
             selected?.let {
@@ -114,11 +120,6 @@ class ScanViewModel : ViewModel(), KoinComponent {
                 )
             }
         }.stateIn(viewModelScope, SharingStarted.Lazily, null)
-
-    val canSave: StateFlow<Boolean> = scannedReadings
-        .combine(savedReadings) { scanned, saved ->
-            if (scanned == null) false else SensorReadings.compare(scanned, saved) != 0
-        }.stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     // Functions
     fun save() {
