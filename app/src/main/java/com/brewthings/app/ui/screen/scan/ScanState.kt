@@ -3,6 +3,7 @@ package com.brewthings.app.ui.screen.scan
 import com.brewthings.app.data.domain.BluetoothScanState
 import com.brewthings.app.data.domain.Device
 import com.brewthings.app.data.domain.Measurement
+import com.brewthings.app.util.datetime.TimeRange
 
 /**
  * Screen state for ScanScreen.
@@ -21,7 +22,12 @@ sealed interface ScanState {
         val devices: List<Device>,
         val bluetoothScanState: BluetoothScanState,
         val sensorMeasurements: List<Measurement>,
-        val brewMeasurements: List<Measurement>,
+        val currentBrewState: BrewState?,
         val canSave: Boolean,
     ) : ScanState
 }
+
+data class BrewState(
+    val timeRange: TimeRange,
+    val measurements: List<Measurement>,
+)

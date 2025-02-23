@@ -27,20 +27,37 @@ interface RaptPillDao {
 
     @Query(
         "SELECT * FROM RaptPillData " +
-            "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
-            "WHERE RaptPill.macAddress = :macAddress " +
-            "AND RaptPillData.timestamp <= :timestamp " +
-            "ORDER BY RaptPillData.timestamp DESC LIMIT 2",
+                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+                "WHERE RaptPill.macAddress = :macAddress " +
+                "ORDER BY RaptPillData.timestamp DESC LIMIT 1"
     )
-    fun observeDataAndPrevious(macAddress: String, timestamp: Instant): Flow<List<RaptPillData>>
+    fun observeLatestData(macAddress: String): Flow<RaptPillData?>
 
     @Query(
         "SELECT * FROM RaptPillData " +
             "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
             "WHERE RaptPill.macAddress = :macAddress " +
             "AND RaptPillData.isOG == 1 " +
-            "OR RaptPillData.isFG == 1 " +
-            "ORDER BY RaptPillData.timestamp ASC",
+            "ORDER BY RaptPillData.timestamp ASC LIMIT 1",
+    )
+    suspend fun observeLastOG(macAddress: String): Flow<RaptPillData?>
+
+    @Query(
+        "SELECT * FROM RaptPillData " +
+                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+                "WHERE RaptPill.macAddress = :macAddress " +
+                "AND RaptPillData.timestamp >= :startDate " +
+                "ORDER BY RaptPillData.timestamp ASC",
+    )
+    fun observeDataSince(macAddress: String, startDate: Instant): Flow<List<RaptPillData>>
+
+    @Query(
+        "SELECT * FROM RaptPillData " +
+                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+                "WHERE RaptPill.macAddress = :macAddress " +
+                "AND RaptPillData.isOG == 1 " +
+                "OR RaptPillData.isFG == 1 " +
+                "ORDER BY RaptPillData.timestamp ASC",
     )
     suspend fun getBrewEdges(macAddress: String): List<RaptPillData>
 

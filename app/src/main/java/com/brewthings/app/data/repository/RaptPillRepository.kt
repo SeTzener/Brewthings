@@ -71,6 +71,11 @@ class RaptPillRepository(
             data.map { it.toModelItem() }
         }
 
+    fun observeLatestData(macAddress: MacAddress): Flow<RaptPillData?> =
+        dao.observeLatestData(macAddress).map { data ->
+            data?.toModelItem()
+        }
+
     suspend fun setFeeding(macAddress: MacAddress, timestamp: Instant, isFeeding: Boolean) {
         dao.setFeeding(
             macAddress = macAddress,
