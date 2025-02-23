@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.brewthings.app.R
+import com.brewthings.app.data.domain.BrewMeasurements
 import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.domain.Measurement
 import com.brewthings.app.ui.converter.toIconRes
@@ -40,8 +41,7 @@ import kotlinx.datetime.atStartOfDayIn
 @Composable
 fun BrewMeasurementsGrid(
     modifier: Modifier = Modifier,
-    timeRange: TimeRange,
-    measurements: List<Measurement>,
+    data: BrewMeasurements,
 ) {
     LazyVerticalGrid(
         modifier = modifier,
@@ -49,8 +49,8 @@ fun BrewMeasurementsGrid(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        item { BrewTimeCard(timeRange) }
-        items(measurements) { BrewMeasurementCard(it) }
+        item { BrewTimeCard(data.timeRange) }
+        items(data.measurements) { BrewMeasurementCard(it) }
     }
 }
 
@@ -113,12 +113,16 @@ private fun BrewCard(
             )
 
             content(
-                Modifier.fillMaxWidth().padding(top = verticalPadding),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = verticalPadding),
                 textColor,
             )
 
             FooterRow(
-                modifier = Modifier.fillMaxWidth().padding(top = verticalPadding),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = verticalPadding),
                 textColor = textColor,
                 footer = footer,
             )
@@ -230,13 +234,15 @@ fun BrewMeasurementsGridPreview() {
         val startDate = LocalDate(2024, 12, 26).atStartOfDayIn(TimeZone.UTC)
         BrewMeasurementsGrid(
             modifier = Modifier.width(360.dp),
-            timeRange = TimeRange(
-                from = startDate,
-                to = startDate + 6.days,
+            data = BrewMeasurements(
+                timeRange = TimeRange(
+                    from = startDate,
+                    to = startDate + 6.days,
+                ),
+                measurements = listOf(
+                    Measurement(DataType.ABV, 1.20f, 1.09f)
+                ),
             ),
-            measurements = listOf(
-                Measurement(DataType.ABV, 1.20f, 1.09f)
-            )
         )
     }
 }

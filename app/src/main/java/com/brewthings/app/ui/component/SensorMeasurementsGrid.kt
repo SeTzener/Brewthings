@@ -26,6 +26,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.domain.Measurement
+import com.brewthings.app.data.domain.SensorMeasurements
 import com.brewthings.app.ui.converter.toColor
 import com.brewthings.app.ui.converter.toIconRes
 import com.brewthings.app.ui.converter.toLabel
@@ -36,7 +37,7 @@ import com.brewthings.app.ui.theme.BrewthingsTheme
 @Composable
 fun SensorMeasurementsGrid(
     modifier: Modifier = Modifier,
-    measurements: List<Measurement>,
+    measurements: SensorMeasurements,
 ) {
     LazyVerticalGrid(
         modifier = modifier,

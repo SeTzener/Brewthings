@@ -5,9 +5,11 @@ package com.brewthings.app.ui.screen.scan
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.brewthings.app.data.domain.BluetoothScanState
+import com.brewthings.app.data.domain.BrewMeasurements
 import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.domain.Device
 import com.brewthings.app.data.domain.Measurement
+import com.brewthings.app.data.domain.SensorMeasurements
 import com.brewthings.app.data.domain.SensorReadings
 import com.brewthings.app.data.domain.toBluetoothScanState
 import com.brewthings.app.data.model.Brew
@@ -75,7 +77,7 @@ class ScanViewModel : ViewModel(), KoinComponent {
             scanResults.map { it?.data }
         }
 
-    private val sensorMeasurements: Flow<List<Measurement>> = scannedReadings
+    private val sensorMeasurements: Flow<SensorMeasurements> = scannedReadings
         .combine(savedReadings) { scanned, saved ->
             if (scanned == null) {
                 if (saved != null) {
@@ -95,17 +97,17 @@ class ScanViewModel : ViewModel(), KoinComponent {
             } ?: flowOf(null)
         }
 
-    private val currentBrewState: Flow<BrewState?> = scannedReadings
+    private val currentBrewState: Flow<BrewMeasurements?> = scannedReadings
         .combine(savedCurrentBrew) { scanned, brew ->
             if (brew == null) {
                 null
             } else {
-                val og = brew.og
                 val latest = scanned ?: brew.fgOrLast
-                val previous = brew.fgOrLast.takeIf { it != latest }
-                BrewState(
-                    timeRange = TimeRange(og.timestamp, latest.timestamp),
-                    measurements = createBrewMeasurements(latest, previous, og, brew.feedings)
+                createBrewMeasurements(
+                    latest = latest,
+                    previous = brew.fgOrLast.takeIf { it != latest },
+                    og = brew.og,
+                    feedings = brew.feedings
                 )
             }
         }
@@ -140,7 +142,7 @@ class ScanViewModel : ViewModel(), KoinComponent {
     private fun observeScanState(): Flow<ScanState> = TODO()
 }
 
-private fun createSensorMeasurements(latest: SensorReadings, previous: SensorReadings?): List<Measurement> =
+private fun createSensorMeasurements(latest: SensorReadings, previous: SensorReadings?): SensorMeasurements =
     listOfNotNull(
         Measurement(DataType.GRAVITY, latest.gravity, previous?.gravity),
         Measurement(DataType.TEMPERATURE, latest.temperature, previous?.temperature),
@@ -153,12 +155,16 @@ private fun createBrewMeasurements(
     previous: SensorReadings?,
     og: SensorReadings,
     feedings: List<Float>,
-): List<Measurement> = listOfNotNull(
-    Measurement(
-        dataType = DataType.ABV,
-        value = calculateABV(og = og.gravity, fg = latest.gravity, feedings = feedings) ?: 0f,
-        previousValue = previous?.let {
-            calculateABV(og = og.gravity, fg = it.gravity, feedings = feedings)
-        }
+): BrewMeasurements =
+    BrewMeasurements(
+        timeRange = TimeRange(og.timestamp, latest.timestamp),
+        measurements = listOfNotNull(
+            Measurement(
+                dataType = DataType.ABV,
+                value = calculateABV(og = og.gravity, fg = latest.gravity, feedings = feedings) ?: 0f,
+                previousValue = previous?.let {
+                    calculateABV(og = og.gravity, fg = it.gravity, feedings = feedings)
+                }
+            )
+        ),
     )
-)

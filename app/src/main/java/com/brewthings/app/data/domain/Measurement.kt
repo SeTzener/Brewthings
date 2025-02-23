@@ -3,6 +3,14 @@ package com.brewthings.app.data.domain
 import com.brewthings.app.data.domain.Trend.Downwards
 import com.brewthings.app.data.domain.Trend.Stationary
 import com.brewthings.app.data.domain.Trend.Upwards
+import com.brewthings.app.util.datetime.TimeRange
+
+typealias SensorMeasurements = List<Measurement>
+
+data class BrewMeasurements(
+    val timeRange: TimeRange,
+    val measurements: List<Measurement>,
+)
 
 data class Measurement(
     val dataType: DataType,
