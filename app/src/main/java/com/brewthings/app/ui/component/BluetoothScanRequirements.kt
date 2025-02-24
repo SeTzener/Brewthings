@@ -101,7 +101,10 @@ fun BluetoothScanRequirements(
                             if (permissionsState.shouldShowRationale) {
                                 BluetoothPermissionsNotGranted(permissionsState)
                             } else {
-                                BluetoothPermissionsNotAvailable(activityCallbacks::openAppDetails)
+                                BluetoothPermissionsNotAvailable {
+                                    showDialog = false
+                                    activityCallbacks.openAppDetails()
+                                }
                             }
                         }
                     }
@@ -115,10 +118,16 @@ fun BluetoothScanRequirements(
                         val unavailableOrNull = bluetoothAvailability as? Bluetooth.Availability.Unavailable
                         when (unavailableOrNull?.reason) {
                             Reason.LocationServicesDisabled ->
-                                LocationServicesDisabled(activityCallbacks::showLocationSettings)
+                                LocationServicesDisabled {
+                                    showDialog = false
+                                    activityCallbacks.showLocationSettings()
+                                }
 
                             Reason.Off, Reason.TurningOff ->
-                                BluetoothDisabled(activityCallbacks::enableBluetooth)
+                                BluetoothDisabled {
+                                    showDialog = false
+                                    activityCallbacks.enableBluetooth()
+                                }
 
                             Reason.TurningOn ->
                                 BluetoothTemporarilyUnavailable()
