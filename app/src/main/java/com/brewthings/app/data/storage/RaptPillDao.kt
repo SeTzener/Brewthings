@@ -40,7 +40,7 @@ interface RaptPillDao {
             "AND RaptPillData.isOG == 1 " +
             "ORDER BY RaptPillData.timestamp ASC LIMIT 1",
     )
-    suspend fun observeLastOG(macAddress: String): Flow<RaptPillData?>
+    fun observeLastOG(macAddress: String): Flow<RaptPillData?>
 
     @Query(
         "SELECT * FROM RaptPillData " +

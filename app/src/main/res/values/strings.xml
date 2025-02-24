@@ -24,7 +24,10 @@
     <string name="bluetooth_disabled_title">"Bluetooth is disabled"</string>
     <string name="bluetooth_disabled_desc">"Please, grant access to it."</string>
     <string name="bluetooth_disabled_btn">"Enable"</string>
-    <string name="bluetooth_unavailable">"Bluetooth is not available"</string>
+    <string name="bluetooth_temporarily_unavailable_title">"Bluetooth is temporarily not available"</string>
+    <string name="bluetooth_temporarily_unavailable_desc">"Please wait. If it takes too long, try to reboot your device."</string>
+    <string name="bluetooth_unavailable_title">"Bluetooth is not available"</string>
+    <string name="bluetooth_unavailable_desc">"Scanning is not supported on this device."</string>
     <string name="pill_graph">"Show history"</string>
     <string name="pill_rssi">"%ddBm"</string>
     <string name="button_save">Save</string>

@@ -32,7 +32,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.BluetoothScanState
-import com.brewthings.app.data.domain.BluetoothScanState.Unavailable.Reason
 import com.brewthings.app.data.domain.Device
 import com.brewthings.app.data.domain.MockDevice
 import com.brewthings.app.ui.theme.BrewthingsTheme
@@ -184,13 +183,12 @@ private fun FullTopAppBarPreview() {
     )
     var selectedDevice: Device by remember { mutableStateOf(devices[1]) }
 
-    val error = BluetoothScanState.Unavailable(Reason.Unknown)
-    var scanState: BluetoothScanState by remember { mutableStateOf(error) }
+    var scanState: BluetoothScanState by remember { mutableStateOf(BluetoothScanState.Unavailable) }
     val onScanClick = {
         scanState = when (scanState) {
-            is BluetoothScanState.Unavailable -> BluetoothScanState.Idle
-            is BluetoothScanState.Idle -> BluetoothScanState.InProgress
-            is BluetoothScanState.InProgress -> error
+            BluetoothScanState.Unavailable -> BluetoothScanState.Idle
+            BluetoothScanState.Idle -> BluetoothScanState.InProgress
+            BluetoothScanState.InProgress -> BluetoothScanState.Unavailable
         }
     }
 

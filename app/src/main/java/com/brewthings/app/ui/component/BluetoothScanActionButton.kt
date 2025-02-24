@@ -40,7 +40,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.BluetoothScanState
-import com.brewthings.app.data.domain.BluetoothScanState.Unavailable.Reason
 import com.brewthings.app.ui.theme.BrewthingsTheme
 
 @Composable
@@ -124,27 +123,25 @@ fun ErrorShakeEffect(content: @Composable (Modifier) -> Unit) {
 }
 
 @Composable
-fun BluetoothUnavailableButton(reason: Reason, onClick: () -> Unit) {
+fun BluetoothUnavailableButton(onClick: () -> Unit) {
     val buttonColor = MaterialTheme.colorScheme.onSurface
-    if (reason != Reason.Unknown && reason != Reason.TurningOn) {
-        ErrorShakeEffect {
-            OutlinedIconButton(
-                onClick = onClick,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape),
-                border = BorderStroke(2.dp, buttonColor),
-                colors = IconButtonDefaults.outlinedIconButtonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = buttonColor,
-                )
-            ) {
-                BluetoothScanDisabledIcon(
-                    imageResId = R.drawable.ic_bluetooth_disabled,
-                    descriptionResId = R.string.a11y_bluetooth_scan_error,
-                    buttonColor = buttonColor,
-                )
-            }
+    ErrorShakeEffect {
+        OutlinedIconButton(
+            onClick = onClick,
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape),
+            border = BorderStroke(2.dp, buttonColor),
+            colors = IconButtonDefaults.outlinedIconButtonColors(
+                containerColor = Color.Transparent,
+                contentColor = buttonColor,
+            )
+        ) {
+            BluetoothScanDisabledIcon(
+                imageResId = R.drawable.ic_bluetooth_disabled,
+                descriptionResId = R.string.a11y_bluetooth_scan_error,
+                buttonColor = buttonColor,
+            )
         }
     }
 }
@@ -218,9 +215,9 @@ fun BluetoothScanIcon(
     onClick: () -> Unit,
 ) {
     when (scanState) {
-        is BluetoothScanState.InProgress -> BluetoothScanProgressButton(onClick)
-        is BluetoothScanState.Idle -> BluetoothScanIdleButton(onClick)
-        is BluetoothScanState.Unavailable -> BluetoothUnavailableButton(scanState.reason, onClick)
+        BluetoothScanState.InProgress -> BluetoothScanProgressButton(onClick)
+        BluetoothScanState.Idle -> BluetoothScanIdleButton(onClick)
+        BluetoothScanState.Unavailable -> BluetoothUnavailableButton(onClick)
     }
 }
 

@@ -43,7 +43,7 @@ class BrewsRepository(
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    suspend fun observeCurrentBrew(macAddress: MacAddress): Flow<Brew?> =
+    fun observeCurrentBrew(macAddress: MacAddress): Flow<Brew?> =
         dao.observeLastOG(macAddress)
             .flatMapLatest { og ->
                 if (og != null) {

@@ -3,7 +3,6 @@ package com.brewthings.app.ui.screen.scan
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.brewthings.app.data.domain.BluetoothScanState
 import com.brewthings.app.data.domain.BrewMeasurements
 import com.brewthings.app.data.domain.Device
 import com.brewthings.app.data.domain.SensorMeasurements
@@ -26,14 +25,14 @@ fun ScanScreen(
         val selectedDevice by viewModel.selectedDevice.collectAsState()
         val lockedSelectedDevice = selectedDevice
         if (lockedSelectedDevice != null) {
-            val bluetoothScanState by viewModel.bluetoothScanState.collectAsState()
+            val isBluetoothScanning by viewModel.isBluetoothScanning.collectAsState()
             val sensorMeasurements by viewModel.sensorMeasurements.collectAsState()
             val brewMeasurements by viewModel.brewMeasurements.collectAsState()
             val canSave by viewModel.canSave.collectAsState()
             ScanScreen(
                 selectedDevice = lockedSelectedDevice,
                 devices = lockedDevices,
-                bluetoothScanState = bluetoothScanState,
+                isBluetoothScanning = isBluetoothScanning,
                 sensorMeasurements = sensorMeasurements,
                 brewMeasurements = brewMeasurements,
                 canSave = canSave,
@@ -50,11 +49,11 @@ fun ScanScreen(
 fun ScanScreen(
     selectedDevice: Device,
     devices: List<Device>,
-    bluetoothScanState: BluetoothScanState,
+    isBluetoothScanning: Boolean,
     sensorMeasurements: SensorMeasurements,
     brewMeasurements: BrewMeasurements?,
     canSave: Boolean,
-    onScanClick: (BluetoothScanState) -> Unit,
+    onScanClick: () -> Unit,
     onSave: () -> Unit,
 ) {
 

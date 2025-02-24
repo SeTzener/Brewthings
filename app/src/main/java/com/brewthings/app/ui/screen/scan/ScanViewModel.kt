@@ -4,15 +4,12 @@ package com.brewthings.app.ui.screen.scan
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.brewthings.app.data.domain.BluetoothScanState
-import com.brewthings.app.data.domain.BluetoothScanState.Unavailable.Reason
 import com.brewthings.app.data.domain.BrewMeasurements
 import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.domain.Device
 import com.brewthings.app.data.domain.Measurement
 import com.brewthings.app.data.domain.SensorMeasurements
 import com.brewthings.app.data.domain.SensorReadings
-import com.brewthings.app.data.domain.toBluetoothScanState
 import com.brewthings.app.data.model.Brew
 import com.brewthings.app.data.model.MacAddress
 import com.brewthings.app.data.model.ScannedRaptPill
@@ -20,7 +17,6 @@ import com.brewthings.app.data.repository.BrewsRepository
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.util.calculateABV
 import com.brewthings.app.util.datetime.TimeRange
-import com.juul.kable.Bluetooth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,14 +40,8 @@ class ScanViewModel : ViewModel(), KoinComponent {
     // State & Flows
     private var latestScanResult: ScannedRaptPill? = null
 
-    private val bluetoothIsScanning = MutableStateFlow(false)
-
-    private val bluetoothAvailability: Flow<Bluetooth.Availability> = Bluetooth.availability
-
-    val bluetoothScanState: StateFlow<BluetoothScanState> = bluetoothAvailability
-        .combine(bluetoothIsScanning) { availability, isScanning ->
-            availability.toBluetoothScanState(isScanning)
-        }.stateIn(viewModelScope, SharingStarted.Lazily, BluetoothScanState.Unavailable(reason = Reason.Unknown))
+    private val _isBluetoothScanning = MutableStateFlow(false)
+    val isBluetoothScanning: StateFlow<Boolean> = _isBluetoothScanning
 
     val devices: StateFlow<List<Device>> = pills.observePills()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
@@ -70,9 +60,9 @@ class ScanViewModel : ViewModel(), KoinComponent {
             } ?: flowOf(null)
         }
 
-    private val scannedReadings: Flow<SensorReadings?> = bluetoothScanState
-        .flatMapLatest { scan ->
-            val scanResults = if (scan == BluetoothScanState.InProgress) {
+    private val scannedReadings: Flow<SensorReadings?> = isBluetoothScanning
+        .flatMapLatest { isScanning ->
+            val scanResults = if (isScanning) {
                 flowOf(null) // start with null, so it doesn't block the observer until something is found
                     .flatMapLatest { pills.fromBluetooth() }
                     .onEach { latestScanResult = it }
@@ -130,22 +120,8 @@ class ScanViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    fun toggleScan(scanState: BluetoothScanState) {
-        when (scanState) {
-            BluetoothScanState.InProgress -> startScan()
-            BluetoothScanState.Idle -> stopScan()
-            is BluetoothScanState.Unavailable -> {
-                // NO-OP
-            }
-        }
-    }
-
-    private fun startScan() {
-        bluetoothIsScanning.value = true
-    }
-
-    private fun stopScan() {
-        bluetoothIsScanning.value = false
+    fun toggleScan() {
+        _isBluetoothScanning.value = !isBluetoothScanning.value
     }
 }
 
