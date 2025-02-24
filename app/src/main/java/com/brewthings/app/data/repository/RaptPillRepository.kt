@@ -14,7 +14,6 @@ import com.brewthings.app.data.storage.RaptPillDao
 import com.brewthings.app.data.storage.toDaoItem
 import com.brewthings.app.data.storage.toModelItem
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 
@@ -96,10 +95,7 @@ class RaptPillRepository(
 
     fun observeSelectedPill(): Flow<MacAddress?> = dataStore.data.map { preferences ->
         val saved = preferences[SELECTED_PILL]
-        saved ?: observePills()
-            .lastOrNull() // last in the flow
-            ?.firstOrNull() // first in the list
-            ?.macAddress
+        saved ?: dao.getFirstPillMacAddress()
     }
 
     suspend fun selectPill(macAddress: MacAddress) = dataStore.edit { preferences ->

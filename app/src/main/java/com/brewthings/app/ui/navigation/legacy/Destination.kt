@@ -6,11 +6,11 @@ object Destination {
     const val BREWS_GRAPH = "brews_graph"
 
     /* Deep links to specific tabs
-    const val SCANNING = "$HOME/${Tab.SCANNING}"
+    const val SCANNING = "$HOME/${Tab.SCAN}"
     const val BREWS = "$HOME/${Tab.BREWS}"*/
 
     object Tab {
-        const val SCANNING = "scanning"
+        const val SCAN = "scan"
         const val BREWS = "brews"
     }
 }

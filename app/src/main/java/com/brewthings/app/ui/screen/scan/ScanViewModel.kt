@@ -123,6 +123,12 @@ class ScanViewModel : ViewModel(), KoinComponent {
     fun toggleScan() {
         _isBluetoothScanning.value = !isBluetoothScanning.value
     }
+
+    fun selectDevice(device: Device) {
+        viewModelScope.launch {
+            pills.selectPill(device.macAddress)
+        }
+    }
 }
 
 private fun createSensorMeasurements(latest: SensorReadings, previous: SensorReadings?): SensorMeasurements =

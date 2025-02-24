@@ -34,7 +34,9 @@ fun ScanPane(
         PermissionGranted(bluetooth, showLocationSettings, enableBluetooth, content)
     } else {
         if (permissionsState.shouldShowRationale) {
-            BluetoothPermissionsNotGranted(permissionsState)
+            BluetoothPermissionsNotGranted {
+                permissionsState.launchMultiplePermissionRequest()
+            }
         } else {
             BluetoothPermissionsNotAvailable(openAppDetails)
         }

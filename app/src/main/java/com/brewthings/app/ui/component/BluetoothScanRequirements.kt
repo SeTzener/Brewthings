@@ -41,8 +41,6 @@ import com.brewthings.app.data.domain.BluetoothScanState
 import com.brewthings.app.ui.ActivityCallbacks
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.MultiplePermissionsState
-import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.juul.kable.Bluetooth
 import com.juul.kable.Reason
@@ -73,11 +71,10 @@ val Bluetooth.permissionsNeeded: List<String> by lazy {
 
 @Composable
 fun BluetoothScanRequirements(
-    modifier: Modifier,
     isScanning: Boolean,
-    toggleScan: () -> Unit,
+    onToggleScan: () -> Unit,
     activityCallbacks: ActivityCallbacks,
-    content: @Composable (scanState: BluetoothScanState, onToggleScan: () -> Unit) -> Unit
+    content: @Composable (scanState: BluetoothScanState, onScanClick: () -> Unit) -> Unit
 ) {
     val permissionsState = rememberMultiplePermissionsState(Bluetooth.permissionsNeeded)
     val bluetoothAvailability by Bluetooth.availability.collectAsStateWithLifecycle(initialValue = null)
@@ -85,30 +82,11 @@ fun BluetoothScanRequirements(
     var showDialog by remember { mutableStateOf(false) }
     var dialogContent by remember { mutableStateOf<@Composable (() -> Unit)?>(null) }
 
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
-    ) {
+    if (permissionsState.allPermissionsGranted) {
         when (bluetoothAvailability) {
             Bluetooth.Availability.Available -> {
-                if (permissionsState.allPermissionsGranted) {
-                    val scanState = if (isScanning) BluetoothScanState.InProgress else BluetoothScanState.Idle
-                    content(scanState, toggleScan)
-                } else {
-                    content(BluetoothScanState.Unavailable) {
-                        showDialog = true
-                        dialogContent = {
-                            if (permissionsState.shouldShowRationale) {
-                                BluetoothPermissionsNotGranted(permissionsState)
-                            } else {
-                                BluetoothPermissionsNotAvailable {
-                                    showDialog = false
-                                    activityCallbacks.openAppDetails()
-                                }
-                            }
-                        }
-                    }
-                }
+                val scanState = if (isScanning) BluetoothScanState.InProgress else BluetoothScanState.Idle
+                content(scanState, onToggleScan)
             }
 
             is Bluetooth.Availability.Unavailable, null -> {
@@ -139,14 +117,31 @@ fun BluetoothScanRequirements(
                 }
             }
         }
-
-        val lockedDialogContent = dialogContent
-        if (showDialog && lockedDialogContent != null) {
-            BluetoothDialog(
-                onDismissRequest = { showDialog = false },
-                content = lockedDialogContent,
-            )
+    } else {
+        content(BluetoothScanState.Unavailable) {
+            showDialog = true
+            dialogContent = {
+                if (permissionsState.shouldShowRationale) {
+                    BluetoothPermissionsNotAvailable {
+                        showDialog = false
+                        activityCallbacks.openAppDetails()
+                    }
+                } else {
+                    BluetoothPermissionsNotGranted {
+                        showDialog = false
+                        permissionsState.launchMultiplePermissionRequest()
+                    }
+                }
+            }
         }
+    }
+
+    val lockedDialogContent = dialogContent
+    if (showDialog && lockedDialogContent != null) {
+        BluetoothDialog(
+            onDismissRequest = { showDialog = false },
+            content = lockedDialogContent,
+        )
     }
 }
 
@@ -204,15 +199,14 @@ fun LocationServicesDisabled(enableAction: () -> Unit) {
     )
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun BluetoothPermissionsNotGranted(permissions: MultiplePermissionsState) {
+fun BluetoothPermissionsNotGranted(launchPermissionsRequest: () -> Unit) {
     ActionRequired(
         icon = ImageVector.vectorResource(R.drawable.ic_bluetooth_disabled),
         title = stringResource(id = R.string.bluetooth_permissions_not_granted_title),
         description = stringResource(id = R.string.bluetooth_permissions_not_granted_desc),
         buttonText = stringResource(id = R.string.bluetooth_permissions_not_granted_btn),
-        onClick = permissions::launchMultiplePermissionRequest,
+        onClick = launchPermissionsRequest,
     )
 }
 
@@ -337,7 +331,7 @@ private fun LocationServicesDisabledDialogPreview() {
 private fun BluetoothPermissionsNotGrantedDialogPreview() {
     BrewthingsTheme {
         BluetoothDialog(onDismissRequest = {}) {
-            BluetoothPermissionsNotGranted(mockMultiplePermissionsState())
+            BluetoothPermissionsNotGranted {}
         }
     }
 }
@@ -350,12 +344,4 @@ private fun BluetoothPermissionsNotAvailableDialogPreview() {
             BluetoothPermissionsNotAvailable {}
         }
     }
-}
-
-private fun mockMultiplePermissionsState() = object : MultiplePermissionsState {
-    override val allPermissionsGranted: Boolean = false
-    override val permissions: List<PermissionState> = emptyList()
-    override val revokedPermissions: List<PermissionState> = emptyList()
-    override val shouldShowRationale: Boolean = false
-    override fun launchMultiplePermissionRequest() {}
 }
