@@ -120,8 +120,12 @@ class ScanViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    fun toggleScan() {
-        _isBluetoothScanning.value = !isBluetoothScanning.value
+    fun startScan() {
+        _isBluetoothScanning.value = true
+    }
+
+    fun stopScan() {
+        _isBluetoothScanning.value = false
     }
 
     fun selectDevice(device: Device) {

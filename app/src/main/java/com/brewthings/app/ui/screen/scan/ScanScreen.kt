@@ -8,11 +8,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.brewthings.app.R
+import com.brewthings.app.data.domain.BluetoothScanState
 import com.brewthings.app.data.domain.BrewMeasurements
 import com.brewthings.app.data.domain.Device
 import com.brewthings.app.data.domain.SensorMeasurements
@@ -53,7 +58,8 @@ fun ScanScreen(
                 brewMeasurements = brewMeasurements,
                 canSave = canSave,
                 onSelectDevice = viewModel::selectDevice,
-                onToggleScan = viewModel::toggleScan,
+                onStartScan = viewModel::startScan,
+                onStopScan = viewModel::stopScan,
                 onSave = viewModel::save,
             )
         }
@@ -70,14 +76,29 @@ fun ScanScreen(
     brewMeasurements: BrewMeasurements?,
     canSave: Boolean,
     onSelectDevice: (Device) -> Unit,
-    onToggleScan: () -> Unit,
+    onStartScan: () -> Unit,
+    onStopScan: () -> Unit,
     onSave: () -> Unit,
 ) {
     BluetoothScanRequirements(
         isScanning = isBluetoothScanning,
-        onToggleScan = onToggleScan,
+        onToggleScan = { if (isBluetoothScanning) onStopScan() else onStartScan() },
         activityCallbacks = activityCallbacks,
     ) { scanState, onScanClick ->
+        var previousScanState by remember { mutableStateOf(BluetoothScanState.Unavailable) }
+
+        LaunchedEffect(scanState) {
+            if (scanState == BluetoothScanState.Idle && previousScanState == BluetoothScanState.Unavailable) {
+                onStartScan()
+            }
+
+            if (scanState == BluetoothScanState.Unavailable && previousScanState == BluetoothScanState.InProgress) {
+                onStopScan()
+            }
+
+            previousScanState = scanState
+        }
+
         Scaffold(
             topBar = {
                 TopAppBar(
