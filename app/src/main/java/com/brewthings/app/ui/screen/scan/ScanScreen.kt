@@ -96,30 +96,12 @@ fun ScanScreen(
 
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = {
-                        ScannedDevicesDropdown(
-                            selectedDevice = selectedDevice,
-                            devices = devices,
-                            onSelect = onSelectDevice,
-                            onAddDevice = {
-                                // TODO(walt)
-                            },
-                        )
-                    },
-                    actions = {
-                        BluetoothScanActionButton(scanState, onScanClick)
-                        SettingsDropdown(
-                            listOf(
-                                SettingsItem(stringResource(R.string.settings_change_rssi)) {
-                                    // TODO(walt)
-                                },
-                                SettingsItem(stringResource(R.string.settings_rename_device)) {
-                                    // TODO(walt)
-                                },
-                            )
-                        )
-                    }
+                BluetoothScanTopBar(
+                    selectedDevice = selectedDevice,
+                    scanState = scanState,
+                    devices = devices,
+                    onSelectDevice = onSelectDevice,
+                    onScanClick = onScanClick
                 )
             },
         ) { paddingValues ->
@@ -128,6 +110,41 @@ fun ScanScreen(
 
         previousScanState = scanState
     }
+}
+
+@Composable
+fun BluetoothScanTopBar(
+    selectedDevice: Device,
+    scanState: BluetoothScanState,
+    devices: List<Device>,
+    onSelectDevice: (Device) -> Unit,
+    onScanClick: () -> Unit,
+) {
+    TopAppBar(
+        title = {
+            ScannedDevicesDropdown(
+                selectedDevice = selectedDevice,
+                devices = devices,
+                onSelect = onSelectDevice,
+                onAddDevice = {
+                    // TODO(walt)
+                },
+            )
+        },
+        actions = {
+            BluetoothScanActionButton(scanState, onScanClick)
+            SettingsDropdown(
+                listOf(
+                    SettingsItem(stringResource(R.string.settings_change_rssi)) {
+                        // TODO(walt)
+                    },
+                    SettingsItem(stringResource(R.string.settings_rename_device)) {
+                        // TODO(walt)
+                    },
+                )
+            )
+        }
+    )
 }
 
 @Composable
