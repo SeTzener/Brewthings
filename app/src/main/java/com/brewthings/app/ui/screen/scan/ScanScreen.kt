@@ -80,24 +80,19 @@ fun ScanScreen(
     onStopScan: () -> Unit,
     onSave: () -> Unit,
 ) {
+    var previousScanState by remember { mutableStateOf(BluetoothScanState.Unavailable) }
+
     BluetoothScanRequirements(
         isScanning = isBluetoothScanning,
         onToggleScan = { if (isBluetoothScanning) onStopScan() else onStartScan() },
         activityCallbacks = activityCallbacks,
     ) { scanState, onScanClick ->
-        var previousScanState by remember { mutableStateOf(BluetoothScanState.Unavailable) }
-
-        LaunchedEffect(scanState) {
-            if (scanState == BluetoothScanState.Idle && previousScanState == BluetoothScanState.Unavailable) {
-                onStartScan()
-            }
-
-            if (scanState == BluetoothScanState.Unavailable && previousScanState == BluetoothScanState.InProgress) {
-                onStopScan()
-            }
-
-            previousScanState = scanState
-        }
+        BluetoothAutoScan(
+            previousScanState = previousScanState,
+            scanState = scanState,
+            startScan = onStartScan,
+            stopScan = onStopScan,
+        )
 
         Scaffold(
             topBar = {
@@ -129,6 +124,26 @@ fun ScanScreen(
             },
         ) { paddingValues ->
             Box(modifier = Modifier.padding(paddingValues))
+        }
+
+        previousScanState = scanState
+    }
+}
+
+@Composable
+fun BluetoothAutoScan(
+    previousScanState: BluetoothScanState,
+    scanState: BluetoothScanState,
+    startScan: () -> Unit,
+    stopScan: () -> Unit,
+) {
+    LaunchedEffect(scanState) {
+        if (scanState == BluetoothScanState.Idle && previousScanState == BluetoothScanState.Unavailable) {
+            startScan()
+        }
+
+        if (scanState == BluetoothScanState.Unavailable && previousScanState == BluetoothScanState.InProgress) {
+            stopScan()
         }
     }
 }

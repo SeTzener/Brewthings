@@ -15,6 +15,7 @@ import com.brewthings.app.data.model.MacAddress
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.repository.BrewsRepository
 import com.brewthings.app.data.repository.RaptPillRepository
+import com.brewthings.app.util.Logger
 import com.brewthings.app.util.calculateABV
 import com.brewthings.app.util.datetime.TimeRange
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -36,6 +38,8 @@ class ScanViewModel : ViewModel(), KoinComponent {
     // Dependencies
     private val pills: RaptPillRepository by inject()
     private val brews: BrewsRepository by inject()
+
+    private val logger = Logger("ScanViewModel")
 
     // State & Flows
     private var latestScanResult: ScannedRaptPill? = null
@@ -112,6 +116,12 @@ class ScanViewModel : ViewModel(), KoinComponent {
         }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     // Functions
+    init {
+        isBluetoothScanning
+            .onEach { isScanning -> logger.info("Bluetooth scanning is ${if (isScanning) "on" else "off"}.") }
+            .launchIn(viewModelScope)
+    }
+
     fun save() {
         viewModelScope.launch {
             latestScanResult?.also {
