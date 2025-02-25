@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -43,14 +40,20 @@ fun BrewMeasurementsGrid(
     modifier: Modifier = Modifier,
     data: BrewMeasurements,
 ) {
-    LazyVerticalGrid(
+    VerticalGrid(
         modifier = modifier,
-        columns = GridCells.Fixed(2),
+        columnsCount = 2,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        item { BrewTimeCard(data.timeRange) }
-        items(data.measurements) { BrewMeasurementCard(it) }
+        items = listOf(GridItem.TimeRange(data.timeRange)) +
+                data.measurements.map { measurement ->
+                    GridItem.Measurement(measurement)
+                }
+    ) { item ->
+        when (item) {
+            is GridItem.TimeRange -> BrewTimeCard(item.data)
+            is GridItem.Measurement -> BrewMeasurementCard(item.data)
+        }
     }
 }
 
@@ -245,4 +248,9 @@ fun BrewMeasurementsGridPreview() {
             ),
         )
     }
+}
+
+private sealed interface GridItem {
+    data class TimeRange(val data: com.brewthings.app.util.datetime.TimeRange) : GridItem
+    data class Measurement(val data: com.brewthings.app.data.domain.Measurement) : GridItem
 }
