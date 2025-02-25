@@ -27,7 +27,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 
 @Composable
-fun TimeSinceUpdate(
+fun TimeSinceLastUpdate(
     now: Instant = Clock.System.now(),
     timeZone: TimeZone = TimeZone.currentSystemDefault(),
     lastUpdate: Instant,
@@ -86,13 +86,16 @@ fun SectionTitle(
 
 @Composable
 fun PrimaryButton(
+    modifier: Modifier = Modifier,
+    isEnabled: Boolean = true,
     text: String,
     onClick: () -> Unit
 ) {
     Button(
-        modifier = Modifier
+        modifier = modifier
             .height(48.dp)
             .fillMaxWidth(),
+        enabled = isEnabled,
         onClick = onClick,
         shape = RoundedCornerShape(50),
     ) {
@@ -106,11 +109,11 @@ fun PrimaryButton(
 
 @Preview
 @Composable
-fun TimeSinceUpdatePreview() {
+fun TimeSinceLastUpdatePreview() {
     val timeZone = TimeZone.UTC
     BrewthingsTheme {
         Surface {
-            TimeSinceUpdate(
+            TimeSinceLastUpdate(
                 now = LocalDateTime(2025, 2, 16, 14, 30, 0).toInstant(timeZone),
                 lastUpdate = LocalDateTime(2025, 2, 16, 14, 15, 0).toInstant(timeZone),
                 timeZone = timeZone,
@@ -137,6 +140,6 @@ fun SectionTitlePreview() {
 @Composable
 fun PrimaryButtonPreview() {
     BrewthingsTheme {
-        PrimaryButton(text = stringResource(R.string.button_save)) { }
+        PrimaryButton(isEnabled = false, text = stringResource(R.string.button_save)) { }
     }
 }

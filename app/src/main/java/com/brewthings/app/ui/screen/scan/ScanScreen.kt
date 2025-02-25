@@ -2,11 +2,12 @@
 
 package com.brewthings.app.ui.screen.scan
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -15,20 +16,30 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.BluetoothScanState
-import com.brewthings.app.data.domain.BrewMeasurements
+import com.brewthings.app.data.domain.BrewWithMeasurements
 import com.brewthings.app.data.domain.Device
 import com.brewthings.app.data.domain.SensorMeasurements
+import com.brewthings.app.data.model.Brew
 import com.brewthings.app.ui.ActivityCallbacks
 import com.brewthings.app.ui.component.BluetoothScanActionButton
 import com.brewthings.app.ui.component.BluetoothScanRequirements
+import com.brewthings.app.ui.component.BrewMeasurementsGrid
+import com.brewthings.app.ui.component.PrimaryButton
 import com.brewthings.app.ui.component.ScannedDevicesDropdown
+import com.brewthings.app.ui.component.ScrollableColumnWithFooter
+import com.brewthings.app.ui.component.SectionTitle
+import com.brewthings.app.ui.component.SensorMeasurementsGrid
 import com.brewthings.app.ui.component.SettingsDropdown
 import com.brewthings.app.ui.component.SettingsItem
+import com.brewthings.app.ui.component.TimeSinceLastUpdate
 import com.brewthings.app.ui.navigation.legacy.Router
 import com.brewthings.app.ui.screen.onboarding.OnboardingScreen
+import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -46,21 +57,32 @@ fun ScanScreen(
         val lockedSelectedDevice = selectedDevice
         if (lockedSelectedDevice != null) {
             val isBluetoothScanning by viewModel.isBluetoothScanning.collectAsState()
+            val lastUpdate by viewModel.lastUpdate.collectAsState()
             val sensorMeasurements by viewModel.sensorMeasurements.collectAsState()
-            val brewMeasurements by viewModel.brewMeasurements.collectAsState()
+            val brewWithMeasurements by viewModel.brewWithMeasurements.collectAsState()
             val canSave by viewModel.canSave.collectAsState()
             ScanScreen(
                 activityCallbacks = activityCallbacks,
                 selectedDevice = lockedSelectedDevice,
                 devices = lockedDevices,
                 isBluetoothScanning = isBluetoothScanning,
+                lastUpdate = lastUpdate,
                 sensorMeasurements = sensorMeasurements,
-                brewMeasurements = brewMeasurements,
+                brewWithMeasurements = brewWithMeasurements,
                 canSave = canSave,
                 onSelectDevice = viewModel::selectDevice,
                 onStartScan = viewModel::startScan,
                 onStopScan = viewModel::stopScan,
                 onSave = viewModel::save,
+                onViewAllData = { device ->
+                    router.goToPillGraph(
+                        name = device.displayName,
+                        macAddress = device.macAddress
+                    )
+                },
+                onViewBrewData = { brew ->
+                    router.goToBrewGraph(brew)
+                }
             )
         }
     }
@@ -72,22 +94,26 @@ fun ScanScreen(
     selectedDevice: Device,
     devices: List<Device>,
     isBluetoothScanning: Boolean,
+    lastUpdate: Instant?,
     sensorMeasurements: SensorMeasurements,
-    brewMeasurements: BrewMeasurements?,
+    brewWithMeasurements: BrewWithMeasurements?,
     canSave: Boolean,
     onSelectDevice: (Device) -> Unit,
     onStartScan: () -> Unit,
     onStopScan: () -> Unit,
     onSave: () -> Unit,
+    onViewAllData: (Device) -> Unit,
+    onViewBrewData: (Brew) -> Unit,
 ) {
     var previousScanState by remember { mutableStateOf(BluetoothScanState.Unavailable) }
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     BluetoothScanRequirements(
         isScanning = isBluetoothScanning,
         onToggleScan = { if (isBluetoothScanning) onStopScan() else onStartScan() },
         activityCallbacks = activityCallbacks,
     ) { scanState, onScanClick ->
-        BluetoothAutoScan(
+        AutoScanBehavior(
             previousScanState = previousScanState,
             scanState = scanState,
             startScan = onStartScan,
@@ -95,8 +121,10 @@ fun ScanScreen(
         )
 
         Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
-                BluetoothScanTopBar(
+                ScanTopBar(
+                    scrollBehavior = scrollBehavior,
                     selectedDevice = selectedDevice,
                     scanState = scanState,
                     devices = devices,
@@ -105,15 +133,61 @@ fun ScanScreen(
                 )
             },
         ) { paddingValues ->
-            Box(modifier = Modifier.padding(paddingValues))
-        }
+            ScrollableColumnWithFooter(
+                modifier = Modifier.padding(paddingValues),
+                scrollableContent = {
+                    if (lastUpdate != null) {
+                        TimeSinceLastUpdate(lastUpdate = lastUpdate)
+                    }
 
-        previousScanState = scanState
+                    if (sensorMeasurements.isNotEmpty()) {
+                        SectionTitle(
+                            title = stringResource(R.string.scan_section_title_last_measurements),
+                            action = stringResource(R.string.scan_section_action_current_device_graph),
+                            onActionClick = {
+                                onViewAllData(selectedDevice)
+                            },
+                        )
+
+                        SensorMeasurementsGrid(
+                            modifier = Modifier.padding(16.dp),
+                            measurements = sensorMeasurements,
+                        )
+                    }
+
+                    if (brewWithMeasurements != null) {
+                        SectionTitle(
+                            title = stringResource(R.string.scan_section_title_current_brew),
+                            action = stringResource(R.string.scan_section_action_current_brew_graph),
+                            onActionClick = {
+                                onViewBrewData(brewWithMeasurements.brew)
+                            },
+                        )
+
+                        BrewMeasurementsGrid(
+                            modifier = Modifier.padding(16.dp),
+                            data = brewWithMeasurements.measurements,
+                        )
+                    }
+                },
+                footer = {
+                    PrimaryButton(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 32.dp),
+                        isEnabled = canSave,
+                        text = stringResource(R.string.button_save),
+                        onClick = onSave,
+                    )
+                }
+            )
+
+            previousScanState = scanState
+        }
     }
 }
 
 @Composable
-fun BluetoothScanTopBar(
+fun ScanTopBar(
+    scrollBehavior: TopAppBarScrollBehavior,
     selectedDevice: Device,
     scanState: BluetoothScanState,
     devices: List<Device>,
@@ -121,6 +195,7 @@ fun BluetoothScanTopBar(
     onScanClick: () -> Unit,
 ) {
     TopAppBar(
+        scrollBehavior = scrollBehavior,
         title = {
             ScannedDevicesDropdown(
                 selectedDevice = selectedDevice,
@@ -148,7 +223,7 @@ fun BluetoothScanTopBar(
 }
 
 @Composable
-fun BluetoothAutoScan(
+fun AutoScanBehavior(
     previousScanState: BluetoothScanState,
     scanState: BluetoothScanState,
     startScan: () -> Unit,

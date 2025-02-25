@@ -10,10 +10,7 @@ import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.util.Logger
 import com.juul.kable.Bluetooth
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
@@ -128,25 +125,6 @@ class ScanningScreenViewModel : ViewModel(), KoinComponent {
     fun onPillUpdate(raptPill: RaptPillWithData) {
         viewModelScope.launch {
             repo.updatePill(raptPill = raptPill)
-        }
-    }
-}
-
-fun foo(): Flow<Unit> {
-    val flow = flow {
-        emit(Unit)
-    }
-    return flow
-}
-
-suspend fun bar(scope: CoroutineScope) {
-    val flow2 = foo()
-
-    for (i in 1..1000) {
-        scope.launch {
-            flow2.collect {
-                print("ciao")
-            }
         }
     }
 }

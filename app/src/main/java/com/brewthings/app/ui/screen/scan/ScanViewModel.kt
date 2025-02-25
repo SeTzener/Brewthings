@@ -5,6 +5,7 @@ package com.brewthings.app.ui.screen.scan
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.brewthings.app.data.domain.BrewMeasurements
+import com.brewthings.app.data.domain.BrewWithMeasurements
 import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.domain.Device
 import com.brewthings.app.data.domain.Measurement
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -75,6 +77,15 @@ class ScanViewModel : ViewModel(), KoinComponent {
             scanResults.map { it?.data }
         }
 
+    val lastUpdate: StateFlow<Instant?> = scannedReadings
+        .combine(savedReadings) { scanned, saved ->
+            when {
+                scanned == null && saved != null -> saved.timestamp
+                scanned != null -> scanned.timestamp
+                else -> null
+            }
+        }.stateIn(viewModelScope, SharingStarted.Lazily, null)
+
     val sensorMeasurements: StateFlow<SensorMeasurements> = scannedReadings
         .combine(savedReadings) { scanned, saved ->
             if (scanned == null) {
@@ -100,17 +111,20 @@ class ScanViewModel : ViewModel(), KoinComponent {
             } ?: flowOf(null)
         }
 
-    val brewMeasurements: StateFlow<BrewMeasurements?> = scannedReadings
+    val brewWithMeasurements: StateFlow<BrewWithMeasurements?> = scannedReadings
         .combine(savedCurrentBrew) { scanned, brew ->
             if (brew == null) {
                 null
             } else {
                 val latest = scanned ?: brew.fgOrLast
-                createBrewMeasurements(
-                    latest = latest,
-                    previous = brew.fgOrLast.takeIf { it != latest },
-                    og = brew.og,
-                    feedings = brew.feedings
+                BrewWithMeasurements(
+                    brew = brew,
+                    measurements = createBrewMeasurements(
+                        latest = latest,
+                        previous = brew.fgOrLast.takeIf { it != latest },
+                        og = brew.og,
+                        feedings = brew.feedings,
+                    )
                 )
             }
         }.stateIn(viewModelScope, SharingStarted.Lazily, null)
