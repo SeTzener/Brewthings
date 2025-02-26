@@ -13,6 +13,7 @@ import com.brewthings.app.data.domain.SensorMeasurements
 import com.brewthings.app.data.domain.SensorReadings
 import com.brewthings.app.data.model.Brew
 import com.brewthings.app.data.model.MacAddress
+import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.repository.BrewsRepository
 import com.brewthings.app.data.repository.RaptPillRepository
@@ -60,13 +61,6 @@ class ScanViewModel : ViewModel(), KoinComponent {
             devices.find { it.macAddress == selectedMacAddress }
         }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    private val savedReadings: Flow<SensorReadings?> = selectedMacAddress
-        .flatMapLatest { selected: MacAddress? ->
-            selected?.let {
-                pills.observeLatestData(it)
-            } ?: flowOf(null)
-        }
-
     private val scannedReadings: Flow<SensorReadings?> = isBluetoothScanning
         .flatMapLatest { isScanning ->
             val scanResults = if (isScanning) {
@@ -78,42 +72,60 @@ class ScanViewModel : ViewModel(), KoinComponent {
             scanResults.map { it?.data }
         }
 
-    val lastUpdate: StateFlow<Instant?> = scannedReadings
-        .combine(savedReadings) { scanned, saved ->
-            when {
-                scanned == null && saved != null -> saved.timestamp
-                scanned != null -> scanned.timestamp
-                else -> null
-            }
-        }.stateIn(viewModelScope, SharingStarted.Lazily, null)
-
-    val sensorMeasurements: StateFlow<SensorMeasurements> = scannedReadings
-        .combine(savedReadings) { scanned, saved ->
-            if (scanned == null) {
-                if (saved != null) {
-                    createSensorMeasurements(latest = saved, previous = null)
-                } else {
-                    emptyList()
-                }
-            } else {
-                createSensorMeasurements(latest = scanned, previous = saved)
-            }
-        }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
-
-    val canSave: StateFlow<Boolean> = scannedReadings
-        .combine(savedReadings) { scanned, saved ->
-            if (scanned == null) false else SensorReadings.compare(scanned, saved) != 0
-        }.stateIn(viewModelScope, SharingStarted.Lazily, false)
-
-    private val savedCurrentBrew: Flow<Brew?> = selectedMacAddress
+    private val currentBrew: Flow<Brew?> = selectedMacAddress
         .flatMapLatest { selected: MacAddress? ->
             selected?.let {
                 brews.observeCurrentBrew(it)
             } ?: flowOf(null)
         }
 
+    val hasBrew: StateFlow<Boolean> = currentBrew
+        .map { it != null }
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
+
+    private val currentBrewData: Flow<List<RaptPillData>> = currentBrew
+        .flatMapLatest { brew ->
+            if (brew != null) {
+                brews.observeBrewData(brew)
+            } else flowOf(emptyList())
+        }
+
+    val lastUpdate: StateFlow<Instant?> = scannedReadings
+        .combine(currentBrew) { scanned, brew ->
+            when {
+                scanned == null && brew != null -> brew.fgOrLast.timestamp
+                scanned != null -> scanned.timestamp
+                else -> null
+            }
+        }.stateIn(viewModelScope, SharingStarted.Lazily, null)
+
+    val sensorMeasurements: StateFlow<SensorMeasurements> = scannedReadings
+        .flatMapLatest { scanned ->
+            if (scanned != null) {
+                currentBrew
+                    .map { brew ->
+                        createSensorMeasurements(latest = scanned, previous = brew?.fgOrLast)
+                    }
+            } else {
+                currentBrewData
+                    .map { data ->
+                        if (data.isNotEmpty()) {
+                            val latest = data.last()
+                            val previous = data
+                                .dropLast(1)
+                                .lastOrNull()
+                            createSensorMeasurements(latest = latest, previous = previous)
+                        } else emptyList()
+                    }
+            }
+        }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    val canSave: StateFlow<Boolean> = scannedReadings
+        .map { result -> latestScanResult?.data != result }
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
+
     val brewWithMeasurements: StateFlow<BrewWithMeasurements?> = scannedReadings
-        .combine(savedCurrentBrew) { scanned, brew ->
+        .combine(currentBrew) { scanned, brew ->
             if (brew == null) {
                 null
             } else {

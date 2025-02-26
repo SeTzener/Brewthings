@@ -37,6 +37,7 @@ import com.brewthings.app.ui.component.SensorMeasurementsGrid
 import com.brewthings.app.ui.component.SettingsDropdown
 import com.brewthings.app.ui.component.SettingsItem
 import com.brewthings.app.ui.component.TimeSinceLastUpdate
+import com.brewthings.app.ui.component.TroubleshootingInfo
 import com.brewthings.app.ui.navigation.legacy.Router
 import com.brewthings.app.ui.screen.onboarding.OnboardingScreen
 import kotlinx.datetime.Instant
@@ -50,6 +51,11 @@ fun ScanScreen(
 ) {
     val devices by viewModel.devices.collectAsState()
     val lockedDevices = devices
+
+    val onAddDevice = {
+        // TODO(walt): routing
+    }
+
     if (lockedDevices.isEmpty()) {
         OnboardingScreen() // TODO(walt): routing
     } else {
@@ -58,6 +64,7 @@ fun ScanScreen(
         if (lockedSelectedDevice != null) {
             val isBluetoothScanning by viewModel.isBluetoothScanning.collectAsState()
             val lastUpdate by viewModel.lastUpdate.collectAsState()
+            val hasBrew by viewModel.hasBrew.collectAsState()
             val sensorMeasurements by viewModel.sensorMeasurements.collectAsState()
             val brewWithMeasurements by viewModel.brewWithMeasurements.collectAsState()
             val canSave by viewModel.canSave.collectAsState()
@@ -66,11 +73,13 @@ fun ScanScreen(
                 selectedDevice = lockedSelectedDevice,
                 devices = lockedDevices,
                 isBluetoothScanning = isBluetoothScanning,
+                hasBrew = hasBrew,
                 lastUpdate = lastUpdate,
                 sensorMeasurements = sensorMeasurements,
                 brewWithMeasurements = brewWithMeasurements,
                 canSave = canSave,
                 onSelectDevice = viewModel::selectDevice,
+                onAddDevice = onAddDevice,
                 onStartScan = viewModel::startScan,
                 onStopScan = viewModel::stopScan,
                 onSave = viewModel::save,
@@ -84,6 +93,12 @@ fun ScanScreen(
                     router.goToBrewGraph(brew)
                 }
             )
+        } else {
+            NoDeviceSelected(
+                devices = devices,
+                onSelectDevice = viewModel::selectDevice,
+                onAddDevice = onAddDevice,
+            )
         }
     }
 }
@@ -94,11 +109,13 @@ fun ScanScreen(
     selectedDevice: Device,
     devices: List<Device>,
     isBluetoothScanning: Boolean,
+    hasBrew: Boolean,
     lastUpdate: Instant?,
     sensorMeasurements: SensorMeasurements,
     brewWithMeasurements: BrewWithMeasurements?,
     canSave: Boolean,
     onSelectDevice: (Device) -> Unit,
+    onAddDevice: () -> Unit,
     onStartScan: () -> Unit,
     onStopScan: () -> Unit,
     onSave: () -> Unit,
@@ -131,56 +148,68 @@ fun ScanScreen(
                     scanState = scanState,
                     devices = devices,
                     onSelectDevice = onSelectDevice,
-                    onScanClick = onScanClick
+                    onAddDevice = onAddDevice,
+                    onScanClick = onScanClick,
                 )
             },
         ) { paddingValues ->
-            ScrollableColumnWithFooter(
-                modifier = Modifier.padding(paddingValues),
-                scrollableContent = {
-                    if (lastUpdate != null) {
-                        TimeSinceLastUpdate(lastUpdate = lastUpdate)
+            if (hasBrew) {
+                ScrollableColumnWithFooter(
+                    modifier = Modifier.padding(paddingValues),
+                    scrollableContent = {
+                        if (lastUpdate != null) {
+                            TimeSinceLastUpdate(lastUpdate = lastUpdate)
+                        }
+
+                        if (sensorMeasurements.isNotEmpty()) {
+                            SectionTitle(
+                                title = stringResource(R.string.scan_section_title_last_measurements),
+                                action = stringResource(R.string.scan_section_action_current_device_graph),
+                                onActionClick = {
+                                    onViewAllData(selectedDevice)
+                                },
+                            )
+
+                            SensorMeasurementsGrid(
+                                modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 4.dp),
+                                measurements = sensorMeasurements,
+                            )
+                        }
+
+                        if (brewWithMeasurements != null) {
+                            SectionTitle(
+                                title = stringResource(R.string.scan_section_title_current_brew),
+                                action = stringResource(R.string.scan_section_action_current_brew_graph),
+                                onActionClick = {
+                                    onViewBrewData(brewWithMeasurements.brew)
+                                },
+                            )
+
+                            BrewMeasurementsGrid(
+                                modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 4.dp),
+                                data = brewWithMeasurements.measurements,
+                            )
+                        }
+                    },
+                    footer = {
+                        PrimaryButton(
+                            modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 16.dp),
+                            isEnabled = canSave,
+                            text = stringResource(R.string.button_save),
+                            onClick = onSave,
+                        )
                     }
-
-                    if (sensorMeasurements.isNotEmpty()) {
-                        SectionTitle(
-                            title = stringResource(R.string.scan_section_title_last_measurements),
-                            action = stringResource(R.string.scan_section_action_current_device_graph),
-                            onActionClick = {
-                                onViewAllData(selectedDevice)
-                            },
-                        )
-
-                        SensorMeasurementsGrid(
-                            modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 4.dp),
-                            measurements = sensorMeasurements,
-                        )
-                    }
-
-                    if (brewWithMeasurements != null) {
-                        SectionTitle(
-                            title = stringResource(R.string.scan_section_title_current_brew),
-                            action = stringResource(R.string.scan_section_action_current_brew_graph),
-                            onActionClick = {
-                                onViewBrewData(brewWithMeasurements.brew)
-                            },
-                        )
-
-                        BrewMeasurementsGrid(
-                            modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 4.dp),
-                            data = brewWithMeasurements.measurements,
-                        )
-                    }
-                },
-                footer = {
-                    PrimaryButton(
-                        modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 16.dp),
-                        isEnabled = canSave,
-                        text = stringResource(R.string.button_save),
-                        onClick = onSave,
-                    )
-                }
-            )
+                )
+            } else {
+                TroubleshootingInfo(
+                    modifier = Modifier.padding(paddingValues),
+                    iconResId = R.drawable.ic_empty_glass,
+                    title = stringResource(R.string.scan_troubleshooting_no_active_brew_title),
+                    description = stringResource(R.string.scan_troubleshooting_no_active_brew_desc),
+                    buttonText = stringResource(R.string.button_view_previous_data),
+                    onButtonClick = { onViewAllData(selectedDevice) },
+                )
+            }
 
             previousScanState = scanState
         }
@@ -188,12 +217,43 @@ fun ScanScreen(
 }
 
 @Composable
+fun NoDeviceSelected(
+    devices: List<Device>,
+    onSelectDevice: (Device) -> Unit,
+    onAddDevice: () -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    ScannedDevicesDropdown(
+                        selectedDevice = null,
+                        devices = devices,
+                        onSelect = onSelectDevice,
+                        onAddDevice = onAddDevice,
+                    )
+                }
+            )
+        },
+        content = { paddingValues ->
+            TroubleshootingInfo(
+                modifier = Modifier.padding(paddingValues),
+                iconResId = R.drawable.ic_device_unknown,
+                title = stringResource(R.string.scan_troubleshooting_no_active_device_title),
+                description = stringResource(R.string.scan_troubleshooting_no_active_device_desc),
+            )
+        }
+    )
+}
+
+@Composable
 fun ScanTopBar(
-    scrollBehavior: TopAppBarScrollBehavior,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
     selectedDevice: Device,
     scanState: BluetoothScanState,
     devices: List<Device>,
     onSelectDevice: (Device) -> Unit,
+    onAddDevice: () -> Unit,
     onScanClick: () -> Unit,
 ) {
     TopAppBar(
@@ -203,9 +263,7 @@ fun ScanTopBar(
                 selectedDevice = selectedDevice,
                 devices = devices,
                 onSelect = onSelectDevice,
-                onAddDevice = {
-                    // TODO(walt)
-                },
+                onAddDevice = onAddDevice,
             )
         },
         actions = {

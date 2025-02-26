@@ -52,7 +52,7 @@ fun TopAppBarTitle(title: String) {
 
 @Composable
 fun ScannedDevicesDropdown(
-    selectedDevice: Device,
+    selectedDevice: Device?,
     devices: List<Device>,
     onSelect: (Device) -> Unit,
     onAddDevice: () -> Unit,
@@ -65,7 +65,7 @@ fun ScannedDevicesDropdown(
         contentAlignment = Alignment.Center,
     ) {
         TextWithIcon(
-            text = selectedDevice.displayName,
+            text = selectedDevice?.displayName ?: stringResource(R.string.scan_device_select),
             iconResId = R.drawable.ic_chevron_down,
             iconAlign = IconAlign.End,
             iconPadding = 4.dp,

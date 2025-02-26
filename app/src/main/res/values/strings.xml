@@ -88,7 +88,13 @@
     <string name="scan_section_title_last_measurements">"Last measurements"</string>
     <string name="scan_section_title_current_brew">"In current brew"</string>
     <string name="scan_section_action_current_device_graph">"All data"</string>
+    <string name="button_view_previous_data">"View previous data"</string>
     <string name="scan_section_action_current_brew_graph">"Brew data"</string>
+    <string name="scan_device_select">"Select device"</string>
+    <string name="scan_troubleshooting_no_active_device_title">"You don't have an active device"</string>
+    <string name="scan_troubleshooting_no_active_device_desc">"Please select or add one from the menu above."</string>
+    <string name="scan_troubleshooting_no_active_brew_title">"You don't have an active brew"</string>
+    <string name="scan_troubleshooting_no_active_brew_desc">"Wait for your first scan result, then tap on the save button to start a new one.\nAlternatively, edit the previous data."</string>
 
     <!-- delete me! -->
     <string name="pill_gravity">"%.3f SG"</string>
