@@ -47,6 +47,8 @@ class ScanViewModel : ViewModel(), KoinComponent {
     // State & Flows
     private var latestScanResult: ScannedRaptPill? = null
 
+    private val latestSavedResult = MutableStateFlow<ScannedRaptPill?>(null)
+
     private val _isBluetoothScanning = MutableStateFlow(false)
     val isBluetoothScanning: StateFlow<Boolean> = _isBluetoothScanning
 
@@ -79,9 +81,10 @@ class ScanViewModel : ViewModel(), KoinComponent {
             } ?: flowOf(null)
         }
 
-    val hasBrew: StateFlow<Boolean> = currentBrew
-        .map { it != null }
-        .stateIn(viewModelScope, SharingStarted.Lazily, false)
+    val hasData: StateFlow<Boolean> = scannedReadings
+        .combine(currentBrew) { scanned, brew ->
+            scanned != null || brew != null
+        }.stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     val lastUpdate: StateFlow<Instant?> = scannedReadings
         .combine(currentBrew) { scanned, brew ->
@@ -112,8 +115,10 @@ class ScanViewModel : ViewModel(), KoinComponent {
             }
         }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    val canSave: StateFlow<Boolean> = scannedReadings
-        .map { result -> latestScanResult?.data != result }
+    val canSave: StateFlow<Boolean> = latestSavedResult
+        .combine(scannedReadings) { latest, scanned ->
+            latest?.data != scanned
+        }
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     // Functions
@@ -127,6 +132,7 @@ class ScanViewModel : ViewModel(), KoinComponent {
         viewModelScope.launch {
             latestScanResult?.also {
                 pills.save(it)
+                latestSavedResult.value = it
             }
         }
     }

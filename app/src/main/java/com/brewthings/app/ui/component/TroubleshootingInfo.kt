@@ -57,7 +57,7 @@ fun TroubleshootingInfo(
                 Column(
                     modifier = Modifier.fillMaxWidth()
                         .weight(2f)
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 32.dp),
                 ) {
                     Text(
                         modifier = Modifier

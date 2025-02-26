@@ -64,7 +64,7 @@ fun ScanScreen(
         if (lockedSelectedDevice != null) {
             val isBluetoothScanning by viewModel.isBluetoothScanning.collectAsState()
             val lastUpdate by viewModel.lastUpdate.collectAsState()
-            val hasBrew by viewModel.hasBrew.collectAsState()
+            val hasData by viewModel.hasData.collectAsState()
             val sensorMeasurements by viewModel.sensorMeasurements.collectAsState()
             val brewWithMeasurements by viewModel.brewWithMeasurements.collectAsState()
             val canSave by viewModel.canSave.collectAsState()
@@ -73,7 +73,7 @@ fun ScanScreen(
                 selectedDevice = lockedSelectedDevice,
                 devices = lockedDevices,
                 isBluetoothScanning = isBluetoothScanning,
-                hasBrew = hasBrew,
+                hasData = hasData,
                 lastUpdate = lastUpdate,
                 sensorMeasurements = sensorMeasurements,
                 brewWithMeasurements = brewWithMeasurements,
@@ -109,7 +109,7 @@ fun ScanScreen(
     selectedDevice: Device,
     devices: List<Device>,
     isBluetoothScanning: Boolean,
-    hasBrew: Boolean,
+    hasData: Boolean,
     lastUpdate: Instant?,
     sensorMeasurements: SensorMeasurements,
     brewWithMeasurements: BrewWithMeasurements?,
@@ -153,7 +153,7 @@ fun ScanScreen(
                 )
             },
         ) { paddingValues ->
-            if (hasBrew) {
+            if (hasData) {
                 ScrollableColumnWithFooter(
                     modifier = Modifier.padding(paddingValues),
                     scrollableContent = {
