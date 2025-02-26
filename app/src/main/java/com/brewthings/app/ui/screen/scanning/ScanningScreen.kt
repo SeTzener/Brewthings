@@ -624,7 +624,7 @@ fun ScannedPillPreview() {
                 data = ScannedRaptPillData(
                     timestamp = Instant.DISTANT_PAST,
                     gravity = 1.0f,
-                    gravityVelocity = -2.4f,
+                    rawVelocity = -2.4f,
                     temperature = 20.0f,
                     x = 236.0625f,
                     y = 4049.375f,
@@ -654,7 +654,7 @@ fun PillPreview() {
                     RaptPillData(
                         timestamp = Instant.DISTANT_PAST,
                         gravity = 1.0f,
-                        gravityVelocity = -2.4f,
+                        rawVelocity = -2.4f,
                         temperature = 20.0f,
                         x = 236.0625f,
                         y = 4049.375f,

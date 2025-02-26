@@ -2,9 +2,9 @@ package com.brewthings.app.data.ble
 
 import com.brewthings.app.data.model.ScannedRaptPillData
 import com.brewthings.app.data.utils.toUShort
-import kotlinx.datetime.Clock
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import kotlinx.datetime.Clock
 
 /*
 Process advertisement with metrics.
@@ -76,7 +76,7 @@ object RaptPillParser {
             timestamp = Clock.System.now(),
             temperature = (temperature / 128.0 - 273.15).toFloat(),
             gravity = gravity,
-            gravityVelocity = if (gravityVelocityValid) gravityVelocity else null,
+            rawVelocity = if (gravityVelocityValid) gravityVelocity else null,
             x = x,
             y = y,
             z = z,

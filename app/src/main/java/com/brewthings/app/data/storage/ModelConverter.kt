@@ -2,7 +2,6 @@ package com.brewthings.app.data.storage
 
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.model.ScannedRaptPillData
-import com.brewthings.app.util.sanitizeVelocity
 
 typealias ModelRaptPill = com.brewthings.app.data.model.RaptPill
 typealias ModelRaptPillData = com.brewthings.app.data.model.RaptPillData
@@ -39,7 +38,7 @@ fun DaoRaptPillReadings.toModelItem(): ModelRaptPillData = ModelRaptPillData(
     timestamp = timestamp,
     temperature = temperature,
     gravity = gravity,
-    gravityVelocity = gravityVelocity?.sanitizeVelocity(),
+    rawVelocity = gravityVelocity,
     x = x,
     y = y,
     z = z,
