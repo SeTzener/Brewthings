@@ -96,8 +96,8 @@ fun SensorMeasurementCard(
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                     }
-                    .padding(start = 4.dp) // TODO(walt): replace icons, then remove this
-                    .size(86.dp),
+                    .padding(start = 12.dp) // TODO(walt): replace icons, then remove this
+                    .size(56.dp),
                 painter = painterResource(id = headerIconRes),
                 contentDescription = null,
                 tint = textColor,

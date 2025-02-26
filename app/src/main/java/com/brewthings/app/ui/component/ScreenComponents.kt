@@ -28,15 +28,16 @@ import kotlinx.datetime.toInstant
 
 @Composable
 fun TimeSinceLastUpdate(
+    modifier: Modifier = Modifier,
     now: Instant = Clock.System.now(),
     timeZone: TimeZone = TimeZone.currentSystemDefault(),
     lastUpdate: Instant,
 ) {
     val textColor = MaterialTheme.colorScheme.onSurfaceVariant
     TextWithIcon(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(12.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         text = lastUpdate.toFormattedDate(now, timeZone),
         iconResId = R.drawable.ic_update,
         iconPadding = 4.dp,
@@ -48,14 +49,15 @@ fun TimeSinceLastUpdate(
 
 @Composable
 fun SectionTitle(
+    modifier: Modifier = Modifier,
     title: String,
     action: String,
     onActionClick: () -> Unit,
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 8.dp)
+            .padding(start = 18.dp, end = 14.dp, top = 8.dp, bottom = 8.dp)
     ) {
         Text(
             modifier = Modifier.align(Alignment.CenterStart),
@@ -67,7 +69,7 @@ fun SectionTitle(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .clickable(onClick = onActionClick)
-                .padding(top = 16.dp, bottom = 16.dp, start = 8.dp),
+                .padding(top = 8.dp, bottom = 8.dp, start = 8.dp),
         ) {
             val textColor = MaterialTheme.colorScheme.onSurfaceVariant
             TextWithIcon(

@@ -106,7 +106,9 @@ fun ScanScreen(
     onViewBrewData: (Brew) -> Unit,
 ) {
     var previousScanState by remember { mutableStateOf(BluetoothScanState.Unavailable) }
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val horizontalPadding = 16.dp
 
     BluetoothScanRequirements(
         isScanning = isBluetoothScanning,
@@ -150,7 +152,7 @@ fun ScanScreen(
                         )
 
                         SensorMeasurementsGrid(
-                            modifier = Modifier.padding(16.dp),
+                            modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 8.dp),
                             measurements = sensorMeasurements,
                         )
                     }
@@ -165,14 +167,14 @@ fun ScanScreen(
                         )
 
                         BrewMeasurementsGrid(
-                            modifier = Modifier.padding(16.dp),
+                            modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 8.dp),
                             data = brewWithMeasurements.measurements,
                         )
                     }
                 },
                 footer = {
                     PrimaryButton(
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 32.dp),
+                        modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 24.dp),
                         isEnabled = canSave,
                         text = stringResource(R.string.button_save),
                         onClick = onSave,

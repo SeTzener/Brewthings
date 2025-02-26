@@ -19,6 +19,7 @@ import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.util.Logger
 import com.brewthings.app.util.calculateABV
 import com.brewthings.app.util.datetime.TimeRange
+import com.brewthings.app.util.toPercent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -164,7 +165,7 @@ private fun createSensorMeasurements(latest: SensorReadings, previous: SensorRea
         Measurement(DataType.GRAVITY, latest.gravity, previous?.gravity),
         Measurement(DataType.TEMPERATURE, latest.temperature, previous?.temperature),
         latest.gravityVelocity?.let { Measurement(DataType.VELOCITY_MEASURED, it, previous?.gravityVelocity) },
-        Measurement(DataType.BATTERY, latest.battery, previous?.battery),
+        Measurement(DataType.BATTERY, latest.battery.toPercent(), previous?.battery?.toPercent()),
     )
 
 private fun createBrewMeasurements(

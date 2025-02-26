@@ -23,3 +23,5 @@ inline fun <T, C : List<T>> C.onEachReverse(
 }
 
 fun Float.sumAll(others: Collection<Float>): Float = this + others.sum()
+
+fun Float.toPercent(): Float = this * 0.01f
