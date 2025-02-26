@@ -57,7 +57,7 @@ fun TroubleshootingInfo(
                 Column(
                     modifier = Modifier.fillMaxWidth()
                         .weight(2f)
-                        .padding(horizontal = 32.dp),
+                        .padding(horizontal = 16.dp),
                 ) {
                     Text(
                         modifier = Modifier
@@ -79,7 +79,7 @@ fun TroubleshootingInfo(
 
             if (buttonText != null) {
                 PrimaryButton(
-                    modifier = Modifier.padding(32.dp)
+                    modifier = Modifier.padding(vertical = 32.dp, horizontal = 16.dp)
                         .align(Alignment.BottomCenter),
                     text = buttonText,
                 ) {
