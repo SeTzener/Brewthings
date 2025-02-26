@@ -39,8 +39,8 @@ fun SensorMeasurementsGrid(
     VerticalGrid(
         modifier = modifier,
         columnsCount = 2,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         items = measurements,
     ) {
         SensorMeasurementCard(it)
@@ -96,8 +96,8 @@ fun SensorMeasurementCard(
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                     }
-                    .padding(start = 12.dp) // TODO(walt): replace icons, then remove this
-                    .size(56.dp),
+                    .padding(start = 10.dp) // TODO(walt): replace icons, then remove this
+                    .size(48.dp),
                 painter = painterResource(id = headerIconRes),
                 contentDescription = null,
                 tint = textColor,

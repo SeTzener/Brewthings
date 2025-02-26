@@ -43,8 +43,8 @@ fun BrewMeasurementsGrid(
     VerticalGrid(
         modifier = modifier,
         columnsCount = 2,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         items = listOf(GridItem.TimeRange(data.timeRange)) +
                 data.measurements.map { measurement ->
                     GridItem.Measurement(measurement)

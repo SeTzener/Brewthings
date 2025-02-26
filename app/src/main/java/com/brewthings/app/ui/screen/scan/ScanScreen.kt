@@ -152,7 +152,7 @@ fun ScanScreen(
                         )
 
                         SensorMeasurementsGrid(
-                            modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 8.dp),
+                            modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 4.dp),
                             measurements = sensorMeasurements,
                         )
                     }
@@ -167,14 +167,14 @@ fun ScanScreen(
                         )
 
                         BrewMeasurementsGrid(
-                            modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 8.dp),
+                            modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 4.dp),
                             data = brewWithMeasurements.measurements,
                         )
                     }
                 },
                 footer = {
                     PrimaryButton(
-                        modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 24.dp),
+                        modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 16.dp),
                         isEnabled = canSave,
                         text = stringResource(R.string.button_save),
                         onClick = onSave,
