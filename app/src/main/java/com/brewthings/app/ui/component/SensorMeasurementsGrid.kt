@@ -100,7 +100,7 @@ fun SensorMeasurementCard(
     ) {
         val verticalPadding = 16.dp
         val horizontalPadding = 16.dp
-        val interVertical = 4.dp
+        val interVertical = 6.dp
         val interHorizontalPadding = 8.dp
 
         ConstraintLayout(modifier = Modifier.padding(vertical = verticalPadding)) {
@@ -128,7 +128,7 @@ fun SensorMeasurementCard(
                     .padding(
                         start = horizontalPadding,
                         end = horizontalPadding,
-                        top = interVertical * 2,
+                        top = interVertical,
                     )
                     .fillMaxWidth(),
                 text = header,
