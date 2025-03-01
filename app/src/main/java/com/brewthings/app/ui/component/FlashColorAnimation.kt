@@ -32,6 +32,7 @@ fun <T: Any?> FlashColorAnimation(
 
     LaunchedEffect(data) {
         if (!isFirstComposition) {
+            isFlashing = false
             repeat(2) { // 2 transitions: target -> background, background -> target
                 isFlashing = !isFlashing
                 delay(animationDurationMs / 2L)
