@@ -18,6 +18,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,18 +39,25 @@ fun TimeSinceLastUpdate(
     timeZone: TimeZone = TimeZone.currentSystemDefault(),
     lastUpdate: Instant,
 ) {
-    val textColor = MaterialTheme.colorScheme.onSurfaceVariant
-    TextWithIcon(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
-        text = lastUpdate.toFormattedDate(now, timeZone),
-        iconResId = R.drawable.ic_update,
-        iconPadding = 4.dp,
-        iconColor = textColor,
-        textStyle = MaterialTheme.typography.titleSmall,
-        textColor = textColor,
-    )
+    val targetColor = MaterialTheme.colorScheme.onSurfaceVariant
+
+    FlashColorAnimation(
+        backgroundColor = Color.Transparent,
+        targetColor = targetColor,
+        data = lastUpdate.toFormattedDate(now, timeZone),
+    ) { textColor, data ->
+        TextWithIcon(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp),
+            text = data,
+            iconResId = R.drawable.ic_update,
+            iconPadding = 4.dp,
+            textStyle = MaterialTheme.typography.titleSmall,
+            textColor = textColor,
+            iconColor = targetColor,
+        )
+    }
 }
 
 @Composable

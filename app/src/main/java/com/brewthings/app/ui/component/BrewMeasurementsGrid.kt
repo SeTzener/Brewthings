@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -62,53 +63,86 @@ fun BrewMeasurementsGrid(
 fun BrewMeasurementCard(measurement: Measurement) {
     val unit = measurement.dataType.toUnit()
     val formatter = measurement.dataType.toValueFormatter()
-    BrewCard(
-        headerIconResId = measurement.dataType.toIconRes(measurement.value),
-        header = measurement.dataType.toLabel(),
-        content = { modifier, textColor ->
-            ValueRow(
-                modifier = modifier,
-                textColor = textColor,
-                formattedValue = formatter.format(measurement.value),
-                unit = unit,
-                trendIconRes = measurement.trend.toIconRes(),
-            )
-        },
-        footer = measurement.previousValue?.let {
-            stringResource(R.string.sensor_measurement_footer, formatter.format(it), unit)
-        } ?: "",
-    )
+    val dataType = measurement.dataType
+    val header = dataType.toLabel()
+    val backgroundColor = CardDefaults.cardColors().containerColor
+
+    FlashColorAnimation(
+        backgroundColor = backgroundColor,
+        targetColor = MaterialTheme.colorScheme.onSurface,
+        data = measurement,
+    ) { textColor, data ->
+        val value = data.value
+        val headerIconResId = dataType.toIconRes(value)
+        val trendIconRes = data.trend.toIconRes()
+        val previousValue = data.previousValue
+
+        BrewCard(
+            backgroundColor = backgroundColor,
+            textColor = textColor,
+            headerIconResId = headerIconResId,
+            header = header,
+            content = { modifier, parentColor ->
+                ValueRow(
+                    modifier = modifier,
+                    textColor = parentColor,
+                    formattedValue = formatter.format(value),
+                    unit = unit,
+                    trendIconRes = trendIconRes,
+                )
+            },
+            footer = previousValue?.let {
+                stringResource(R.string.sensor_measurement_footer, formatter.format(it), unit)
+            } ?: "",
+        )
+    }
 }
 
 @Composable
 fun BrewTimeCard(range: TimeRange) {
-    BrewCard(
-        headerIconResId = R.drawable.ic_calendar,
-        header = stringResource(R.string.brew_time_header),
-        content = { modifier, textColor ->
-            TimeRow(
-                modifier = modifier,
-                textColor = textColor,
-                formattedTime = range.format()
-            )
-        },
-        footer = stringResource(
-            R.string.brew_time_footer,
-            range.from.toSimpleFormattedDate()
-        ),
-    )
+    val backgroundColor = CardDefaults.cardColors().containerColor
+    val from = range.from.toSimpleFormattedDate()
+
+    FlashColorAnimation(
+        backgroundColor = backgroundColor,
+        targetColor = MaterialTheme.colorScheme.onSurface,
+        data = range.format(),
+    ) { textColor, data ->
+        BrewCard(
+            backgroundColor = backgroundColor,
+            textColor = textColor,
+            headerIconResId = R.drawable.ic_calendar,
+            header = stringResource(R.string.brew_time_header),
+            content = { modifier, parentColor ->
+                TimeRow(
+                    modifier = modifier,
+                    textColor = parentColor,
+                    formattedTime = data
+                )
+            },
+            footer = stringResource(
+                R.string.brew_time_footer,
+                from,
+            ),
+        )
+    }
 }
 
 @Composable
 private fun BrewCard(
+    backgroundColor: Color,
+    textColor: Color,
     @DrawableRes headerIconResId: Int,
     header: String,
     content: @Composable (Modifier, Color) -> Unit,
     footer: String,
 ) {
-    Card {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = backgroundColor,
+        ),
+    ) {
         val verticalPadding = 10.dp
-        val textColor = MaterialTheme.colorScheme.onSurface
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderRow(
                 textColor = textColor,
@@ -149,6 +183,7 @@ private fun HeaderRow(
         textStyle = MaterialTheme.typography.bodySmall,
         iconPadding = 4.dp,
         iconSize = 18.dp,
+        iconColor = textColor,
     )
 }
 
