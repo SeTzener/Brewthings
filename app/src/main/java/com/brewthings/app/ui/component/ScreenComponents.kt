@@ -1,15 +1,20 @@
 package com.brewthings.app.ui.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -109,6 +114,55 @@ fun PrimaryButton(
     }
 }
 
+@Composable
+fun SecondaryButton(
+    modifier: Modifier = Modifier,
+    isEnabled: Boolean = true,
+    text: String,
+    onClick: () -> Unit
+) {
+    OutlinedButton(
+        modifier = modifier
+            .height(48.dp)
+            .fillMaxWidth(),
+        enabled = isEnabled,
+        onClick = onClick,
+        shape = RoundedCornerShape(50),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+    ) {
+        Text(
+            text = text.uppercase(),
+            style = MaterialTheme.typography.labelLarge,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.primary
+        )
+    }
+}
+
+@Composable
+fun TertiaryButton(
+    modifier: Modifier = Modifier,
+    isEnabled: Boolean = true,
+    text: String,
+    onClick: () -> Unit
+) {
+    TextButton(
+        modifier = modifier
+            .height(48.dp)
+            .fillMaxWidth(),
+        enabled = isEnabled,
+        onClick = onClick
+    ) {
+        Text(
+            text = text.uppercase(),
+            style = MaterialTheme.typography.labelLarge,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.primary
+        )
+    }
+}
+
+
 @Preview
 @Composable
 fun TimeSinceLastUpdatePreview() {
@@ -142,6 +196,12 @@ fun SectionTitlePreview() {
 @Composable
 fun PrimaryButtonPreview() {
     BrewthingsTheme {
-        PrimaryButton(isEnabled = false, text = stringResource(R.string.button_save)) { }
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            PrimaryButton(text = stringResource(R.string.button_save)) { }
+            SecondaryButton (text = stringResource(R.string.button_save)) { }
+            TertiaryButton (text = stringResource(R.string.button_save)) { }
+        }
     }
 }

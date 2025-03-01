@@ -1,9 +1,7 @@
 package com.brewthings.app.ui.component
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,13 +11,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.brewthings.app.R
 import com.brewthings.app.ui.theme.BrewthingsTheme
 
@@ -33,58 +31,76 @@ fun TroubleshootingInfo(
     onButtonClick: (() -> Unit)? = null,
 ) {
     DelayedContent {
-        Box {
-            Column(modifier = modifier.fillMaxSize()) {
-                Spacer(
-                    modifier = Modifier.fillMaxWidth()
-                        .weight(1f),
-                )
+        TroubleshootingInfoContent(
+            modifier = modifier,
+            iconResId = iconResId,
+            title = title,
+            description = description,
+            buttonText = buttonText,
+            onButtonClick = onButtonClick,
+        )
+    }
+}
 
-                Box(
-                    modifier = Modifier.fillMaxWidth()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(96.dp),
-                        painter = painterResource(id = iconResId),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                    )
-                }
+@Composable
+private fun TroubleshootingInfoContent(
+    modifier: Modifier = Modifier,
+    @DrawableRes iconResId: Int,
+    title: String,
+    description: String,
+    buttonText: String? = null,
+    onButtonClick: (() -> Unit)? = null,
+) {
+    ConstraintLayout(modifier = modifier.fillMaxSize()) {
+        val (columnRef, iconRef, buttonRef) = createRefs()
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 32.dp)
+                .constrainAs(columnRef) {
+                    centerTo(parent)
+                },
+        ) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = title,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Text(
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(),
+                text = description,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
 
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                        .weight(2f)
-                        .padding(horizontal = 32.dp),
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        text = title,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    Text(
-                        modifier = Modifier
-                            .padding(top = 16.dp)
-                            .fillMaxWidth(),
-                        text = description,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-            }
+        Icon(
+            modifier = Modifier
+                .padding(bottom = 32.dp)
+                .size(96.dp)
+                .constrainAs(iconRef) {
+                    centerHorizontallyTo(parent)
+                    bottom.linkTo(columnRef.top)
+                },
+            painter = painterResource(id = iconResId),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+        )
 
-            if (buttonText != null) {
-                PrimaryButton(
-                    modifier = Modifier.padding(vertical = 32.dp, horizontal = 16.dp)
-                        .align(Alignment.BottomCenter),
-                    text = buttonText,
-                ) {
-                    onButtonClick?.invoke()
-                }
+        if (buttonText != null) {
+            TertiaryButton(
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .constrainAs(buttonRef) {
+                        top.linkTo(columnRef.bottom)
+                    },
+                text = buttonText,
+            ) {
+                onButtonClick?.invoke()
             }
         }
     }
@@ -92,10 +108,10 @@ fun TroubleshootingInfo(
 
 @Preview
 @Composable
-fun TroubleshootingInfoPreview() {
+fun TroubleshootingInfoContentPreview() {
     BrewthingsTheme {
         Surface {
-            TroubleshootingInfo(
+            TroubleshootingInfoContent(
                 iconResId = R.drawable.ic_empty_glass,
                 title = stringResource(R.string.scan_troubleshooting_no_active_brew_title),
                 description = stringResource(R.string.scan_troubleshooting_no_active_brew_desc),

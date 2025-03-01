@@ -94,7 +94,7 @@
     <string name="scan_troubleshooting_no_active_device_title">"You don't have an active device"</string>
     <string name="scan_troubleshooting_no_active_device_desc">"Please select or add one from the menu above."</string>
     <string name="scan_troubleshooting_no_active_brew_title">"You don't have an active brew"</string>
-    <string name="scan_troubleshooting_no_active_brew_desc">"Wait for your first scan result, then tap on the save button to start a new one.\nAlternatively, edit the previous data."</string>
+    <string name="scan_troubleshooting_no_active_brew_desc">"Wait for your first scan result, then tap on the save button to start a new one.\n\nAlternatively, edit the previous data."</string>
 
     <!-- delete me! -->
     <string name="pill_gravity">"%.3f SG"</string>
