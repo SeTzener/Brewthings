@@ -20,7 +20,11 @@ fun ScannedRaptPill.toDaoItem(): DaoRaptPill = DaoRaptPill(
     name = name,
 )
 
-fun ScannedRaptPillData.toDaoItem(): DaoRaptPillReadings = DaoRaptPillReadings(
+fun ScannedRaptPillData.toDaoItem(
+    isOg: Boolean? = null,
+    isFg: Boolean? = null,
+    isFeeding: Boolean? = null,
+): DaoRaptPillReadings = DaoRaptPillReadings(
     timestamp = timestamp,
     temperature = temperature,
     gravity = gravity,
@@ -29,9 +33,9 @@ fun ScannedRaptPillData.toDaoItem(): DaoRaptPillReadings = DaoRaptPillReadings(
     y = y,
     z = z,
     battery = battery,
-    isOG = null,
-    isFG = null,
-    isFeeding = null,
+    isOG = isOg?.takeIf { it },
+    isFG = isFg?.takeIf { it },
+    isFeeding = isFeeding?.takeIf { it },
 )
 
 fun DaoRaptPillReadings.toModelItem(): ModelRaptPillData = ModelRaptPillData(

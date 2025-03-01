@@ -40,9 +40,14 @@ class RaptPillRepository(
         }
     }
 
-    suspend fun save(scannedRaptPill: ScannedRaptPill) {
+    suspend fun save(
+        scannedRaptPill: ScannedRaptPill,
+        isOg: Boolean? = null,
+        isFg: Boolean? = null,
+        isFeeding: Boolean? = null,
+    ) {
         val pill = scannedRaptPill.toDaoItem()
-        val readings = scannedRaptPill.data.toDaoItem()
+        val readings = scannedRaptPill.data.toDaoItem(isOg = isOg, isFg = isFg, isFeeding = isFeeding)
         dao.insertReadings(pill, readings)
     }
 

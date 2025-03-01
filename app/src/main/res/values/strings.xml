@@ -55,7 +55,8 @@
     <string name="formatted_date_hours_ago">%d hours ago</string>
     <string name="formatted_date_yesterday">Yesterday</string>
     <string name="formatted_date_last_weekday">Last %s</string>
-    <string name="formatted_duration_less_than_a_minute">One minute or less</string>
+    <string name="formatted_duration_less_than_a_minute">Few seconds</string>
+    <string name="formatted_duration_minute">One minute</string>
     <string name="formatted_duration_minutes">%d minutes</string>
     <string name="formatted_duration_hour">One hour</string>
     <string name="formatted_duration_hours">%d hours</string>
@@ -95,6 +96,9 @@
     <string name="scan_troubleshooting_no_active_device_desc">"Please select or add one from the menu above."</string>
     <string name="scan_troubleshooting_no_active_brew_title">"You don't have an active brew"</string>
     <string name="scan_troubleshooting_no_active_brew_desc">"Wait for your first scan result, then tap on the save button to start a new one.\n\nAlternatively, edit the previous data."</string>
+    <string name="start_new_brew_dialog_text">"Do you want to start a new brew and use this data as OG?"</string>
+    <string name="button_yes">"Yes"</string>
+    <string name="button_no">"No"</string>
 
     <!-- delete me! -->
     <string name="pill_gravity">"%.3f SG"</string>

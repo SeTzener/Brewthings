@@ -3,8 +3,11 @@
 package com.brewthings.app.ui.screen.scan
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -104,7 +107,7 @@ fun ScanScreen(
 }
 
 @Composable
-fun ScanScreen(
+private fun ScanScreen(
     activityCallbacks: ActivityCallbacks,
     selectedDevice: Device,
     devices: List<Device>,
@@ -118,11 +121,12 @@ fun ScanScreen(
     onAddDevice: () -> Unit,
     onStartScan: () -> Unit,
     onStopScan: () -> Unit,
-    onSave: () -> Unit,
+    onSave: (Boolean) -> Unit,
     onViewAllData: (Device) -> Unit,
     onViewBrewData: (Brew) -> Unit,
 ) {
     var previousScanState by remember { mutableStateOf(BluetoothScanState.Unavailable) }
+    var showStartBrewDialog by remember { mutableStateOf(false) }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val horizontalPadding = 16.dp
@@ -198,7 +202,13 @@ fun ScanScreen(
                             modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 16.dp),
                             isEnabled = canSave,
                             text = stringResource(R.string.button_save),
-                            onClick = onSave,
+                            onClick = {
+                                if (brewWithMeasurements == null) {
+                                    showStartBrewDialog = true
+                                } else {
+                                    onSave(false)
+                                }
+                            },
                         )
                     }
                 )
@@ -215,11 +225,18 @@ fun ScanScreen(
 
             previousScanState = scanState
         }
+
+        if (showStartBrewDialog) {
+            StartBrewDialog { isConfirmed ->
+                showStartBrewDialog = false
+                onSave(isConfirmed)
+            }
+        }
     }
 }
 
 @Composable
-fun NoDeviceSelected(
+private fun NoDeviceSelected(
     devices: List<Device>,
     onSelectDevice: (Device) -> Unit,
     onAddDevice: () -> Unit,
@@ -249,7 +266,7 @@ fun NoDeviceSelected(
 }
 
 @Composable
-fun ScanTopBar(
+private fun ScanTopBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     selectedDevice: Device,
     scanState: BluetoothScanState,
@@ -285,7 +302,7 @@ fun ScanTopBar(
 }
 
 @Composable
-fun AutoScanBehavior(
+private fun AutoScanBehavior(
     previousScanState: BluetoothScanState,
     scanState: BluetoothScanState,
     startScan: () -> Unit,
@@ -300,4 +317,22 @@ fun AutoScanBehavior(
             stopScan()
         }
     }
+}
+
+@Composable
+private fun StartBrewDialog(callback: (Boolean) -> Unit) {
+    AlertDialog(
+        onDismissRequest = { callback(false) },
+        text = { Text(text = stringResource(R.string.start_new_brew_dialog_text)) },
+        confirmButton = {
+            TextButton(onClick = { callback(true) }) {
+                Text(stringResource(R.string.button_yes))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { callback(false) }) {
+                Text(stringResource(R.string.button_no))
+            }
+        }
+    )
 }

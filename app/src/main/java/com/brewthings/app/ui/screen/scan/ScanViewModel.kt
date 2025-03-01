@@ -154,10 +154,10 @@ class ScanViewModel : ViewModel(), KoinComponent {
             .launchIn(viewModelScope)
     }
 
-    fun save() {
+    fun save(isOg: Boolean) {
         viewModelScope.launch {
             latestScannedResult.value?.also { result ->
-                pills.save(result)
+                pills.save(scannedRaptPill = result, isOg = isOg)
                 latestSavedResult.value = result
             }
         }

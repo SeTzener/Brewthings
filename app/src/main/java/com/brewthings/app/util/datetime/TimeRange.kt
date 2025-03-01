@@ -3,10 +3,10 @@ package com.brewthings.app.util.datetime
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.brewthings.app.R
-import kotlinx.datetime.Instant
-import kotlinx.serialization.Serializable
 import kotlin.math.abs
 import kotlin.time.Duration
+import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class TimeRange(val from: Instant, val to: Instant)
@@ -20,10 +20,13 @@ fun TimeRange.format(): String {
     when {
         // Only minutes have passed.
         days == 0L && hours == 0L -> when {
-            (0..1L).contains(minutes) ->
+            minutes < 1L ->
                 return stringResource(R.string.formatted_duration_less_than_a_minute)
 
-            (2..59L).contains(minutes) ->
+            minutes == 1L ->
+                return stringResource(R.string.formatted_duration_minute)
+
+            (2L..59L).contains(minutes) ->
                 return stringResource(R.string.formatted_duration_minutes, abs(minutes))
         }
 
@@ -31,7 +34,7 @@ fun TimeRange.format(): String {
         days == 0L -> when (hours) {
             1L ->
                 return stringResource(R.string.formatted_duration_hour)
-            in 2..23L ->
+            in 2L..23L ->
                 return stringResource(R.string.formatted_duration_hours, abs(hours))
         }
 
