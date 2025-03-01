@@ -1,6 +1,8 @@
 package com.brewthings.app.ui.component
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +15,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -32,6 +39,7 @@ import com.brewthings.app.ui.converter.toLabel
 import com.brewthings.app.ui.converter.toUnit
 import com.brewthings.app.ui.converter.toValueFormatter
 import com.brewthings.app.ui.theme.BrewthingsTheme
+import kotlinx.coroutines.delay
 
 @Composable
 fun SensorMeasurementsGrid(
@@ -51,17 +59,54 @@ fun SensorMeasurementsGrid(
 
 @Composable
 private fun SensorMeasurementCard(measurement: Measurement) {
-    val (dataType, value, previousValue) = measurement
+    // Constants
+    val animationDurationMs = 1000
+    val textColor = Color.White
+
+    val dataType = measurement.dataType
     val unit = dataType.toUnit()
+    val header = dataType.toLabel()
     val formatter = dataType.toValueFormatter()
+    val backgroundColor = dataType.toColor(isDarkTheme = isSystemInDarkTheme())
+
+    // Variables
+    var isFirstComposition by remember { mutableStateOf(true) }
+    var isFlashing by remember { mutableStateOf(false) }
+    var cachedMeasurement by remember { mutableStateOf(measurement) }
+
+    val previousValue = cachedMeasurement.previousValue
+    val value = cachedMeasurement.value
+    val headerIconRes = dataType.toIconRes(value)
+    val trendIconRes = cachedMeasurement.trend.toIconRes()
+
+    //Animations
+    val animatedTextColor by animateColorAsState(
+        targetValue = if (isFlashing) backgroundColor else textColor,
+        animationSpec = tween(durationMillis = animationDurationMs / 2),
+        label = "Color Flash Animation"
+    )
+    
+    LaunchedEffect(measurement) {
+        if (!isFirstComposition) {
+            repeat(2) { // 2 transitions: base -> white, white -> base
+                isFlashing = !isFlashing
+                delay(animationDurationMs / 2L) // Match animation duration
+                cachedMeasurement = measurement // Only change data in the middle of the animation
+            }
+        } else {
+            isFirstComposition = false
+        }
+    }
+
+    // Laoyut
     SensorMeasurementCard(
-        backgroundColor = dataType.toColor(isDarkTheme = isSystemInDarkTheme()),
-        textColor = Color.White,
-        headerIconRes = dataType.toIconRes(value),
-        header = dataType.toLabel(),
+        backgroundColor = backgroundColor,
+        textColor = animatedTextColor,
+        headerIconRes = headerIconRes,
+        header = header,
         formattedValue = formatter.format(value),
         unit = unit,
-        trendIconRes = measurement.trend.toIconRes(),
+        trendIconRes = trendIconRes,
         footer = previousValue?.let {
             stringResource(R.string.sensor_measurement_footer, formatter.format(it), unit)
         } ?: ""
