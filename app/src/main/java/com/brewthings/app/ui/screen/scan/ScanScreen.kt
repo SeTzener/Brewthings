@@ -43,6 +43,9 @@ import com.brewthings.app.ui.component.TimeSinceLastUpdate
 import com.brewthings.app.ui.component.TroubleshootingInfo
 import com.brewthings.app.ui.navigation.legacy.Router
 import com.brewthings.app.ui.screen.onboarding.OnboardingScreen
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.delay
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 
@@ -71,7 +74,9 @@ fun ScanScreen(
             val sensorMeasurements by viewModel.sensorMeasurements.collectAsState()
             val brewWithMeasurements by viewModel.brewWithMeasurements.collectAsState()
             val canSave by viewModel.canSave.collectAsState()
+            val now by viewModel.now.collectAsState()
             ScanScreen(
+                now = now,
                 activityCallbacks = activityCallbacks,
                 selectedDevice = lockedSelectedDevice,
                 devices = lockedDevices,
@@ -108,6 +113,7 @@ fun ScanScreen(
 
 @Composable
 private fun ScanScreen(
+    now: Instant,
     activityCallbacks: ActivityCallbacks,
     selectedDevice: Device,
     devices: List<Device>,
@@ -162,7 +168,7 @@ private fun ScanScreen(
                     modifier = Modifier.padding(paddingValues),
                     scrollableContent = {
                         if (lastUpdate != null) {
-                            TimeSinceLastUpdate(lastUpdate = lastUpdate)
+                            TimeSinceLastUpdate(now = now, lastUpdate = lastUpdate)
                         }
 
                         if (sensorMeasurements.isNotEmpty()) {

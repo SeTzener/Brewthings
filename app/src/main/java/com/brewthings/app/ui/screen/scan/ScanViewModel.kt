@@ -20,19 +20,23 @@ import com.brewthings.app.util.Logger
 import com.brewthings.app.util.calculateABV
 import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.toPercent
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -45,6 +49,14 @@ class ScanViewModel : ViewModel(), KoinComponent {
     private val logger = Logger("ScanViewModel")
 
     // State & Flows
+    val now: StateFlow<Instant> = flow {
+        while (true) {
+            delay(1.minutes)
+            emit(Clock.System.now())
+            logger.info("Refresh!")
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, Clock.System.now())
+
     private val _isBluetoothScanning = MutableStateFlow(false)
     val isBluetoothScanning: StateFlow<Boolean> = _isBluetoothScanning
 
