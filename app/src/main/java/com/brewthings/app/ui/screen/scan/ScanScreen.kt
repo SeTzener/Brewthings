@@ -163,6 +163,7 @@ fun ScanScreen(
 
                         if (sensorMeasurements.isNotEmpty()) {
                             SectionTitle(
+                                modifier = Modifier.padding(top = 8.dp),
                                 title = stringResource(R.string.scan_section_title_last_measurements),
                                 action = stringResource(R.string.scan_section_action_current_device_graph),
                                 onActionClick = {
@@ -178,6 +179,7 @@ fun ScanScreen(
 
                         if (brewWithMeasurements != null) {
                             SectionTitle(
+                                modifier = Modifier.padding(top = 8.dp),
                                 title = stringResource(R.string.scan_section_title_current_brew),
                                 action = stringResource(R.string.scan_section_action_current_brew_graph),
                                 onActionClick = {

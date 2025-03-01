@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.brewthings.app.R
@@ -96,8 +97,8 @@ fun SensorMeasurementCard(
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                     }
-                    .padding(start = 10.dp) // TODO(walt): replace icons, then remove this
-                    .size(48.dp),
+                    .padding(start = 12.dp) // TODO(walt): replace icons, then remove this
+                    .size(36.dp),
                 painter = painterResource(id = headerIconRes),
                 contentDescription = null,
                 tint = textColor,
@@ -112,11 +113,11 @@ fun SensorMeasurementCard(
                     .padding(
                         start = horizontalPadding,
                         end = horizontalPadding,
-                        top = interVertical,
+                        top = interVertical * 2,
                     )
                     .fillMaxWidth(),
                 text = header,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = textColor,
             )
 
@@ -131,7 +132,7 @@ fun SensorMeasurementCard(
                         top = interVertical,
                     ),
                 text = formattedValue,
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
                 color = textColor,
             )
 
@@ -141,9 +142,9 @@ fun SensorMeasurementCard(
                         baseline.linkTo(valueRef.baseline)
                         start.linkTo(valueRef.end)
                     }
-                    .padding(start = interHorizontalPadding),
+                    .padding(start = interHorizontalPadding / 2),
                 text = unit,
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.bodySmall,
                 color = textColor,
             )
 
@@ -164,7 +165,7 @@ fun SensorMeasurementCard(
                     painter = painterResource(id = trendIconRes),
                     contentDescription = null,
                     tint = textColor,
-                    maxSize = 36.dp
+                    maxSize = 24.dp
                 )
             }
 
@@ -181,7 +182,7 @@ fun SensorMeasurementCard(
                     )
                     .fillMaxWidth(),
                 text = footer,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = textColor,
             )
         }

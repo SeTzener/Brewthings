@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.brewthings.app.R
@@ -145,8 +146,9 @@ private fun HeaderRow(
         iconResId = headerIconResId,
         text = header,
         textColor = textColor,
-        textStyle = MaterialTheme.typography.bodyMedium,
+        textStyle = MaterialTheme.typography.bodySmall,
         iconPadding = 4.dp,
+        iconSize = 18.dp,
     )
 }
 
@@ -169,7 +171,7 @@ private fun ValueRow(
                 },
             text = formattedValue,
             color = textColor,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
         )
 
         Text(
@@ -178,10 +180,10 @@ private fun ValueRow(
                     baseline.linkTo(valueRef.baseline)
                     start.linkTo(valueRef.end)
                 }
-                .padding(start = interHorizontalPadding),
+                .padding(start = interHorizontalPadding / 2),
             text = unit,
             color = textColor,
-            style = MaterialTheme.typography.titleSmall,
+            style = MaterialTheme.typography.bodySmall,
         )
 
         if (trendIconRes != null) {
@@ -212,7 +214,7 @@ private fun TimeRow(
         modifier = modifier,
         text = formattedTime,
         color = textColor,
-        style = MaterialTheme.typography.titleLarge,
+        style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
     )
 }
 
