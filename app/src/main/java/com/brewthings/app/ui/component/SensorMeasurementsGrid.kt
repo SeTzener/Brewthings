@@ -1,6 +1,7 @@
 package com.brewthings.app.ui.component
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -54,7 +55,7 @@ private fun SensorMeasurementCard(measurement: Measurement) {
     val unit = dataType.toUnit()
     val formatter = dataType.toValueFormatter()
     SensorMeasurementCard(
-        backgroundColor = dataType.toColor(),
+        backgroundColor = dataType.toColor(isDarkTheme = isSystemInDarkTheme()),
         textColor = Color.White,
         headerIconRes = dataType.toIconRes(value),
         header = dataType.toLabel(),
@@ -198,8 +199,8 @@ fun SensorMeasurementGridPreview() {
             measurements = listOf(
                 Measurement(DataType.GRAVITY, 1.056f, 1.060f),
                 Measurement(DataType.TEMPERATURE, 18.25f, 18.25f),
-                Measurement(DataType.VELOCITY_MEASURED, 1.575f, 0.617f),
                 Measurement(DataType.BATTERY, 0.58f, 0.5825f),
+                Measurement(DataType.VELOCITY_MEASURED, 1.575f, 0.617f),
             )
         )
     }

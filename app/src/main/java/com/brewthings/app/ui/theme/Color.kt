@@ -21,3 +21,12 @@ val Coral = Color(0xFFFF7F50)
 val MediumPurple = Color(0xFF9370DB)
 val Gold = Color(0xFFFFD700)
 val DarkTurquoise = Color(0xFF00CED1)
+
+// Darker variants of the colors above
+val RedAlertDark = Color(0xFF73332f)
+val SteelBlueDark = Color(0xFF0d4a73)
+val LimeGreenDark = Color(0xFF32CD32)
+val CoralDark = Color(0xFF275021)
+val MediumPurpleDark = Color(0xFF4f3d74)
+val GoldDark = Color(0xFF544600)
+val DarkTurquoiseDark = Color(0xFF004f51)

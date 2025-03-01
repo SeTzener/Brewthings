@@ -7,12 +7,19 @@ import com.brewthings.app.R
 import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.domain.Trend
 import com.brewthings.app.ui.theme.Coral
+import com.brewthings.app.ui.theme.CoralDark
 import com.brewthings.app.ui.theme.DarkTurquoise
+import com.brewthings.app.ui.theme.DarkTurquoiseDark
 import com.brewthings.app.ui.theme.Gold
+import com.brewthings.app.ui.theme.GoldDark
 import com.brewthings.app.ui.theme.LimeGreen
+import com.brewthings.app.ui.theme.LimeGreenDark
 import com.brewthings.app.ui.theme.MediumPurple
+import com.brewthings.app.ui.theme.MediumPurpleDark
 import com.brewthings.app.ui.theme.RedAlert
+import com.brewthings.app.ui.theme.RedAlertDark
 import com.brewthings.app.ui.theme.SteelBlue
+import com.brewthings.app.ui.theme.SteelBlueDark
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 
@@ -44,14 +51,17 @@ fun Trend.toIconRes(): Int? = when (this) {
 }
 
 @Composable
-fun DataType.toColor(): Color = when (this) {
-    DataType.GRAVITY -> SteelBlue
-    DataType.TEMPERATURE -> MediumPurple
-    DataType.BATTERY -> RedAlert
-    DataType.TILT -> DarkTurquoise
-    DataType.ABV -> LimeGreen
-    DataType.VELOCITY_MEASURED -> Coral
-    DataType.VELOCITY_COMPUTED -> Gold
+fun DataType.toColor(): Color = toColor(isDarkTheme = false)
+
+@Composable
+fun DataType.toColor(isDarkTheme: Boolean): Color = when (this) {
+    DataType.GRAVITY -> if (isDarkTheme) SteelBlueDark else SteelBlue
+    DataType.TEMPERATURE -> if (isDarkTheme) MediumPurpleDark else MediumPurple
+    DataType.BATTERY -> if (isDarkTheme) RedAlertDark else RedAlert
+    DataType.TILT -> if (isDarkTheme) DarkTurquoiseDark else DarkTurquoise
+    DataType.ABV -> if (isDarkTheme) LimeGreenDark else LimeGreen
+    DataType.VELOCITY_MEASURED -> if (isDarkTheme) CoralDark else Coral
+    DataType.VELOCITY_COMPUTED -> if (isDarkTheme) GoldDark else Gold
 }
 
 @Composable
