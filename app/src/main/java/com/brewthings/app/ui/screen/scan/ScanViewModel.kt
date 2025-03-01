@@ -58,7 +58,7 @@ class ScanViewModel : ViewModel(), KoinComponent {
                 flowOf()
             }
         }
-        .stateIn(viewModelScope, SharingStarted.Lazily, null) // Keeps last known value
+        .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     val devices: StateFlow<List<Device>> = pills.observePills()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
@@ -91,30 +91,60 @@ class ScanViewModel : ViewModel(), KoinComponent {
             }
         }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    val sensorMeasurements: StateFlow<SensorMeasurements> =
-        brewWithLatestAndPrevious(default = emptyList()) { _, latest, previous ->
-            createSensorMeasurements(latest, previous)
-        }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
-
-    val brewWithMeasurements: StateFlow<BrewWithMeasurements?> =
-        brewWithLatestAndPrevious(default = null) { brew, latest, previous ->
-            brew?.let {
-                BrewWithMeasurements(
-                    brew = brew,
-                    measurements = createBrewMeasurements(
-                        latest = latest,
-                        previous = previous,
-                        og = brew.og,
-                        feedings = brew.feedings,
-                    )
-                )
-            }
+    private val latestUnsavedResult: StateFlow<ScannedRaptPill?> = latestSavedResult
+        .combine(latestScannedResult) { latest, scanned ->
+            scanned?.takeIf { latest != scanned }
         }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    val canSave: StateFlow<Boolean> = latestSavedResult
-        .combine(latestScannedResult) { latest, scanned ->
-            scanned != null && latest != scanned
+    private val brewWithLatestAndPrevious: Flow<BrewWithLatestAndPrevious?> = latestUnsavedResult
+        .flatMapLatest { scanned ->
+        if (scanned != null) {
+            currentBrew.map { brew ->
+                val previous = brew?.fgOrLast
+                BrewWithLatestAndPrevious(brew, scanned.data, previous)
+            }
+        } else {
+            currentBrew.flatMapLatest { brew ->
+                brew?.let {
+                    brews.observeBrewData(it)
+                        .map { data ->
+                            if (data.isNotEmpty()) {
+                                val latest = data.last()
+                                val previous = data.dropLast(1).lastOrNull()
+                                BrewWithLatestAndPrevious(brew, latest, previous)
+                            } else null
+                        }
+                } ?: flowOf(null)
+            }
         }
+    }
+
+    val sensorMeasurements: StateFlow<SensorMeasurements> = brewWithLatestAndPrevious
+        .map { data ->
+            data?.run { createSensorMeasurements(latest, previous) } ?: emptyList()
+        }
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    val brewWithMeasurements: StateFlow<BrewWithMeasurements?> = brewWithLatestAndPrevious
+        .map { data ->
+            data?.run {
+                brew?.let {
+                    BrewWithMeasurements(
+                        brew = it,
+                        measurements = createBrewMeasurements(
+                            latest = latest,
+                            previous = previous,
+                            og = it.og,
+                            feedings = it.feedings,
+                        )
+                    )
+                }
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.Lazily, null)
+
+    val canSave: StateFlow<Boolean> = latestUnsavedResult
+        .map { it != null }
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     // Functions
@@ -146,32 +176,6 @@ class ScanViewModel : ViewModel(), KoinComponent {
             pills.selectPill(device.macAddress)
         }
     }
-
-    private fun <T> brewWithLatestAndPrevious(
-        default: T,
-        callback: (brew: Brew?, SensorReadings, SensorReadings?) -> T,
-    ): Flow<T> = latestScannedResult
-        .flatMapLatest { scanned ->
-            if (scanned != null) {
-                currentBrew.map { brew ->
-                    val previous = brew?.fgOrLast
-                    callback(brew, scanned.data, previous)
-                }
-            } else {
-                currentBrew.flatMapLatest { brew ->
-                    brew?.let {
-                        brews.observeBrewData(it)
-                            .map { data ->
-                                if (data.isNotEmpty()) {
-                                    val latest = data.last()
-                                    val previous = data.dropLast(1).lastOrNull()
-                                    callback(brew, latest, previous)
-                                } else default
-                            }
-                    } ?: flowOf(default)
-                }
-            }
-        }
 }
 
 private fun createSensorMeasurements(latest: SensorReadings, previous: SensorReadings?): SensorMeasurements =
@@ -200,3 +204,5 @@ private fun createBrewMeasurements(
             )
         ),
     )
+
+private data class BrewWithLatestAndPrevious(val brew: Brew?, val latest: SensorReadings, val previous: SensorReadings?)
