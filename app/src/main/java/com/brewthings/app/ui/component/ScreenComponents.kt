@@ -49,7 +49,7 @@ fun TimeSinceLastUpdate(
         TextWithIcon(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 4.dp),
+                .padding(horizontal = 15.dp, vertical = 4.dp),
             text = data,
             iconResId = R.drawable.ic_update,
             iconPadding = 4.dp,

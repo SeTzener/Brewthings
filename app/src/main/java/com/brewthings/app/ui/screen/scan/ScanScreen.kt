@@ -209,7 +209,7 @@ private fun ScanScreen(
                     },
                     footer = {
                         PrimaryButton(
-                            modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 16.dp),
+                            modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 24.dp),
                             isEnabled = canSave,
                             text = stringResource(R.string.button_save),
                             onClick = {
