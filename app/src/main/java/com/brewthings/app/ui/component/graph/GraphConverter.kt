@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.toArgb
 import com.brewthings.app.ui.component.graph.mpandroid.InvisibleDataSet
 import com.brewthings.app.ui.component.graph.mpandroid.MpAndroidChartData
 import com.brewthings.app.ui.component.graph.mpandroid.VisibleDataSet
-import com.brewthings.app.ui.converter.toColor
+import com.brewthings.app.ui.converter.toLineColor
 import com.brewthings.app.ui.converter.toFormatPattern
 import com.brewthings.app.ui.converter.toLabel
 import com.github.mikephil.charting.data.Entry
@@ -29,7 +29,7 @@ private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
 
     // Derive values from type
     val label = type.toLabel()
-    val lineColor = type.toColor()
+    val lineColor = type.toLineColor()
     val formatPattern = type.toFormatPattern()
 
     // Helper function to finalize and add a valid dataset

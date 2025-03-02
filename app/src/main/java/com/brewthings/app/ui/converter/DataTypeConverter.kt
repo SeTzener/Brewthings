@@ -51,7 +51,7 @@ fun Trend.toIconRes(): Int? = when (this) {
 }
 
 @Composable
-fun DataType.toColor(): Color = toColor(isDarkTheme = false)
+fun DataType.toLineColor(): Color = toColor(isDarkTheme = false)
 
 @Composable
 fun DataType.toColor(isDarkTheme: Boolean): Color = when (this) {
