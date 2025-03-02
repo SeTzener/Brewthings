@@ -37,7 +37,7 @@ class BrewsRepository(
         dao.observeBrewData(
             macAddress = brew.macAddress,
             startDate = brew.og.timestamp,
-            endDate = brew.fgOrLast.timestamp
+            endDate = brew.fgOrLast.timestamp,
         ).map { data ->
             data.map { it.toModelItem() }
         }
@@ -48,7 +48,7 @@ class BrewsRepository(
             .flatMapLatest { og ->
                 if (og != null) {
                     dao.observeDataSince(macAddress, og.readings.timestamp)
-                        .map { data ->  data.map { point -> point.toModelItem() } }
+                        .map { data -> data.map { point -> point.toModelItem() } }
                 } else {
                     flowOf(null)
                 }
@@ -198,7 +198,7 @@ class BrewsRepository(
         macAddress: MacAddress,
         start: RaptPillData,
         end: RaptPillData,
-        isCompleted: Boolean
+        isCompleted: Boolean,
     ) =
         Brew(
             macAddress = macAddress,

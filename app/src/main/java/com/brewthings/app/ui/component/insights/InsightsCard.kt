@@ -36,8 +36,8 @@ import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toFormattedDate
-import kotlin.math.abs
 import kotlinx.datetime.Instant
+import kotlin.math.abs
 
 @Composable
 fun InsightsCard(

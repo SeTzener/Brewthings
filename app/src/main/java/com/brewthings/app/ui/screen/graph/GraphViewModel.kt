@@ -129,7 +129,7 @@ abstract class GraphScreenViewModel(
                     type = dataType,
                     data = dataPoints,
                 )
-            }
+            },
         )
 
     private fun onSelect(index: Int?) {
@@ -239,7 +239,7 @@ class PillGraphScreenViewModel(
 }
 
 class BrewsGraphScreenViewModel(
-    private val brew: Brew = ParameterHolders.BrewGraph.brew ?: error("brew is required")
+    private val brew: Brew = ParameterHolders.BrewGraph.brew ?: error("brew is required"),
 ) : GraphScreenViewModel(
     screenTitle = brew.macAddress, // TODO(walt): change
     showInsightsCardActions = false,

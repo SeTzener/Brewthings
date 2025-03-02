@@ -32,10 +32,10 @@ import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toSimpleFormattedDate
-import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
+import kotlin.time.Duration.Companion.days
 
 @Composable
 fun BrewMeasurementsGrid(
@@ -48,9 +48,9 @@ fun BrewMeasurementsGrid(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         items = listOf(GridItem.TimeRange(data.timeRange)) +
-                data.measurements.map { measurement ->
-                    GridItem.Measurement(measurement)
-                }
+            data.measurements.map { measurement ->
+                GridItem.Measurement(measurement)
+            },
     ) { item ->
         when (item) {
             is GridItem.TimeRange -> BrewTimeCard(item.data)
@@ -117,7 +117,7 @@ fun BrewTimeCard(range: TimeRange) {
                 TimeRow(
                     modifier = modifier,
                     textColor = parentColor,
-                    formattedTime = data
+                    formattedTime = data,
                 )
             },
             footer = stringResource(
@@ -233,7 +233,7 @@ private fun ValueRow(
                     .padding(start = interHorizontalPadding),
                 painter = painterResource(id = trendIconRes),
                 tint = textColor,
-                maxSize = 24.dp
+                maxSize = 24.dp,
             )
         }
     }
@@ -280,7 +280,7 @@ fun BrewMeasurementsGridPreview() {
                     to = startDate + 6.days,
                 ),
                 measurements = listOf(
-                    Measurement(DataType.ABV, 1.20f, 1.09f)
+                    Measurement(DataType.ABV, 1.20f, 1.09f),
                 ),
             ),
         )

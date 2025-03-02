@@ -70,7 +70,7 @@ fun SectionTitle(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 18.dp, end = 14.dp, top = 8.dp, bottom = 8.dp)
+            .padding(start = 18.dp, end = 14.dp, top = 8.dp, bottom = 8.dp),
     ) {
         Text(
             modifier = Modifier.align(Alignment.CenterStart),
@@ -104,7 +104,7 @@ fun PrimaryButton(
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Button(
         modifier = modifier
@@ -117,7 +117,7 @@ fun PrimaryButton(
         Text(
             text = text.uppercase(),
             style = MaterialTheme.typography.labelLarge,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -127,7 +127,7 @@ fun SecondaryButton(
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     OutlinedButton(
         modifier = modifier
@@ -136,13 +136,13 @@ fun SecondaryButton(
         enabled = isEnabled,
         onClick = onClick,
         shape = RoundedCornerShape(50),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
     ) {
         Text(
             text = text.uppercase(),
             style = MaterialTheme.typography.labelLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
         )
     }
 }
@@ -152,24 +152,23 @@ fun TertiaryButton(
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     TextButton(
         modifier = modifier
             .height(48.dp)
             .fillMaxWidth(),
         enabled = isEnabled,
-        onClick = onClick
+        onClick = onClick,
     ) {
         Text(
             text = text.uppercase(),
             style = MaterialTheme.typography.labelLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
         )
     }
 }
-
 
 @Preview
 @Composable
@@ -205,11 +204,11 @@ fun SectionTitlePreview() {
 fun PrimaryButtonPreview() {
     BrewthingsTheme {
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             PrimaryButton(text = stringResource(R.string.button_save)) { }
-            SecondaryButton (text = stringResource(R.string.button_save)) { }
-            TertiaryButton (text = stringResource(R.string.button_save)) { }
+            SecondaryButton(text = stringResource(R.string.button_save)) { }
+            TertiaryButton(text = stringResource(R.string.button_save)) { }
         }
     }
 }

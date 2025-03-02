@@ -72,7 +72,8 @@ fun DataType.toFormatPattern(): String = when (this) {
     DataType.TEMPERATURE,
     DataType.TILT,
     DataType.VELOCITY_MEASURED,
-    DataType.VELOCITY_COMPUTED -> "0.##"
+    DataType.VELOCITY_COMPUTED,
+    -> "0.##"
 }
 
 @Composable
@@ -84,8 +85,9 @@ fun DataType.toUnit(): String = stringResource(
         DataType.TILT -> R.string.unit_tilt
         DataType.ABV -> R.string.unit_abv
         DataType.VELOCITY_MEASURED,
-        DataType.VELOCITY_COMPUTED -> R.string.unit_velocity
-    }
+        DataType.VELOCITY_COMPUTED,
+        -> R.string.unit_velocity
+    },
 )
 
 @Composable
@@ -94,9 +96,9 @@ fun DataType.toLabel(isShortened: Boolean = false): String = stringResource(
         DataType.GRAVITY ->
             R.string.graph_data_label_gravity
 
-        DataType.TEMPERATURE -> if (isShortened)
+        DataType.TEMPERATURE -> if (isShortened) {
             R.string.graph_data_label_temp_short
-        else
+        } else
             R.string.graph_data_label_temp_full
 
         DataType.BATTERY ->
@@ -108,18 +110,17 @@ fun DataType.toLabel(isShortened: Boolean = false): String = stringResource(
         DataType.ABV ->
             R.string.graph_data_label_abv
 
-        DataType.VELOCITY_MEASURED -> if (isShortened)
+        DataType.VELOCITY_MEASURED -> if (isShortened) {
             R.string.graph_data_label_velocity_measured_short
-        else
+        } else
             R.string.graph_data_label_velocity_measured_full
 
-        DataType.VELOCITY_COMPUTED -> if (isShortened)
+        DataType.VELOCITY_COMPUTED -> if (isShortened) {
             R.string.graph_data_label_velocity_computed_short
-        else
+        } else
             R.string.graph_data_label_velocity_computed_full
-    }
+    },
 )
-
 
 @Composable
 fun DataType.toValueFormatter(): DecimalFormat {

@@ -45,12 +45,12 @@ import com.brewthings.app.ui.theme.BrewthingsTheme
 @Composable
 fun BluetoothScanActionButton(
     scanState: BluetoothScanState,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .size(48.dp) // Standard action button size
+            .size(48.dp), // Standard action button size
     ) {
         BluetoothScanIcon(scanState, onClick)
     }
@@ -68,7 +68,7 @@ fun BluetoothScanBox() {
             .background(color)
             .fillMaxWidth(fraction = 0.4f)
             .aspectRatio(1f),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         BluetoothScanProgressIcon()
     }
@@ -82,16 +82,16 @@ fun ScanningEffect(color: Color) {
         targetValue = 1.4f,
         animationSpec = infiniteRepeatable(
             animation = tween(1000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        )
+            repeatMode = RepeatMode.Restart,
+        ),
     )
     val alpha by transition.animateFloat(
         initialValue = 0.3f,
         targetValue = 0f,
         animationSpec = infiniteRepeatable(
             animation = tween(1000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        )
+            repeatMode = RepeatMode.Restart,
+        ),
     )
 
     Canvas(modifier = Modifier.fillMaxSize()) {
@@ -112,7 +112,7 @@ fun ErrorShakeEffect(content: @Composable (Modifier) -> Unit) {
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 80, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
+            repeatMode = RepeatMode.Reverse,
         ),
         label = "ShakeAnimation",
     )
@@ -135,7 +135,7 @@ fun BluetoothUnavailableButton(onClick: () -> Unit) {
             colors = IconButtonDefaults.outlinedIconButtonColors(
                 containerColor = Color.Transparent,
                 contentColor = buttonColor,
-            )
+            ),
         ) {
             BluetoothScanDisabledIcon(
                 imageResId = R.drawable.ic_bluetooth_disabled,
@@ -158,7 +158,7 @@ fun BluetoothScanIdleButton(onClick: () -> Unit) {
         colors = IconButtonDefaults.outlinedIconButtonColors(
             containerColor = Color.Transparent,
             contentColor = buttonColor,
-        )
+        ),
     ) {
         BluetoothScanDisabledIcon(
             imageResId = R.drawable.ic_bluetooth,
@@ -179,7 +179,7 @@ fun BluetoothScanProgressButton(onClick: () -> Unit) {
         modifier = Modifier
             .size(40.dp)
             .clip(CircleShape),
-        colors = IconButtonDefaults.iconButtonColors(containerColor = buttonColor)
+        colors = IconButtonDefaults.iconButtonColors(containerColor = buttonColor),
     ) {
         BluetoothScanProgressIcon()
     }
@@ -205,7 +205,7 @@ fun BluetoothScanProgressIcon() {
         modifier = Modifier.fillMaxSize(fraction = 0.5f),
         imageVector = ImageVector.vectorResource(R.drawable.ic_bluetooth_scan),
         contentDescription = stringResource(R.string.a11y_bluetooth_scan_scanning),
-        tint = MaterialTheme.colorScheme.onPrimary
+        tint = MaterialTheme.colorScheme.onPrimary,
     )
 }
 

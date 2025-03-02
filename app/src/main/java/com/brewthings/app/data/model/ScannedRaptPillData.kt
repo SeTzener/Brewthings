@@ -18,4 +18,3 @@ data class ScannedRaptPillData(
 ) : SensorWithTiltReadings {
     override val gravityVelocity: Float? = rawVelocity?.sanitizeVelocity()
 }
-

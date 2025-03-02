@@ -91,7 +91,7 @@ fun ScanScreen(
                 onViewAllData = { device ->
                     router.goToPillGraph(
                         name = device.displayName,
-                        macAddress = device.macAddress
+                        macAddress = device.macAddress,
                     )
                 },
                 onViewBrewData = { brew ->
@@ -222,7 +222,7 @@ private fun ScanScreen(
                                 },
                             )
                         }
-                    }
+                    },
                 )
             } else {
                 TroubleshootingInfo(
@@ -286,17 +286,17 @@ private fun ScanTopBar(
 
                     SettingsItem(
                         stringResource(
-                            if (isAutosaveEnabled)
+                            if (isAutosaveEnabled) {
                                 R.string.settings_disable_autosave
-                            else
-                                R.string.settings_enable_autosave
-                        )
+                            } else
+                                R.string.settings_enable_autosave,
+                        ),
                     ) {
                         onToggleAutosave(isAutosaveEnabled)
                     },
-                )
+                ),
             )
-        }
+        },
     )
 }
 
@@ -332,6 +332,6 @@ private fun StartBrewDialog(callback: (Boolean) -> Unit) {
             TextButton(onClick = { callback(false) }) {
                 Text(stringResource(R.string.button_no))
             }
-        }
+        },
     )
 }

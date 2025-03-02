@@ -3,10 +3,10 @@ package com.brewthings.app.util.datetime
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.brewthings.app.R
-import kotlin.math.abs
-import kotlin.time.Duration
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
+import kotlin.math.abs
+import kotlin.time.Duration
 
 @Serializable
 data class TimeRange(val from: Instant, val to: Instant)

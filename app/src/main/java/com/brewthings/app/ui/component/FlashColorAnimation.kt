@@ -12,11 +12,11 @@ import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.delay
 
 @Composable
-fun <T: Any?> FlashColorAnimation(
+fun <T : Any?> FlashColorAnimation(
     backgroundColor: Color,
     targetColor: Color,
     data: T,
-    content: @Composable (Color, T) -> Unit
+    content: @Composable (Color, T) -> Unit,
 ) {
     val animationDurationMs = 1000
 
@@ -27,7 +27,7 @@ fun <T: Any?> FlashColorAnimation(
     val animatedColor by animateColorAsState(
         targetValue = if (isFlashing) backgroundColor else targetColor,
         animationSpec = tween(durationMillis = animationDurationMs / 2),
-        label = "Color Flash Animation"
+        label = "Color Flash Animation",
     )
 
     LaunchedEffect(data) {

@@ -33,7 +33,7 @@ fun ScrollableColumnWithFooter(
     modifier: Modifier = Modifier,
     nestedScrollConnection: NestedScrollConnection? = null,
     scrollableContent: @Composable ColumnScope.() -> Unit,
-    footer: @Composable () -> Unit
+    footer: @Composable () -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
@@ -46,7 +46,7 @@ fun ScrollableColumnWithFooter(
                         modifier.nestedScroll(nestedScroll)
                     } ?: modifier
                 }
-                .verticalScroll(scrollState)
+                .verticalScroll(scrollState),
         ) {
             scrollableContent()
             Spacer(modifier = Modifier.weight(1f)) // Pushes footer down if there's space
@@ -82,7 +82,7 @@ private fun Preview(
                     scrollBehavior = scrollBehavior,
                     title = {
                         Text("Preview")
-                    }
+                    },
                 )
             },
         ) { paddingValues ->
@@ -93,7 +93,7 @@ private fun Preview(
                         modifier = Modifier
                             .background(color = Color.Yellow)
                             .fillMaxWidth()
-                            .height(contentHeight)
+                            .height(contentHeight),
                     )
                 },
                 footer = {
@@ -101,11 +101,10 @@ private fun Preview(
                         modifier = Modifier
                             .background(color = Color.Red)
                             .fillMaxWidth()
-                            .height(footerHeight)
+                            .height(footerHeight),
                     )
-                }
+                },
             )
         }
     }
 }
-

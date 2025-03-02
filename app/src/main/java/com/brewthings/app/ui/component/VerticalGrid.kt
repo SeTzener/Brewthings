@@ -16,18 +16,18 @@ fun <T> VerticalGrid(
     horizontalArrangement: Arrangement.Horizontal,
     verticalArrangement: Arrangement.Vertical,
     items: List<T>,
-    content: @Composable (T) -> Unit
+    content: @Composable (T) -> Unit,
 ) {
     require(columnsCount > 0) { "columnsCount must be greater than 0" }
 
     Column(
         modifier = modifier,
-        verticalArrangement = verticalArrangement
+        verticalArrangement = verticalArrangement,
     ) {
         items.chunked(columnsCount).forEach { rowItems ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = horizontalArrangement
+                horizontalArrangement = horizontalArrangement,
             ) {
                 rowItems.forEach { item ->
                     Box(modifier = Modifier.weight(1f)) {

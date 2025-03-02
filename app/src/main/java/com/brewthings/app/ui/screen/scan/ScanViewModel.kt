@@ -21,7 +21,6 @@ import com.brewthings.app.util.Logger
 import com.brewthings.app.util.calculateABV
 import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.toPercent
-import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -41,6 +40,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlin.time.Duration.Companion.minutes
 
 class ScanViewModel : ViewModel(), KoinComponent {
     // Dependencies
@@ -134,7 +134,9 @@ class ScanViewModel : ViewModel(), KoinComponent {
                                     val latest = data.last()
                                     val previous = data.dropLast(1).lastOrNull()
                                     BrewWithLatestAndPrevious(brew, latest, previous)
-                                } else null
+                                } else {
+                                    null
+                                }
                             }
                     } ?: flowOf(null)
                 }
@@ -158,7 +160,7 @@ class ScanViewModel : ViewModel(), KoinComponent {
                             previous = previous,
                             og = it.og,
                             feedings = it.feedings,
-                        )
+                        ),
                     )
                 }
             }
@@ -253,8 +255,8 @@ private fun createBrewMeasurements(
                 value = calculateABV(og = og.gravity, fg = latest.gravity, feedings = feedings) ?: 0f,
                 previousValue = previous?.let {
                     calculateABV(og = og.gravity, fg = it.gravity, feedings = feedings)
-                }
-            )
+                },
+            ),
         ),
     )
 

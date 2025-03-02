@@ -137,7 +137,7 @@ class MpAndroidChart(
         val endDate = chartData.to
         val startDate = maxOf(
             chartData.from,
-            endDate - 7.days
+            endDate - 7.days,
         )
         val visibleGraphTimePeriod = (endDate.epochSeconds - startDate.epochSeconds).toFloat()
         setVisibleXRange(visibleGraphTimePeriod, visibleGraphTimePeriod)

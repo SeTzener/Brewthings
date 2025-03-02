@@ -72,7 +72,7 @@ fun BluetoothScanRequirements(
     isScanning: Boolean,
     onToggleScan: () -> Unit,
     activityCallbacks: ActivityCallbacks,
-    content: @Composable (scanState: BluetoothScanState, onScanClick: () -> Unit) -> Unit
+    content: @Composable (scanState: BluetoothScanState, onScanClick: () -> Unit) -> Unit,
 ) {
     val permissionsState = rememberMultiplePermissionsState(permissionsNeeded)
     val bluetoothAvailability by Bluetooth.availability.collectAsStateWithLifecycle(initialValue = null)
@@ -154,7 +154,7 @@ fun BluetoothDialog(
                 .fillMaxWidth()
                 .padding(24.dp),
             shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.colorScheme.background,
         ) {
             Box(
                 modifier = Modifier.padding(16.dp),

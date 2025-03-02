@@ -77,7 +77,7 @@ private fun SensorMeasurementCard(measurement: Measurement) {
             trendIconRes = trendIconRes,
             footer = previousValue?.let {
                 stringResource(R.string.sensor_measurement_footer, formatter.format(it), unit)
-            } ?: ""
+            } ?: "",
         )
     }
 }
@@ -180,7 +180,7 @@ fun SensorMeasurementCard(
                     painter = painterResource(id = trendIconRes),
                     contentDescription = null,
                     tint = textColor,
-                    maxSize = 24.dp
+                    maxSize = 24.dp,
                 )
             }
 
@@ -215,7 +215,7 @@ fun SensorMeasurementGridPreview() {
                 Measurement(DataType.TEMPERATURE, 18.25f, 18.25f),
                 Measurement(DataType.BATTERY, 0.58f, 0.5825f),
                 Measurement(DataType.VELOCITY_MEASURED, 1.575f, 0.617f),
-            )
+            ),
         )
     }
 }

@@ -16,7 +16,7 @@ fun BatteryLevelIndicator(
 ) {
     Icon(
         imageVector = ImageVector.vectorResource(
-            id = DataType.BATTERY.toIconRes(batteryPercentage)
+            id = DataType.BATTERY.toIconRes(batteryPercentage),
         ),
         contentDescription = null,
         tint = tint,

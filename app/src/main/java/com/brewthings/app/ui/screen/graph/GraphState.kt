@@ -1,7 +1,7 @@
 package com.brewthings.app.ui.screen.graph
 
-import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.data.domain.DataType
+import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.ui.component.graph.GraphData
 import kotlinx.datetime.Instant
 

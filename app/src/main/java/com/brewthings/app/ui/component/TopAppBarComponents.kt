@@ -75,7 +75,7 @@ fun ScannedDevicesDropdown(
         DropdownMenu(
             modifier = Modifier.widthIn(min = 200.dp),
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             devices.forEach { device ->
                 DropdownMenuItem(
@@ -97,12 +97,12 @@ fun ScannedDevicesDropdown(
                     onClick = {
                         onSelect(device)
                         expanded = false
-                    }
+                    },
                 )
             }
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                color = Grey_Light
+                color = Grey_Light,
             )
             DropdownMenuItem(
                 text = {
@@ -118,7 +118,7 @@ fun ScannedDevicesDropdown(
                 onClick = {
                     onAddDevice()
                     expanded = false
-                }
+                },
             )
         }
     }
@@ -136,12 +136,12 @@ fun SettingsDropdown(items: List<SettingsItem>) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_settings),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface
+            tint = MaterialTheme.colorScheme.onSurface,
         )
 
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             items.forEach { item ->
                 DropdownMenuItem(
@@ -155,7 +155,7 @@ fun SettingsDropdown(items: List<SettingsItem>) {
                     onClick = {
                         item.onSelect()
                         expanded = false
-                    }
+                    },
                 )
             }
         }
@@ -168,7 +168,7 @@ private fun OnboardingTopAppBarPreview() {
     BrewthingsTheme {
         TopAppBar(
             title = { TopAppBarTitle(stringResource(R.string.onboarding_add_device)) },
-            actions = { SettingsDropdown(emptyList())  }
+            actions = { SettingsDropdown(emptyList()) },
         )
     }
 }
@@ -209,14 +209,14 @@ private fun FullTopAppBarPreview() {
                         SettingsDropdown(
                             listOf(
                                 SettingsItem(stringResource(R.string.settings_rename_device)) {},
-                            )
+                            ),
                         )
-                    }
+                    },
                 )
             },
             content = { paddingValues ->
                 Box(modifier = Modifier.padding(paddingValues))
-            }
+            },
         )
     }
 }
