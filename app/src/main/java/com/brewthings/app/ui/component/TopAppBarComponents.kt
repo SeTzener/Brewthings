@@ -208,7 +208,6 @@ private fun FullTopAppBarPreview() {
                         BluetoothScanActionButton(scanState, onScanClick)
                         SettingsDropdown(
                             listOf(
-                                SettingsItem(stringResource(R.string.settings_change_rssi)) {},
                                 SettingsItem(stringResource(R.string.settings_rename_device)) {},
                             )
                         )

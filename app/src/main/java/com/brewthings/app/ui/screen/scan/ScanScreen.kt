@@ -308,9 +308,6 @@ private fun ScanTopBar(
             BluetoothScanActionButton(scanState, onScanClick)
             SettingsDropdown(
                 listOf(
-                    SettingsItem(stringResource(R.string.settings_change_rssi)) {
-                        // TODO(walt)
-                    },
                     SettingsItem(stringResource(R.string.settings_rename_device), onRenameDeviceClick),
                 )
             )
