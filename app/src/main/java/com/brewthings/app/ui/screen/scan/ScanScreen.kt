@@ -69,6 +69,7 @@ fun ScanScreen(
             val sensorMeasurements by viewModel.sensorMeasurements.collectAsState()
             val brewWithMeasurements by viewModel.brewWithMeasurements.collectAsState()
             val canSave by viewModel.canSave.collectAsState()
+            val isAutosaveEnabled by viewModel.isAutosaveEnabled.collectAsState()
             val now by viewModel.now.collectAsState()
             ScanScreen(
                 now = now,
@@ -81,6 +82,7 @@ fun ScanScreen(
                 sensorMeasurements = sensorMeasurements,
                 brewWithMeasurements = brewWithMeasurements,
                 canSave = canSave,
+                isAutosaveEnabled = isAutosaveEnabled,
                 onSelectDevice = viewModel::selectDevice,
                 onAddDevice = onAddDevice,
                 onStartScan = viewModel::startScan,
@@ -96,6 +98,7 @@ fun ScanScreen(
                     router.goToBrewGraph(brew)
                 },
                 onRenameDevice = viewModel::renameDevice,
+                onToggleAutosave = viewModel::toggleAutosave,
             )
         }
     } else {
@@ -115,6 +118,7 @@ private fun ScanScreen(
     sensorMeasurements: SensorMeasurements,
     brewWithMeasurements: BrewWithMeasurements?,
     canSave: Boolean,
+    isAutosaveEnabled: Boolean,
     onSelectDevice: (Device) -> Unit,
     onAddDevice: () -> Unit,
     onStartScan: () -> Unit,
@@ -123,6 +127,7 @@ private fun ScanScreen(
     onViewAllData: (Device) -> Unit,
     onViewBrewData: (Brew) -> Unit,
     onRenameDevice: (String) -> Unit,
+    onToggleAutosave: (Boolean) -> Unit,
 ) {
     var previousScanState by remember { mutableStateOf(BluetoothScanState.Unavailable) }
     var showStartBrewDialog by remember { mutableStateOf(false) }
@@ -151,12 +156,14 @@ private fun ScanScreen(
                     selectedDevice = selectedDevice,
                     scanState = scanState,
                     devices = devices,
+                    isAutosaveEnabled = isAutosaveEnabled,
                     onSelectDevice = onSelectDevice,
                     onAddDevice = onAddDevice,
                     onScanClick = onScanClick,
                     onRenameDeviceClick = {
                         showRenameBottomSheet = true
                     },
+                    onToggleAutosave = onToggleAutosave,
                 )
             },
         ) { paddingValues ->
@@ -201,18 +208,20 @@ private fun ScanScreen(
                         }
                     },
                     footer = {
-                        PrimaryButton(
-                            modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 24.dp),
-                            isEnabled = canSave,
-                            text = stringResource(R.string.button_save),
-                            onClick = {
-                                if (brewWithMeasurements == null) {
-                                    showStartBrewDialog = true
-                                } else {
-                                    onSave(false)
-                                }
-                            },
-                        )
+                        if (!isAutosaveEnabled) {
+                            PrimaryButton(
+                                modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 24.dp),
+                                isEnabled = canSave,
+                                text = stringResource(R.string.button_save),
+                                onClick = {
+                                    if (brewWithMeasurements == null) {
+                                        showStartBrewDialog = true
+                                    } else {
+                                        onSave(false)
+                                    }
+                                },
+                            )
+                        }
                     }
                 )
             } else {
@@ -252,10 +261,12 @@ private fun ScanTopBar(
     selectedDevice: Device,
     scanState: BluetoothScanState,
     devices: List<Device>,
+    isAutosaveEnabled: Boolean,
     onSelectDevice: (Device) -> Unit,
     onAddDevice: () -> Unit,
     onScanClick: () -> Unit,
     onRenameDeviceClick: () -> Unit,
+    onToggleAutosave: (Boolean) -> Unit,
 ) {
     TopAppBar(
         scrollBehavior = scrollBehavior,
@@ -272,6 +283,17 @@ private fun ScanTopBar(
             SettingsDropdown(
                 listOf(
                     SettingsItem(stringResource(R.string.settings_rename_device), onRenameDeviceClick),
+
+                    SettingsItem(
+                        stringResource(
+                            if (isAutosaveEnabled)
+                                R.string.settings_disable_autosave
+                            else
+                                R.string.settings_enable_autosave
+                        )
+                    ) {
+                        onToggleAutosave(isAutosaveEnabled)
+                    },
                 )
             )
         }

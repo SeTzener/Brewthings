@@ -169,19 +169,28 @@ class ScanViewModel : ViewModel(), KoinComponent {
         .map { it != null }
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
+    val isAutosaveEnabled: StateFlow<Boolean> = settings
+        .isAutosaveEnabled()
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
+
     // Functions
     init {
         isBluetoothScanning
             .onEach { isScanning -> logger.info("Bluetooth scanning is ${if (isScanning) "on" else "off"}.") }
             .launchIn(viewModelScope)
+
+        isAutosaveEnabled
+            .combine(canSave) { isAutosaveEnabled, canSave ->
+                if (isAutosaveEnabled && canSave) {
+                    val isOg = brewWithMeasurements.value == null
+                    suspendSave(isOg)
+                }
+            }.launchIn(viewModelScope)
     }
 
     fun save(isOg: Boolean) {
         viewModelScope.launch {
-            latestScannedResult.value?.also { result ->
-                pills.save(scannedRaptPill = result, isOg = isOg)
-                latestSavedResult.value = result
-            }
+            suspendSave(isOg)
         }
     }
 
@@ -204,6 +213,20 @@ class ScanViewModel : ViewModel(), KoinComponent {
             selectedMacAddress.value?.let { macAddress ->
                 pills.updatePillName(macAddress, newName)
             }
+        }
+    }
+
+    fun toggleAutosave(isEnabled: Boolean) {
+        viewModelScope.launch {
+            settings.setAutosaveEnabled(!isEnabled)
+        }
+    }
+
+    private suspend fun suspendSave(isOg: Boolean) {
+        val latestResult = latestScannedResult.value
+        if (latestResult != null && latestResult != latestSavedResult.value) {
+            pills.save(scannedRaptPill = latestResult, isOg = isOg)
+            latestSavedResult.value = latestResult
         }
     }
 }
