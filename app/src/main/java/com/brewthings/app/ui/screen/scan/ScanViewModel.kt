@@ -16,6 +16,7 @@ import com.brewthings.app.data.model.MacAddress
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.repository.BrewsRepository
 import com.brewthings.app.data.repository.RaptPillRepository
+import com.brewthings.app.data.repository.SettingsRepository
 import com.brewthings.app.util.Logger
 import com.brewthings.app.util.calculateABV
 import com.brewthings.app.util.datetime.TimeRange
@@ -43,6 +44,7 @@ import org.koin.core.component.inject
 
 class ScanViewModel : ViewModel(), KoinComponent {
     // Dependencies
+    private val settings: SettingsRepository by inject()
     private val pills: RaptPillRepository by inject()
     private val brews: BrewsRepository by inject()
 
@@ -75,7 +77,14 @@ class ScanViewModel : ViewModel(), KoinComponent {
     val devices: StateFlow<List<Device>> = pills.observePills()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    private val selectedMacAddress: StateFlow<MacAddress?> = pills.observeSelectedPill()
+    private val selectedMacAddress: StateFlow<MacAddress?> = settings.observeSelectedPill()
+        .flatMapLatest { selectedMacAddress ->
+            if (selectedMacAddress != null) {
+                flowOf(selectedMacAddress)
+            } else {
+                devices.map { it.firstOrNull()?.macAddress }
+            }
+        }
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     val selectedDevice: StateFlow<Device?> = devices
@@ -186,7 +195,7 @@ class ScanViewModel : ViewModel(), KoinComponent {
 
     fun selectDevice(device: Device) {
         viewModelScope.launch {
-            pills.selectPill(device.macAddress)
+            settings.selectPill(device.macAddress)
         }
     }
 

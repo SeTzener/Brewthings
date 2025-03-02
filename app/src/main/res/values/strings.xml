@@ -90,13 +90,13 @@
     <string name="button_view_previous_data">"View previous data"</string>
     <string name="scan_section_action_current_brew_graph">"Brew data"</string>
     <string name="scan_device_select">"Select device"</string>
-    <string name="scan_troubleshooting_no_active_device_title">"You don't have an active device"</string>
-    <string name="scan_troubleshooting_no_active_device_desc">"Please select or add one from the menu above."</string>
     <string name="scan_troubleshooting_no_active_brew_title">"You don't have an active brew"</string>
     <string name="scan_troubleshooting_no_active_brew_desc">"Wait for your first scan result, then tap on the save button to start a new one.\n\nAlternatively, edit the previous data."</string>
     <string name="start_new_brew_dialog_text">"Do you want to start a new brew and use this data as OG?"</string>
     <string name="button_yes">"Yes"</string>
     <string name="button_no">"No"</string>
+    <string name="settings_enable_autosave">"Enable autosave"</string>
+    <string name="settings_disable_autosave">"Disable autosave"</string>
 
     <!-- delete me! -->
     <string name="pill_gravity">"%.3f SG"</string>

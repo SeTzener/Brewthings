@@ -43,7 +43,6 @@ import com.brewthings.app.ui.component.SettingsItem
 import com.brewthings.app.ui.component.TimeSinceLastUpdate
 import com.brewthings.app.ui.component.TroubleshootingInfo
 import com.brewthings.app.ui.navigation.legacy.Router
-import com.brewthings.app.ui.screen.onboarding.OnboardingScreen
 import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 
@@ -60,9 +59,7 @@ fun ScanScreen(
         // TODO(walt): routing
     }
 
-    if (lockedDevices.isEmpty()) {
-        OnboardingScreen() // TODO(walt): routing
-    } else {
+    if (lockedDevices.isNotEmpty()) {
         val selectedDevice by viewModel.selectedDevice.collectAsState()
         val lockedSelectedDevice = selectedDevice
         if (lockedSelectedDevice != null) {
@@ -100,13 +97,9 @@ fun ScanScreen(
                 },
                 onRenameDevice = viewModel::renameDevice,
             )
-        } else {
-            NoDeviceSelected(
-                devices = devices,
-                onSelectDevice = viewModel::selectDevice,
-                onAddDevice = onAddDevice,
-            )
         }
+    } else {
+        onAddDevice()
     }
 }
 
@@ -251,36 +244,6 @@ private fun ScanScreen(
             }
         }
     }
-}
-
-@Composable
-private fun NoDeviceSelected(
-    devices: List<Device>,
-    onSelectDevice: (Device) -> Unit,
-    onAddDevice: () -> Unit,
-) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    ScannedDevicesDropdown(
-                        selectedDevice = null,
-                        devices = devices,
-                        onSelect = onSelectDevice,
-                        onAddDevice = onAddDevice,
-                    )
-                }
-            )
-        },
-        content = { paddingValues ->
-            TroubleshootingInfo(
-                modifier = Modifier.padding(paddingValues),
-                iconResId = R.drawable.ic_device_unknown,
-                title = stringResource(R.string.scan_troubleshooting_no_active_device_title),
-                description = stringResource(R.string.scan_troubleshooting_no_active_device_desc),
-            )
-        }
-    )
 }
 
 @Composable

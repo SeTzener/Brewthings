@@ -1,9 +1,5 @@
 package com.brewthings.app.data.repository
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
 import com.brewthings.app.data.ble.RaptPillScanner
 import com.brewthings.app.data.model.MacAddress
 import com.brewthings.app.data.model.RaptPill
@@ -17,12 +13,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 
-private val SELECTED_PILL = stringPreferencesKey("selected_pill")
-
 class RaptPillRepository(
     private val scanner: RaptPillScanner,
     private val dao: RaptPillDao,
-    private val dataStore: DataStore<Preferences>,
 ) {
     fun fromBluetooth(): Flow<ScannedRaptPill> = scanner.scan()
 
@@ -100,14 +93,5 @@ class RaptPillRepository(
                 name = pill.name,
             )
         }
-    }
-
-    fun observeSelectedPill(): Flow<MacAddress?> = dataStore.data.map { preferences ->
-        val saved = preferences[SELECTED_PILL]
-        saved ?: dao.getFirstPillMacAddress()
-    }
-
-    suspend fun selectPill(macAddress: MacAddress) = dataStore.edit { preferences ->
-        preferences[SELECTED_PILL] = macAddress
     }
 }

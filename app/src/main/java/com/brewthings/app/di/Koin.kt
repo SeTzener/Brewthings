@@ -7,6 +7,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.brewthings.app.data.ble.RaptPillScanner
 import com.brewthings.app.data.repository.BrewsRepository
 import com.brewthings.app.data.repository.RaptPillRepository
+import com.brewthings.app.data.repository.SettingsRepository
 import com.brewthings.app.data.storage.RaptPillDatabase
 import com.brewthings.app.ui.navigation.legacy.Destination
 import com.brewthings.app.ui.screen.brews.BrewsViewModel
@@ -28,8 +29,9 @@ val appModule = module {
 
     factory { RaptPillScanner() }
     factory { get<RaptPillDatabase>().raptPillDao() }
-    factory { RaptPillRepository(scanner = get(), dao = get(), dataStore = get()) }
+    factory { RaptPillRepository(scanner = get(), dao = get()) }
     factory { BrewsRepository(dao = get()) }
+    factory { SettingsRepository(dataStore = get()) }
 
     viewModel { ScanningScreenViewModel() } // TODO(walt): Remove me
     viewModel { ScanViewModel() }
