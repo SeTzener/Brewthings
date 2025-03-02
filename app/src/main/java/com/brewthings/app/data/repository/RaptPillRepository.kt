@@ -71,6 +71,10 @@ class RaptPillRepository(
         dao.updatePillData(raptPill = raptPill.raptPill.toDaoItem())
     }
 
+    suspend fun updatePillName(macAddress: MacAddress, newName: String) {
+        dao.updatePillName(macAddress, newName)
+    }
+
     fun observeData(macAddress: MacAddress): Flow<List<RaptPillData>> =
         dao.observeData(macAddress).map { data ->
             data.map { it.toModelItem() }

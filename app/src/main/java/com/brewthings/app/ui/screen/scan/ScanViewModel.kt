@@ -75,7 +75,8 @@ class ScanViewModel : ViewModel(), KoinComponent {
     val devices: StateFlow<List<Device>> = pills.observePills()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    private val selectedMacAddress: Flow<MacAddress?> = pills.observeSelectedPill()
+    private val selectedMacAddress: StateFlow<MacAddress?> = pills.observeSelectedPill()
+        .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     val selectedDevice: StateFlow<Device?> = devices
         .combine(selectedMacAddress) { devices, selectedMacAddress ->
@@ -110,26 +111,26 @@ class ScanViewModel : ViewModel(), KoinComponent {
 
     private val brewWithLatestAndPrevious: Flow<BrewWithLatestAndPrevious?> = latestUnsavedResult
         .flatMapLatest { scanned ->
-        if (scanned != null) {
-            currentBrew.map { brew ->
-                val previous = brew?.fgOrLast
-                BrewWithLatestAndPrevious(brew, scanned.data, previous)
-            }
-        } else {
-            currentBrew.flatMapLatest { brew ->
-                brew?.let {
-                    brews.observeBrewData(it)
-                        .map { data ->
-                            if (data.isNotEmpty()) {
-                                val latest = data.last()
-                                val previous = data.dropLast(1).lastOrNull()
-                                BrewWithLatestAndPrevious(brew, latest, previous)
-                            } else null
-                        }
-                } ?: flowOf(null)
+            if (scanned != null) {
+                currentBrew.map { brew ->
+                    val previous = brew?.fgOrLast
+                    BrewWithLatestAndPrevious(brew, scanned.data, previous)
+                }
+            } else {
+                currentBrew.flatMapLatest { brew ->
+                    brew?.let {
+                        brews.observeBrewData(it)
+                            .map { data ->
+                                if (data.isNotEmpty()) {
+                                    val latest = data.last()
+                                    val previous = data.dropLast(1).lastOrNull()
+                                    BrewWithLatestAndPrevious(brew, latest, previous)
+                                } else null
+                            }
+                    } ?: flowOf(null)
+                }
             }
         }
-    }
 
     val sensorMeasurements: StateFlow<SensorMeasurements> = brewWithLatestAndPrevious
         .map { data ->
@@ -186,6 +187,14 @@ class ScanViewModel : ViewModel(), KoinComponent {
     fun selectDevice(device: Device) {
         viewModelScope.launch {
             pills.selectPill(device.macAddress)
+        }
+    }
+
+    fun renameDevice(newName: String) {
+        viewModelScope.launch {
+            selectedMacAddress.value?.let { macAddress ->
+                pills.updatePillName(macAddress, newName)
+            }
         }
     }
 }

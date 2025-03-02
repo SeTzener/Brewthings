@@ -32,6 +32,7 @@ import com.brewthings.app.ui.ActivityCallbacks
 import com.brewthings.app.ui.component.BluetoothScanActionButton
 import com.brewthings.app.ui.component.BluetoothScanRequirements
 import com.brewthings.app.ui.component.BrewMeasurementsGrid
+import com.brewthings.app.ui.component.EditNameBottomSheet
 import com.brewthings.app.ui.component.PrimaryButton
 import com.brewthings.app.ui.component.ScannedDevicesDropdown
 import com.brewthings.app.ui.component.ScrollableColumnWithFooter
@@ -43,9 +44,6 @@ import com.brewthings.app.ui.component.TimeSinceLastUpdate
 import com.brewthings.app.ui.component.TroubleshootingInfo
 import com.brewthings.app.ui.navigation.legacy.Router
 import com.brewthings.app.ui.screen.onboarding.OnboardingScreen
-import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.delay
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 
@@ -99,7 +97,8 @@ fun ScanScreen(
                 },
                 onViewBrewData = { brew ->
                     router.goToBrewGraph(brew)
-                }
+                },
+                onRenameDevice = viewModel::renameDevice,
             )
         } else {
             NoDeviceSelected(
@@ -130,9 +129,11 @@ private fun ScanScreen(
     onSave: (Boolean) -> Unit,
     onViewAllData: (Device) -> Unit,
     onViewBrewData: (Brew) -> Unit,
+    onRenameDevice: (String) -> Unit,
 ) {
     var previousScanState by remember { mutableStateOf(BluetoothScanState.Unavailable) }
     var showStartBrewDialog by remember { mutableStateOf(false) }
+    var showRenameBottomSheet by remember { mutableStateOf(false) }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val horizontalPadding = 16.dp
@@ -160,6 +161,9 @@ private fun ScanScreen(
                     onSelectDevice = onSelectDevice,
                     onAddDevice = onAddDevice,
                     onScanClick = onScanClick,
+                    onRenameDeviceClick = {
+                        showRenameBottomSheet = true
+                    },
                 )
             },
         ) { paddingValues ->
@@ -232,6 +236,14 @@ private fun ScanScreen(
             previousScanState = scanState
         }
 
+        if (showRenameBottomSheet) {
+            EditNameBottomSheet(
+                device = selectedDevice,
+                onDismiss = { showRenameBottomSheet = false },
+                onDeviceNameUpdate = onRenameDevice,
+            )
+        }
+
         if (showStartBrewDialog) {
             StartBrewDialog { isConfirmed ->
                 showStartBrewDialog = false
@@ -280,6 +292,7 @@ private fun ScanTopBar(
     onSelectDevice: (Device) -> Unit,
     onAddDevice: () -> Unit,
     onScanClick: () -> Unit,
+    onRenameDeviceClick: () -> Unit,
 ) {
     TopAppBar(
         scrollBehavior = scrollBehavior,
@@ -298,9 +311,7 @@ private fun ScanTopBar(
                     SettingsItem(stringResource(R.string.settings_change_rssi)) {
                         // TODO(walt)
                     },
-                    SettingsItem(stringResource(R.string.settings_rename_device)) {
-                        // TODO(walt)
-                    },
+                    SettingsItem(stringResource(R.string.settings_rename_device), onRenameDeviceClick),
                 )
             )
         }

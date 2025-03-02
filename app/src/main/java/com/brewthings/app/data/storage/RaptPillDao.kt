@@ -141,6 +141,9 @@ interface RaptPillDao {
         )
     }
 
+    @Query("SELECT * FROM RaptPill WHERE macAddress = :macAddress")
+    suspend fun getPillByMacAddress(macAddress: String): RaptPill?
+
     @Query("SELECT pillId FROM RaptPill WHERE macAddress = :macAddress")
     suspend fun getPillIdByMacAddress(macAddress: String): Long?
 
@@ -161,6 +164,12 @@ interface RaptPillDao {
         val pillId = getPillIdByMacAddress(raptPill.macAddress)
             ?: error("No pill found with mac address ${raptPill.macAddress}")
         updatePill(raptPill.copy(pillId = pillId))
+    }
+
+    @Transaction
+    suspend fun updatePillName(macAddress: String, newName: String) {
+        val pill = getPillByMacAddress(macAddress) ?: error("No pill found with mac address $macAddress")
+        updatePill(pill.copy(name = newName))
     }
 
     @Transaction

@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -17,7 +15,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
@@ -28,10 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -47,11 +40,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.model.RaptPill
@@ -61,6 +51,7 @@ import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.model.ScannedRaptPillData
 import com.brewthings.app.ui.ActivityCallbacks
 import com.brewthings.app.ui.component.BatteryLevelIndicator
+import com.brewthings.app.ui.component.EditNameBottomSheet
 import com.brewthings.app.ui.component.ExpandableCard
 import com.brewthings.app.ui.component.ScanPane
 import com.brewthings.app.ui.component.SectionTitle
@@ -543,74 +534,15 @@ private fun DropDownMenu(
         if (showBottomSheet) {
             expanded = false
             EditNameBottomSheet(
-                isBottomSheetVisible = true,
-                sheetState = SheetState(skipPartiallyExpanded = true, density = Density(1f)),
-                pill = raptPill,
+                device = raptPill.raptPill,
                 onDismiss = { showBottomSheet = false },
-                onPillUpdate = onPillUpdate,
+                onDeviceNameUpdate = { newName ->
+                    onPillUpdate(raptPill.copy(raptPill = raptPill.raptPill.copy(name = newName)))
+                },
             )
         }
     }
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EditNameBottomSheet(
-    isBottomSheetVisible: Boolean,
-    sheetState: SheetState,
-    pill: RaptPillWithData,
-    onDismiss: () -> Unit,
-    onPillUpdate: (newPill: RaptPillWithData) -> Unit,
-) {
-    var name by remember { mutableStateOf(pill.raptPill.name) }
-
-    if (isBottomSheetVisible) {
-        ModalBottomSheet(
-            onDismissRequest = onDismiss,
-            sheetState = sheetState,
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            dragHandle = null,
-            scrimColor = Color.Black.copy(alpha = .5f),
-        ) {
-            Column(
-                modifier = Modifier
-                    .navigationBarsPadding()
-                    .fillMaxWidth()
-                    .imePadding()
-                    .padding(vertical = 32.dp, horizontal = 24.dp), // Inner padding,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 32.dp),
-                    value = name ?: "",
-                    onValueChange = { name = it },
-                    label = { Text(text = stringResource(id = R.string.edit_name_tooltip)) },
-                    readOnly = false,
-                    shape = RoundedCornerShape(12.dp),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done,
-                    ),
-                )
-
-                OutlinedButton(
-                    onClick = {
-                        onPillUpdate(pill.copy(raptPill = pill.raptPill.copy(name = name)))
-                        onDismiss()
-                    },
-                    content = { Text(text = stringResource(id = R.string.button_save)) },
-                    enabled = isValidName(oldName = pill.raptPill.name, newName = name),
-                )
-            }
-        }
-    }
-}
-
-private fun isValidName(oldName: String?, newName: String?): Boolean =
-    newName?.trim()?.let { it.isNotEmpty() && it != oldName } ?: false
 
 @Preview
 @Composable
