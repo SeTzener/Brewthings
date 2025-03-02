@@ -9,7 +9,7 @@ import com.brewthings.app.data.repository.BrewsRepository
 import com.brewthings.app.data.repository.RaptPillRepository
 import com.brewthings.app.data.repository.SettingsRepository
 import com.brewthings.app.data.storage.RaptPillDatabase
-import com.brewthings.app.ui.navigation.legacy.Destination
+import com.brewthings.app.ui.navigation.Destination
 import com.brewthings.app.ui.screen.brews.BrewsViewModel
 import com.brewthings.app.ui.screen.graph.BrewsGraphScreenViewModel
 import com.brewthings.app.ui.screen.graph.GraphScreenViewModel

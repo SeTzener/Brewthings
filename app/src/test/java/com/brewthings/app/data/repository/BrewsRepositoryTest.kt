@@ -1,5 +1,3 @@
-@file:Suppress("IllegalIdentifier")
-
 package com.brewthings.app.data.repository
 
 import com.brewthings.app.data.storage.RaptPillDao

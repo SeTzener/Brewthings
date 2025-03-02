@@ -4,7 +4,6 @@ import com.brewthings.app.data.ble.RaptPillScanner
 import com.brewthings.app.data.model.MacAddress
 import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.RaptPillData
-import com.brewthings.app.data.model.RaptPillWithData
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.storage.RaptPillDao
 import com.brewthings.app.data.storage.toDaoItem
@@ -18,20 +17,6 @@ class RaptPillRepository(
     private val dao: RaptPillDao,
 ) {
     fun fromBluetooth(): Flow<ScannedRaptPill> = scanner.scan()
-
-    fun fromDatabase(): Flow<List<RaptPillWithData>> = dao.observeAll().map { query ->
-        query.map { db ->
-            RaptPillWithData(
-                raptPill = RaptPill(
-                    macAddress = db.pill.macAddress,
-                    name = db.pill.name,
-                ),
-                data = db.data.map { data ->
-                    data.toModelItem()
-                },
-            )
-        }
-    }
 
     suspend fun save(
         scannedRaptPill: ScannedRaptPill,
@@ -60,10 +45,6 @@ class RaptPillRepository(
         )
     }
 
-    suspend fun updatePill(raptPill: RaptPillWithData) {
-        dao.updatePillData(raptPill = raptPill.raptPill.toDaoItem())
-    }
-
     suspend fun updatePillName(macAddress: MacAddress, newName: String) {
         dao.updatePillName(macAddress, newName)
     }
@@ -71,11 +52,6 @@ class RaptPillRepository(
     fun observeData(macAddress: MacAddress): Flow<List<RaptPillData>> =
         dao.observeData(macAddress).map { data ->
             data.map { it.toModelItem() }
-        }
-
-    fun observeLatestData(macAddress: MacAddress): Flow<RaptPillData?> =
-        dao.observeLatestData(macAddress).map { data ->
-            data?.toModelItem()
         }
 
     suspend fun setFeeding(macAddress: MacAddress, timestamp: Instant, isFeeding: Boolean) {

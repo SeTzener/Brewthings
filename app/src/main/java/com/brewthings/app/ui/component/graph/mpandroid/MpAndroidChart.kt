@@ -30,7 +30,6 @@ class MpAndroidChart(
     selectedIndex: Int?,
     private val density: Density,
     private val textSize: TextUnit,
-    private var isDarkTheme: Boolean,
     private var textColor: Color,
     primaryColor: Color,
     onSelect: (Int?) -> Unit,
@@ -79,11 +78,9 @@ class MpAndroidChart(
     fun refresh(
         chartData: MpAndroidChartData?,
         selectedIndex: Int?,
-        isDarkTheme: Boolean,
         textColor: Color,
         primaryColor: Color,
     ) {
-        this.isDarkTheme = isDarkTheme
         this.textColor = textColor
         highlightedRenderer.primaryColor = primaryColor.toArgb()
 

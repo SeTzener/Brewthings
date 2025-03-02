@@ -42,7 +42,7 @@ import com.brewthings.app.ui.component.SettingsDropdown
 import com.brewthings.app.ui.component.SettingsItem
 import com.brewthings.app.ui.component.TimeSinceLastUpdate
 import com.brewthings.app.ui.component.TroubleshootingInfo
-import com.brewthings.app.ui.navigation.legacy.Router
+import com.brewthings.app.ui.navigation.Router
 import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 

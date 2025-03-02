@@ -15,7 +15,7 @@ import com.brewthings.app.ui.component.graph.DataPoint
 import com.brewthings.app.ui.component.graph.GraphData
 import com.brewthings.app.ui.component.graph.GraphSeries
 import com.brewthings.app.ui.component.insights.toInsights
-import com.brewthings.app.ui.navigation.legacy.ParameterHolders
+import com.brewthings.app.ui.navigation.ParameterHolders
 import com.brewthings.app.util.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch

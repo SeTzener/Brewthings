@@ -1,4 +1,4 @@
-package com.brewthings.app.ui.navigation.legacy
+package com.brewthings.app.ui.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

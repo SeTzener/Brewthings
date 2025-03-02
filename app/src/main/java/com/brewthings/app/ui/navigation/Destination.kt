@@ -1,4 +1,4 @@
-package com.brewthings.app.ui.navigation.legacy
+package com.brewthings.app.ui.navigation
 
 object Destination {
     const val HOME = "home"

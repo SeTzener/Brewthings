@@ -11,18 +11,8 @@ import kotlinx.datetime.Instant
 
 @Dao
 interface RaptPillDao {
-    @Transaction
-    @Query("SELECT * FROM RaptPill")
-    fun observeAll(): Flow<List<RaptPillWithData>>
-
     @Query("SELECT * FROM RaptPill")
     fun observePills(): Flow<List<RaptPill>>
-
-    @Query(
-        "SELECT RaptPill.macAddress FROM RaptPill " +
-                "ORDER BY RaptPill.pillId ASC LIMIT 1",
-    )
-    suspend fun getFirstPillMacAddress(): String?
 
     @Query(
         "SELECT * FROM RaptPillData " +
@@ -30,14 +20,6 @@ interface RaptPillDao {
                 "WHERE RaptPill.macAddress = :macAddress",
     )
     fun observeData(macAddress: String): Flow<List<RaptPillData>>
-
-    @Query(
-        "SELECT * FROM RaptPillData " +
-                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
-                "WHERE RaptPill.macAddress = :macAddress " +
-                "ORDER BY RaptPillData.timestamp DESC LIMIT 1"
-    )
-    fun observeLatestData(macAddress: String): Flow<RaptPillData?>
 
     @Query(
         "SELECT * FROM RaptPillData " +
@@ -146,9 +128,6 @@ interface RaptPillDao {
 
     @Query("SELECT pillId FROM RaptPill WHERE macAddress = :macAddress")
     suspend fun getPillIdByMacAddress(macAddress: String): Long?
-
-    @Query("SELECT name FROM RaptPill WHERE macAddress = :macAddress")
-    suspend fun getPillNameByMacAddress(macAddress: String): String?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPill(raptPill: RaptPill)

@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.brewthings.app.data.model.Brew
 import com.brewthings.app.ui.component.SectionTitle
 import com.brewthings.app.ui.component.VerticalSpace
-import com.brewthings.app.ui.navigation.legacy.Router
+import com.brewthings.app.ui.navigation.Router
 import com.brewthings.app.util.newOrCached
 import org.koin.androidx.compose.koinViewModel
 

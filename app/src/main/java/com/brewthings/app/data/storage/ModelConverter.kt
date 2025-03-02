@@ -3,17 +3,11 @@ package com.brewthings.app.data.storage
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.model.ScannedRaptPillData
 
-typealias ModelRaptPill = com.brewthings.app.data.model.RaptPill
 typealias ModelRaptPillData = com.brewthings.app.data.model.RaptPillData
 
 typealias DaoRaptPill = RaptPill
 typealias DaoRaptPillData = RaptPillData
 typealias DaoRaptPillReadings = RaptPillReadings
-
-fun ModelRaptPill.toDaoItem(): DaoRaptPill = DaoRaptPill(
-    macAddress = macAddress,
-    name = name,
-)
 
 fun ScannedRaptPill.toDaoItem(): DaoRaptPill = DaoRaptPill(
     macAddress = macAddress,

@@ -2,7 +2,6 @@ package com.brewthings.app.ui.component.insights
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +21,6 @@ import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.util.Logger
 import kotlinx.datetime.Instant
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun InsightsPager(
     dataTypes: List<DataType>,

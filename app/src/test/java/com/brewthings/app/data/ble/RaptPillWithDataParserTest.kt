@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test
 class RaptPillWithDataParserTest {
     @Test
     fun parseValidPillData() {
-        val hexString = "5054020001C01D9DBD95AB44BA0232FC8BC52112796400"
-        val byteArray = hexStringToByteArray(hexString)
+        val byteArray = "5054020001C01D9DBD95AB44BA0232FC8BC52112796400".toByteArray()
         val data = RaptPillParser.parse(byteArray)
         with(data) {
             assertTrue(gravityVelocity == -2.4627526f)
@@ -19,11 +18,10 @@ class RaptPillWithDataParserTest {
             assertTrue(battery.toDouble() == 100.0)
         }
     }
-    private fun hexStringToByteArray(s: String): ByteArray {
-        val len = s.length
-        val data = ByteArray(len / 2)
-        for (i in 0 until len step 2) {
-            data[i / 2] = ((Character.digit(s[i], 16) shl 4) + Character.digit(s[i + 1], 16)).toByte()
+    private fun String.toByteArray(): ByteArray {
+        val data = ByteArray(length / 2)
+        for (i in indices step 2) {
+            data[i / 2] = ((Character.digit(this[i], 16) shl 4) + Character.digit(this[i + 1], 16)).toByte()
         }
         return data
     }

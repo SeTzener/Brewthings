@@ -49,7 +49,7 @@ import com.brewthings.app.ui.component.BackgroundStatusBar
 import com.brewthings.app.ui.component.graph.Graph
 import com.brewthings.app.ui.component.insights.InsightsPager
 import com.brewthings.app.ui.converter.toLabel
-import com.brewthings.app.ui.navigation.legacy.Router
+import com.brewthings.app.ui.navigation.Router
 import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.qualifier.named

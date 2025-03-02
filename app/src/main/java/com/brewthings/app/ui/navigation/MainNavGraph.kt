@@ -1,4 +1,4 @@
-package com.brewthings.app.ui.navigation.legacy
+package com.brewthings.app.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember

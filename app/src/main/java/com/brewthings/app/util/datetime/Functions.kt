@@ -1,14 +1,14 @@
 package com.brewthings.app.util.datetime
 
+import java.time.format.DateTimeFormatter
+import kotlin.math.roundToLong
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
-import java.time.format.DateTimeFormatter
-import kotlin.math.roundToLong
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.hours
 
 fun daysBetweenIgnoringTime(instant1: Instant, instant2: Instant): Int {
     val timeZone = TimeZone.UTC
@@ -41,9 +41,6 @@ fun isYesterday(date: Instant, now: Instant, timeZone: TimeZone): Boolean {
     val nowLocalDate = now.toLocalDateTime(timeZone)
     return localOffsetDate.dayOfYear == nowLocalDate.dayOfYear
 }
-
-fun ClosedRange<Instant>.contains(otherRange: ClosedRange<Instant>): Boolean =
-    contains(otherRange.start) && contains(otherRange.endInclusive)
 
 /**
  * Rounds the given milliseconds since epoch [Long] to the closest hour.

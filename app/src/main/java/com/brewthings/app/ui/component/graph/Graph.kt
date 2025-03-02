@@ -1,6 +1,5 @@
 package com.brewthings.app.ui.component.graph
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,7 +20,6 @@ fun Graph(
 ) {
     val density: Density = LocalDensity.current
     val textSize = MaterialTheme.typography.labelMedium.fontSize
-    val isDarkTheme = isSystemInDarkTheme()
     val textColor = MaterialTheme.colorScheme.onBackground
     val primaryColor = MaterialTheme.colorScheme.primary
 
@@ -39,7 +37,6 @@ fun Graph(
                 selectedIndex = selectedIndex,
                 density = density,
                 textSize = textSize,
-                isDarkTheme = isDarkTheme,
                 textColor = textColor,
                 primaryColor = primaryColor,
                 onSelect = onSelect,
@@ -49,7 +46,6 @@ fun Graph(
             chart.refresh(
                 chartData = chartData,
                 selectedIndex = selectedIndex,
-                isDarkTheme = isDarkTheme,
                 textColor = textColor,
                 primaryColor = primaryColor,
             )

@@ -1,4 +1,4 @@
-package com.brewthings.app.ui.navigation.legacy
+package com.brewthings.app.ui.navigation
 
 import androidx.navigation.NavController
 import com.brewthings.app.data.model.Brew

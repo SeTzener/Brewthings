@@ -45,28 +45,26 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.juul.kable.Bluetooth
 import com.juul.kable.Reason
 
-val Bluetooth.permissionsNeeded: List<String> by lazy {
-    when {
-        // If your app targets Android 9 (API level 28) or lower, you can declare the ACCESS_COARSE_LOCATION permission
-        // instead of the ACCESS_FINE_LOCATION permission.
-        // https://developer.android.com/guide/topics/connectivity/bluetooth/permissions#declare-android11-or-lower
-        SDK_INT <= VERSION_CODES.P -> listOf(ACCESS_COARSE_LOCATION)
+private val permissionsNeeded: List<String> = when {
+    // If your app targets Android 9 (API level 28) or lower, you can declare the ACCESS_COARSE_LOCATION permission
+    // instead of the ACCESS_FINE_LOCATION permission.
+    // https://developer.android.com/guide/topics/connectivity/bluetooth/permissions#declare-android11-or-lower
+    SDK_INT <= VERSION_CODES.P -> listOf(ACCESS_COARSE_LOCATION)
 
-        // ACCESS_FINE_LOCATION is necessary because, on Android 11 (API level 30) and lower, a Bluetooth scan could
-        // potentially be used to gather information about the location of the user.
-        // https://developer.android.com/guide/topics/connectivity/bluetooth/permissions#declare-android11-or-lower
-        SDK_INT <= VERSION_CODES.R -> listOf(ACCESS_FINE_LOCATION)
+    // ACCESS_FINE_LOCATION is necessary because, on Android 11 (API level 30) and lower, a Bluetooth scan could
+    // potentially be used to gather information about the location of the user.
+    // https://developer.android.com/guide/topics/connectivity/bluetooth/permissions#declare-android11-or-lower
+    SDK_INT <= VERSION_CODES.R -> listOf(ACCESS_FINE_LOCATION)
 
-        // If your app targets Android 12 (API level 31) or higher, declare the following permissions in your app's
-        // manifest file:
-        //
-        // 1. If your app looks for Bluetooth devices, such as BLE peripherals, declare the `BLUETOOTH_SCAN` permission.
-        // 2. If your app makes the current device discoverable to other Bluetooth devices, declare the
-        //    `BLUETOOTH_ADVERTISE` permission.
-        // 3. If your app communicates with already-paired Bluetooth devices, declare the BLUETOOTH_CONNECT permission.
-        // https://developer.android.com/guide/topics/connectivity/bluetooth/permissions#declare-android12-or-higher
-        else /* SDK_INT >= S */ -> listOf(BLUETOOTH_SCAN, BLUETOOTH_CONNECT)
-    }
+    // If your app targets Android 12 (API level 31) or higher, declare the following permissions in your app's
+    // manifest file:
+    //
+    // 1. If your app looks for Bluetooth devices, such as BLE peripherals, declare the `BLUETOOTH_SCAN` permission.
+    // 2. If your app makes the current device discoverable to other Bluetooth devices, declare the
+    //    `BLUETOOTH_ADVERTISE` permission.
+    // 3. If your app communicates with already-paired Bluetooth devices, declare the BLUETOOTH_CONNECT permission.
+    // https://developer.android.com/guide/topics/connectivity/bluetooth/permissions#declare-android12-or-higher
+    else /* SDK_INT >= S */ -> listOf(BLUETOOTH_SCAN, BLUETOOTH_CONNECT)
 }
 
 @Composable
@@ -76,7 +74,7 @@ fun BluetoothScanRequirements(
     activityCallbacks: ActivityCallbacks,
     content: @Composable (scanState: BluetoothScanState, onScanClick: () -> Unit) -> Unit
 ) {
-    val permissionsState = rememberMultiplePermissionsState(Bluetooth.permissionsNeeded)
+    val permissionsState = rememberMultiplePermissionsState(permissionsNeeded)
     val bluetoothAvailability by Bluetooth.availability.collectAsStateWithLifecycle(initialValue = null)
 
     var showDialog by remember { mutableStateOf(false) }
