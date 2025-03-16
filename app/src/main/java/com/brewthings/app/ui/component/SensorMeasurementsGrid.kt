@@ -5,17 +5,14 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,7 +61,7 @@ private fun SensorMeasurementCard(measurement: Measurement) {
     ) { textColor, data ->
         val previousValue = data.previousValue
         val value = data.value
-        val headerIconRes = dataType.toIconRes(value)
+        val headerIconRes = dataType.toIconRes(value = value, trimmed = true)
         val trendIconRes = data.trend.toIconRes()
 
         SensorMeasurementCard(
@@ -106,15 +103,15 @@ fun SensorMeasurementCard(
         ConstraintLayout(modifier = Modifier.padding(vertical = verticalPadding)) {
             val (headerIconRef, headerRef, valueRef, unitRef, trendIconRef, footerRef) = createRefs()
 
-            Icon(
+            ScaleToHeightIcon(
                 modifier = Modifier
                     .constrainAs(headerIconRef) {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                     }
-                    .padding(start = 12.dp) // TODO(walt): replace icons, then remove this
-                    .size(36.dp),
-                painter = painterResource(id = headerIconRes),
+                    .padding(horizontal = horizontalPadding),
+                iconRes = headerIconRes,
+                desiredHeight = 32.dp,
                 contentDescription = null,
                 tint = textColor,
             )
@@ -128,7 +125,7 @@ fun SensorMeasurementCard(
                     .padding(
                         start = horizontalPadding,
                         end = horizontalPadding,
-                        top = interVertical,
+                        top = interVertical * 1.5f,
                     )
                     .fillMaxWidth(),
                 text = header,
@@ -164,7 +161,7 @@ fun SensorMeasurementCard(
             )
 
             if (trendIconRes != null) {
-                ScalableIcon(
+                ShrinkToFitIcon(
                     modifier = Modifier
                         .constrainAs(trendIconRef) {
                             bottom.linkTo(valueRef.bottom)
@@ -177,7 +174,7 @@ fun SensorMeasurementCard(
                             top = interVertical,
                             end = horizontalPadding,
                         ),
-                    painter = painterResource(id = trendIconRes),
+                    iconRes = trendIconRes,
                     contentDescription = null,
                     tint = textColor,
                     maxSize = 24.dp,

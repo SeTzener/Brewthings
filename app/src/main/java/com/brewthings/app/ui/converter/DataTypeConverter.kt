@@ -24,22 +24,27 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 
 @Composable
-fun DataType.toIconRes(optionalValue: Float? = null): Int = when (this) {
-    DataType.GRAVITY -> R.drawable.ic_gravity
-    DataType.TEMPERATURE -> R.drawable.ic_temperature
-    DataType.TILT -> R.drawable.ic_tilt
-    DataType.ABV -> R.drawable.ic_abv
-    DataType.VELOCITY_MEASURED -> R.drawable.ic_velocity_measured
-    DataType.VELOCITY_COMPUTED -> R.drawable.ic_velocity_computed
+fun DataType.toIconRes(
+    value: Float? = null,
+    trimmed: Boolean = false,
+): Int = when (this) {
+    DataType.GRAVITY -> if (trimmed) R.drawable.ic_gravity_trimmed else R.drawable.ic_gravity
+    DataType.TEMPERATURE -> if (trimmed) R.drawable.ic_temperature_trimmed else R.drawable.ic_temperature
+    DataType.TILT -> R.drawable.ic_tilt // this asset is already trimmed
+    DataType.ABV -> if (trimmed) R.drawable.ic_abv_trimmed else R.drawable.ic_abv
+    DataType.VELOCITY_MEASURED ->
+        if (trimmed) R.drawable.ic_velocity_measured_trimmed else R.drawable.ic_velocity_measured
+    DataType.VELOCITY_COMPUTED ->
+        if (trimmed) R.drawable.ic_velocity_computed_trimmed else R.drawable.ic_velocity_computed
     DataType.BATTERY -> when {
-        optionalValue == null || optionalValue <= 0f -> R.drawable.ic_battery_0
-        optionalValue <= 0.125f -> R.drawable.ic_battery_1
-        optionalValue <= 0.25f -> R.drawable.ic_battery_2
-        optionalValue <= 0.375f -> R.drawable.ic_battery_3
-        optionalValue <= 0.5f -> R.drawable.ic_battery_4
-        optionalValue <= 0.75f -> R.drawable.ic_battery_5
-        optionalValue < 1f -> R.drawable.ic_battery_6
-        else -> R.drawable.ic_battery_7
+        value == null || value <= 0f -> if (trimmed) R.drawable.ic_battery_0_trimmed else R.drawable.ic_battery_0
+        value <= 0.125f -> if (trimmed) R.drawable.ic_battery_1_trimmed else R.drawable.ic_battery_1
+        value <= 0.25f -> if (trimmed) R.drawable.ic_battery_2_trimmed else R.drawable.ic_battery_2
+        value <= 0.375f -> if (trimmed) R.drawable.ic_battery_3_trimmed else R.drawable.ic_battery_3
+        value <= 0.5f -> if (trimmed) R.drawable.ic_battery_4_trimmed else R.drawable.ic_battery_4
+        value <= 0.75f -> if (trimmed) R.drawable.ic_battery_5_trimmed else R.drawable.ic_battery_5
+        value < 1f -> if (trimmed) R.drawable.ic_battery_6_trimmed else R.drawable.ic_battery_6
+        else -> if (trimmed) R.drawable.ic_battery_7_trimmed else R.drawable.ic_battery_7
     }
 }
 
