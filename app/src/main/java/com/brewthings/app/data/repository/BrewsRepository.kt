@@ -2,14 +2,18 @@ package com.brewthings.app.data.repository
 
 import com.brewthings.app.data.model.Brew
 import com.brewthings.app.data.model.Brews
+import com.brewthings.app.data.model.MacAddress
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.storage.RaptPillDao
 import com.brewthings.app.data.storage.RaptPillReadings
 import com.brewthings.app.data.storage.toModelItem
 import com.brewthings.app.util.calculateFeeding
 import com.google.common.annotations.VisibleForTesting
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 
@@ -33,13 +37,37 @@ class BrewsRepository(
         dao.observeBrewData(
             macAddress = brew.macAddress,
             startDate = brew.og.timestamp,
-            endDate = brew.fgOrLast.timestamp
+            endDate = brew.fgOrLast.timestamp,
         ).map { data ->
             data.map { it.toModelItem() }
         }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun observeCurrentBrew(macAddress: MacAddress): Flow<Brew?> =
+        dao.observeLastOG(macAddress)
+            .flatMapLatest { og ->
+                if (og != null) {
+                    dao.observeDataSince(macAddress, og.readings.timestamp)
+                        .map { data -> data.map { point -> point.toModelItem() } }
+                } else {
+                    flowOf(null)
+                }
+            }
+            .map { data ->
+                if (data != null && !data.containsFG()) {
+                    createBrew(
+                        macAddress = macAddress,
+                        start = data.first(),
+                        end = data.last(),
+                        isCompleted = false,
+                    )
+                } else {
+                    null
+                }
+            }
+
     @VisibleForTesting
-    suspend fun getBrews(macAddress: String): List<Brew> {
+    suspend fun getBrews(macAddress: MacAddress): List<Brew> {
         val brews: MutableList<Brew> = mutableListOf()
 
         // Collect the first list of edges from the flow
@@ -142,7 +170,7 @@ class BrewsRepository(
     }
 
     private suspend fun getFeedingsAndDiluting(
-        macAddress: String,
+        macAddress: MacAddress,
         startDate: Instant,
         endDate: Instant,
     ): List<Float> {
@@ -166,7 +194,12 @@ class BrewsRepository(
         return result
     }
 
-    private suspend fun createBrew(macAddress: String, start: RaptPillData, end: RaptPillData, isCompleted: Boolean) =
+    private suspend fun createBrew(
+        macAddress: MacAddress,
+        start: RaptPillData,
+        end: RaptPillData,
+        isCompleted: Boolean,
+    ) =
         Brew(
             macAddress = macAddress,
             og = start,
@@ -178,4 +211,6 @@ class BrewsRepository(
             fgOrLast = end,
             isCompleted = isCompleted,
         )
+
+    private fun List<RaptPillData>.containsFG(): Boolean = find { it.isFG } != null
 }

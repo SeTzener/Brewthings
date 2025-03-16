@@ -30,7 +30,6 @@ class MpAndroidChart(
     selectedIndex: Int?,
     private val density: Density,
     private val textSize: TextUnit,
-    private var isDarkTheme: Boolean,
     private var textColor: Color,
     primaryColor: Color,
     onSelect: (Int?) -> Unit,
@@ -79,11 +78,9 @@ class MpAndroidChart(
     fun refresh(
         chartData: MpAndroidChartData?,
         selectedIndex: Int?,
-        isDarkTheme: Boolean,
         textColor: Color,
         primaryColor: Color,
     ) {
-        this.isDarkTheme = isDarkTheme
         this.textColor = textColor
         highlightedRenderer.primaryColor = primaryColor.toArgb()
 
@@ -140,7 +137,7 @@ class MpAndroidChart(
         val endDate = chartData.to
         val startDate = maxOf(
             chartData.from,
-            endDate - 7.days
+            endDate - 7.days,
         )
         val visibleGraphTimePeriod = (endDate.epochSeconds - startDate.epochSeconds).toFloat()
         setVisibleXRange(visibleGraphTimePeriod, visibleGraphTimePeriod)

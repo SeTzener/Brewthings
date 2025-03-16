@@ -10,14 +10,14 @@ import androidx.compose.ui.unit.dp
 import com.brewthings.app.data.model.Brew
 import com.brewthings.app.ui.component.SectionTitle
 import com.brewthings.app.ui.component.VerticalSpace
-import com.brewthings.app.ui.navigation.legacy.Router
+import com.brewthings.app.ui.navigation.Router
 import com.brewthings.app.util.newOrCached
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun BrewsScreen(
     router: Router,
-    viewModel: BrewsScreenViewModel = koinViewModel(),
+    viewModel: BrewsViewModel = koinViewModel(),
 ) {
     BrewsScreen(
         state = viewModel.screenState,
@@ -27,7 +27,7 @@ fun BrewsScreen(
 
 @Composable
 fun BrewsScreen(
-    state: BrewsScreenState,
+    state: BrewsState,
     openGraph: (Brew) -> Unit,
 ) {
     val lockedBrews = newOrCached(state.brews, emptyList())

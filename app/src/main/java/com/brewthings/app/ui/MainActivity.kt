@@ -9,7 +9,7 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.brewthings.app.ui.navigation.legacy.MainNavGraph
+import com.brewthings.app.ui.navigation.MainNavGraph
 import com.brewthings.app.ui.theme.BrewthingsTheme
 
 private const val REQUEST_CODE_ENABLE_BLUETOOTH = 55001

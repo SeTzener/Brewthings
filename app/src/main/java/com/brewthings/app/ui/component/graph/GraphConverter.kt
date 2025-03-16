@@ -1,19 +1,13 @@
 package com.brewthings.app.ui.component.graph
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.brewthings.app.ui.component.graph.mpandroid.InvisibleDataSet
 import com.brewthings.app.ui.component.graph.mpandroid.MpAndroidChartData
 import com.brewthings.app.ui.component.graph.mpandroid.VisibleDataSet
-import com.brewthings.app.ui.screen.graph.toLabel
-import com.brewthings.app.ui.theme.Coral
-import com.brewthings.app.ui.theme.DarkTurquoise
-import com.brewthings.app.ui.theme.Gold
-import com.brewthings.app.ui.theme.LimeGreen
-import com.brewthings.app.ui.theme.MediumPurple
-import com.brewthings.app.ui.theme.RedAlert
-import com.brewthings.app.ui.theme.SteelBlue
+import com.brewthings.app.ui.converter.toLineColor
+import com.brewthings.app.ui.converter.toFormatPattern
+import com.brewthings.app.ui.converter.toLabel
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
@@ -102,26 +96,3 @@ private fun GraphSeries.toChartDataSet(): List<ILineDataSet> {
 }
 
 fun List<Entry>.isSequence(): Boolean = size > 1
-
-@Composable
-fun DataType.toLineColor(): Color = when (this) {
-    DataType.GRAVITY -> SteelBlue
-    DataType.TEMPERATURE -> MediumPurple
-    DataType.BATTERY -> RedAlert
-    DataType.TILT -> DarkTurquoise
-    DataType.ABV -> LimeGreen
-    DataType.VELOCITY_MEASURED -> Coral
-    DataType.VELOCITY_COMPUTED -> Gold
-}
-
-@Composable
-private fun DataType.toFormatPattern(): String = when (this) {
-    DataType.GRAVITY -> "0.000"
-    DataType.TEMPERATURE,
-    DataType.BATTERY,
-    DataType.TILT,
-    DataType.ABV,
-    DataType.VELOCITY_MEASURED,
-    DataType.VELOCITY_COMPUTED,
-    -> "#.#"
-}

@@ -10,8 +10,7 @@ import java.util.concurrent.TimeUnit
 /**
  * A [ValueFormatter] that formats dates with a given date format [String].
  *
- * Note: The formatted value is rounded using [roundMsToHour] to work around a floating point accuracy issue, as
- * explained in [SensorValuesChart].
+ * Note: The formatted value is rounded using [roundMsToHour] to work around a floating point accuracy issue.
  */
 class DateValueFormatter(dateFormat: String) : ValueFormatter() {
 

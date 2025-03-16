@@ -76,7 +76,7 @@ object RaptPillParser {
             timestamp = Clock.System.now(),
             temperature = (temperature / 128.0 - 273.15).toFloat(),
             gravity = gravity,
-            gravityVelocity = if (gravityVelocityValid) gravityVelocity else null,
+            rawVelocity = if (gravityVelocityValid) gravityVelocity else null,
             x = x,
             y = y,
             z = z,

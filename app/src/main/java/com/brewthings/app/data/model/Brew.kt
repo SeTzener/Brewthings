@@ -10,7 +10,7 @@ data class Brew(
     val og: RaptPillData,
     val fgOrLast: RaptPillData,
     val isCompleted: Boolean,
-    private val feedings: List<Float>,
+    val feedings: List<Float>,
 ) {
     val durationSinceOG: TimeRange by lazy { TimeRange(og.timestamp, fgOrLast.timestamp) }
     val abv: Float by lazy { calculateABV(og.gravity, fgOrLast.gravity, feedings) ?: 0.0f }

@@ -1,6 +1,7 @@
 package com.brewthings.app.data.repository
 
 import com.brewthings.app.data.ble.RaptPillScanner
+import com.brewthings.app.data.model.MacAddress
 import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.ScannedRaptPill
@@ -17,25 +18,18 @@ class RaptPillRepository(
 ) {
     fun fromBluetooth(): Flow<ScannedRaptPill> = scanner.scan()
 
-    fun fromDatabase(): Flow<List<RaptPill>> = dao.observeAll().map { query ->
-        query.map { db ->
-            RaptPill(
-                macAddress = db.pill.macAddress,
-                name = db.pill.name,
-                data = db.data.map { data ->
-                    data.toModelItem()
-                },
-            )
-        }
-    }
-
-    suspend fun save(scannedRaptPill: ScannedRaptPill) {
+    suspend fun save(
+        scannedRaptPill: ScannedRaptPill,
+        isOg: Boolean? = null,
+        isFg: Boolean? = null,
+        isFeeding: Boolean? = null,
+    ) {
         val pill = scannedRaptPill.toDaoItem()
-        val readings = scannedRaptPill.data.toDaoItem()
+        val readings = scannedRaptPill.data.toDaoItem(isOg = isOg, isFg = isFg, isFeeding = isFeeding)
         dao.insertReadings(pill, readings)
     }
 
-    suspend fun setIsOG(macAddress: String, timestamp: Instant, isOg: Boolean) {
+    suspend fun setIsOG(macAddress: MacAddress, timestamp: Instant, isOg: Boolean) {
         dao.setIsOG(
             macAddress = macAddress,
             timestamp = timestamp,
@@ -43,7 +37,7 @@ class RaptPillRepository(
         )
     }
 
-    suspend fun setIsFG(macAddress: String, timestamp: Instant, isOg: Boolean) {
+    suspend fun setIsFG(macAddress: MacAddress, timestamp: Instant, isOg: Boolean) {
         dao.setIsFG(
             macAddress = macAddress,
             timestamp = timestamp,
@@ -51,20 +45,29 @@ class RaptPillRepository(
         )
     }
 
-    suspend fun updatePill(raptPill: RaptPill) {
-        dao.updatePillData(raptPill = raptPill.toDaoItem())
+    suspend fun updatePillName(macAddress: MacAddress, newName: String) {
+        dao.updatePillName(macAddress, newName)
     }
 
-    fun observeData(macAddress: String): Flow<List<RaptPillData>> =
+    fun observeData(macAddress: MacAddress): Flow<List<RaptPillData>> =
         dao.observeData(macAddress).map { data ->
             data.map { it.toModelItem() }
         }
 
-    suspend fun setFeeding(macAddress: String, timestamp: Instant, isFeeding: Boolean) {
+    suspend fun setFeeding(macAddress: MacAddress, timestamp: Instant, isFeeding: Boolean) {
         dao.setFeeding(
             macAddress = macAddress,
             timestamp = timestamp,
             isFeeding = isFeeding,
         )
+    }
+
+    fun observePills(): Flow<List<RaptPill>> = dao.observePills().map { pills ->
+        pills.map { pill ->
+            RaptPill(
+                macAddress = pill.macAddress,
+                name = pill.name,
+            )
+        }
     }
 }

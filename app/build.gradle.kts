@@ -116,10 +116,13 @@ dependencies {
     implementation(libs.accompanist.systemuicontroller)
 
     // AndroidX AppCompat
-    implementation(libs.app.compat)
+    implementation(libs.androidx.appcompat)
 
     // AndroidX Lifecycle
-    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    // AndroidX DataStore
+    implementation(libs.androidx.datastore.preferences)
 
     // Firebase
     implementation(platform(libs.firebase.bom))
@@ -132,6 +135,9 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.tooling)
+
+    // ConstraintLayout
+    implementation(libs.compose.constraintLayout)
 
     // Navigation Compose
     implementation(libs.navigation.ui)

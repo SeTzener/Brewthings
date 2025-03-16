@@ -42,9 +42,6 @@ fun isYesterday(date: Instant, now: Instant, timeZone: TimeZone): Boolean {
     return localOffsetDate.dayOfYear == nowLocalDate.dayOfYear
 }
 
-fun ClosedRange<Instant>.contains(otherRange: ClosedRange<Instant>): Boolean =
-    contains(otherRange.start) && contains(otherRange.endInclusive)
-
 /**
  * Rounds the given milliseconds since epoch [Long] to the closest hour.
  */

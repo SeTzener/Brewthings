@@ -6,6 +6,7 @@ import com.brewthings.app.data.model.ScannedRaptPillData
 import com.brewthings.app.util.Logger
 import com.brewthings.app.util.asHexString
 import com.juul.kable.Advertisement
+import com.juul.kable.ObsoleteKableApi
 import com.juul.kable.Scanner
 import com.juul.kable.logs.Logging
 import com.juul.kable.logs.SystemLogEngine
@@ -20,6 +21,7 @@ class RaptPillScanner {
     // 16722 = 0x52 0x41 prefix in little endian = `R` `A` = start of "RAPT"
     private val manufacturerId: Int = 16722
 
+    @OptIn(ObsoleteKableApi::class)
     private val scanner = Scanner {
         logging {
             engine = SystemLogEngine

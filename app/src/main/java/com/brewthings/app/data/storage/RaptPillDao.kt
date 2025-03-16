@@ -11,10 +11,6 @@ import kotlinx.datetime.Instant
 
 @Dao
 interface RaptPillDao {
-    @Transaction
-    @Query("SELECT * FROM RaptPill")
-    fun observeAll(): Flow<List<RaptPillWithData>>
-
     @Query("SELECT * FROM RaptPill")
     fun observePills(): Flow<List<RaptPill>>
 
@@ -29,10 +25,19 @@ interface RaptPillDao {
         "SELECT * FROM RaptPillData " +
             "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
             "WHERE RaptPill.macAddress = :macAddress " +
-            "AND RaptPillData.timestamp <= :timestamp " +
-            "ORDER BY RaptPillData.timestamp DESC LIMIT 2",
+            "AND RaptPillData.isOG == 1 " +
+            "ORDER BY RaptPillData.timestamp DESC LIMIT 1",
     )
-    fun observeDataAndPrevious(macAddress: String, timestamp: Instant): Flow<List<RaptPillData>>
+    fun observeLastOG(macAddress: String): Flow<RaptPillData?>
+
+    @Query(
+        "SELECT * FROM RaptPillData " +
+            "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+            "WHERE RaptPill.macAddress = :macAddress " +
+            "AND RaptPillData.timestamp >= :startDate " +
+            "ORDER BY RaptPillData.timestamp ASC",
+    )
+    fun observeDataSince(macAddress: String, startDate: Instant): Flow<List<RaptPillData>>
 
     @Query(
         "SELECT * FROM RaptPillData " +
@@ -56,11 +61,11 @@ interface RaptPillDao {
 
     @Query(
         "SELECT * FROM RaptPillData " +
-                "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
-                "WHERE RaptPill.macAddress = :macAddress " +
-                "AND RaptPillData.timestamp >= :startDate " +
-                "AND RaptPillData.timestamp <= :endDate " +
-                "ORDER BY RaptPillData.timestamp ASC",
+            "JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId " +
+            "WHERE RaptPill.macAddress = :macAddress " +
+            "AND RaptPillData.timestamp >= :startDate " +
+            "AND RaptPillData.timestamp <= :endDate " +
+            "ORDER BY RaptPillData.timestamp ASC",
     )
     suspend fun getBrewData(macAddress: String, startDate: Instant, endDate: Instant): List<RaptPillData>
 
@@ -118,11 +123,11 @@ interface RaptPillDao {
         )
     }
 
+    @Query("SELECT * FROM RaptPill WHERE macAddress = :macAddress")
+    suspend fun getPillByMacAddress(macAddress: String): RaptPill?
+
     @Query("SELECT pillId FROM RaptPill WHERE macAddress = :macAddress")
     suspend fun getPillIdByMacAddress(macAddress: String): Long?
-
-    @Query("SELECT name FROM RaptPill WHERE macAddress = :macAddress")
-    suspend fun getPillNameByMacAddress(macAddress: String): String?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPill(raptPill: RaptPill)
@@ -138,6 +143,12 @@ interface RaptPillDao {
         val pillId = getPillIdByMacAddress(raptPill.macAddress)
             ?: error("No pill found with mac address ${raptPill.macAddress}")
         updatePill(raptPill.copy(pillId = pillId))
+    }
+
+    @Transaction
+    suspend fun updatePillName(macAddress: String, newName: String) {
+        val pill = getPillByMacAddress(macAddress) ?: error("No pill found with mac address $macAddress")
+        updatePill(pill.copy(name = newName))
     }
 
     @Transaction
