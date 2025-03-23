@@ -63,6 +63,11 @@ fun BrewCompositionChart(
         val height = size.height
         val strokePadding = strokeWidth / 2
 
+        // Compute actual heights (each layer builds on top of the previous one)
+        val sweetnessHeight = (animatedSweetness.value / 100f) * height
+        val waterHeight = (animatedWater.value / 100f) * height
+        val abvHeight = (animatedAbv.value / 100f) * height
+
         // Function to calculate width at a specific height (to match the trapezoidal shape)
         fun getWidthAtHeight(fillHeight: Float): Float {
             val bottomWidth = width * 0.6f
@@ -70,14 +75,12 @@ fun BrewCompositionChart(
             return bottomWidth + (width - bottomWidth) * interpolation
         }
 
-        // Function to create trapezoidal path
+        // Function to create a trapezoidal path
         fun createTrapezoidPath(
             startHeight: Float,
             fillHeight: Float,
             paddings: PaddingValues = PaddingValues(0.dp),
         ): Path {
-            if (fillHeight == 0f) return Path()
-
             val bottomWidthAtStart = getWidthAtHeight(startHeight)
             val topWidthAtEnd = getWidthAtHeight(startHeight + fillHeight)
 
@@ -93,26 +96,39 @@ fun BrewCompositionChart(
 
             val bottom = height - startHeight
             val top = bottom - fillHeight
+            val paddedTop = if (fillHeight < paddingTop) top else top + paddingTop
+            val paddedBottom = (bottom - paddingBottom).coerceAtLeast(paddedTop)
 
             return Path().apply {
                 // Start at the bottom of the liquid
-                moveTo(leftBottom + paddingLeft, bottom - paddingBottom)
+                moveTo(leftBottom + paddingLeft, paddedBottom)
                 // Move to the top of the liquid
-                lineTo(leftTop + paddingLeft, top + paddingTop)
+                lineTo(leftTop + paddingLeft, paddedTop)
                 // Top edge
-                lineTo(rightTop - paddingRight, top + paddingTop)
+                lineTo(rightTop - paddingRight, paddedTop)
                 // Bottom edge
-                lineTo(rightBottom - paddingRight, bottom - paddingBottom)
+                lineTo(rightBottom - paddingRight, paddedBottom)
                 close()
             }
         }
 
-        // Draw the glass with trapezoidal shape
-        val glassPath = createTrapezoidPath(0f, height)
+        // Function to draw a filled trapezoidal path
+        fun drawFillPath(
+            color: Color,
+            startHeight: Float,
+            fillHeight: Float,
+            paddings: PaddingValues,
+        ) {
+            drawPath(
+                path = createTrapezoidPath(startHeight, fillHeight, paddings),
+                color = color,
+                style = Fill,
+            )
+        }
 
         // Draw glass outline with rounded corners
         drawPath(
-            path = glassPath,
+            path = createTrapezoidPath(0f, height),
             color = Color.Gray,
             style = Stroke(
                 width = strokeWidth.toPx(),
@@ -121,59 +137,37 @@ fun BrewCompositionChart(
             )
         )
 
-        // Compute actual heights (each layer builds on top of the previous one)
-        val sweetnessHeight = (animatedSweetness.value / 100f) * height
-        val waterHeight = (animatedWater.value / 100f) * height
-        val abvHeight = (animatedAbv.value / 100f) * height
-
-        val sweetnessFillPath = createTrapezoidPath(
+        // Draw the fill layers
+        drawFillPath(
+            color = colors.sweetness,
             startHeight = 0f,
             fillHeight = sweetnessHeight,
             paddings = PaddingValues(
                 start = strokePadding,
                 end = strokePadding,
-                bottom = strokePadding
-            )
+                bottom = strokePadding,
+            ),
         )
 
-        // Draw the sweetness
-        drawPath(
-            path = sweetnessFillPath,
-            color = colors.sweetness,
-            style = Fill
-        )
-
-        val waterFillPath = createTrapezoidPath(
+        drawFillPath(
+            color = colors.water,
             startHeight = sweetnessHeight,
             fillHeight = waterHeight,
             paddings = PaddingValues(
                 start = strokePadding,
                 end = strokePadding,
-            )
+            ),
         )
 
-        // Draw the sweetness
-        drawPath(
-            path = waterFillPath,
-            color = colors.water,
-            style = Fill
-        )
-
-        val abvFillPath = createTrapezoidPath(
+        drawFillPath(
+            color = colors.abv,
             startHeight = sweetnessHeight + waterHeight,
             fillHeight = abvHeight,
             paddings = PaddingValues(
                 start = strokePadding,
                 end = strokePadding,
                 top = strokePadding,
-            )
-        )
-
-        // Draw the abv
-        drawPath(
-            path = abvFillPath,
-            color = colors.abv,
-            style = Fill
+            ),
         )
     }
 }
