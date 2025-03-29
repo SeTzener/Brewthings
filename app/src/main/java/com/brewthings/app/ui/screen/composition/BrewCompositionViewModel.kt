@@ -19,9 +19,9 @@ class BrewCompositionViewModel(
     val screenState: StateFlow<BrewCompositionScreenState> = _screenState
 }
 
-private val Brew.abvPercentage: Float get() = (abv * 100f).coerceIn(0f, 100f)
+private val Brew.abvPercentage: Float get() = abv.coerceIn(0f, 100f)
 
 private val Brew.sweetnessPercentage: Float get() {
-    val sweetness = ((fgOrLast.gravity - fgOrLast.gravity) / (og.gravity - fgOrLast.gravity))
-    return (sweetness * 100f).coerceIn(0f, 100f)
+    val sweetness = 182.460f * (fgOrLast.gravity - 1f)
+    return sweetness.coerceIn(0f, 100f)
 }

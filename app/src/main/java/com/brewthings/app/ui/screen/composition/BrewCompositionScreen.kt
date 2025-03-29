@@ -1,3 +1,5 @@
+@file:Suppress("KotlinConstantConditions")
+
 package com.brewthings.app.ui.screen.composition
 
 import androidx.compose.animation.core.animateFloatAsState
@@ -82,7 +84,7 @@ fun BrewCompositionScreen(
     onBackClick: () -> Unit,
 ) {
     val totalPercentage = state.abvPercentage + state.sweetnessPercentage
-    val remainingPercentage = 100f - totalPercentage
+    val remainingPercentage = (100f - totalPercentage).coerceIn(0f, 100f)
 
     var animateStart by remember { mutableStateOf(false) }
 
