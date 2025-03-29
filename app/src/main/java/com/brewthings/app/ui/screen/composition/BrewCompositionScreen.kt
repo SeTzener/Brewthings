@@ -191,7 +191,7 @@ fun BrewCompositionScreen(
 
                 Text(
                     modifier = Modifier.alpha(animatedWaterVisibility),
-                    text = state.abvPercentage.toWaterLevelDescription(),
+                    text = remainingPercentage.toWaterLevelDescription(),
                     fontWeight = FontWeight.Bold
                 )
 
