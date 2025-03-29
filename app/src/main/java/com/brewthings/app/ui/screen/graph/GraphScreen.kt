@@ -113,7 +113,7 @@ fun GraphScreen(
                             onBrewClicked(lockBrew)
                         }
                     }
-                }
+                },
             )
         },
     ) { paddingValues ->

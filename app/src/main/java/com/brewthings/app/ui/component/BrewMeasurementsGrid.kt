@@ -31,10 +31,10 @@ import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toSimpleFormattedDate
-import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
+import kotlin.time.Duration.Companion.days
 
 @Composable
 fun BrewMeasurementsGrid(

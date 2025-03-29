@@ -93,27 +93,27 @@ fun BrewCompositionScreen(
 
     val animatedSweetness by animateFloatAsState(
         targetValue = if (animateStart) state.sweetnessPercentage else 0f,
-        animationSpec = tween(1000)
+        animationSpec = tween(1000),
     )
     val animatedSweetnessVisibility by animateFloatAsState(
         targetValue = if (animateStart) 1f else 0f,
-        animationSpec = tween(1000)
+        animationSpec = tween(1000),
     )
     val animatedAbv by animateFloatAsState(
         targetValue = if (animateStart) state.abvPercentage else 0f,
-        animationSpec = tween(1000, delayMillis = 1000)
+        animationSpec = tween(1000, delayMillis = 1000),
     )
     val animatedAbvVisibility by animateFloatAsState(
         targetValue = if (animateStart) 1f else 0f,
-        animationSpec = tween(1000, delayMillis = 1000)
+        animationSpec = tween(1000, delayMillis = 1000),
     )
     val animatedWater by animateFloatAsState(
         targetValue = if (animateStart) remainingPercentage else 0f,
-        animationSpec = tween(1000, delayMillis = 2000)
+        animationSpec = tween(1000, delayMillis = 2000),
     )
     val animatedWaterVisibility by animateFloatAsState(
         targetValue = if (animateStart) 1f else 0f,
-        animationSpec = tween(1000, delayMillis = 2000)
+        animationSpec = tween(1000, delayMillis = 2000),
     )
 
     LaunchedEffect(Unit) {
@@ -126,7 +126,7 @@ fun BrewCompositionScreen(
                 navigationIcon = { TopAppBarBackButton(onBackClick) },
                 title = { TopAppBarTitle(stringResource(R.string.brew_composition_title)) },
             )
-        }
+        },
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -134,7 +134,7 @@ fun BrewCompositionScreen(
                 .padding(innerPadding)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             BrewCompositionChart(
                 modifier = Modifier
@@ -150,19 +150,19 @@ fun BrewCompositionScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 CompositionBar(
                     label = stringResource(R.string.brew_composition_sweetness),
                     percentage = animatedSweetness,
                     color = colors.sweetness,
-                    thresholds = getSweetnessThresholds()
+                    thresholds = getSweetnessThresholds(),
                 )
 
                 Text(
                     modifier = Modifier.alpha(animatedSweetnessVisibility),
                     text = state.sweetnessPercentage.toSweetnessLevelDescription(),
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -177,7 +177,7 @@ fun BrewCompositionScreen(
                 Text(
                     modifier = Modifier.alpha(animatedAbvVisibility),
                     text = state.abvPercentage.toAbvLevelDescription(),
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -192,9 +192,8 @@ fun BrewCompositionScreen(
                 Text(
                     modifier = Modifier.alpha(animatedWaterVisibility),
                     text = remainingPercentage.toWaterLevelDescription(),
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
-
             }
         }
     }
@@ -205,7 +204,7 @@ private fun CompositionBar(
     label: String,
     percentage: Float,
     thresholds: List<Float>,
-    color: Color
+    color: Color,
 ) {
     Column {
         Text(label, style = MaterialTheme.typography.bodyLarge)
@@ -248,7 +247,7 @@ private fun ThresholdLinearProgressIndicator(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(8.dp)
+            .height(8.dp),
     ) {
         Canvas(modifier = Modifier.matchParentSize()) {
             val width = size.width
@@ -262,7 +261,7 @@ private fun ThresholdLinearProgressIndicator(
                     color = thresholdColor,
                     start = Offset(xPos, 0f),
                     end = Offset(xPos, height),
-                    strokeWidth = 2.dp.toPx()
+                    strokeWidth = 2.dp.toPx(),
                 )
             }
         }
@@ -271,7 +270,7 @@ private fun ThresholdLinearProgressIndicator(
             progress = progress,
             modifier = Modifier.matchParentSize(),
             color = progressColor,
-            trackColor = Color.Transparent
+            trackColor = Color.Transparent,
         )
     }
 }
@@ -362,8 +361,8 @@ private fun BrewCompositionChart(
             style = Stroke(
                 width = strokeWidth.toPx(),
                 cap = StrokeCap.Round,
-                join = StrokeJoin.Round
-            )
+                join = StrokeJoin.Round,
+            ),
         )
 
         // Draw the fill layers
@@ -492,7 +491,7 @@ fun BrewCompositionScreenPreview() {
             BrewCompositionScreen(
                 state = BrewCompositionScreenState(
                     abvPercentage = 40f,
-                    sweetnessPercentage = 20f
+                    sweetnessPercentage = 20f,
                 ),
                 onBackClick = {},
             )
