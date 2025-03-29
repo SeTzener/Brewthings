@@ -132,14 +132,14 @@ fun BrewCompositionScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp),
+                .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             BrewCompositionChart(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(16.dp),
+                    .padding(24.dp),
                 abvPercentage = animatedAbv,
                 sweetnessPercentage = animatedSweetness,
                 waterPercentage = animatedWater,
@@ -149,7 +149,7 @@ fun BrewCompositionScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .padding(vertical = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 CompositionBar(
