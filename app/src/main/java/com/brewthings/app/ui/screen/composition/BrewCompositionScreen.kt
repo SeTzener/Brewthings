@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -35,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
@@ -55,6 +57,7 @@ import com.brewthings.app.ui.navigation.Router
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.ui.theme.Gold
 import com.brewthings.app.ui.theme.GoldDark
+import com.brewthings.app.ui.theme.GreyNevada
 import com.brewthings.app.ui.theme.LimeGreen
 import com.brewthings.app.ui.theme.LimeGreenDark
 import com.brewthings.app.ui.theme.SteelBlue
@@ -153,6 +156,7 @@ fun BrewCompositionScreen(
                     label = stringResource(R.string.brew_composition_sweetness),
                     percentage = animatedSweetness,
                     color = colors.sweetness,
+                    thresholds = getSweetnessThresholds()
                 )
 
                 Text(
@@ -167,6 +171,7 @@ fun BrewCompositionScreen(
                     label = stringResource(R.string.brew_composition_abv),
                     percentage = animatedAbv,
                     color = colors.abv,
+                    thresholds = getAbvThresholds(),
                 )
 
                 Text(
@@ -181,6 +186,7 @@ fun BrewCompositionScreen(
                     label = stringResource(R.string.brew_composition_water),
                     percentage = animatedWater,
                     color = colors.water,
+                    thresholds = getWaterThresholds(),
                 )
 
                 Text(
@@ -195,19 +201,30 @@ fun BrewCompositionScreen(
 }
 
 @Composable
-private fun CompositionBar(label: String, percentage: Float, color: Color) {
+private fun CompositionBar(
+    label: String,
+    percentage: Float,
+    thresholds: List<Float>,
+    color: Color
+) {
     Column {
         Text(label, style = MaterialTheme.typography.bodyLarge)
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        LinearProgressIndicator(
-            progress = { percentage / 100f },
-            color = color,
+        val trackColor = GreyNevada
+        val thresholdColor = MaterialTheme.colorScheme.surface
+
+        ThresholdLinearProgressIndicator(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(10.dp)
-                .clip(RoundedCornerShape(5.dp))
+                .clip(RoundedCornerShape(5.dp)),
+            trackColor = trackColor,
+            progressColor = color,
+            thresholdColor = thresholdColor,
+            thresholds = thresholds,
+            progress = { percentage / 100f },
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -215,6 +232,46 @@ private fun CompositionBar(label: String, percentage: Float, color: Color) {
         Text(
             text = stringResource(R.string.brew_composition_percent_format, percentage.toInt()),
             textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Composable
+private fun ThresholdLinearProgressIndicator(
+    modifier: Modifier = Modifier,
+    thresholds: List<Float>,
+    progressColor: Color,
+    trackColor: Color,
+    thresholdColor: Color,
+    progress: () -> Float,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(8.dp)
+    ) {
+        Canvas(modifier = Modifier.matchParentSize()) {
+            val width = size.width
+            val height = size.height
+
+            drawRect(color = trackColor, size = size)
+
+            thresholds.forEach { threshold ->
+                val xPos = threshold / 100f * width
+                drawLine(
+                    color = thresholdColor,
+                    start = Offset(xPos, 0f),
+                    end = Offset(xPos, height),
+                    strokeWidth = 2.dp.toPx()
+                )
+            }
+        }
+
+        LinearProgressIndicator(
+            progress = progress,
+            modifier = Modifier.matchParentSize(),
+            color = progressColor,
+            trackColor = Color.Transparent
         )
     }
 }
@@ -364,6 +421,9 @@ private fun Float.toSweetnessLevelDescription(): String {
     return stringResource(R.string.brew_composition_sweetness_level, level)
 }
 
+private fun getSweetnessThresholds() =
+    listOf(3f, 5f, 10f, 15f, 20f, 30f, 40f, 50f, 60f, 70f, 80f, 90f)
+
 @Composable
 private fun Float.toAbvLevelDescription(): String {
     val level = when {
@@ -384,6 +444,8 @@ private fun Float.toAbvLevelDescription(): String {
     return stringResource(R.string.brew_composition_abv_level, level)
 }
 
+private fun getAbvThresholds() = listOf(2f, 5f, 7f, 10f, 12f, 14f, 16f, 18f, 20f, 35f, 50f, 70f)
+
 @Composable
 private fun Float.toWaterLevelDescription(): String = when {
     this <= 10f -> stringResource(R.string.brew_composition_water_level_0_10)
@@ -393,6 +455,8 @@ private fun Float.toWaterLevelDescription(): String = when {
     this <= 90f -> stringResource(R.string.brew_composition_water_level_70_90)
     else -> stringResource(R.string.brew_composition_water_level_90_100)
 }
+
+private fun getWaterThresholds() = listOf(10f, 30f, 50f, 70f, 90f)
 
 data class BrewCompositionColors(
     val stroke: Color,
