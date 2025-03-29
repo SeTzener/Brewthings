@@ -304,6 +304,7 @@ private fun BrewCompositionChart(
 
         // Function to create a trapezoidal path
         fun createTrapezoidPath(
+            isOpen: Boolean,
             startHeight: Float,
             fillHeight: Float,
             paddings: PaddingValues = PaddingValues(0.dp),
@@ -328,15 +329,13 @@ private fun BrewCompositionChart(
             val paddedBottom = (bottom - paddingBottom).coerceAtLeast(paddedTop)
 
             return Path().apply {
-                // Start at the bottom of the liquid
-                moveTo(leftBottom + paddingLeft, paddedBottom)
-                // Move to the top of the liquid
-                lineTo(leftTop + paddingLeft, paddedTop)
-                // Top edge
-                lineTo(rightTop - paddingRight, paddedTop)
-                // Bottom edge
+                moveTo(leftTop + paddingLeft, paddedTop)
+                lineTo(leftBottom + paddingLeft, paddedBottom)
                 lineTo(rightBottom - paddingRight, paddedBottom)
-                close()
+                lineTo(rightTop - paddingRight, paddedTop)
+                if (!isOpen) {
+                    close()
+                }
             }
         }
 
@@ -348,7 +347,12 @@ private fun BrewCompositionChart(
             paddings: PaddingValues,
         ) {
             drawPath(
-                path = createTrapezoidPath(startHeight, fillHeight, paddings),
+                path = createTrapezoidPath(
+                    isOpen = false,
+                    startHeight = startHeight,
+                    fillHeight = fillHeight,
+                    paddings = paddings
+                ),
                 color = color,
                 style = Fill,
             )
@@ -356,7 +360,7 @@ private fun BrewCompositionChart(
 
         // Draw glass outline with rounded corners
         drawPath(
-            path = createTrapezoidPath(0f, height),
+            path = createTrapezoidPath(isOpen = true, startHeight = 0f, fillHeight = height),
             color = Color.Gray,
             style = Stroke(
                 width = strokeWidth.toPx(),
