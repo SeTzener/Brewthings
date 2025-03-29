@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.brewthings.app.ui.ActivityCallbacks
+import com.brewthings.app.ui.screen.composition.BrewCompositionScreen
 import com.brewthings.app.ui.screen.graph.GraphScreen
 
 @Composable
@@ -36,6 +37,10 @@ fun MainNavGraph(activityCallbacks: ActivityCallbacks) {
 
         composable(Destination.BREWS_GRAPH) {
             GraphScreen(router, Destination.BREWS_GRAPH)
+        }
+
+        composable(Destination.BREW_COMPOSITION) {
+            BrewCompositionScreen(router)
         }
     }
 }

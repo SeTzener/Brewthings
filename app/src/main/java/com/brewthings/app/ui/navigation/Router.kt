@@ -23,4 +23,9 @@ class Router(private val navController: NavController) {
         ParameterHolders.BrewGraph.brew = brew
         navController.navigate(route = Destination.BREWS_GRAPH)
     }
+
+    fun goToBrewComposition(brew: Brew) {
+        ParameterHolders.BrewComposition.brew = brew
+        navController.navigate(route = Destination.BREW_COMPOSITION)
+    }
 }

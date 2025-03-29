@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.ui.component.TopAppBarBackButton
 import com.brewthings.app.ui.component.TopAppBarTitle
+import com.brewthings.app.ui.navigation.Router
 import com.brewthings.app.ui.theme.BrewthingsTheme
 import com.brewthings.app.ui.theme.Gold
 import com.brewthings.app.ui.theme.GoldDark
@@ -55,7 +57,22 @@ import com.brewthings.app.ui.theme.LimeGreen
 import com.brewthings.app.ui.theme.LimeGreenDark
 import com.brewthings.app.ui.theme.SteelBlue
 import com.brewthings.app.ui.theme.SteelBlueDark
+import org.koin.androidx.compose.koinViewModel
 import kotlin.math.min
+
+@Composable
+fun BrewCompositionScreen(
+    router: Router,
+    viewModel: BrewCompositionViewModel = koinViewModel(),
+) {
+    val state by viewModel.screenState.collectAsState()
+    BrewCompositionScreen(
+        state = state,
+        onBackClick = {
+            router.back()
+        },
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

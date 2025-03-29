@@ -11,6 +11,7 @@ import com.brewthings.app.data.repository.SettingsRepository
 import com.brewthings.app.data.storage.RaptPillDatabase
 import com.brewthings.app.ui.navigation.Destination
 import com.brewthings.app.ui.screen.brews.BrewsViewModel
+import com.brewthings.app.ui.screen.composition.BrewCompositionViewModel
 import com.brewthings.app.ui.screen.graph.BrewsGraphScreenViewModel
 import com.brewthings.app.ui.screen.graph.GraphScreenViewModel
 import com.brewthings.app.ui.screen.graph.PillGraphScreenViewModel
@@ -34,6 +35,7 @@ val appModule = module {
 
     viewModel { ScanViewModel() }
     viewModel { BrewsViewModel() }
+    viewModel { BrewCompositionViewModel() }
     viewModel<GraphScreenViewModel>(qualifier = named(Destination.PILL_GRAPH)) { PillGraphScreenViewModel() }
     viewModel<GraphScreenViewModel>(qualifier = named(Destination.BREWS_GRAPH)) { BrewsGraphScreenViewModel() }
 }

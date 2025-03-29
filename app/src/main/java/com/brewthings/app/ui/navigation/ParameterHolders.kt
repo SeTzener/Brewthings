@@ -15,4 +15,8 @@ object ParameterHolders {
     object BrewGraph {
         var brew: Brew? = null
     }
+
+    object BrewComposition {
+        var brew: Brew? = null
+    }
 }

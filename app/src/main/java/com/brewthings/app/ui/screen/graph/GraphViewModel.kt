@@ -36,6 +36,8 @@ abstract class GraphScreenViewModel(
     private val screenTitle: String,
     private val showInsightsCardActions: Boolean,
 ) : ViewModel(), KoinComponent {
+    abstract val brew: Brew?
+
     var screenState: GraphState by mutableStateOf(createInitialState())
         private set
 
@@ -90,6 +92,7 @@ abstract class GraphScreenViewModel(
             showInsightsCardActions = showInsightsCardActions,
             dataTypes = graphDataTypes,
             selectedDataTypes = listOf(DataType.GRAVITY),
+            brew = brew,
         )
 
     protected fun loadData() {
@@ -108,6 +111,7 @@ abstract class GraphScreenViewModel(
                             insights = insights,
                         ),
                         feedings = feedings,
+                        brew = brew,
                     )
                 }
         }
@@ -204,6 +208,8 @@ class PillGraphScreenViewModel(
     screenTitle = name ?: macAddress,
     showInsightsCardActions = true,
 ) {
+    override val brew = null
+
     private val repo: RaptPillRepository by inject()
 
     init {
@@ -239,7 +245,7 @@ class PillGraphScreenViewModel(
 }
 
 class BrewsGraphScreenViewModel(
-    private val brew: Brew = ParameterHolders.BrewGraph.brew ?: error("brew is required"),
+    override val brew: Brew = ParameterHolders.BrewGraph.brew ?: error("brew is required"),
 ) : GraphScreenViewModel(
     screenTitle = brew.macAddress, // TODO(walt): change
     showInsightsCardActions = false,

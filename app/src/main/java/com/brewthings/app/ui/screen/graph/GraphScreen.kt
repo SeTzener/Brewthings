@@ -28,7 +28,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,8 +40,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.DataType
+import com.brewthings.app.data.model.Brew
 import com.brewthings.app.ui.component.BackgroundNavigationBar
 import com.brewthings.app.ui.component.BackgroundStatusBar
+import com.brewthings.app.ui.component.BrewCompositionAction
 import com.brewthings.app.ui.component.TopAppBarBackButton
 import com.brewthings.app.ui.component.TopAppBarTitle
 import com.brewthings.app.ui.component.graph.Graph
@@ -62,6 +63,9 @@ fun GraphScreen(
     GraphScreen(
         screenState = viewModel.screenState,
         onBackClick = { router.back() },
+        onBrewClicked = { brew ->
+            router.goToBrewComposition(brew)
+        },
         viewModel::toggleDataType,
         viewModel::onGraphSelect,
         viewModel::onPagerSelect,
@@ -76,6 +80,7 @@ fun GraphScreen(
 fun GraphScreen(
     screenState: GraphState,
     onBackClick: () -> Unit,
+    onBrewClicked: (Brew) -> Unit,
     toggleDataType: (DataType) -> Unit,
     onGraphSelect: (Int?) -> Unit,
     onPagerSelect: (Int) -> Unit,
@@ -97,10 +102,18 @@ fun GraphScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            GraphTopBar(
+            TopAppBar(
+                title = { TopAppBarTitle(screenState.title) },
+                navigationIcon = { TopAppBarBackButton(onBackClick) },
                 scrollBehavior = scrollBehavior,
-                title = screenState.title,
-                onBackClick = onBackClick,
+                actions = {
+                    val lockBrew = screenState.brew
+                    if (lockBrew != null) {
+                        BrewCompositionAction {
+                            onBrewClicked(lockBrew)
+                        }
+                    }
+                }
             )
         },
     ) { paddingValues ->
@@ -154,24 +167,6 @@ fun GraphScreen(
             }
         }
     }
-}
-
-@Composable
-fun GraphTopBar(
-    scrollBehavior: TopAppBarScrollBehavior,
-    title: String,
-    onBackClick: () -> Unit,
-) {
-    TopAppBar(
-        title = { TopAppBarTitle(title) },
-        navigationIcon = { TopAppBarBackButton(onBackClick) },
-        scrollBehavior = scrollBehavior,
-    )
-}
-
-@Composable
-fun TopAppBarBackButton(onClick: () -> Unit) {
-    TODO("Not yet implemented")
 }
 
 @Composable
