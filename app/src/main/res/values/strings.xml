@@ -103,10 +103,10 @@
     <string name="brew_composition_sweetness">Sweetness</string>
     <string name="brew_composition_sweetness_level">Sweet like %s.</string>
     <string name="brew_composition_sweetness_level_0_3">cucumber water</string>
-    <string name="brew_composition_sweetness_level_3_5">a hint of fruit</string>
-    <string name="brew_composition_sweetness_level_5_10">green tea</string>
-    <string name="brew_composition_sweetness_level_10_15">a crisp apple</string>
-    <string name="brew_composition_sweetness_level_15_20">a ripe pear</string>
+    <string name="brew_composition_sweetness_level_3_5">chamomile tea</string>
+    <string name="brew_composition_sweetness_level_5_10">an apple</string>
+    <string name="brew_composition_sweetness_level_10_15">a juicy pear</string>
+    <string name="brew_composition_sweetness_level_15_20">a ripe mango</string>
     <string name="brew_composition_sweetness_level_20_30">honey</string>
     <string name="brew_composition_sweetness_level_30_40">caramel syrup</string>
     <string name="brew_composition_sweetness_level_40_50">molasses</string>
