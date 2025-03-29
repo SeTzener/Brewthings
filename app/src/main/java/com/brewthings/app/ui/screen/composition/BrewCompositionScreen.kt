@@ -3,6 +3,7 @@ package com.brewthings.app.ui.screen.composition
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,10 +15,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,28 +38,39 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.brewthings.app.R
+import com.brewthings.app.ui.component.TopAppBarBackButton
+import com.brewthings.app.ui.component.TopAppBarTitle
 import com.brewthings.app.ui.theme.BrewthingsTheme
+import com.brewthings.app.ui.theme.Gold
+import com.brewthings.app.ui.theme.GoldDark
+import com.brewthings.app.ui.theme.LimeGreen
+import com.brewthings.app.ui.theme.LimeGreenDark
+import com.brewthings.app.ui.theme.SteelBlue
+import com.brewthings.app.ui.theme.SteelBlueDark
 import kotlin.math.min
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BrewCompositionScreen(
-    abvPercentage: Float,
-    sweetnessPercentage: Float,
-    modifier: Modifier = Modifier
+    state: BrewCompositionScreenState,
+    colors: BrewCompositionColors = BrewCompositionColors.default(),
+    onBackClick: () -> Unit,
 ) {
-    val totalPercentage = abvPercentage + sweetnessPercentage
+    val totalPercentage = state.abvPercentage + state.sweetnessPercentage
     val remainingPercentage = 100f - totalPercentage
 
     var animateStart by remember { mutableStateOf(false) }
 
     val animatedSweetness by animateFloatAsState(
-        targetValue = if (animateStart) sweetnessPercentage else 0f,
+        targetValue = if (animateStart) state.sweetnessPercentage else 0f,
         animationSpec = tween(1000)
     )
     val animatedSweetnessVisibility by animateFloatAsState(
@@ -63,7 +78,7 @@ fun BrewCompositionScreen(
         animationSpec = tween(1000)
     )
     val animatedAbv by animateFloatAsState(
-        targetValue = if (animateStart) abvPercentage else 0f,
+        targetValue = if (animateStart) state.abvPercentage else 0f,
         animationSpec = tween(1000, delayMillis = 1000)
     )
     val animatedAbvVisibility by animateFloatAsState(
@@ -74,69 +89,94 @@ fun BrewCompositionScreen(
         targetValue = if (animateStart) remainingPercentage else 0f,
         animationSpec = tween(1000, delayMillis = 2000)
     )
+    val animatedWaterVisibility by animateFloatAsState(
+        targetValue = if (animateStart) 1f else 0f,
+        animationSpec = tween(1000, delayMillis = 2000)
+    )
 
     LaunchedEffect(Unit) {
         animateStart = true
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.weight(0.2f))
-
-        BrewCompositionChart(
-            modifier = Modifier
-                .weight(1f),
-            abvPercentage = animatedAbv,
-            sweetnessPercentage = animatedSweetness,
-            waterPercentage = animatedWater,
-            colors = BrewCompositionChartColors(
-                abv = Color(0xFFB71C1C),
-                sweetness = Color(0xFFFFC107),
-                water = Color(0xFFB3E5FC),
-                stroke = Color.Gray,
-            ),
-        )
-
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                navigationIcon = { TopAppBarBackButton(onBackClick) },
+                title = { TopAppBarTitle(stringResource(R.string.brew_composition_title)) },
+            )
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CompositionBar("Sweetness", animatedSweetness, Color(0xFFFFC107))
-
-            Text(
-                modifier = Modifier.alpha(animatedSweetnessVisibility),
-                text = "Sweet like honey",
-                color = Color(0xFFFFC107),
-                fontWeight = FontWeight.Bold
+            BrewCompositionChart(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(16.dp),
+                abvPercentage = animatedAbv,
+                sweetnessPercentage = animatedSweetness,
+                waterPercentage = animatedWater,
+                colors = colors,
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                CompositionBar(
+                    label = stringResource(R.string.brew_composition_sweetness),
+                    percentage = animatedSweetness,
+                    color = colors.sweetness,
+                )
 
-            CompositionBar("Alcohol", animatedAbv, Color(0xFFB71C1C))
+                Text(
+                    modifier = Modifier.alpha(animatedSweetnessVisibility),
+                    text = state.sweetnessPercentage.toSweetnessLevelDescription(),
+                    fontWeight = FontWeight.Bold
+                )
 
-            Text(
-                modifier = Modifier.alpha(animatedAbvVisibility),
-                text = "Strong like mead",
-                color = Color(0xFFB71C1C),
-                fontWeight = FontWeight.Bold
-            )
+                Spacer(modifier = Modifier.height(4.dp))
 
-            Spacer(modifier = Modifier.height(4.dp))
+                CompositionBar(
+                    label = stringResource(R.string.brew_composition_abv),
+                    percentage = animatedAbv,
+                    color = colors.abv,
+                )
 
-            CompositionBar("Water & Other Compounds", animatedWater, Color(0xFFB3E5FC))
+                Text(
+                    modifier = Modifier.alpha(animatedAbvVisibility),
+                    text = state.abvPercentage.toAbvLevelDescription(),
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                CompositionBar(
+                    label = stringResource(R.string.brew_composition_water),
+                    percentage = animatedWater,
+                    color = colors.water,
+                )
+
+                Text(
+                    modifier = Modifier.alpha(animatedWaterVisibility),
+                    text = state.abvPercentage.toWaterLevelDescription(),
+                    fontWeight = FontWeight.Bold
+                )
+
+            }
         }
     }
 }
 
 @Composable
-fun CompositionBar(label: String, percentage: Float, color: Color) {
+private fun CompositionBar(label: String, percentage: Float, color: Color) {
     Column {
         Text(label, style = MaterialTheme.typography.bodyLarge)
 
@@ -153,22 +193,25 @@ fun CompositionBar(label: String, percentage: Float, color: Color) {
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        Text("${percentage.toInt()}%", textAlign = TextAlign.Center)
+        Text(
+            text = stringResource(R.string.brew_composition_percent_format, percentage.toInt()),
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
 @Composable
-fun BrewCompositionChart(
+private fun BrewCompositionChart(
     modifier: Modifier = Modifier,
     abvPercentage: Float,
     waterPercentage: Float,
     sweetnessPercentage: Float,
-    colors: BrewCompositionChartColors,
+    colors: BrewCompositionColors,
     strokeWidth: Dp = 12.dp,
 ) {
     Canvas(modifier = modifier.fillMaxSize()) {
         val height = size.height
-        val width = min(size.width, size.height)
+        val width = min(size.width, 1.5f * size.height)
         val startWidth = size.width - width
         val strokePadding = strokeWidth / 2
 
@@ -195,7 +238,8 @@ fun BrewCompositionChart(
 
             val paddingBottom = paddings.calculateBottomPadding().toPx()
             val paddingTop = paddings.calculateTopPadding().toPx()
-            val paddingLeft = paddings.calculateStartPadding(LayoutDirection.Ltr).toPx() + startWidth
+            val paddingLeft =
+                paddings.calculateStartPadding(LayoutDirection.Ltr).toPx() + startWidth
             val paddingRight = paddings.calculateEndPadding(LayoutDirection.Ltr).toPx()
 
             val leftBottom = (width - bottomWidthAtStart) / 2
@@ -281,22 +325,93 @@ fun BrewCompositionChart(
     }
 }
 
-data class BrewCompositionChartColors(
+@Composable
+private fun Float.toSweetnessLevelDescription(): String {
+    val level = when {
+        this <= 3f -> stringResource(R.string.brew_composition_sweetness_level_0_3)
+        this <= 5f -> stringResource(R.string.brew_composition_sweetness_level_3_5)
+        this <= 10f -> stringResource(R.string.brew_composition_sweetness_level_5_10)
+        this <= 15f -> stringResource(R.string.brew_composition_sweetness_level_10_15)
+        this <= 20f -> stringResource(R.string.brew_composition_sweetness_level_15_20)
+        this <= 30f -> stringResource(R.string.brew_composition_sweetness_level_20_30)
+        this <= 40f -> stringResource(R.string.brew_composition_sweetness_level_30_40)
+        this <= 50f -> stringResource(R.string.brew_composition_sweetness_level_40_50)
+        this <= 60f -> stringResource(R.string.brew_composition_sweetness_level_50_60)
+        this <= 70f -> stringResource(R.string.brew_composition_sweetness_level_60_70)
+        this <= 80f -> stringResource(R.string.brew_composition_sweetness_level_70_80)
+        this <= 90f -> stringResource(R.string.brew_composition_sweetness_level_80_90)
+        else -> stringResource(R.string.brew_composition_sweetness_level_90_100)
+    }
+    return stringResource(R.string.brew_composition_sweetness_level, level)
+}
+
+@Composable
+private fun Float.toAbvLevelDescription(): String {
+    val level = when {
+        this <= 2f -> stringResource(R.string.brew_composition_abv_level_0_2)
+        this <= 5f -> stringResource(R.string.brew_composition_abv_level_2_5)
+        this <= 7f -> stringResource(R.string.brew_composition_abv_level_5_7)
+        this <= 10f -> stringResource(R.string.brew_composition_abv_level_7_10)
+        this <= 12f -> stringResource(R.string.brew_composition_abv_level_10_12)
+        this <= 14f -> stringResource(R.string.brew_composition_abv_level_12_14)
+        this <= 16f -> stringResource(R.string.brew_composition_abv_level_14_16)
+        this <= 18f -> stringResource(R.string.brew_composition_abv_level_16_18)
+        this <= 20f -> stringResource(R.string.brew_composition_abv_level_18_20)
+        this <= 35f -> stringResource(R.string.brew_composition_abv_level_20_35)
+        this <= 50f -> stringResource(R.string.brew_composition_abv_level_35_50)
+        this <= 70f -> stringResource(R.string.brew_composition_abv_level_50_70)
+        else -> stringResource(R.string.brew_composition_abv_level_70_100)
+    }
+    return stringResource(R.string.brew_composition_abv_level, level)
+}
+
+@Composable
+private fun Float.toWaterLevelDescription(): String = when {
+    this <= 10f -> stringResource(R.string.brew_composition_water_level_0_10)
+    this <= 30f -> stringResource(R.string.brew_composition_water_level_10_30)
+    this <= 50f -> stringResource(R.string.brew_composition_water_level_30_50)
+    this <= 70f -> stringResource(R.string.brew_composition_water_level_50_70)
+    this <= 90f -> stringResource(R.string.brew_composition_water_level_70_90)
+    else -> stringResource(R.string.brew_composition_water_level_90_100)
+}
+
+data class BrewCompositionColors(
     val stroke: Color,
     val abv: Color,
     val sweetness: Color,
     val water: Color,
-)
+) {
+    companion object {
+        @Composable
+        fun default() = if (isSystemInDarkTheme()) {
+            BrewCompositionColors(
+                stroke = MaterialTheme.colorScheme.onSurface,
+                abv = LimeGreenDark,
+                sweetness = GoldDark,
+                water = SteelBlueDark,
+            )
+        } else {
+            BrewCompositionColors(
+                stroke = MaterialTheme.colorScheme.onSurface,
+                abv = LimeGreen,
+                sweetness = Gold,
+                water = SteelBlue,
+            )
+        }
+    }
+}
 
-@Preview
+@PreviewLightDark
 @Composable
 fun BrewCompositionScreenPreview() {
     BrewthingsTheme {
         Surface {
             BrewCompositionScreen(
-                abvPercentage = 40f,
-                sweetnessPercentage = 20f,
-                modifier = Modifier.fillMaxSize()
+                state = BrewCompositionScreenState(
+                    abvPercentage = 40f,
+                    sweetnessPercentage = 20f
+                ),
+                onBackClick = {},
             )
         }
     }
