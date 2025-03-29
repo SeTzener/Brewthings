@@ -14,6 +14,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,16 +27,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.BluetoothScanState
 import com.brewthings.app.data.domain.Device
 import com.brewthings.app.data.domain.MockDevice
 import com.brewthings.app.ui.theme.BrewthingsTheme
-import com.brewthings.app.ui.theme.Grey_Light
+import com.brewthings.app.ui.theme.GreyLight
 
 @Composable
 fun TopAppBarTitle(title: String) {
@@ -102,7 +104,7 @@ fun ScannedDevicesDropdown(
             }
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                color = Grey_Light,
+                color = GreyLight,
             )
             DropdownMenuItem(
                 text = {
@@ -162,18 +164,31 @@ fun SettingsDropdown(items: List<SettingsItem>) {
     }
 }
 
-@Preview
+@Composable
+fun TopAppBarBackButton(
+    onClick: () -> Unit,
+) {
+    IconButton(onClick = onClick) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_arrow_back),
+            contentDescription = null,
+        )
+    }
+}
+
+@PreviewLightDark
 @Composable
 private fun OnboardingTopAppBarPreview() {
     BrewthingsTheme {
         TopAppBar(
+            navigationIcon = { TopAppBarBackButton { } },
             title = { TopAppBarTitle(stringResource(R.string.onboarding_add_device)) },
             actions = { SettingsDropdown(emptyList()) },
         )
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 private fun FullTopAppBarPreview() {
     val devices = listOf(
