@@ -98,7 +98,7 @@
     <string name="unit_velocity">"SG/d"</string>
     <string name="unset_FG">Unset FG</string>
     <string name="unset_OG">Unset OG</string>
-    <string name="brew_composition_title">Brew Composition</string>
+    <string name="brew_composition_title">Profiler</string>
     <string name="brew_composition_percent_format">%d\%%</string>
     <string name="brew_composition_sweetness">Sweetness</string>
     <string name="brew_composition_sweetness_level">Sweet like %s.</string>
