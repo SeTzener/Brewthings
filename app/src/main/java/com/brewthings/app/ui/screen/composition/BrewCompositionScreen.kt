@@ -1,56 +1,77 @@
-package com.brewthings.app.ui.component
+package com.brewthings.app.ui.screen.composition
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.ui.theme.BrewthingsTheme
+import kotlin.math.min
 
 @Composable
-fun BrewCompositionChart(
-    modifier: Modifier = Modifier,
+fun BrewCompositionScreen(
     abvPercentage: Float,
     sweetnessPercentage: Float,
-    colors: BrewCompositionChartColors,
-    strokeWidth: Dp = 8.dp,
+    modifier: Modifier = Modifier
 ) {
     val totalPercentage = abvPercentage + sweetnessPercentage
     val remainingPercentage = 100f - totalPercentage
 
     var animateStart by remember { mutableStateOf(false) }
-    val animatedSweetness = animateFloatAsState(
+
+    val animatedSweetness by animateFloatAsState(
         targetValue = if (animateStart) sweetnessPercentage else 0f,
         animationSpec = tween(1000)
     )
-    val animatedWater = animateFloatAsState(
-        targetValue = if (animateStart) remainingPercentage else 0f,
+    val animatedSweetnessVisibility by animateFloatAsState(
+        targetValue = if (animateStart) 1f else 0f,
+        animationSpec = tween(1000)
+    )
+    val animatedAbv by animateFloatAsState(
+        targetValue = if (animateStart) abvPercentage else 0f,
         animationSpec = tween(1000, delayMillis = 1000)
     )
-    val animatedAbv = animateFloatAsState(
-        targetValue = if (animateStart) abvPercentage else 0f,
+    val animatedAbvVisibility by animateFloatAsState(
+        targetValue = if (animateStart) 1f else 0f,
+        animationSpec = tween(1000, delayMillis = 1000)
+    )
+    val animatedWater by animateFloatAsState(
+        targetValue = if (animateStart) remainingPercentage else 0f,
         animationSpec = tween(1000, delayMillis = 2000)
     )
 
@@ -58,15 +79,103 @@ fun BrewCompositionChart(
         animateStart = true
     }
 
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.weight(0.2f))
+
+        BrewCompositionChart(
+            modifier = Modifier
+                .weight(1f),
+            abvPercentage = animatedAbv,
+            sweetnessPercentage = animatedSweetness,
+            waterPercentage = animatedWater,
+            colors = BrewCompositionChartColors(
+                abv = Color(0xFFB71C1C),
+                sweetness = Color(0xFFFFC107),
+                water = Color(0xFFB3E5FC),
+                stroke = Color.Gray,
+            ),
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 32.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            CompositionBar("Sweetness", animatedSweetness, Color(0xFFFFC107))
+
+            Text(
+                modifier = Modifier.alpha(animatedSweetnessVisibility),
+                text = "Sweet like honey",
+                color = Color(0xFFFFC107),
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            CompositionBar("Alcohol", animatedAbv, Color(0xFFB71C1C))
+
+            Text(
+                modifier = Modifier.alpha(animatedAbvVisibility),
+                text = "Strong like mead",
+                color = Color(0xFFB71C1C),
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            CompositionBar("Water & Other Compounds", animatedWater, Color(0xFFB3E5FC))
+        }
+    }
+}
+
+@Composable
+fun CompositionBar(label: String, percentage: Float, color: Color) {
+    Column {
+        Text(label, style = MaterialTheme.typography.bodyLarge)
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        LinearProgressIndicator(
+            progress = { percentage / 100f },
+            color = color,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(10.dp)
+                .clip(RoundedCornerShape(5.dp))
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Text("${percentage.toInt()}%", textAlign = TextAlign.Center)
+    }
+}
+
+@Composable
+fun BrewCompositionChart(
+    modifier: Modifier = Modifier,
+    abvPercentage: Float,
+    waterPercentage: Float,
+    sweetnessPercentage: Float,
+    colors: BrewCompositionChartColors,
+    strokeWidth: Dp = 12.dp,
+) {
     Canvas(modifier = modifier.fillMaxSize()) {
-        val width = size.width
         val height = size.height
+        val width = min(size.width, size.height)
+        val startWidth = size.width - width
         val strokePadding = strokeWidth / 2
 
         // Compute actual heights (each layer builds on top of the previous one)
-        val sweetnessHeight = (animatedSweetness.value / 100f) * height
-        val waterHeight = (animatedWater.value / 100f) * height
-        val abvHeight = (animatedAbv.value / 100f) * height
+        val sweetnessHeight = (sweetnessPercentage / 100f) * height
+        val waterHeight = (waterPercentage / 100f) * height
+        val abvHeight = (abvPercentage / 100f) * height
 
         // Function to calculate width at a specific height (to match the trapezoidal shape)
         fun getWidthAtHeight(fillHeight: Float): Float {
@@ -86,7 +195,7 @@ fun BrewCompositionChart(
 
             val paddingBottom = paddings.calculateBottomPadding().toPx()
             val paddingTop = paddings.calculateTopPadding().toPx()
-            val paddingLeft = paddings.calculateStartPadding(LayoutDirection.Ltr).toPx()
+            val paddingLeft = paddings.calculateStartPadding(LayoutDirection.Ltr).toPx() + startWidth
             val paddingRight = paddings.calculateEndPadding(LayoutDirection.Ltr).toPx()
 
             val leftBottom = (width - bottomWidthAtStart) / 2
@@ -150,9 +259,9 @@ fun BrewCompositionChart(
         )
 
         drawFillPath(
-            color = colors.water,
+            color = colors.abv,
             startHeight = sweetnessHeight,
-            fillHeight = waterHeight,
+            fillHeight = abvHeight,
             paddings = PaddingValues(
                 start = strokePadding,
                 end = strokePadding,
@@ -160,9 +269,9 @@ fun BrewCompositionChart(
         )
 
         drawFillPath(
-            color = colors.abv,
-            startHeight = sweetnessHeight + waterHeight,
-            fillHeight = abvHeight,
+            color = colors.water,
+            startHeight = sweetnessHeight + abvHeight,
+            fillHeight = waterHeight,
             paddings = PaddingValues(
                 start = strokePadding,
                 end = strokePadding,
@@ -177,29 +286,17 @@ data class BrewCompositionChartColors(
     val abv: Color,
     val sweetness: Color,
     val water: Color,
-) {
-    companion object {
-        val Default = BrewCompositionChartColors(
-            stroke = Color.Gray,
-            sweetness = Color(0xFFFFC107),
-            abv = Color(0xFF81C784),
-            water = Color(0xFFB3E5FC),
-        )
-    }
-}
+)
 
-@Composable
 @Preview
-fun BrewCompositionChartPreview() {
+@Composable
+fun BrewCompositionScreenPreview() {
     BrewthingsTheme {
         Surface {
-            BrewCompositionChart(
-                modifier = Modifier
-                    .height(500.dp)
-                    .padding(4.dp),
+            BrewCompositionScreen(
                 abvPercentage = 40f,
                 sweetnessPercentage = 20f,
-                colors = BrewCompositionChartColors.Default,
+                modifier = Modifier.fillMaxSize()
             )
         }
     }
