@@ -403,9 +403,9 @@ private fun BrewCompositionChart(
 @Composable
 private fun Float.toSweetnessLevelDescription(): String {
     val level = when {
-        this <= 3f -> stringResource(R.string.brew_composition_sweetness_level_0_3)
-        this <= 5f -> stringResource(R.string.brew_composition_sweetness_level_3_5)
-        this <= 10f -> stringResource(R.string.brew_composition_sweetness_level_5_10)
+        this <= 3f -> stringResource(R.string.brew_composition_sweetness_level_00_03)
+        this <= 5f -> stringResource(R.string.brew_composition_sweetness_level_03_05)
+        this <= 10f -> stringResource(R.string.brew_composition_sweetness_level_05_10)
         this <= 15f -> stringResource(R.string.brew_composition_sweetness_level_10_15)
         this <= 20f -> stringResource(R.string.brew_composition_sweetness_level_15_20)
         this <= 30f -> stringResource(R.string.brew_composition_sweetness_level_20_30)
@@ -426,10 +426,10 @@ private fun getSweetnessThresholds() =
 @Composable
 private fun Float.toAbvLevelDescription(): String {
     val level = when {
-        this <= 2f -> stringResource(R.string.brew_composition_abv_level_0_2)
-        this <= 5f -> stringResource(R.string.brew_composition_abv_level_2_5)
-        this <= 7f -> stringResource(R.string.brew_composition_abv_level_5_7)
-        this <= 10f -> stringResource(R.string.brew_composition_abv_level_7_10)
+        this <= 2f -> stringResource(R.string.brew_composition_abv_level_00_02)
+        this <= 5f -> stringResource(R.string.brew_composition_abv_level_02_05)
+        this <= 7f -> stringResource(R.string.brew_composition_abv_level_05_07)
+        this <= 10f -> stringResource(R.string.brew_composition_abv_level_07_10)
         this <= 12f -> stringResource(R.string.brew_composition_abv_level_10_12)
         this <= 14f -> stringResource(R.string.brew_composition_abv_level_12_14)
         this <= 16f -> stringResource(R.string.brew_composition_abv_level_14_16)
@@ -447,7 +447,7 @@ private fun getAbvThresholds() = listOf(2f, 5f, 7f, 10f, 12f, 14f, 16f, 18f, 20f
 
 @Composable
 private fun Float.toWaterLevelDescription(): String = when {
-    this <= 10f -> stringResource(R.string.brew_composition_water_level_0_10)
+    this <= 10f -> stringResource(R.string.brew_composition_water_level_00_10)
     this <= 30f -> stringResource(R.string.brew_composition_water_level_10_30)
     this <= 50f -> stringResource(R.string.brew_composition_water_level_30_50)
     this <= 70f -> stringResource(R.string.brew_composition_water_level_50_70)
