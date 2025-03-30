@@ -20,6 +20,7 @@ import com.brewthings.app.data.repository.SettingsRepository
 import com.brewthings.app.util.Logger
 import com.brewthings.app.util.calculateABV
 import com.brewthings.app.util.datetime.TimeRange
+import com.brewthings.app.util.invertVelocity
 import com.brewthings.app.util.toPercent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -233,12 +234,21 @@ class ScanViewModel : ViewModel(), KoinComponent {
     }
 }
 
-private fun createSensorMeasurements(latest: SensorReadings, previous: SensorReadings?): SensorMeasurements =
+private fun createSensorMeasurements(
+    latest: SensorReadings,
+    previous: SensorReadings?
+): SensorMeasurements =
     listOfNotNull(
         Measurement(DataType.GRAVITY, latest.gravity, previous?.gravity),
         Measurement(DataType.TEMPERATURE, latest.temperature, previous?.temperature),
         Measurement(DataType.BATTERY, latest.battery.toPercent(), previous?.battery?.toPercent()),
-        latest.gravityVelocity?.let { Measurement(DataType.VELOCITY_MEASURED, it, previous?.gravityVelocity) },
+        latest.gravityVelocity?.let {
+            Measurement(
+                DataType.VELOCITY_MEASURED,
+                it.invertVelocity(),
+                previous?.gravityVelocity?.invertVelocity()
+            )
+        },
     )
 
 private fun createBrewMeasurements(
@@ -252,7 +262,8 @@ private fun createBrewMeasurements(
         measurements = listOfNotNull(
             Measurement(
                 dataType = DataType.ABV,
-                value = calculateABV(og = og.gravity, fg = latest.gravity, feedings = feedings) ?: 0f,
+                value = calculateABV(og = og.gravity, fg = latest.gravity, feedings = feedings)
+                    ?: 0f,
                 previousValue = previous?.let {
                     calculateABV(og = og.gravity, fg = it.gravity, feedings = feedings)
                 },
@@ -260,4 +271,8 @@ private fun createBrewMeasurements(
         ),
     )
 
-private data class BrewWithLatestAndPrevious(val brew: Brew?, val latest: SensorReadings, val previous: SensorReadings?)
+private data class BrewWithLatestAndPrevious(
+    val brew: Brew?,
+    val latest: SensorReadings,
+    val previous: SensorReadings?
+)

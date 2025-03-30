@@ -2,6 +2,7 @@ package com.brewthings.app.data.ble
 
 import com.brewthings.app.data.model.ScannedRaptPillData
 import com.brewthings.app.data.utils.toUShort
+import com.brewthings.app.util.validateVelocity
 import kotlinx.datetime.Clock
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -76,7 +77,7 @@ object RaptPillParser {
             timestamp = Clock.System.now(),
             temperature = (temperature / 128.0 - 273.15).toFloat(),
             gravity = gravity,
-            rawVelocity = if (gravityVelocityValid) gravityVelocity else null,
+            rawVelocity = if (gravityVelocityValid && gravityVelocity.validateVelocity()) gravityVelocity else null,
             x = x,
             y = y,
             z = z,
