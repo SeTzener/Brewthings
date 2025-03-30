@@ -19,6 +19,6 @@ fun calculateVelocity(previousData: RaptPillData?, fgData: RaptPillData): Float?
     if (velocity.validateVelocity()) return velocity else return null
 }
 
-fun Float.validateVelocity(): Boolean = (isInfinite() || isNaN() || this > 0 || this < -100)
+fun Float.validateVelocity(): Boolean = isInfinite() || isNaN() || this > 0 || this < -100
 
 fun Float.invertVelocity(): Float = -this
