@@ -16,7 +16,7 @@ fun calculateVelocity(previousData: RaptPillData?, fgData: RaptPillData): Float?
     val gpDrop = (fgData.gravity - previousData.gravity) * 1000f
     val daysBetween = (fgData.timestamp.epochSeconds - previousData.timestamp.epochSeconds).toFloat() / 86_400f
     val velocity = gpDrop / daysBetween
-    if (velocity.validateVelocity()) return velocity else return null
+    return velocity.takeIf { it.validateVelocity() }
 }
 
 fun Float.validateVelocity(): Boolean = isInfinite() || isNaN() || this > 0 || this < -100
