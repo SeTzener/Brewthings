@@ -64,6 +64,7 @@ import com.brewthings.app.ui.theme.SteelBlue
 import com.brewthings.app.ui.theme.SteelBlueDark
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 @Composable
 fun BrewCompositionScreen(
@@ -229,7 +230,10 @@ private fun CompositionBar(
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = stringResource(R.string.brew_composition_percent_format, percentage.toInt()),
+            text = stringResource(
+                R.string.brew_composition_percent_format,
+                percentage.roundToInt()
+            ),
             textAlign = TextAlign.Center,
         )
     }
