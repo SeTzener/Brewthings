@@ -76,7 +76,7 @@ object RaptPillParser {
             timestamp = Clock.System.now(),
             temperature = (temperature / 128.0 - 273.15).toFloat(),
             gravity = gravity,
-            rawVelocity = if (gravityVelocityValid) gravityVelocity else null,
+            rawVelocity = if (gravityVelocityValid) gravityVelocity.sanitizeVelocity() else null,
             x = x,
             y = y,
             z = z,
@@ -84,3 +84,10 @@ object RaptPillParser {
         )
     }
 }
+
+private fun Float.sanitizeVelocity(): Float? =
+    if (isInfinite() || isNaN() || this > -100 || this < 100) {
+        null // Invalid velocity.
+    } else {
+        -1 * this // Invert the sign, to make it more intuitive.
+    }
