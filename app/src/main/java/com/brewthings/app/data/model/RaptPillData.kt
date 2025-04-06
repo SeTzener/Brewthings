@@ -2,7 +2,6 @@ package com.brewthings.app.data.model
 
 import com.brewthings.app.data.domain.BrewStage
 import com.brewthings.app.data.domain.SensorWithTiltReadings
-import com.brewthings.app.util.sanitizeVelocity
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
@@ -20,5 +19,5 @@ data class RaptPillData(
     override val isFG: Boolean,
     override val isFeeding: Boolean,
 ) : SensorWithTiltReadings, BrewStage {
-    override val gravityVelocity: Float? = rawVelocity?.sanitizeVelocity()
+    override val gravityVelocity: Float? = rawVelocity
 }
