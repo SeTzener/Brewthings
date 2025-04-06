@@ -86,7 +86,7 @@ object RaptPillParser {
 }
 
 private fun Float.sanitizeVelocity(): Float? =
-    if (isInfinite() || isNaN() || this > -100 || this < 100) {
+    if (isInfinite() || isNaN() || this < -100 || this > 100) {
         null // Invalid velocity.
     } else {
         -1 * this // Invert the sign, to make it more intuitive.
