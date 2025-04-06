@@ -179,7 +179,7 @@ dependencies {
     testImplementation(libs.serialization.moshi)
     testImplementation(libs.serialization.moshi.kotlin)
 
-    // Integration Testing
+    // Instrumented Testing
     androidTestImplementation(libs.junit5.jupiter.api)
     androidTestRuntimeOnly(libs.junit5.jupiter.engine)
     androidTestImplementation(libs.androidx.test.core)

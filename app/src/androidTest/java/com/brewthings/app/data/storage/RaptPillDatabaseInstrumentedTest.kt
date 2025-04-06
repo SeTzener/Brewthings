@@ -16,7 +16,7 @@ private const val RAPT_PILL_COUNT = 1
 private const val RAPT_PILL_DATA_COUNT = 343
 
 @TestInstance(Lifecycle.PER_CLASS)
-class RaptPillDatabaseTest {
+class RaptPillDatabaseInstrumentedTest {
 
     private lateinit var context: Context
     private lateinit var db: RaptPillDatabase
