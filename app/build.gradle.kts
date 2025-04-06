@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.room)
     alias(libs.plugins.serialization)
     alias(libs.plugins.spotless)
+    alias(libs.plugins.junit5.android)
 }
 
 val appId = stringProperty("app.id")
@@ -68,6 +69,7 @@ android {
         versionCode = generateVersionCode(semanticVersioning, buildVersion)
         versionName = semanticVersioning
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["runnerBuilder"] = "de.mannodermaus.junit5.AndroidJUnit5Builder"
     }
 
     buildTypes {
@@ -107,7 +109,6 @@ android {
 }
 
 dependencies {
-
     // Core Libraries
     implementation(libs.core.ktx)
 
@@ -168,15 +169,21 @@ dependencies {
     ksp(libs.room.compiler)
 
     // Unit Testing
-    testImplementation(libs.junit.jupiter.api)
-    testImplementation(libs.junit.jupiter.engine)
-    testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.junit5.jupiter.api)
+    testImplementation(libs.junit5.jupiter.engine)
+    testImplementation(libs.junit5.jupiter.params)
     testImplementation(libs.kotest.junit5)
     testImplementation(libs.mockk)
     testImplementation(libs.mockk.dsl)
     testImplementation(libs.karumi)
     testImplementation(libs.serialization.moshi)
     testImplementation(libs.serialization.moshi.kotlin)
+
+    // Integration Testing
+    androidTestImplementation(libs.junit5.jupiter.api)
+    androidTestRuntimeOnly(libs.junit5.jupiter.engine)
+    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.runner)
 }
 tasks.withType<Test> {
     useJUnitPlatform()
