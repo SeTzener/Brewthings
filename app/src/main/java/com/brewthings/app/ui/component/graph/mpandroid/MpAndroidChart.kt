@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.brewthings.app.ui.theme.Grey_Nevada
+import com.brewthings.app.ui.theme.GreyNevada
 import com.brewthings.app.ui.theme.Size
 import com.brewthings.app.util.Logger
 import com.github.mikephil.charting.charts.LineChart
@@ -112,7 +112,7 @@ class MpAndroidChart(
             setDrawGridLinesBehindData(false)
             val dashedLineLength = with(density) { Size.Graph.DASHED_LINE_LENGTH.toPx() }
             setGridDashedLine(DashPathEffect(floatArrayOf(dashedLineLength, dashedLineLength), 0f))
-            gridColor = Grey_Nevada.toArgb()
+            gridColor = GreyNevada.toArgb()
             setDrawAxisLine(false)
             textColor = this@MpAndroidChart.textColor.toArgb()
             textSize = this@MpAndroidChart.textSize.value

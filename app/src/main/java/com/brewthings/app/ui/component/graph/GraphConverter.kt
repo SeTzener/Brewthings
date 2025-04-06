@@ -5,9 +5,9 @@ import androidx.compose.ui.graphics.toArgb
 import com.brewthings.app.ui.component.graph.mpandroid.InvisibleDataSet
 import com.brewthings.app.ui.component.graph.mpandroid.MpAndroidChartData
 import com.brewthings.app.ui.component.graph.mpandroid.VisibleDataSet
-import com.brewthings.app.ui.converter.toLineColor
 import com.brewthings.app.ui.converter.toFormatPattern
 import com.brewthings.app.ui.converter.toLabel
+import com.brewthings.app.ui.converter.toLineColor
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 

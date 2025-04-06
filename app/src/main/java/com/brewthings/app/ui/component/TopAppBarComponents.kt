@@ -14,8 +14,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -26,16 +26,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.BluetoothScanState
 import com.brewthings.app.data.domain.Device
 import com.brewthings.app.data.domain.MockDevice
 import com.brewthings.app.ui.theme.BrewthingsTheme
-import com.brewthings.app.ui.theme.Grey_Light
+import com.brewthings.app.ui.theme.GreyLight
 
 @Composable
 fun TopAppBarTitle(title: String) {
@@ -102,7 +103,7 @@ fun ScannedDevicesDropdown(
             }
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                color = Grey_Light,
+                color = GreyLight,
             )
             DropdownMenuItem(
                 text = {
@@ -162,60 +163,65 @@ fun SettingsDropdown(items: List<SettingsItem>) {
     }
 }
 
-@Preview
 @Composable
-private fun OnboardingTopAppBarPreview() {
-    BrewthingsTheme {
-        TopAppBar(
-            title = { TopAppBarTitle(stringResource(R.string.onboarding_add_device)) },
-            actions = { SettingsDropdown(emptyList()) },
+fun TopAppBarBackButton(
+    onClick: () -> Unit,
+) {
+    IconButton(onClick = onClick) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_arrow_back),
+            contentDescription = null,
         )
     }
 }
 
-@Preview
+@Composable
+fun BrewCompositionAction(
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .size(48.dp)
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_percent),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurface,
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun OnboardingTopAppBarPreview() {
+    BrewthingsTheme {
+        TopAppBar(
+            navigationIcon = { TopAppBarBackButton { } },
+            title = { TopAppBarTitle(stringResource(R.string.onboarding_add_device)) },
+            actions = { BrewCompositionAction { } },
+        )
+    }
+}
+
+@PreviewLightDark
 @Composable
 private fun FullTopAppBarPreview() {
-    val devices = listOf(
-        MockDevice(name = "Rapt Pill", macAddress = "AB:CD:EF:AA"),
-        MockDevice(name = "Sample Pill", macAddress = "AB:CD:EF:AB"),
-        MockDevice(name = "Pillolone", macAddress = "AB:CD:EF:BA"),
-    )
-    var selectedDevice: Device by remember { mutableStateOf(devices[1]) }
-
-    var scanState: BluetoothScanState by remember { mutableStateOf(BluetoothScanState.Unavailable) }
-    val onScanClick = {
-        scanState = when (scanState) {
-            BluetoothScanState.Unavailable -> BluetoothScanState.Idle
-            BluetoothScanState.Idle -> BluetoothScanState.InProgress
-            BluetoothScanState.InProgress -> BluetoothScanState.Unavailable
-        }
-    }
-
+    val device = MockDevice(name = "Rapt Pill", macAddress = "AB:CD:EF:AA")
     BrewthingsTheme {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        ScannedDevicesDropdown(
-                            selectedDevice = selectedDevice,
-                            devices = devices,
-                            onSelect = { selectedDevice = it },
-                            onAddDevice = {},
-                        )
-                    },
-                    actions = {
-                        BluetoothScanActionButton(scanState, onScanClick)
-                        SettingsDropdown(
-                            listOf(
-                                SettingsItem(stringResource(R.string.settings_rename_device)) {},
-                            ),
-                        )
-                    },
+        TopAppBar(
+            title = {
+                ScannedDevicesDropdown(
+                    selectedDevice = device,
+                    devices = listOf(device),
+                    onSelect = {},
+                    onAddDevice = {},
                 )
             },
-            content = { paddingValues ->
-                Box(modifier = Modifier.padding(paddingValues))
+            actions = {
+                BluetoothScanActionButton(BluetoothScanState.InProgress) {}
+                SettingsDropdown(listOf())
             },
         )
     }

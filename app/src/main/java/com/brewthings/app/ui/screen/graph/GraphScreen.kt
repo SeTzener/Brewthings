@@ -23,14 +23,11 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,13 +36,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.DataType
+import com.brewthings.app.data.model.Brew
 import com.brewthings.app.ui.component.BackgroundNavigationBar
 import com.brewthings.app.ui.component.BackgroundStatusBar
+import com.brewthings.app.ui.component.BrewCompositionAction
+import com.brewthings.app.ui.component.TopAppBarBackButton
+import com.brewthings.app.ui.component.TopAppBarTitle
 import com.brewthings.app.ui.component.graph.Graph
 import com.brewthings.app.ui.component.insights.InsightsPager
 import com.brewthings.app.ui.converter.toLabel
@@ -63,6 +63,9 @@ fun GraphScreen(
     GraphScreen(
         screenState = viewModel.screenState,
         onBackClick = { router.back() },
+        onBrewClicked = { brew ->
+            router.goToBrewComposition(brew)
+        },
         viewModel::toggleDataType,
         viewModel::onGraphSelect,
         viewModel::onPagerSelect,
@@ -77,6 +80,7 @@ fun GraphScreen(
 fun GraphScreen(
     screenState: GraphState,
     onBackClick: () -> Unit,
+    onBrewClicked: (Brew) -> Unit,
     toggleDataType: (DataType) -> Unit,
     onGraphSelect: (Int?) -> Unit,
     onPagerSelect: (Int) -> Unit,
@@ -98,10 +102,18 @@ fun GraphScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            GraphTopBar(
+            TopAppBar(
+                title = { TopAppBarTitle(screenState.title) },
+                navigationIcon = { TopAppBarBackButton(onBackClick) },
                 scrollBehavior = scrollBehavior,
-                title = screenState.title,
-                onBackClick = onBackClick,
+                actions = {
+                    val lockBrew = screenState.brew
+                    if (lockBrew != null) {
+                        BrewCompositionAction {
+                            onBrewClicked(lockBrew)
+                        }
+                    }
+                },
             )
         },
     ) { paddingValues ->
@@ -155,31 +167,6 @@ fun GraphScreen(
             }
         }
     }
-}
-
-@Composable
-fun GraphTopBar(
-    scrollBehavior: TopAppBarScrollBehavior,
-    title: String,
-    onBackClick: () -> Unit,
-) {
-    TopAppBar(
-        title = {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge,
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_back),
-                    contentDescription = null,
-                )
-            }
-        },
-        scrollBehavior = scrollBehavior,
-    )
 }
 
 @Composable

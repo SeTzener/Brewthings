@@ -52,7 +52,7 @@ fun ScaleToHeightIcon(
         ContextCompat.getDrawable(context, iconRes)
     }
 
-    val intrinsicWidth = drawable?.intrinsicWidth ?: 1  // Avoid division by zero
+    val intrinsicWidth = drawable?.intrinsicWidth ?: 1 // Avoid division by zero
     val intrinsicHeight = drawable?.intrinsicHeight ?: 1
     val aspectRatio = intrinsicWidth.toFloat() / intrinsicHeight.toFloat()
 

@@ -4,6 +4,7 @@ object Destination {
     const val HOME = "home"
     const val PILL_GRAPH = "pill_graph"
     const val BREWS_GRAPH = "brews_graph"
+    const val BREW_COMPOSITION = "brew_composition"
 
     /* Deep links to specific tabs
     const val SCANNING = "$HOME/${Tab.SCAN}"
