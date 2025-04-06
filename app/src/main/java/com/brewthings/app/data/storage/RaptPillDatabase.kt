@@ -41,11 +41,11 @@ abstract class RaptPillDatabase : RoomDatabase() {
             }
         }
 
-        fun create(context: Context): RaptPillDatabase {
+        fun create(context: Context, dbName: String = DATABASE_NAME): RaptPillDatabase {
             return Room.databaseBuilder(
                 context,
                 RaptPillDatabase::class.java,
-                DATABASE_NAME,
+                dbName,
             ).addMigrations(
                 MIGRATION_1_2,
                 MIGRATION_2_3,
