@@ -2,9 +2,10 @@ package com.brewthings.app.data.ble
 
 import com.brewthings.app.data.model.ScannedRaptPillData
 import com.brewthings.app.data.utils.toUShort
-import kotlinx.datetime.Clock
+import com.brewthings.app.util.sanitizeVelocity
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import kotlinx.datetime.Clock
 
 /*
 Process advertisement with metrics.
@@ -84,10 +85,3 @@ object RaptPillParser {
         )
     }
 }
-
-private fun Float.sanitizeVelocity(): Float? =
-    if (isInfinite() || isNaN() || this < -100 || this > 100) {
-        null // Invalid velocity.
-    } else {
-        -1 * this // Invert the sign, to make it more intuitive.
-    }

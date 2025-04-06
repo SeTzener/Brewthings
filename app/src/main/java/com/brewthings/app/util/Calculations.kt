@@ -10,10 +10,17 @@ fun calculateABV(og: Float, fg: Float, feedings: List<Float>): Float? {
     return (og.sumAll(feedings) - fg) * 131.25f
 }
 
-fun calculateVelocity(previousData: RaptPillData?, fgData: RaptPillData): Float? {
-    if (previousData == null) return null
+fun calculateVelocity(previous: RaptPillData?, fg: RaptPillData): Float? {
+    if (previous == null) return null
 
-    val gpDrop = (fgData.gravity - previousData.gravity) * 1000f
-    val daysBetween = (fgData.timestamp.epochSeconds - previousData.timestamp.epochSeconds).toFloat() / 86_400f
-    return gpDrop / daysBetween
+    val gpDrop = (fg.gravity - previous.gravity) * 1000f
+    val daysBetween = (fg.timestamp.epochSeconds - previous.timestamp.epochSeconds) / 86_400f
+    return (gpDrop / daysBetween).sanitizeVelocity()
 }
+
+fun Float.sanitizeVelocity(): Float? =
+    if (isInfinite() || isNaN() || this < -100 || this > 100) {
+        null // Invalid velocity.
+    } else {
+        -1 * this // Invert the sign, to make it more intuitive.
+    }
