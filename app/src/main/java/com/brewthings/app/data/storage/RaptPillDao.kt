@@ -11,6 +11,12 @@ import kotlinx.datetime.Instant
 
 @Dao
 interface RaptPillDao {
+    @Query("SELECT COUNT(*) FROM RaptPill")
+    fun countRaptPills(): Int
+
+    @Query("SELECT COUNT(*) FROM RaptPillData")
+    fun countRaptPillData(): Int
+
     @Query("SELECT * FROM RaptPill")
     fun observePills(): Flow<List<RaptPill>>
 
