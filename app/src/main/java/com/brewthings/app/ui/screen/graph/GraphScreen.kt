@@ -72,6 +72,7 @@ fun GraphScreen(
         viewModel::setIsOG,
         viewModel::setIsFG,
         viewModel::setFeeding,
+        viewModel::deleteMeasurement,
     )
 }
 
@@ -87,6 +88,7 @@ fun GraphScreen(
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
     setFeeding: (Instant, Boolean) -> Unit,
+    deleteMeasurement: (Instant) -> Unit,
 ) {
     BackgroundStatusBar()
     BackgroundNavigationBar()
@@ -162,6 +164,7 @@ fun GraphScreen(
                         setIsFG = setIsFG,
                         setFeeding = setFeeding,
                         showCardActions = screenState.showInsightsCardActions,
+                        deleteMeasurement = deleteMeasurement
                     )
                 }
             }
