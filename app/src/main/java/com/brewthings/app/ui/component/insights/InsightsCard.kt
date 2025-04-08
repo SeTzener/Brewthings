@@ -167,7 +167,7 @@ fun InsightsCard(
                 setIsOG = setIsOG,
                 setIsFG = setIsFG,
                 setFeeding = setFeeding,
-                deleteMeasurement = deleteMeasurement
+                deleteMeasurement = deleteMeasurement,
             )
         }
     }
@@ -180,14 +180,14 @@ fun InsightsActionRow(
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
     setFeeding: (Instant, Boolean) -> Unit,
-    deleteMeasurement: (Instant) -> Unit
+    deleteMeasurement: (Instant) -> Unit,
 ) {
     var isDeleteMeasurement = remember { mutableStateOf(false) }
     if (isDeleteMeasurement.value) {
         deleteMeasurementDialog(
             isDeleteMeasurement = isDeleteMeasurement,
             timestamp = data.timestamp,
-            deleteMeasurement = deleteMeasurement
+            deleteMeasurement = deleteMeasurement,
         )
     }
     Row(
@@ -254,7 +254,7 @@ fun InsightsActionRow(
             onClick = { isDeleteMeasurement.value = true },
             colors = IconButtonDefaults.iconButtonColors(
                 contentColor = Color.Red,
-            )
+            ),
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_delete),
@@ -268,7 +268,7 @@ fun InsightsActionRow(
 private fun deleteMeasurementDialog(
     isDeleteMeasurement: MutableState<Boolean>,
     timestamp: Instant,
-    deleteMeasurement: (Instant) -> Unit
+    deleteMeasurement: (Instant) -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = { isDeleteMeasurement.value = false },
@@ -290,7 +290,7 @@ private fun deleteMeasurementDialog(
             ) {
                 Text(text = stringResource(id = R.string.button_no))
             }
-        }
+        },
     )
 }
 

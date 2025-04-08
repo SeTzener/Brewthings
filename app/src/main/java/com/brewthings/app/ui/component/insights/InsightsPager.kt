@@ -17,7 +17,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.data.domain.DataType
-import com.brewthings.app.data.model.MacAddress
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.util.Logger
 import kotlinx.datetime.Instant

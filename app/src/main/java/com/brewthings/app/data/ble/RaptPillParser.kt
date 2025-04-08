@@ -3,9 +3,9 @@ package com.brewthings.app.data.ble
 import com.brewthings.app.data.model.ScannedRaptPillData
 import com.brewthings.app.data.utils.toUShort
 import com.brewthings.app.util.sanitizeVelocity
+import kotlinx.datetime.Clock
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import kotlinx.datetime.Clock
 
 /*
 Process advertisement with metrics.

@@ -164,7 +164,7 @@ fun GraphScreen(
                         setIsFG = setIsFG,
                         setFeeding = setFeeding,
                         showCardActions = screenState.showInsightsCardActions,
-                        deleteMeasurement = deleteMeasurement
+                        deleteMeasurement = deleteMeasurement,
                     )
                 }
             }

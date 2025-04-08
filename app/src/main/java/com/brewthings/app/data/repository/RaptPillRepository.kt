@@ -4,14 +4,13 @@ import com.brewthings.app.data.ble.RaptPillScanner
 import com.brewthings.app.data.model.MacAddress
 import com.brewthings.app.data.model.RaptPill
 import com.brewthings.app.data.model.RaptPillData
-import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.data.model.ScannedRaptPill
 import com.brewthings.app.data.storage.RaptPillDao
 import com.brewthings.app.data.storage.toDaoItem
 import com.brewthings.app.data.storage.toModelItem
 import kotlinx.coroutines.flow.Flow
-import kotlinx.datetime.Instant
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.Instant
 
 class RaptPillRepository(
     private val scanner: RaptPillScanner,

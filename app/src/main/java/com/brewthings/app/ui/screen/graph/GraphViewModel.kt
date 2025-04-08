@@ -242,7 +242,7 @@ class PillGraphScreenViewModel(
                 repo.setFeeding(
                     macAddress = macAddress,
                     timestamp = timestamp,
-                    isFeeding = isFeeding
+                    isFeeding = isFeeding,
                 )
             }
         }
