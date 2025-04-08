@@ -70,4 +70,10 @@ class RaptPillRepository(
             )
         }
     }
+
+    suspend fun deleteMeasurement(macAddress: MacAddress, timestamp: Instant) {
+        val pillId = dao.getPillIdByMacAddress(macAddress) ?: error("No pill found with mac address $macAddress")
+        val dataId = dao.getPillData(macAddress, timestamp).dataId
+        dao.deletePillData(pillId = pillId, dataId = dataId)
+    }
 }

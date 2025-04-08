@@ -232,7 +232,7 @@ private fun CompositionBar(
         Text(
             text = stringResource(
                 R.string.brew_composition_percent_format,
-                percentage.roundToInt()
+                percentage.roundToInt(),
             ),
             textAlign = TextAlign.Center,
         )
@@ -355,7 +355,7 @@ private fun BrewCompositionChart(
                     isOpen = false,
                     startHeight = startHeight,
                     fillHeight = fillHeight,
-                    paddings = paddings
+                    paddings = paddings,
                 ),
                 color = color,
                 style = Fill,
