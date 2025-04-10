@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.model.Brew
+import com.brewthings.app.data.storage.RaptPillReadings
 import com.brewthings.app.ui.component.BackgroundNavigationBar
 import com.brewthings.app.ui.component.BackgroundStatusBar
 import com.brewthings.app.ui.component.BrewCompositionAction
@@ -72,6 +73,7 @@ fun GraphScreen(
         viewModel::setIsOG,
         viewModel::setIsFG,
         viewModel::setFeeding,
+        viewModel::updateReadings,
     )
 }
 
@@ -87,6 +89,7 @@ fun GraphScreen(
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
     setFeeding: (Instant, Boolean) -> Unit,
+    updateReadings: (RaptPillReadings) -> Unit,
 ) {
     BackgroundStatusBar()
     BackgroundNavigationBar()
@@ -161,6 +164,7 @@ fun GraphScreen(
                         setIsOG = setIsOG,
                         setIsFG = setIsFG,
                         setFeeding = setFeeding,
+                        updateReadings = updateReadings,
                         showCardActions = screenState.showInsightsCardActions,
                     )
                 }
