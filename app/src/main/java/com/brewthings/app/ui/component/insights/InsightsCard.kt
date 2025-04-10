@@ -34,6 +34,7 @@ import com.brewthings.app.R
 import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.domain.Insight
 import com.brewthings.app.data.model.RaptPillInsights
+import com.brewthings.app.data.storage.RaptPillReadings
 import com.brewthings.app.ui.component.BatteryLevelIndicator
 import com.brewthings.app.ui.component.IconAlign
 import com.brewthings.app.ui.component.TextWithIcon
@@ -55,6 +56,7 @@ fun InsightsCard(
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
     setFeeding: (Instant, Boolean) -> Unit,
+    updateReadings: (RaptPillReadings) -> Unit,
     deleteMeasurement: (Instant) -> Unit,
 ) {
     Card {
@@ -610,6 +612,7 @@ fun InsightsCardPreview() {
             setIsOG = { _, _ -> },
             setIsFG = { _, _ -> },
             setFeeding = { _, _ -> },
+            updateReadings = {},
             deleteMeasurement = { _ -> },
         )
     }

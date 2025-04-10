@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.model.RaptPillInsights
+import com.brewthings.app.data.storage.RaptPillReadings
 import com.brewthings.app.util.Logger
 import kotlinx.datetime.Instant
 
@@ -32,6 +33,7 @@ fun InsightsPager(
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
     setFeeding: (Instant, Boolean) -> Unit,
+    updateReadings: (RaptPillReadings) -> Unit,
     deleteMeasurement: (Instant) -> Unit,
 ) {
     val logger by remember { mutableStateOf(Logger("InsightsPager")) }
@@ -65,6 +67,7 @@ fun InsightsPager(
                 setIsFG = setIsFG,
                 setFeeding = setFeeding,
                 feedings = feedings,
+                updateReadings = updateReadings,
                 deleteMeasurement = deleteMeasurement,
             )
         }

@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.brewthings.app.data.model.MacAddress
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Instant
 
@@ -176,11 +177,21 @@ interface RaptPillDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updatePill(raptPill: RaptPill)
 
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updatePillReadings(raptPillData: RaptPillData)
+
     @Transaction
     suspend fun updatePillData(raptPill: RaptPill) {
         val pillId = getPillIdByMacAddress(raptPill.macAddress)
             ?: error("No pill found with mac address ${raptPill.macAddress}")
         updatePill(raptPill.copy(pillId = pillId))
+    }
+
+    @Transaction
+    suspend fun updatePillDataReadings(macAddress: MacAddress, raptPillData: RaptPillData) {
+        val pillId = getPillIdByMacAddress(macAddress)
+            ?: error("No pill found with mac address ${macAddress}")
+        updatePillReadings(raptPillData.copy(pillId = pillId))
     }
 
     @Transaction

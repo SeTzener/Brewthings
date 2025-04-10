@@ -62,6 +62,10 @@ class RaptPillRepository(
         )
     }
 
+    suspend fun updatePillDataReadings(macAddress: MacAddress, raptPillData: RaptPillData) {
+        dao.updatePillDataReadings(macAddress, raptPillData.toDaoItem())
+    }
+
     fun observePills(): Flow<List<RaptPill>> = dao.observePills().map { pills ->
         pills.map { pill ->
             RaptPill(
