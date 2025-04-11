@@ -40,6 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -210,7 +211,11 @@ fun EditReadingsBottomSheet(
     ) {
         var gravity by remember { mutableStateOf(data.gravity.value.toString()) }
         var temperature by remember { mutableStateOf(data.temperature.value.toString()) }
-        var velocity by remember { mutableStateOf(data.gravityVelocity?.value.toString()) }
+        var velocity by remember {
+            mutableStateOf(
+                if (data.gravityVelocity != null) abs(data.gravityVelocity.value).toString() else ""
+            )
+        }
 
         Column(
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -221,7 +226,8 @@ fun EditReadingsBottomSheet(
                 readOnly = false,
                 label = { Text(text = stringResource(R.string.graph_data_label_gravity)) },
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
                 ),
                 leadingIcon = {
                     Icon(
@@ -236,7 +242,8 @@ fun EditReadingsBottomSheet(
                 readOnly = false,
                 label = { Text(text = stringResource(R.string.graph_data_label_temp_full)) },
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
                 ),
                 leadingIcon = {
                     Icon(
@@ -251,7 +258,8 @@ fun EditReadingsBottomSheet(
                 readOnly = false,
                 label = { Text(text = stringResource(R.string.graph_data_label_velocity_measured_full)) },
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
                 ),
                 leadingIcon = {
                     Icon(
