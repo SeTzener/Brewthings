@@ -11,7 +11,6 @@ import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.data.repository.BrewsRepository
 import com.brewthings.app.data.repository.RaptPillRepository
-import com.brewthings.app.data.storage.RaptPillReadings
 import com.brewthings.app.ui.component.graph.DataPoint
 import com.brewthings.app.ui.component.graph.GraphData
 import com.brewthings.app.ui.component.graph.GraphSeries
@@ -85,7 +84,12 @@ abstract class GraphScreenViewModel(
 
     abstract fun setFeeding(timestamp: Instant, isFeeding: Boolean?)
 
-    abstract fun updateReadings(readings: RaptPillReadings)
+    abstract fun updateReadings(
+        timestamp: Instant,
+        gravity: Float,
+        temperature: Float,
+        velocity: Float?
+    )
 
     abstract fun deleteMeasurement(timestamp: Instant)
 
@@ -257,22 +261,20 @@ class PillGraphScreenViewModel(
         }
     }
 
-    override fun updateReadings(readings: RaptPillReadings) {
-        val data = RaptPillData(
-            timestamp = readings.timestamp,
-            temperature = readings.temperature,
-            gravity = readings.gravity,
-            rawVelocity = readings.gravityVelocity,
-            x = readings.x,
-            y = readings.y,
-            z = readings.z,
-            battery = readings.battery,
-            isOG = readings.isOG ?: false,
-            isFG = readings.isFG ?: false,
-            isFeeding = readings.isFeeding ?: false,
-        )
+    override fun updateReadings(
+        timestamp: Instant,
+        gravity: Float,
+        temperature: Float,
+        velocity: Float?
+    ) {
         viewModelScope.launch {
-            repo.updatePillDataReadings(macAddress = macAddress, raptPillData = data)
+            repo.updatePillDataReadings(
+                macAddress = macAddress,
+                timestamp = timestamp,
+                gravity = gravity,
+                temperature = temperature,
+                velocity = velocity
+            )
         }
     }
 
@@ -308,7 +310,12 @@ class BrewsGraphScreenViewModel(
         // TODO(walt): hidden for now
     }
 
-    override fun updateReadings(readings: RaptPillReadings) {
+    override fun updateReadings(
+        timestamp: Instant,
+        gravity: Float,
+        temperature: Float,
+        velocity: Float?
+    ) {
         TODO("Not yet implemented")
     }
 

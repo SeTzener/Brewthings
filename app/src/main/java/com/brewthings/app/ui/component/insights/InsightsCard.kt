@@ -2,6 +2,7 @@ package com.brewthings.app.ui.component.insights
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,17 +10,29 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,16 +40,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.domain.Insight
+import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.model.RaptPillInsights
 import com.brewthings.app.data.storage.RaptPillReadings
+import com.brewthings.app.data.storage.RaptPillWithData
 import com.brewthings.app.ui.component.BatteryLevelIndicator
 import com.brewthings.app.ui.component.IconAlign
+import com.brewthings.app.ui.component.PrimaryButton
 import com.brewthings.app.ui.component.TextWithIcon
 import com.brewthings.app.ui.converter.toLineColor
 import com.brewthings.app.ui.theme.BrewthingsTheme
@@ -56,12 +73,17 @@ fun InsightsCard(
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
     setFeeding: (Instant, Boolean) -> Unit,
-    updateReadings: (RaptPillReadings) -> Unit,
+    updateReadings: (Instant, Float, Float, Float?) -> Unit,
     deleteMeasurement: (Instant) -> Unit,
 ) {
+    val isEditReadings = remember { mutableStateOf(false) }
+
+    if (isEditReadings.value) {
+        EditReadingsBottomSheet(isEditReadings, data, updateReadings)
+    }
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
-            InsightsTimeHeader(data)
+            InsightsTimeHeader(data, setIsOG, setIsFG, setFeeding, isEditReadings)
 
             InsightsHeaderRow()
 
@@ -172,6 +194,86 @@ fun InsightsCard(
                 deleteMeasurement = deleteMeasurement,
             )
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditReadingsBottomSheet(
+    editReadings: MutableState<Boolean>,
+    data: RaptPillInsights,
+    updateReadings: (Instant, Float, Float, Float?) -> Unit
+) {
+    ModalBottomSheet(
+        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer),
+        onDismissRequest = { editReadings.value = false },
+    ) {
+        var gravity by remember { mutableStateOf(data.gravity.value.toString()) }
+        var temperature by remember { mutableStateOf(data.temperature.value.toString()) }
+        var velocity by remember { mutableStateOf(data.gravityVelocity?.value.toString()) }
+
+        Column(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+        ) {
+            OutlinedTextField(
+                value = gravity,
+                onValueChange = { gravity = it },
+                readOnly = false,
+                label = { Text(text = stringResource(R.string.graph_data_label_gravity)) },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number
+                ),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_gravity),
+                        contentDescription = null,
+                    )
+                }
+            )
+            OutlinedTextField(
+                value = temperature,
+                onValueChange = { temperature = it },
+                readOnly = false,
+                label = { Text(text = stringResource(R.string.graph_data_label_temp_full)) },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number
+                ),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_temperature),
+                        contentDescription = null,
+                    )
+                }
+            )
+            OutlinedTextField(
+                value = velocity,
+                onValueChange = { velocity = it },
+                readOnly = false,
+                label = { Text(text = stringResource(R.string.graph_data_label_velocity_measured_full)) },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number
+                ),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_velocity_measured),
+                        contentDescription = null,
+                    )
+                }
+            )
+        }
+        PrimaryButton(
+            modifier = Modifier.padding(start = 48.dp, top = 24.dp, end = 48.dp, bottom = 48.dp),
+            text = stringResource(id = R.string.button_save),
+            onClick = {
+                updateReadings(
+                    data.timestamp,
+                    gravity.toFloat(),
+                    temperature.toFloat(),
+                    velocity.toFloatOrNull()
+                )
+                editReadings.value = false
+            },
+        )
     }
 }
 
@@ -297,7 +399,15 @@ private fun DeleteMeasurementDialog(
 }
 
 @Composable
-fun InsightsTimeHeader(data: RaptPillInsights) {
+fun InsightsTimeHeader(
+    data: RaptPillInsights,
+    setIsOG: (Instant, Boolean) -> Unit,
+    setIsFG: (Instant, Boolean) -> Unit,
+    setFeeding: (Instant, Boolean) -> Unit,
+    isEditReadings: MutableState<Boolean>,
+) {
+    val isExpandOptions = remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier.padding(bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -315,8 +425,130 @@ fun InsightsTimeHeader(data: RaptPillInsights) {
                 style = MaterialTheme.typography.bodySmall,
             )
         }
+        Spacer(modifier = Modifier.weight(1f))
+        IconButton(
+            onClick = { isExpandOptions.value = true }
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_more_vertical),
+                contentDescription = null,
+            )
+            if (isExpandOptions.value) {
+                optionsDropdown(
+                    isExpandOptions = isExpandOptions,
+                    isEditReadings = isEditReadings,
+                    data = data,
+                    setIsOG = setIsOG,
+                    setIsFG = setIsFG,
+                    setFeeding = setFeeding,
+                )
+            }
+        }
     }
 }
+
+@Composable
+private fun optionsDropdown(
+    isExpandOptions: MutableState<Boolean>,
+    data: RaptPillInsights,
+    setIsOG: (Instant, Boolean) -> Unit,
+    setIsFG: (Instant, Boolean) -> Unit,
+    setFeeding: (Instant, Boolean) -> Unit,
+    isEditReadings: MutableState<Boolean>,
+) {
+    DropdownMenu(
+        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer),
+        expanded = isExpandOptions.value,
+        onDismissRequest = { isExpandOptions.value = false }
+    ) {
+        DropdownMenuItem(
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_edit),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
+            text = {
+                Text(
+                    text = stringResource(R.string.edit),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            },
+            onClick = {
+                isEditReadings.value = true
+                isExpandOptions.value = false
+            }
+        )
+
+        DropdownMenuItem(
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_gravity),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
+            text = {
+                Text(
+                    text = if (data.isOG)
+                        stringResource(R.string.unset_OG) else
+                        stringResource(R.string.set_OG),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            },
+            onClick = {
+                setIsOG(data.timestamp, !data.isOG)
+                isExpandOptions.value = false
+            }
+        )
+
+        DropdownMenuItem(
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_final_gravity),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
+            text = {
+                Text(
+                    text = if (data.isFG)
+                        stringResource(R.string.unset_FG) else
+                        stringResource(R.string.set_FG),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            },
+            onClick = {
+                setIsFG(data.timestamp, !data.isFG)
+                isExpandOptions.value = false
+            }
+        )
+
+        DropdownMenuItem(
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_feeding),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
+            text = {
+                Text(
+                    text = if (data.isFeeding)
+                        stringResource(R.string.unfeeding) else
+                        stringResource(R.string.feeding),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            },
+            onClick = {
+                setFeeding(data.timestamp, !data.isFeeding)
+                isExpandOptions.value = false
+            }
+        )
+    }
+}
+
 
 @Composable
 private fun RaptPillInsights.getInfoText(): String {
@@ -612,7 +844,7 @@ fun InsightsCardPreview() {
             setIsOG = { _, _ -> },
             setIsFG = { _, _ -> },
             setFeeding = { _, _ -> },
-            updateReadings = {},
+            updateReadings = { _, _, _, _ -> },
             deleteMeasurement = { _ -> },
         )
     }
