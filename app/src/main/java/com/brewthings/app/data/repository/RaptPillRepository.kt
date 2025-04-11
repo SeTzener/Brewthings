@@ -25,7 +25,8 @@ class RaptPillRepository(
         isFeeding: Boolean? = null,
     ) {
         val pill = scannedRaptPill.toDaoItem()
-        val readings = scannedRaptPill.data.toDaoItem(isOg = isOg, isFg = isFg, isFeeding = isFeeding)
+        val readings =
+            scannedRaptPill.data.toDaoItem(isOg = isOg, isFg = isFg, isFeeding = isFeeding)
         dao.insertReadings(pill, readings)
     }
 
@@ -62,8 +63,24 @@ class RaptPillRepository(
         )
     }
 
-    suspend fun updatePillDataReadings(macAddress: MacAddress, raptPillData: RaptPillData) {
-        dao.updatePillDataReadings(macAddress, raptPillData.toDaoItem())
+    suspend fun updatePillDataReadings(
+        macAddress: MacAddress,
+        timestamp: Instant,
+        gravity: Float,
+        temperature: Float,
+        velocity: Float?
+    ) {
+        val data = dao.getPillData(macAddress, timestamp)
+        dao.updatePillDataReadings(
+            macAddress = macAddress,
+            raptPillData = data.copy(
+                readings = data.readings.copy(
+                    gravity = gravity,
+                    temperature = temperature,
+                    gravityVelocity = velocity
+                )
+            )
+        )
     }
 
     fun observePills(): Flow<List<RaptPill>> = dao.observePills().map { pills ->
