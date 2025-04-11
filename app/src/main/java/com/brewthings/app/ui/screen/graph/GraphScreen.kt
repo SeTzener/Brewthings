@@ -89,7 +89,7 @@ fun GraphScreen(
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
     setFeeding: (Instant, Boolean) -> Unit,
-    updateReadings: (RaptPillReadings) -> Unit,
+    updateReadings: (Instant, Float, Float, Float?) -> Unit,
 ) {
     BackgroundStatusBar()
     BackgroundNavigationBar()
