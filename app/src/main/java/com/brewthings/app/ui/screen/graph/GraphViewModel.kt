@@ -84,6 +84,13 @@ abstract class GraphScreenViewModel(
 
     abstract fun setFeeding(timestamp: Instant, isFeeding: Boolean?)
 
+    abstract fun updateReadings(
+        timestamp: Instant,
+        gravity: Float,
+        temperature: Float,
+        velocity: Float?
+    )
+
     abstract fun observeRaptPillData(): Flow<List<RaptPillData>>
 
     private fun createInitialState(): GraphState =
@@ -202,7 +209,8 @@ private fun List<Float?>.normalize(): List<Float?> {
 }
 
 class PillGraphScreenViewModel(
-    val macAddress: String = ParameterHolders.PillGraph.macAddress ?: error("macAddress is required"),
+    val macAddress: String = ParameterHolders.PillGraph.macAddress
+        ?: error("macAddress is required"),
     name: String? = ParameterHolders.PillGraph.name,
 ) : GraphScreenViewModel(
     screenTitle = name ?: macAddress,
@@ -236,8 +244,29 @@ class PillGraphScreenViewModel(
     override fun setFeeding(timestamp: Instant, isFeeding: Boolean?) {
         viewModelScope.launch {
             if (isFeeding != null) {
-                repo.setFeeding(macAddress = macAddress, timestamp = timestamp, isFeeding = isFeeding)
+                repo.setFeeding(
+                    macAddress = macAddress,
+                    timestamp = timestamp,
+                    isFeeding = isFeeding
+                )
             }
+        }
+    }
+
+    override fun updateReadings(
+        timestamp: Instant,
+        gravity: Float,
+        temperature: Float,
+        velocity: Float?
+    ) {
+        viewModelScope.launch {
+            repo.updatePillDataReadings(
+                macAddress = macAddress,
+                timestamp = timestamp,
+                gravity = gravity,
+                temperature = temperature,
+                velocity = velocity
+            )
         }
     }
 
@@ -267,6 +296,15 @@ class BrewsGraphScreenViewModel(
 
     override fun setFeeding(timestamp: Instant, isFeeding: Boolean?) {
         // TODO(walt): hidden for now
+    }
+
+    override fun updateReadings(
+        timestamp: Instant,
+        gravity: Float,
+        temperature: Float,
+        velocity: Float?
+    ) {
+        TODO("Not yet implemented")
     }
 
     override fun observeRaptPillData(): Flow<List<RaptPillData>> = repo.observeBrewData(brew)
