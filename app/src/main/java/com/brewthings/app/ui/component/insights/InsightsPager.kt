@@ -32,6 +32,7 @@ fun InsightsPager(
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
     setFeeding: (Instant, Boolean) -> Unit,
+    deleteMeasurement: (Instant) -> Unit,
 ) {
     val logger by remember { mutableStateOf(Logger("InsightsPager")) }
 
@@ -64,6 +65,7 @@ fun InsightsPager(
                 setIsFG = setIsFG,
                 setFeeding = setFeeding,
                 feedings = feedings,
+                deleteMeasurement = deleteMeasurement,
             )
         }
     }

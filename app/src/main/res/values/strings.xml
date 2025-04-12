@@ -65,6 +65,8 @@
     <string name="button_save">Save</string>
     <string name="button_view_previous_data">"View previous data"</string>
     <string name="button_yes">"Yes"</string>
+    <string name="delete_measurement">"Warning"</string>
+    <string name="delete_measurement_confirmation">"This operation cannot be reverted.\n\nAre you sure you want to delete this measurement?"</string>
     <string name="diluting">Dilute</string>
     <string name="dropdown_add_device">"Add new"</string>
     <string name="edit_name_tooltip">Pill Name</string>

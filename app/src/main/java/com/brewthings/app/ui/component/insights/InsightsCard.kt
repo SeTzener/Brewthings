@@ -5,14 +5,21 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,8 +43,8 @@ import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toFormattedDate
-import kotlinx.datetime.Instant
 import kotlin.math.abs
+import kotlinx.datetime.Instant
 
 @Composable
 fun InsightsCard(
@@ -48,6 +55,7 @@ fun InsightsCard(
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
     setFeeding: (Instant, Boolean) -> Unit,
+    deleteMeasurement: (Instant) -> Unit,
 ) {
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -159,20 +167,33 @@ fun InsightsCard(
                 setIsOG = setIsOG,
                 setIsFG = setIsFG,
                 setFeeding = setFeeding,
+                deleteMeasurement = deleteMeasurement,
             )
         }
     }
 }
 
-@Composable fun InsightsActionRow(
+@Composable
+fun InsightsActionRow(
     data: RaptPillInsights,
     feedings: List<Instant>,
     setIsOG: (Instant, Boolean) -> Unit,
     setIsFG: (Instant, Boolean) -> Unit,
     setFeeding: (Instant, Boolean) -> Unit,
+    deleteMeasurement: (Instant) -> Unit,
 ) {
+    val isDeleteMeasurement = remember { mutableStateOf(false) }
+    if (isDeleteMeasurement.value) {
+        DeleteMeasurementDialog(
+            isDeleteMeasurement = isDeleteMeasurement,
+            timestamp = data.timestamp,
+            deleteMeasurement = deleteMeasurement,
+        )
+    }
     Row(
-        modifier = Modifier.padding(bottom = 8.dp),
+        modifier = Modifier
+            .padding(bottom = 8.dp)
+            .fillMaxWidth(),
     ) {
         TextButton(
             modifier = Modifier.padding(start = 7.dp),
@@ -225,7 +246,52 @@ fun InsightsCard(
                 style = Typography.bodyMedium,
             )
         }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        IconButton(
+            modifier = Modifier.padding(end = 12.dp),
+            onClick = { isDeleteMeasurement.value = true },
+            colors = IconButtonDefaults.iconButtonColors(
+                contentColor = Color.Red,
+            ),
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_delete),
+                contentDescription = null,
+            )
+        }
     }
+}
+
+@Composable
+private fun DeleteMeasurementDialog(
+    isDeleteMeasurement: MutableState<Boolean>,
+    timestamp: Instant,
+    deleteMeasurement: (Instant) -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = { isDeleteMeasurement.value = false },
+        title = { Text(text = stringResource(id = R.string.delete_measurement)) },
+        text = { Text(text = stringResource(id = R.string.delete_measurement_confirmation)) },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    isDeleteMeasurement.value = false
+                    deleteMeasurement(timestamp)
+                },
+            ) {
+                Text(text = stringResource(id = R.string.button_yes))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { isDeleteMeasurement.value = false },
+            ) {
+                Text(text = stringResource(id = R.string.button_no))
+            }
+        },
+    )
 }
 
 @Composable
@@ -544,6 +610,7 @@ fun InsightsCardPreview() {
             setIsOG = { _, _ -> },
             setIsFG = { _, _ -> },
             setFeeding = { _, _ -> },
+            deleteMeasurement = { _ -> },
         )
     }
 }
