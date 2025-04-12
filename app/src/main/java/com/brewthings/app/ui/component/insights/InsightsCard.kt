@@ -43,8 +43,8 @@ import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toFormattedDate
-import kotlinx.datetime.Instant
 import kotlin.math.abs
+import kotlinx.datetime.Instant
 
 @Composable
 fun InsightsCard(
@@ -182,9 +182,9 @@ fun InsightsActionRow(
     setFeeding: (Instant, Boolean) -> Unit,
     deleteMeasurement: (Instant) -> Unit,
 ) {
-    var isDeleteMeasurement = remember { mutableStateOf(false) }
+    val isDeleteMeasurement = remember { mutableStateOf(false) }
     if (isDeleteMeasurement.value) {
-        deleteMeasurementDialog(
+        DeleteMeasurementDialog(
             isDeleteMeasurement = isDeleteMeasurement,
             timestamp = data.timestamp,
             deleteMeasurement = deleteMeasurement,
@@ -265,7 +265,7 @@ fun InsightsActionRow(
 }
 
 @Composable
-private fun deleteMeasurementDialog(
+private fun DeleteMeasurementDialog(
     isDeleteMeasurement: MutableState<Boolean>,
     timestamp: Instant,
     deleteMeasurement: (Instant) -> Unit,
