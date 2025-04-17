@@ -196,7 +196,7 @@ private fun ScanScreen(
                             SensorMeasurementsGrid(
                                 modifier = Modifier.padding(
                                     horizontal = horizontalPadding,
-                                    vertical = 4.dp
+                                    vertical = 4.dp,
                                 ),
                                 measurements = sensorMeasurements,
                             )
@@ -215,7 +215,7 @@ private fun ScanScreen(
                             BrewMeasurementsGrid(
                                 modifier = Modifier.padding(
                                     horizontal = horizontalPadding,
-                                    vertical = 4.dp
+                                    vertical = 4.dp,
                                 ),
                                 data = brewWithMeasurements.measurements,
                             )
@@ -226,7 +226,7 @@ private fun ScanScreen(
                             PrimaryButton(
                                 modifier = Modifier.padding(
                                     horizontal = horizontalPadding,
-                                    vertical = 24.dp
+                                    vertical = 24.dp,
                                 ),
                                 isEnabled = canSave,
                                 text = stringResource(R.string.button_save),
@@ -301,7 +301,7 @@ private fun ScanTopBar(
                 listOf(
                     SettingsItem(
                         stringResource(R.string.settings_rename_device),
-                        onRenameDeviceClick
+                        onRenameDeviceClick,
                     ),
 
                     SettingsItem(
@@ -330,8 +330,10 @@ private fun AutoScanBehavior(
     LaunchedEffect(scanState) {
         if (
             scanState == BluetoothScanState.Idle &&
-            (previousScanState == BluetoothScanState.Unavailable ||
-                    previousScanState == BluetoothScanState.NotInitialized)
+            (
+                previousScanState == BluetoothScanState.Unavailable ||
+                    previousScanState == BluetoothScanState.NotInitialized
+                )
         ) {
             startScan()
         }

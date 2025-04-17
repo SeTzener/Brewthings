@@ -82,9 +82,9 @@ fun OnboardScreen(
                         TopAppBarTitle(
                             title = stringResource(R.string.onboarding_add_device),
                         )
-                    }
+                    },
                 )
-            }
+            },
         ) { paddingValues ->
             OnboardScreenContent(
                 modifier = Modifier
