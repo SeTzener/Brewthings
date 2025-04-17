@@ -13,6 +13,10 @@ class Router(private val navController: NavController) {
         }
     }
 
+    fun goToOnboarding() {
+        navController.navigate(route = Destination.ONBOARDING)
+    }
+
     fun goToPillGraph(name: String?, macAddress: String) {
         ParameterHolders.PillGraph.name = name
         ParameterHolders.PillGraph.macAddress = macAddress

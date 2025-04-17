@@ -301,7 +301,7 @@ private fun ScanTopBar(
 }
 
 @Composable
-private fun AutoScanBehavior(
+fun AutoScanBehavior(
     previousScanState: BluetoothScanState,
     scanState: BluetoothScanState,
     startScan: () -> Unit,
