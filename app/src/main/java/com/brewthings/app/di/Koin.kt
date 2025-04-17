@@ -15,6 +15,7 @@ import com.brewthings.app.ui.screen.composition.BrewCompositionViewModel
 import com.brewthings.app.ui.screen.graph.BrewsGraphScreenViewModel
 import com.brewthings.app.ui.screen.graph.GraphScreenViewModel
 import com.brewthings.app.ui.screen.graph.PillGraphScreenViewModel
+import com.brewthings.app.ui.screen.onboard.OnboardViewModel
 import com.brewthings.app.ui.screen.scan.ScanViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -33,6 +34,7 @@ val appModule = module {
     factory { BrewsRepository(dao = get()) }
     factory { SettingsRepository(dataStore = get()) }
 
+    viewModel { OnboardViewModel() }
     viewModel { ScanViewModel() }
     viewModel { BrewsViewModel() }
     viewModel { BrewCompositionViewModel() }
