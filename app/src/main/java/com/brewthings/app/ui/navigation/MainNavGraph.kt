@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.brewthings.app.ui.ActivityCallbacks
 import com.brewthings.app.ui.screen.composition.BrewCompositionScreen
 import com.brewthings.app.ui.screen.graph.GraphScreen
+import com.brewthings.app.ui.screen.onboard.OnboardScreen
 
 @Composable
 fun MainNavGraph(activityCallbacks: ActivityCallbacks) {
@@ -30,6 +31,10 @@ fun MainNavGraph(activityCallbacks: ActivityCallbacks) {
             HomeScreen(router, activityCallbacks, tab)
         }
          */
+
+        composable(Destination.ONBOARDING) {
+            OnboardScreen(router, activityCallbacks)
+        }
 
         composable(Destination.PILL_GRAPH) {
             GraphScreen(router, Destination.PILL_GRAPH)
