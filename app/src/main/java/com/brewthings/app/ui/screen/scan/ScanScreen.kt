@@ -137,7 +137,7 @@ private fun ScanScreen(
     onRenameDevice: (String) -> Unit,
     onToggleAutosave: (Boolean) -> Unit,
 ) {
-    var previousScanState by remember { mutableStateOf(BluetoothScanState.Unavailable) }
+    var previousScanState by remember { mutableStateOf(BluetoothScanState.NotInitialized) }
     var showStartBrewDialog by remember { mutableStateOf(false) }
     var showRenameBottomSheet by remember { mutableStateOf(false) }
 
@@ -194,7 +194,10 @@ private fun ScanScreen(
                             )
 
                             SensorMeasurementsGrid(
-                                modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 4.dp),
+                                modifier = Modifier.padding(
+                                    horizontal = horizontalPadding,
+                                    vertical = 4.dp
+                                ),
                                 measurements = sensorMeasurements,
                             )
                         }
@@ -210,7 +213,10 @@ private fun ScanScreen(
                             )
 
                             BrewMeasurementsGrid(
-                                modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 4.dp),
+                                modifier = Modifier.padding(
+                                    horizontal = horizontalPadding,
+                                    vertical = 4.dp
+                                ),
                                 data = brewWithMeasurements.measurements,
                             )
                         }
@@ -218,7 +224,10 @@ private fun ScanScreen(
                     footer = {
                         if (!isAutosaveEnabled) {
                             PrimaryButton(
-                                modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 24.dp),
+                                modifier = Modifier.padding(
+                                    horizontal = horizontalPadding,
+                                    vertical = 24.dp
+                                ),
                                 isEnabled = canSave,
                                 text = stringResource(R.string.button_save),
                                 onClick = {
@@ -290,7 +299,10 @@ private fun ScanTopBar(
             BluetoothScanActionButton(scanState, onScanClick)
             SettingsDropdown(
                 listOf(
-                    SettingsItem(stringResource(R.string.settings_rename_device), onRenameDeviceClick),
+                    SettingsItem(
+                        stringResource(R.string.settings_rename_device),
+                        onRenameDeviceClick
+                    ),
 
                     SettingsItem(
                         stringResource(
@@ -309,14 +321,18 @@ private fun ScanTopBar(
 }
 
 @Composable
-fun AutoScanBehavior(
+private fun AutoScanBehavior(
     previousScanState: BluetoothScanState,
     scanState: BluetoothScanState,
     startScan: () -> Unit,
     stopScan: () -> Unit,
 ) {
     LaunchedEffect(scanState) {
-        if (scanState == BluetoothScanState.Idle && previousScanState == BluetoothScanState.Unavailable) {
+        if (
+            scanState == BluetoothScanState.Idle &&
+            (previousScanState == BluetoothScanState.Unavailable ||
+                    previousScanState == BluetoothScanState.NotInitialized)
+        ) {
             startScan()
         }
 
