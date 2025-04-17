@@ -39,7 +39,7 @@ class OnboardViewModel : ViewModel(), KoinComponent {
             }
         }
         .combine(
-            pills.observePills()
+            pills.observePills(),
         ) { scanned, saved ->
             if (saved.firstOrNull { it.macAddress == scanned.macAddress } != null) {
                 null
