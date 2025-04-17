@@ -87,7 +87,7 @@ fun BluetoothScanRequirements(
                 content(scanState, onToggleScan)
             }
 
-            is Bluetooth.Availability.Unavailable, null -> {
+            is Bluetooth.Availability.Unavailable -> {
                 content(BluetoothScanState.Unavailable) {
                     showDialog = true
                     dialogContent = {
@@ -114,6 +114,8 @@ fun BluetoothScanRequirements(
                     }
                 }
             }
+
+            null -> content(BluetoothScanState.NotInitialized) {}
         }
     } else {
         content(BluetoothScanState.Unavailable) {

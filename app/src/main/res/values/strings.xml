@@ -107,7 +107,7 @@
     <string name="location_services_disabled_title">"Location services disabled"</string>
     <string name="onboarding_add_device">"Add a device"</string>
     <string name="onboarding_scanning">"Scanning for device…"</string>
-    <string name="onboarding_scanning_resume">"Resume scan"</string>
+    <string name="onboarding_scanning_resume">"Start scan"</string>
     <string name="pill_abv">"%.2f\%%"</string>
     <string name="pill_battery">"%.1f\%%"</string>
     <string name="pill_graph">"Show history"</string>
