@@ -61,6 +61,7 @@
     <string name="brew_start_to_end">From: %s - To: %s</string>
     <string name="brew_time_footer">"started on %s"</string>
     <string name="brew_time_header">"Time since OG"</string>
+    <string name="button_add_device">"Add a new device"</string>
     <string name="button_no">"No"</string>
     <string name="button_save">Save</string>
     <string name="button_view_previous_data">"View previous data"</string>
@@ -122,9 +123,8 @@
     <string name="scan_section_title_last_measurements">"Last measurements"</string>
     <string name="scan_troubleshooting_no_active_brew_desc">"Wait for your first scan result, then tap on the save button to start a new one.\n\nAlternatively, edit the previous data."</string>
     <string name="scan_troubleshooting_no_active_brew_title">"You don't have an active brew"</string>
-    <string name="scan_troubleshooting_no_device_title">"You don't have an active device"</string>
     <string name="scan_troubleshooting_no_device_desc">"To configure your first device, go to the next screen and wait for your first scan result."</string>
-    <string name="button_add_device">"Add a new device"</string>
+    <string name="scan_troubleshooting_no_device_title">"You don't have an active device"</string>
     <string name="sensor_measurement_footer">previously: %s %s</string>
     <string name="set_FG">Set FG</string>
     <string name="set_OG">Set OG</string>
