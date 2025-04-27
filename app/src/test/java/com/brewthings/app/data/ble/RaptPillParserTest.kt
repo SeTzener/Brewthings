@@ -5,6 +5,33 @@ import org.junit.jupiter.api.Test
 
 class RaptPillParserTest {
     @Test
+    fun canParseData() {
+        val byteArray = "5054020001C01D9DBD95AB44BA0232FC8BC52112796400".toByteArray()
+
+        val prefix = byteArray
+            .slice(0..1)
+            .map { it.toInt().toChar() }
+            .joinToString(separator = "")
+
+        println("Parsed RAPT Pill Data:")
+        println("prefix = $prefix")
+        println("version = ${byteArray[2].toInt()}")
+        println("zero = ${byteArray[3].toInt()}")
+
+        val data = RaptPillParser.parse(byteArray)
+
+        println("gravityVelocity = ${data.gravityVelocity}")
+        println("temperature = ${data.temperature}")
+        println("gravity = ${data.gravity}")
+        println("x = ${data.x}")
+        println("y = ${data.y}")
+        println("z = ${data.z}")
+        println("battery = ${data.battery}")
+
+        // Finished without crashing
+    }
+
+    @Test
     fun parseValidPillData() {
         val byteArray = "5054020001C01D9DBD95AB44BA0232FC8BC52112796400".toByteArray()
         val data = RaptPillParser.parse(byteArray)
