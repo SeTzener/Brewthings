@@ -217,7 +217,9 @@ fun BluetoothScanIcon(
     when (scanState) {
         BluetoothScanState.InProgress -> BluetoothScanProgressButton(onClick)
         BluetoothScanState.Idle -> BluetoothScanIdleButton(onClick)
-        BluetoothScanState.Unavailable -> BluetoothUnavailableButton(onClick)
+        BluetoothScanState.Unavailable,
+        BluetoothScanState.NotInitialized,
+        -> BluetoothUnavailableButton(onClick)
     }
 }
 

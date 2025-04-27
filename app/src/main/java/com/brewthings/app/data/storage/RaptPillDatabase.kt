@@ -9,6 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.brewthings.app.R
 import com.brewthings.app.data.utils.ReadScript
 import com.brewthings.app.util.Logger
+import com.google.firebase.components.BuildConfig
 
 @Database(entities = [RaptPill::class, RaptPillData::class], version = 4)
 @androidx.room.TypeConverters(TypeConverter::class)
@@ -53,11 +54,13 @@ abstract class RaptPillDatabase : RoomDatabase() {
             ).addCallback(object : Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
-                    try {
-                        // Inserting initial data
-                        ReadScript.insertFromFile(context, R.raw.sample, db)
-                    } catch (e: Exception) {
-                        logger.error("Failed to insert initial data.", e)
+                    if (BuildConfig.DEBUG) {
+                        logger.info("Inserting initial data.")
+                        try {
+                            ReadScript.insertFromFile(context, R.raw.sample, db)
+                        } catch (e: Exception) {
+                            logger.error("Failed to insert initial data.", e)
+                        }
                     }
                 }
             }).build()
