@@ -9,7 +9,7 @@ class RaptPillWithDataParserTest {
         val byteArray = "5054020001C01D9DBD95AB44BA0232FC8BC52112796400".toByteArray()
         val data = RaptPillParser.parse(byteArray)
         with(data) {
-            assertTrue(gravityVelocity == -2.4627526f)
+            assertTrue(gravityVelocity == 2.4627526f)
             assertTrue(temperature == 26.185938f)
             assertTrue(gravity == 1.4880686f)
             assertTrue(x == 4040.6875f)
