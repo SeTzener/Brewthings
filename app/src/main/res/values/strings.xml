@@ -71,7 +71,8 @@
     <string name="diluting">Dilute</string>
     <string name="dropdown_add_device">"Add new"</string>
     <string name="edit_name_tooltip">Pill Name</string>
-<string name="feeding">Feed</string>
+    <string name="edit">Edit</string>
+    <string name="feeding">Feed</string>
     <string name="formatted_date_hour_ago">an hour ago</string>
     <string name="formatted_date_hours_ago">%d hours ago</string>
     <string name="formatted_date_last_weekday">Last %s</string>
@@ -144,4 +145,4 @@
     <string name="unit_velocity">"SG/d"</string>
     <string name="unset_FG">Unset FG</string>
     <string name="unset_OG">Unset OG</string>
-    </resources>
+</resources>

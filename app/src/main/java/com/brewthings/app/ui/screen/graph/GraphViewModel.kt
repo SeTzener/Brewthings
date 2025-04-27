@@ -84,6 +84,13 @@ abstract class GraphScreenViewModel(
 
     abstract fun setFeeding(timestamp: Instant, isFeeding: Boolean?)
 
+    abstract fun updateReadings(
+        timestamp: Instant,
+        gravity: Float,
+        temperature: Float,
+        velocity: Float?
+    )
+
     abstract fun deleteMeasurement(timestamp: Instant)
 
     abstract fun observeRaptPillData(): Flow<List<RaptPillData>>
@@ -254,6 +261,23 @@ class PillGraphScreenViewModel(
         }
     }
 
+    override fun updateReadings(
+        timestamp: Instant,
+        gravity: Float,
+        temperature: Float,
+        velocity: Float?
+    ) {
+        viewModelScope.launch {
+            repo.updatePillDataReadings(
+                macAddress = macAddress,
+                timestamp = timestamp,
+                gravity = gravity,
+                temperature = temperature,
+                velocity = velocity
+            )
+        }
+    }
+
     override fun observeRaptPillData(): Flow<List<RaptPillData>> = repo.observeData(macAddress)
 }
 
@@ -284,6 +308,15 @@ class BrewsGraphScreenViewModel(
 
     override fun deleteMeasurement(timestamp: Instant) {
         // TODO(walt): hidden for now
+    }
+
+    override fun updateReadings(
+        timestamp: Instant,
+        gravity: Float,
+        temperature: Float,
+        velocity: Float?
+    ) {
+        TODO("Not yet implemented")
     }
 
     override fun observeRaptPillData(): Flow<List<RaptPillData>> = repo.observeBrewData(brew)
