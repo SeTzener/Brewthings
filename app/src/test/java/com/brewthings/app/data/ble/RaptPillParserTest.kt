@@ -3,7 +3,7 @@ package com.brewthings.app.data.ble
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-class RaptPillWithDataParserTest {
+class RaptPillParserTest {
     @Test
     fun parseValidPillData() {
         val byteArray = "5054020001C01D9DBD95AB44BA0232FC8BC52112796400".toByteArray()
