@@ -45,7 +45,7 @@ class InsightsConverterTest {
                         }
                     },
                     battery = 100.0f,
-                    gravityVelocity = 1f,
+                    rawVelocity = 1f,
                     x = 100f,
                     y = 200f,
                     z = 300f,

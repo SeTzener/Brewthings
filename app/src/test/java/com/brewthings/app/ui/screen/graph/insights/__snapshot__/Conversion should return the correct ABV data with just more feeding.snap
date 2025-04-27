@@ -152,10 +152,14 @@
         },
         "abv": {
             "value": 2.6249976,
-            "deltaFromPrevious": 0.0,
+            "deltaFromPrevious": -1.3124988,
             "deltaFromOG": null
         },
-        "calculatedVelocity": null,
+        "calculatedVelocity": {
+            "value": -9.99999,
+            "deltaFromPrevious": -9.99999,
+            "deltaFromOG": null
+        },
         "durationSinceOG": {
             "from": "2024-09-01T00:00:00Z",
             "to": "2024-09-04T00:00:00Z"
@@ -193,7 +197,7 @@
         },
         "abv": {
             "value": 6.562494,
-            "deltaFromPrevious": 3.9374962,
+            "deltaFromPrevious": 5.249995,
             "deltaFromOG": null
         },
         "calculatedVelocity": {
@@ -238,7 +242,7 @@
         },
         "abv": {
             "value": 7.8749924,
-            "deltaFromPrevious": 1.3124986,
+            "deltaFromPrevious": 2.6249976,
             "deltaFromOG": null
         },
         "calculatedVelocity": {
@@ -283,7 +287,7 @@
         },
         "abv": {
             "value": 9.187491,
-            "deltaFromPrevious": 1.312499,
+            "deltaFromPrevious": 2.6249976,
             "deltaFromOG": null
         },
         "calculatedVelocity": {
@@ -328,10 +332,14 @@
         },
         "abv": {
             "value": 9.187491,
-            "deltaFromPrevious": 0.0,
+            "deltaFromPrevious": -2.6249976,
             "deltaFromOG": null
         },
-        "calculatedVelocity": null,
+        "calculatedVelocity": {
+            "value": -29.999971,
+            "deltaFromPrevious": -29.999971,
+            "deltaFromOG": null
+        },
         "durationSinceOG": {
             "from": "2024-09-01T00:00:00Z",
             "to": "2024-09-08T00:00:00Z"
@@ -368,8 +376,8 @@
             "deltaFromOG": 0.0
         },
         "abv": {
-            "value": 0.0,
-            "deltaFromPrevious": -9.187491,
+            "value": 15.749985,
+            "deltaFromPrevious": 11.812489,
             "deltaFromOG": null
         },
         "calculatedVelocity": {

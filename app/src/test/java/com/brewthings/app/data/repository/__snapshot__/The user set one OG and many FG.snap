@@ -1,120 +1,132 @@
 [
     {
+        "macAddress": "macAddressTest",
         "og": {
             "timestamp": "2024-09-01T00:00:00Z",
             "temperature": 0.0,
             "gravity": 0.0,
-            "gravityVelocity": null,
+            "rawVelocity": null,
             "x": 0.0,
             "y": 0.0,
             "z": 0.0,
             "battery": 0.0,
             "isOG": true,
             "isFG": false,
-            "isFeeding": false
+            "isFeeding": false,
+            "gravityVelocity": null
         },
         "fgOrLast": {
             "timestamp": "2024-09-02T00:00:00Z",
             "temperature": 0.0,
             "gravity": 0.0,
-            "gravityVelocity": null,
+            "rawVelocity": null,
             "x": 0.0,
             "y": 0.0,
             "z": 0.0,
             "battery": 0.0,
             "isOG": false,
             "isFG": true,
-            "isFeeding": false
+            "isFeeding": false,
+            "gravityVelocity": null
         },
         "isCompleted": true,
         "feedings": []
     },
     {
+        "macAddress": "macAddressTest",
         "og": {
             "timestamp": "2024-09-02T00:00:00Z",
             "temperature": 0.0,
             "gravity": 0.0,
-            "gravityVelocity": null,
+            "rawVelocity": null,
             "x": 0.0,
             "y": 0.0,
             "z": 0.0,
             "battery": 0.0,
             "isOG": false,
             "isFG": true,
-            "isFeeding": false
+            "isFeeding": false,
+            "gravityVelocity": null
         },
         "fgOrLast": {
             "timestamp": "2024-09-03T00:00:00Z",
             "temperature": 0.0,
             "gravity": 0.0,
-            "gravityVelocity": null,
+            "rawVelocity": null,
             "x": 0.0,
             "y": 0.0,
             "z": 0.0,
             "battery": 0.0,
             "isOG": false,
             "isFG": true,
-            "isFeeding": false
+            "isFeeding": false,
+            "gravityVelocity": null
         },
         "isCompleted": false,
         "feedings": []
     },
     {
+        "macAddress": "macAddressTest",
         "og": {
             "timestamp": "2024-09-03T00:00:00Z",
             "temperature": 0.0,
             "gravity": 0.0,
-            "gravityVelocity": null,
+            "rawVelocity": null,
             "x": 0.0,
             "y": 0.0,
             "z": 0.0,
             "battery": 0.0,
             "isOG": false,
             "isFG": true,
-            "isFeeding": false
+            "isFeeding": false,
+            "gravityVelocity": null
         },
         "fgOrLast": {
             "timestamp": "2024-09-04T00:00:00Z",
             "temperature": 0.0,
             "gravity": 0.0,
-            "gravityVelocity": null,
+            "rawVelocity": null,
             "x": 0.0,
             "y": 0.0,
             "z": 0.0,
             "battery": 0.0,
             "isOG": false,
             "isFG": true,
-            "isFeeding": false
+            "isFeeding": false,
+            "gravityVelocity": null
         },
         "isCompleted": false,
         "feedings": []
     },
     {
+        "macAddress": "macAddressTest",
         "og": {
             "timestamp": "2024-09-04T00:00:00Z",
             "temperature": 0.0,
             "gravity": 0.0,
-            "gravityVelocity": null,
+            "rawVelocity": null,
             "x": 0.0,
             "y": 0.0,
             "z": 0.0,
             "battery": 0.0,
             "isOG": false,
             "isFG": true,
-            "isFeeding": false
+            "isFeeding": false,
+            "gravityVelocity": null
         },
         "fgOrLast": {
             "timestamp": "2024-09-05T00:00:00Z",
             "temperature": 0.0,
             "gravity": 0.0,
-            "gravityVelocity": null,
+            "rawVelocity": null,
             "x": 0.0,
             "y": 0.0,
             "z": 0.0,
             "battery": 0.0,
             "isOG": false,
             "isFG": true,
-            "isFeeding": false
+            "isFeeding": false,
+            "gravityVelocity": null
         },
         "isCompleted": false,
         "feedings": []
