@@ -25,17 +25,21 @@ mockk = "1.13.13"
 moshi = "1.14.0"
 mpAndroidChart = "v3.1.0"
 navigation = "2.7.7"
-jupiter = "5.10.2"
+junit5-android = "1.9.3.0"
+junit5-jupiter = "5.10.2"
 room = "2.6.1"
 spotless = "6.19.0"
 kotlinxSerializationJson = "1.6.3"
 kotlinxDatetime = "0.6.0"
+test-core = "1.5.0"
+test-runner = "1.5.2"
 toml4j = "0.7.2"
 
 [plugins]
 android = { id = "com.android.application", version.ref = "android" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+junit5-android = { id = "de.mannodermaus.android-junit5", version.ref = "junit5-android" }
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
@@ -60,6 +64,10 @@ androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecyc
 
 # AndroidX DataStore
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
+
+# AndroidX Test
+androidx-test-core = { module = "androidx.test:core", version.ref = "test-core" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "test-runner" }
 
 # Firebase
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
@@ -108,9 +116,9 @@ toml4j = { group = "com.moandjiezana.toml", name = "toml4j", version.ref = "toml
 
 # Test
 kotest-junit5 = { group = "io.kotest", name = "kotest-runner-junit5-jvm", version.ref = "kotest" }
-junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "jupiter" }
-junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "jupiter" }
-junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "jupiter" }
+junit5-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit5-jupiter" }
+junit5-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit5-jupiter" }
+junit5-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit5-jupiter" }
 karumi = { group = "com.karumi.kotlinsnapshot", name = "core", version.ref = "kotlinsnapshot" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 mockk-dsl = { group = "io.mockk", name = "mockk-dsl-jvm", version.ref = "mockk" }

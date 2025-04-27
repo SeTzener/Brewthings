@@ -13,6 +13,20 @@ import kotlinx.datetime.Instant
 interface RaptPillDao {
     @Query(
         """
+            SELECT COUNT(*) FROM RaptPill
+        """,
+    )
+    fun countRaptPills(): Int
+
+    @Query(
+        """
+            SELECT COUNT(*) FROM RaptPillData
+        """,
+    )
+    fun countRaptPillData(): Int
+
+    @Query(
+        """
             SELECT * FROM RaptPill
         """,
     )
