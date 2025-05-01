@@ -4,14 +4,17 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.brewthings.app.R
+import com.brewthings.app.data.storage.migrations.MIGRATION_1_2
+import com.brewthings.app.data.storage.migrations.MIGRATION_2_3
+import com.brewthings.app.data.storage.migrations.MIGRATION_3_4
+import com.brewthings.app.data.storage.migrations.MIGRATION_4_5
 import com.brewthings.app.data.utils.ReadScript
 import com.brewthings.app.util.Logger
 import com.google.firebase.components.BuildConfig
 
-@Database(entities = [RaptPill::class, RaptPillData::class], version = 4)
+@Database(entities = [RaptPill::class, RaptPillData::class, BrewData::class], version = 5)
 @androidx.room.TypeConverters(TypeConverter::class)
 abstract class RaptPillDatabase : RoomDatabase() {
     abstract fun raptPillDao(): RaptPillDao
@@ -20,27 +23,6 @@ abstract class RaptPillDatabase : RoomDatabase() {
         private const val DATABASE_NAME = "rapt-db"
 
         private val logger = Logger("RaptPillDatabase")
-
-        private val MIGRATION_1_2 = object : Migration(1, 2) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                // Adding new columns to the RaptPillReadings table
-                db.execSQL("ALTER TABLE RaptPillData ADD COLUMN isOG INTEGER")
-                db.execSQL("ALTER TABLE RaptPillData ADD COLUMN isFG INTEGER")
-            }
-        }
-
-        private val MIGRATION_2_3 = object : Migration(2, 3) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                // Adding new columns to the RaptPillReadings table
-                db.execSQL("ALTER TABLE RaptPillData ADD COLUMN gravityVelocity REAL")
-            }
-        }
-
-        private val MIGRATION_3_4 = object : Migration(3, 4) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("ALTER TABLE RaptPillData ADD COLUMN isFeeding INTEGER")
-            }
-        }
 
         fun create(context: Context, dbName: String = DATABASE_NAME): RaptPillDatabase {
             return Room.databaseBuilder(
@@ -51,6 +33,7 @@ abstract class RaptPillDatabase : RoomDatabase() {
                 MIGRATION_1_2,
                 MIGRATION_2_3,
                 MIGRATION_3_4,
+                MIGRATION_4_5,
             ).addCallback(object : Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
