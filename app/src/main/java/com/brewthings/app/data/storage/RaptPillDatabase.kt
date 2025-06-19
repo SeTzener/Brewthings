@@ -6,10 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.brewthings.app.BuildConfig
 import com.brewthings.app.R
 import com.brewthings.app.data.utils.ReadScript
 import com.brewthings.app.util.Logger
-import com.google.firebase.components.BuildConfig
 
 @Database(entities = [RaptPill::class, RaptPillData::class], version = 4)
 @androidx.room.TypeConverters(TypeConverter::class)
