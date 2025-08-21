@@ -47,3 +47,22 @@ fun DaoRaptPillReadings.toModelItem(): ModelRaptPillData = ModelRaptPillData(
 )
 
 fun DaoRaptPillData.toModelItem() = readings.toModelItem()
+
+fun ModelRaptPillData.toDaoItem() =
+    DaoRaptPillData(
+        pillId = 0,
+        readings = RaptPillReadings(
+            timestamp = timestamp,
+            temperature = temperature,
+            gravity = gravity,
+            gravityVelocity = rawVelocity,
+            x = x,
+            y = y,
+            z = z,
+            battery = battery,
+            isOG = isOG,
+            isFG = isFG,
+            isFeeding = isFeeding,
+        ),
+    )
+
