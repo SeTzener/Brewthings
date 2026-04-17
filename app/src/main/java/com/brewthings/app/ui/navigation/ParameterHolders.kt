@@ -1,5 +1,6 @@
 package com.brewthings.app.ui.navigation
 
+import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.model.Brew
 
 /**
@@ -10,10 +11,12 @@ object ParameterHolders {
     object PillGraph {
         var name: String? = null
         var macAddress: String? = null
+        var dataType: DataType? = null
     }
 
     object BrewGraph {
         var brew: Brew? = null
+        var dataType: DataType? = null
     }
 
     object BrewComposition {

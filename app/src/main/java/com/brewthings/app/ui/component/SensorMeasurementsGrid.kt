@@ -5,14 +5,17 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,6 +37,7 @@ import com.brewthings.app.ui.theme.BrewthingsTheme
 fun SensorMeasurementsGrid(
     modifier: Modifier = Modifier,
     measurements: SensorMeasurements,
+    onClick: ((DataType) -> Unit)? = null,
 ) {
     VerticalGrid(
         modifier = modifier,
@@ -42,12 +46,12 @@ fun SensorMeasurementsGrid(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         items = measurements,
     ) {
-        SensorMeasurementCard(it)
+        SensorMeasurementCard(it, onClick)
     }
 }
 
 @Composable
-private fun SensorMeasurementCard(measurement: Measurement) {
+private fun SensorMeasurementCard(measurement: Measurement, onClick: ((DataType) -> Unit)?) {
     val dataType = measurement.dataType
     val unit = dataType.toUnit()
     val header = dataType.toLabel()
@@ -75,6 +79,7 @@ private fun SensorMeasurementCard(measurement: Measurement) {
             footer = previousValue?.let {
                 stringResource(R.string.sensor_measurement_footer, formatter.format(it), unit)
             } ?: "",
+            onClick = onClick?.let { { it(dataType) } },
         )
     }
 }
@@ -89,29 +94,33 @@ fun SensorMeasurementCard(
     unit: String,
     @DrawableRes trendIconRes: Int?,
     footer: String,
+    onClick: (() -> Unit)? = null,
 ) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = backgroundColor,
         ),
+        onClick = onClick ?: {},
+        enabled = onClick != null,
     ) {
         val verticalPadding = 16.dp
         val horizontalPadding = 16.dp
-        val interVertical = 6.dp
+        val interVertical = 8.dp
         val interHorizontalPadding = 8.dp
 
         ConstraintLayout(modifier = Modifier.padding(vertical = verticalPadding)) {
             val (headerIconRef, headerRef, valueRef, unitRef, trendIconRef, footerRef) = createRefs()
 
-            ScaleToHeightIcon(
+            Icon(
                 modifier = Modifier
                     .constrainAs(headerIconRef) {
-                        top.linkTo(parent.top)
                         start.linkTo(parent.start)
+                        top.linkTo(headerRef.top)
+                        bottom.linkTo(headerRef.bottom)
                     }
-                    .padding(horizontal = horizontalPadding),
-                iconRes = headerIconRes,
-                desiredHeight = 32.dp,
+                    .padding(horizontal = horizontalPadding)
+                    .size(12.dp),
+                painter = painterResource(headerIconRes),
                 contentDescription = null,
                 tint = textColor,
             )
@@ -119,13 +128,13 @@ fun SensorMeasurementCard(
             Text(
                 modifier = Modifier
                     .constrainAs(headerRef) {
-                        top.linkTo(headerIconRef.bottom)
-                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        start.linkTo(headerIconRef.end)
+                        end.linkTo(parent.end)
                     }
                     .padding(
-                        start = horizontalPadding,
+                        start = 12.dp,
                         end = horizontalPadding,
-                        top = interVertical * 1.5f,
                     )
                     .fillMaxWidth(),
                 text = header,
@@ -144,7 +153,7 @@ fun SensorMeasurementCard(
                         top = interVertical,
                     ),
                 text = formattedValue,
-                style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
+                style = MaterialTheme.typography.titleMedium.copy(fontSize = 22.sp),
                 color = textColor,
             )
 

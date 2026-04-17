@@ -1,6 +1,7 @@
 package com.brewthings.app.ui.navigation
 
 import androidx.navigation.NavController
+import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.model.Brew
 
 class Router(private val navController: NavController) {
@@ -17,14 +18,16 @@ class Router(private val navController: NavController) {
         navController.navigate(route = Destination.ONBOARDING)
     }
 
-    fun goToPillGraph(name: String?, macAddress: String) {
+    fun goToPillGraph(name: String?, macAddress: String, dataType: DataType? = null) {
         ParameterHolders.PillGraph.name = name
         ParameterHolders.PillGraph.macAddress = macAddress
+        ParameterHolders.PillGraph.dataType = dataType
         navController.navigate(route = Destination.PILL_GRAPH)
     }
 
-    fun goToBrewGraph(brew: Brew) {
+    fun goToBrewGraph(brew: Brew, dataType: DataType? = null) {
         ParameterHolders.BrewGraph.brew = brew
+        ParameterHolders.BrewGraph.dataType = dataType
         navController.navigate(route = Destination.BREWS_GRAPH)
     }
 

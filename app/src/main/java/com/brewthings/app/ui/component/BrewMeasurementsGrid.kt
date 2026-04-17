@@ -40,6 +40,8 @@ import kotlin.time.Duration.Companion.days
 fun BrewMeasurementsGrid(
     modifier: Modifier = Modifier,
     data: BrewMeasurements,
+    onTimeClick: (() -> Unit)? = null,
+    onClick: ((DataType) -> Unit)? = null,
 ) {
     VerticalGrid(
         modifier = modifier,
@@ -52,14 +54,14 @@ fun BrewMeasurementsGrid(
             },
     ) { item ->
         when (item) {
-            is GridItem.TimeRange -> BrewTimeCard(item.data)
-            is GridItem.Measurement -> BrewMeasurementCard(item.data)
+            is GridItem.TimeRange -> BrewTimeCard(item.data, onTimeClick)
+            is GridItem.Measurement -> BrewMeasurementCard(item.data, onClick)
         }
     }
 }
 
 @Composable
-fun BrewMeasurementCard(measurement: Measurement) {
+fun BrewMeasurementCard(measurement: Measurement, onClick: ((DataType) -> Unit)? = null) {
     val unit = measurement.dataType.toUnit()
     val formatter = measurement.dataType.toValueFormatter()
     val dataType = measurement.dataType
@@ -93,12 +95,13 @@ fun BrewMeasurementCard(measurement: Measurement) {
             footer = previousValue?.let {
                 stringResource(R.string.sensor_measurement_footer, formatter.format(it), unit)
             } ?: "",
+            onClick = onClick?.let { { it(dataType) } },
         )
     }
 }
 
 @Composable
-fun BrewTimeCard(range: TimeRange) {
+fun BrewTimeCard(range: TimeRange, onClick: (() -> Unit)? = null) {
     val backgroundColor = CardDefaults.cardColors().containerColor
     val from = range.from.toSimpleFormattedDate()
 
@@ -123,6 +126,7 @@ fun BrewTimeCard(range: TimeRange) {
                 R.string.brew_time_footer,
                 from,
             ),
+            onClick = onClick,
         )
     }
 }
@@ -135,11 +139,14 @@ private fun BrewCard(
     header: String,
     content: @Composable (Modifier, Color) -> Unit,
     footer: String,
+    onClick: (() -> Unit)? = null,
 ) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = backgroundColor,
         ),
+        onClick = onClick ?: {},
+        enabled = onClick != null,
     ) {
         val verticalPadding = 10.dp
         Column(modifier = Modifier.padding(16.dp)) {

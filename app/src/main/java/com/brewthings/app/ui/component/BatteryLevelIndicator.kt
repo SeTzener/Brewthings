@@ -3,6 +3,7 @@ package com.brewthings.app.ui.component
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -13,6 +14,7 @@ import com.brewthings.app.ui.converter.toIconRes
 fun BatteryLevelIndicator(
     batteryPercentage: Float,
     tint: Color = MaterialTheme.colorScheme.primary,
+    modifier: Modifier = Modifier,
 ) {
     Icon(
         imageVector = ImageVector.vectorResource(
@@ -20,5 +22,6 @@ fun BatteryLevelIndicator(
         ),
         contentDescription = null,
         tint = tint,
+        modifier = modifier,
     )
 }

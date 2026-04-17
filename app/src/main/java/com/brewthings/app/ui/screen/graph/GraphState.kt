@@ -8,7 +8,7 @@ import kotlinx.datetime.Instant
 
 data class GraphState(
     // Immutable state
-    val title: String,
+    val title: String? = null,
     val dataTypes: List<DataType>,
     // Graph customizations
     val showInsightsCardActions: Boolean,
