@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.domain.BluetoothScanState
 import com.brewthings.app.data.domain.BrewWithMeasurements
+import com.brewthings.app.data.domain.DataType
 import com.brewthings.app.data.domain.Device
 import com.brewthings.app.data.domain.SensorMeasurements
 import com.brewthings.app.data.model.Brew
@@ -95,6 +96,13 @@ fun ScanScreen(
                         macAddress = device.macAddress,
                     )
                 },
+                onMeasurementClick = { dataType ->
+                    router.goToPillGraph(
+                        name = lockedSelectedDevice.displayName,
+                        macAddress = lockedSelectedDevice.macAddress,
+                        dataType = dataType,
+                    )
+                },
                 onViewBrewData = { brew ->
                     router.goToBrewGraph(brew)
                 },
@@ -133,6 +141,7 @@ private fun ScanScreen(
     onStopScan: () -> Unit,
     onSave: (Boolean) -> Unit,
     onViewAllData: (Device) -> Unit,
+    onMeasurementClick: (DataType) -> Unit,
     onViewBrewData: (Brew) -> Unit,
     onRenameDevice: (String) -> Unit,
     onToggleAutosave: (Boolean) -> Unit,
@@ -199,6 +208,7 @@ private fun ScanScreen(
                                     vertical = 4.dp,
                                 ),
                                 measurements = sensorMeasurements,
+                                onClick = onMeasurementClick,
                             )
                         }
 

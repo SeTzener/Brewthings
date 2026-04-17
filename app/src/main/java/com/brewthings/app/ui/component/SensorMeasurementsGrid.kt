@@ -37,6 +37,7 @@ import com.brewthings.app.ui.theme.BrewthingsTheme
 fun SensorMeasurementsGrid(
     modifier: Modifier = Modifier,
     measurements: SensorMeasurements,
+    onClick: ((DataType) -> Unit)? = null,
 ) {
     VerticalGrid(
         modifier = modifier,
@@ -45,12 +46,12 @@ fun SensorMeasurementsGrid(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         items = measurements,
     ) {
-        SensorMeasurementCard(it)
+        SensorMeasurementCard(it, onClick)
     }
 }
 
 @Composable
-private fun SensorMeasurementCard(measurement: Measurement) {
+private fun SensorMeasurementCard(measurement: Measurement, onClick: ((DataType) -> Unit)?) {
     val dataType = measurement.dataType
     val unit = dataType.toUnit()
     val header = dataType.toLabel()
@@ -78,6 +79,7 @@ private fun SensorMeasurementCard(measurement: Measurement) {
             footer = previousValue?.let {
                 stringResource(R.string.sensor_measurement_footer, formatter.format(it), unit)
             } ?: "",
+            onClick = onClick?.let { { it(dataType) } },
         )
     }
 }
@@ -92,11 +94,14 @@ fun SensorMeasurementCard(
     unit: String,
     @DrawableRes trendIconRes: Int?,
     footer: String,
+    onClick: (() -> Unit)? = null,
 ) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = backgroundColor,
         ),
+        onClick = onClick ?: {},
+        enabled = onClick != null,
     ) {
         val verticalPadding = 16.dp
         val horizontalPadding = 16.dp

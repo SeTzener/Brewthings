@@ -35,6 +35,7 @@ val graphDataTypes = listOf(
 abstract class GraphScreenViewModel(
     private val screenTitle: String,
     private val showInsightsCardActions: Boolean,
+    private val initialDataType: DataType = DataType.GRAVITY,
 ) : ViewModel(), KoinComponent {
     abstract val brew: Brew?
 
@@ -93,7 +94,7 @@ abstract class GraphScreenViewModel(
             title = screenTitle,
             showInsightsCardActions = showInsightsCardActions,
             dataTypes = graphDataTypes,
-            selectedDataTypes = listOf(DataType.GRAVITY),
+            selectedDataTypes = listOf(initialDataType),
             brew = brew,
         )
 
@@ -207,9 +208,11 @@ class PillGraphScreenViewModel(
     val macAddress: String = ParameterHolders.PillGraph.macAddress
         ?: error("macAddress is required"),
     name: String? = ParameterHolders.PillGraph.name,
+    dataType: DataType = ParameterHolders.PillGraph.dataType ?: DataType.GRAVITY,
 ) : GraphScreenViewModel(
     screenTitle = name ?: macAddress,
     showInsightsCardActions = true,
+    initialDataType = dataType,
 ) {
     override val brew = null
 
