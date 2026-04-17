@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
@@ -39,12 +40,11 @@ import com.brewthings.app.ui.component.IconAlign
 import com.brewthings.app.ui.component.TextWithIcon
 import com.brewthings.app.ui.converter.toLineColor
 import com.brewthings.app.ui.theme.BrewthingsTheme
-import com.brewthings.app.ui.theme.Typography
 import com.brewthings.app.util.datetime.TimeRange
 import com.brewthings.app.util.datetime.format
 import com.brewthings.app.util.datetime.toFormattedDate
-import kotlinx.datetime.Instant
 import kotlin.math.abs
+import kotlinx.datetime.Instant
 
 @Composable
 fun InsightsCard(
@@ -58,7 +58,7 @@ fun InsightsCard(
     deleteMeasurement: (Instant) -> Unit,
 ) {
     Card {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(12.dp)) {
             InsightsTimeHeader(data)
 
             InsightsHeaderRow()
@@ -97,6 +97,7 @@ fun InsightsCard(
                     BatteryLevelIndicator(
                         batteryPercentage = data.battery.value,
                         tint = highlightIconColor(dataTypes, DataType.BATTERY),
+                        modifier = Modifier.size(16.dp),
                     )
                 },
                 labelResId = R.string.graph_data_label_battery,
@@ -169,6 +170,8 @@ fun InsightsCard(
                 setFeeding = setFeeding,
                 deleteMeasurement = deleteMeasurement,
             )
+        } else {
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
@@ -194,6 +197,7 @@ fun InsightsActionRow(
         modifier = Modifier
             .padding(bottom = 8.dp)
             .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         TextButton(
             modifier = Modifier.padding(start = 7.dp),
@@ -207,7 +211,7 @@ fun InsightsActionRow(
                         id = R.string.set_OG,
                     )
                 },
-                style = Typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
             )
         }
         TextButton(
@@ -228,7 +232,7 @@ fun InsightsActionRow(
                         stringResource(id = R.string.diluting)
                     }
                 },
-                style = Typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
             )
         }
         TextButton(
@@ -243,14 +247,16 @@ fun InsightsActionRow(
                         id = R.string.set_FG,
                     )
                 },
-                style = Typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
             )
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
         IconButton(
-            modifier = Modifier.padding(end = 12.dp),
+            modifier = Modifier
+                .padding(end = 16.dp)
+                .size(20.dp),
             onClick = { isDeleteMeasurement.value = true },
             colors = IconButtonDefaults.iconButtonColors(
                 contentColor = Color.Red,
@@ -297,15 +303,14 @@ private fun DeleteMeasurementDialog(
 @Composable
 fun InsightsTimeHeader(data: RaptPillInsights) {
     Row(
-        modifier = Modifier.padding(bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         InsightIcon(iconResId = R.drawable.ic_calendar)
-        Spacer(modifier = Modifier.size(16.dp))
+        Spacer(modifier = Modifier.size(8.dp))
         Column {
             Text(
                 text = data.timestamp.toFormattedDate(),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
             )
             Text(
                 modifier = Modifier.padding(top = 4.dp),
@@ -362,11 +367,11 @@ fun InsightsRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         icon(Modifier)
-        Spacer(modifier = Modifier.size(16.dp))
+        Spacer(modifier = Modifier.size(8.dp))
         label(Modifier.weight(1f))
         Spacer(modifier = Modifier.size(8.dp))
         value(Modifier.weight(1f))
-        Spacer(modifier = Modifier.size(16.dp))
+        Spacer(modifier = Modifier.size(8.dp))
         fromPrevious(Modifier.weight(1f))
         Spacer(modifier = Modifier.size(8.dp))
         fromOG(Modifier.weight(1f))
@@ -379,7 +384,7 @@ fun InsightsHeaderRow(
 ) {
     InsightsRow(
         modifier = modifier,
-        icon = { Spacer(modifier = Modifier.size(24.dp)) },
+        icon = { Spacer(modifier = Modifier.size(16.dp)) },
         label = { InsightHeader(it, R.string.graph_header_name) },
         value = { InsightHeader(it, R.string.graph_header_value) },
         fromPrevious = { InsightHeader(it, R.string.graph_header_from_previous) },
@@ -396,7 +401,7 @@ fun InsightHeader(
         modifier = modifier,
         text = stringResource(id = headerResId),
         textAlign = TextAlign.Start,
-        style = MaterialTheme.typography.bodyMedium.copy(
+        style = MaterialTheme.typography.bodySmall.copy(
             fontWeight = FontWeight.Bold,
         ),
     )
@@ -467,7 +472,7 @@ fun InsightIcon(
     tint: Color = MaterialTheme.colorScheme.primary,
 ) {
     Icon(
-        modifier = modifier.size(24.dp),
+        modifier = modifier.size(16.dp),
         painter = painterResource(id = iconResId),
         contentDescription = null,
         tint = tint,
@@ -504,7 +509,7 @@ fun InsightLabel(
     Text(
         modifier = modifier,
         text = stringResource(id = labelResId),
-        style = MaterialTheme.typography.bodyMedium.highlight(isHighlighted),
+        style = MaterialTheme.typography.bodySmall.highlight(isHighlighted),
         color = highlightColor(isHighlighted),
     )
 }
@@ -520,7 +525,7 @@ fun InsightValue(
         modifier = modifier,
         text = if (value != null && !value.isNaN()) stringResource(id = textResId, value) else "",
         textAlign = TextAlign.Start,
-        style = MaterialTheme.typography.bodyMedium.highlight(isHighlighted),
+        style = MaterialTheme.typography.bodySmall.highlight(isHighlighted),
         color = highlightColor(isHighlighted),
     )
 }
