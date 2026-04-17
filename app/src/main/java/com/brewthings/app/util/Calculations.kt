@@ -6,8 +6,9 @@ fun calculateFeeding(previousGravity: Float, actualGravity: Float): Float =
     actualGravity.minus(previousGravity)
 
 fun calculateABV(og: Float, fg: Float, feedings: List<Float>): Float? {
-    if (og <= 1.0 || fg <= 1.0) return null
-    return (og.sumAll(feedings) - fg) * 131.25f
+    val coercedOg = maxOf(og, 0f)
+    val coercedFg = maxOf(fg, 0f)
+    return (coercedOg.sumAll(feedings) - coercedFg) * 131.25f
 }
 
 fun calculateVelocity(previous: RaptPillData?, fg: RaptPillData): Float? {
