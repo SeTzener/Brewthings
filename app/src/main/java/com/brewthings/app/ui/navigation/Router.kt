@@ -25,8 +25,9 @@ class Router(private val navController: NavController) {
         navController.navigate(route = Destination.PILL_GRAPH)
     }
 
-    fun goToBrewGraph(brew: Brew) {
+    fun goToBrewGraph(brew: Brew, dataType: DataType? = null) {
         ParameterHolders.BrewGraph.brew = brew
+        ParameterHolders.BrewGraph.dataType = dataType
         navController.navigate(route = Destination.BREWS_GRAPH)
     }
 

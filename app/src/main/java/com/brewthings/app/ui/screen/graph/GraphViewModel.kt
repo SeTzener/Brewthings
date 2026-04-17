@@ -262,9 +262,11 @@ class PillGraphScreenViewModel(
 
 class BrewsGraphScreenViewModel(
     override val brew: Brew = ParameterHolders.BrewGraph.brew ?: error("brew is required"),
+    dataType: DataType = ParameterHolders.BrewGraph.dataType ?: DataType.GRAVITY,
 ) : GraphScreenViewModel(
     screenTitle = brew.macAddress, // TODO(walt): change
     showInsightsCardActions = false,
+    initialDataType = dataType,
 ) {
     private val repo: BrewsRepository by inject()
 

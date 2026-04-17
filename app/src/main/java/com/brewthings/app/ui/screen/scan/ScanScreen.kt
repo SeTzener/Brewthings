@@ -106,6 +106,9 @@ fun ScanScreen(
                 onViewBrewData = { brew ->
                     router.goToBrewGraph(brew)
                 },
+                onBrewMeasurementClick = { brew, dataType ->
+                    router.goToBrewGraph(brew, dataType)
+                },
                 onRenameDevice = viewModel::renameDevice,
                 onToggleAutosave = viewModel::toggleAutosave,
             )
@@ -143,6 +146,7 @@ private fun ScanScreen(
     onViewAllData: (Device) -> Unit,
     onMeasurementClick: (DataType) -> Unit,
     onViewBrewData: (Brew) -> Unit,
+    onBrewMeasurementClick: (Brew, DataType) -> Unit,
     onRenameDevice: (String) -> Unit,
     onToggleAutosave: (Boolean) -> Unit,
 ) {
@@ -228,6 +232,12 @@ private fun ScanScreen(
                                     vertical = 4.dp,
                                 ),
                                 data = brewWithMeasurements.measurements,
+                                onTimeClick = {
+                                    onViewBrewData(brewWithMeasurements.brew)
+                                },
+                                onClick = { dataType ->
+                                    onBrewMeasurementClick(brewWithMeasurements.brew, dataType)
+                                },
                             )
                         }
                     },
