@@ -105,7 +105,11 @@ fun GraphScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                title = { TopAppBarTitle(screenState.title) },
+                title = {
+                    TopAppBarTitle(
+                        screenState.title ?: stringResource(R.string.graph_title_brew),
+                    )
+                },
                 navigationIcon = { TopAppBarBackButton(onBackClick) },
                 scrollBehavior = scrollBehavior,
                 actions = {

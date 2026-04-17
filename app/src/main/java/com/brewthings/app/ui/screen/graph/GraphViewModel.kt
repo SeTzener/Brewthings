@@ -33,7 +33,7 @@ val graphDataTypes = listOf(
 )
 
 abstract class GraphScreenViewModel(
-    private val screenTitle: String,
+    private val screenTitle: String?,
     private val showInsightsCardActions: Boolean,
     private val initialDataType: DataType = DataType.GRAVITY,
 ) : ViewModel(), KoinComponent {
@@ -264,7 +264,7 @@ class BrewsGraphScreenViewModel(
     override val brew: Brew = ParameterHolders.BrewGraph.brew ?: error("brew is required"),
     dataType: DataType = ParameterHolders.BrewGraph.dataType ?: DataType.GRAVITY,
 ) : GraphScreenViewModel(
-    screenTitle = brew.macAddress, // TODO(walt): change
+    screenTitle = null,
     showInsightsCardActions = false,
     initialDataType = dataType,
 ) {

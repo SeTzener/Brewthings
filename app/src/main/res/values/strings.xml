@@ -91,6 +91,7 @@
     <string name="graph_data_label_abv">ABV</string>
     <string name="graph_data_label_battery">Battery</string>
     <string name="graph_data_label_data_types">Measurements</string>
+    <string name="graph_title_brew">Brew</string>
     <string name="graph_data_label_gravity">Gravity</string>
     <string name="graph_data_label_temp_full">Temperature</string>
     <string name="graph_data_label_temp_short">Temp</string>
