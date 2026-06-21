@@ -105,6 +105,7 @@
     <string name="graph_header_from_previous">Δ prev.</string>
     <string name="graph_header_name">Name</string>
     <string name="graph_header_value">Value</string>
+    <string name="last_brew_abv_header">"Last ABV"</string>
     <string name="last_brew_time_footer">"ended on %s"</string>
     <string name="last_brew_time_header">"Time since last brew"</string>
     <string name="location_services_disabled_btn">"Enable"</string>

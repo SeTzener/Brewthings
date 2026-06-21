@@ -56,17 +56,25 @@ fun BrewMeasurementsGrid(
     ) { item ->
         when (item) {
             is GridItem.TimeRange -> BrewTimeCard(item.data, isLastBrew, onTimeClick)
-            is GridItem.Measurement -> BrewMeasurementCard(item.data, onClick)
+            is GridItem.Measurement -> BrewMeasurementCard(item.data, isLastBrew, onClick)
         }
     }
 }
 
 @Composable
-fun BrewMeasurementCard(measurement: Measurement, onClick: ((DataType) -> Unit)? = null) {
+fun BrewMeasurementCard(
+    measurement: Measurement,
+    isLastBrew: Boolean = false,
+    onClick: ((DataType) -> Unit)? = null,
+) {
     val unit = measurement.dataType.toUnit()
     val formatter = measurement.dataType.toValueFormatter()
     val dataType = measurement.dataType
-    val header = dataType.toLabel()
+    val header = if (isLastBrew && dataType == DataType.ABV) {
+        stringResource(R.string.last_brew_abv_header)
+    } else {
+        dataType.toLabel()
+    }
     val backgroundColor = CardDefaults.cardColors().containerColor
 
     FlashColorAnimation(
