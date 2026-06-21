@@ -40,6 +40,7 @@ import kotlin.time.Duration.Companion.days
 fun BrewMeasurementsGrid(
     modifier: Modifier = Modifier,
     data: BrewMeasurements,
+    isLastBrew: Boolean = false,
     onTimeClick: (() -> Unit)? = null,
     onClick: ((DataType) -> Unit)? = null,
 ) {
@@ -54,7 +55,7 @@ fun BrewMeasurementsGrid(
             },
     ) { item ->
         when (item) {
-            is GridItem.TimeRange -> BrewTimeCard(item.data, onTimeClick)
+            is GridItem.TimeRange -> BrewTimeCard(item.data, isLastBrew, onTimeClick)
             is GridItem.Measurement -> BrewMeasurementCard(item.data, onClick)
         }
     }
@@ -101,7 +102,7 @@ fun BrewMeasurementCard(measurement: Measurement, onClick: ((DataType) -> Unit)?
 }
 
 @Composable
-fun BrewTimeCard(range: TimeRange, onClick: (() -> Unit)? = null) {
+fun BrewTimeCard(range: TimeRange, isLastBrew: Boolean = false, onClick: (() -> Unit)? = null) {
     val backgroundColor = CardDefaults.cardColors().containerColor
     val from = range.from.toSimpleFormattedDate()
 
@@ -114,7 +115,9 @@ fun BrewTimeCard(range: TimeRange, onClick: (() -> Unit)? = null) {
             backgroundColor = backgroundColor,
             textColor = textColor,
             headerIconResId = R.drawable.ic_calendar,
-            header = stringResource(R.string.brew_time_header),
+            header = stringResource(
+                if (isLastBrew) R.string.last_brew_time_header else R.string.brew_time_header,
+            ),
             content = { modifier, parentColor ->
                 TimeRow(
                     modifier = modifier,
@@ -123,7 +126,7 @@ fun BrewTimeCard(range: TimeRange, onClick: (() -> Unit)? = null) {
                 )
             },
             footer = stringResource(
-                R.string.brew_time_footer,
+                if (isLastBrew) R.string.last_brew_time_footer else R.string.brew_time_footer,
                 from,
             ),
             onClick = onClick,
