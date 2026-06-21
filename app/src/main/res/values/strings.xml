@@ -61,6 +61,8 @@
     <string name="brew_start_to_end">From: %s - To: %s</string>
     <string name="brew_time_footer">"started on %s"</string>
     <string name="brew_time_header">"Time since OG"</string>
+    <string name="brews_empty_desc">"Once you start a brew from the scan screen, it will show up here."</string>
+    <string name="brews_empty_title">"You don't have any brews yet"</string>
     <string name="button_add_device">"Add a new device"</string>
     <string name="button_no">"No"</string>
     <string name="button_save">Save</string>

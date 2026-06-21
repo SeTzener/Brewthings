@@ -6,9 +6,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.brewthings.app.R
 import com.brewthings.app.data.model.Brew
 import com.brewthings.app.ui.component.SectionTitle
+import com.brewthings.app.ui.component.TroubleshootingInfo
 import com.brewthings.app.ui.component.VerticalSpace
 import com.brewthings.app.ui.navigation.Router
 import com.brewthings.app.util.newOrCached
@@ -31,6 +34,17 @@ fun BrewsScreen(
     openGraph: (Brew) -> Unit,
 ) {
     val lockedBrews = newOrCached(state.brews, emptyList())
+
+    if (lockedBrews.isEmpty()) {
+        TroubleshootingInfo(
+            modifier = Modifier.fillMaxSize(),
+            iconResId = R.drawable.ic_empty_glass,
+            title = stringResource(R.string.brews_empty_title),
+            description = stringResource(R.string.brews_empty_desc),
+        )
+        return
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
