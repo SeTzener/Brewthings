@@ -67,7 +67,6 @@
     <string name="button_no">"No"</string>
     <string name="button_save">Save</string>
     <string name="button_start_new_brew">"Start a new brew"</string>
-    <string name="button_view_previous_data">"View previous data"</string>
     <string name="button_yes">"Yes"</string>
     <string name="delete_measurement">"Warning"</string>
     <string name="delete_measurement_confirmation">"This operation cannot be reverted.\n\nAre you sure you want to delete this measurement?"</string>

@@ -115,7 +115,7 @@ fun TroubleshootingInfoContentPreview() {
                 iconResId = R.drawable.ic_empty_glass,
                 title = stringResource(R.string.scan_troubleshooting_no_active_brew_title),
                 description = stringResource(R.string.scan_troubleshooting_no_active_brew_desc),
-                buttonText = stringResource(R.string.button_view_previous_data),
+                buttonText = stringResource(R.string.button_add_device),
             )
         }
     }
