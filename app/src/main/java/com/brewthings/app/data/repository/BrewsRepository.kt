@@ -66,6 +66,11 @@ class BrewsRepository(
                 }
             }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun observeLastBrew(macAddress: MacAddress): Flow<Brew?> =
+        dao.observeData(macAddress)
+            .map { getBrews(macAddress).lastOrNull() }
+
     @VisibleForTesting
     suspend fun getBrews(macAddress: MacAddress): List<Brew> {
         val brews: MutableList<Brew> = mutableListOf()
