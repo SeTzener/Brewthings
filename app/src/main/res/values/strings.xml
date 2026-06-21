@@ -108,7 +108,7 @@
     <string name="graph_header_value">Value</string>
     <string name="last_brew_abv_header">"Last ABV"</string>
     <string name="last_brew_time_footer">"ended on %s"</string>
-    <string name="last_brew_time_header">"Time since last brew"</string>
+    <string name="last_brew_time_header">"Time since end"</string>
     <string name="location_services_disabled_btn">"Enable"</string>
     <string name="location_services_disabled_desc">"Please, enable them on the Settings screen."</string>
     <string name="location_services_disabled_title">"Location services disabled"</string>
