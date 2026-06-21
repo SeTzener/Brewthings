@@ -6,8 +6,11 @@ import com.brewthings.app.data.storage.RaptPillReadings
 import com.brewthings.app.utils.shouldMatchSnapshot
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Instant
 import org.junit.jupiter.api.Test
@@ -169,6 +172,36 @@ class BrewsRepositoryTest {
 
         runBlocking {
             repository.getBrews("macAddressTest") shouldMatchSnapshot testInfo
+        }
+    }
+
+    @Test
+    fun `observeLastBrew emits the most recent brew`() {
+        every { dao.observeData(any()) } returns flowOf(emptyList())
+        coEvery { dao.getBrewEdges(any()) }.coAnswers {
+            listOf(
+                createOG("01"),
+                createFG("02"),
+                createOG("03"),
+                createFG("04"),
+            )
+        }
+        coEvery { dao.getBrewData(any(), any(), any()) }.coAnswers { emptyList() }
+
+        runBlocking {
+            val lastBrew = repository.observeLastBrew("macAddressTest").first()
+            lastBrew shouldBe repository.getBrews("macAddressTest").last()
+        }
+    }
+
+    @Test
+    fun `observeLastBrew emits null when there are no brews`() {
+        every { dao.observeData(any()) } returns flowOf(emptyList())
+        coEvery { dao.getBrewEdges(any()) }.coAnswers { emptyList() }
+        coEvery { dao.getBrewData(any(), any(), any()) }.coAnswers { emptyList() }
+
+        runBlocking {
+            repository.observeLastBrew("macAddressTest").first() shouldBe null
         }
     }
 

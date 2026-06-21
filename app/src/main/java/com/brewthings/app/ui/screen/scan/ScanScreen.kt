@@ -219,7 +219,13 @@ private fun ScanScreen(
                         if (brewWithMeasurements != null) {
                             SectionTitle(
                                 modifier = Modifier.padding(top = 8.dp),
-                                title = stringResource(R.string.scan_section_title_current_brew),
+                                title = stringResource(
+                                    if (brewWithMeasurements.isCurrent) {
+                                        R.string.scan_section_title_current_brew
+                                    } else {
+                                        R.string.scan_section_title_last_brew
+                                    },
+                                ),
                                 action = stringResource(R.string.scan_section_action_current_brew_graph),
                                 onActionClick = {
                                     onViewBrewData(brewWithMeasurements.brew)
@@ -232,6 +238,7 @@ private fun ScanScreen(
                                     vertical = 4.dp,
                                 ),
                                 data = brewWithMeasurements.measurements,
+                                isLastBrew = !brewWithMeasurements.isCurrent,
                                 onTimeClick = {
                                     onViewBrewData(brewWithMeasurements.brew)
                                 },
@@ -243,18 +250,25 @@ private fun ScanScreen(
                     },
                     footer = {
                         if (!isAutosaveEnabled) {
+                            val hasCurrentBrew = brewWithMeasurements?.isCurrent == true
                             PrimaryButton(
                                 modifier = Modifier.padding(
                                     horizontal = horizontalPadding,
                                     vertical = 24.dp,
                                 ),
                                 isEnabled = canSave,
-                                text = stringResource(R.string.button_save),
-                                onClick = {
-                                    if (brewWithMeasurements == null) {
-                                        showStartBrewDialog = true
+                                text = stringResource(
+                                    if (hasCurrentBrew) {
+                                        R.string.button_save
                                     } else {
+                                        R.string.button_start_new_brew
+                                    },
+                                ),
+                                onClick = {
+                                    if (hasCurrentBrew) {
                                         onSave(false)
+                                    } else {
+                                        showStartBrewDialog = true
                                     }
                                 },
                             )
@@ -267,8 +281,6 @@ private fun ScanScreen(
                     iconResId = R.drawable.ic_empty_glass,
                     title = stringResource(R.string.scan_troubleshooting_no_active_brew_title),
                     description = stringResource(R.string.scan_troubleshooting_no_active_brew_desc),
-                    buttonText = stringResource(R.string.button_view_previous_data),
-                    onButtonClick = { onViewAllData(selectedDevice) },
                 )
             }
 

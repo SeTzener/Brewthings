@@ -61,10 +61,12 @@
     <string name="brew_start_to_end">From: %s - To: %s</string>
     <string name="brew_time_footer">"started on %s"</string>
     <string name="brew_time_header">"Time since OG"</string>
+    <string name="brews_empty_desc">"Once you start a brew from the scan screen, it will show up here."</string>
+    <string name="brews_empty_title">"You don't have any brews yet"</string>
     <string name="button_add_device">"Add a new device"</string>
     <string name="button_no">"No"</string>
     <string name="button_save">Save</string>
-    <string name="button_view_previous_data">"View previous data"</string>
+    <string name="button_start_new_brew">"Start a new brew"</string>
     <string name="button_yes">"Yes"</string>
     <string name="delete_measurement">"Warning"</string>
     <string name="delete_measurement_confirmation">"This operation cannot be reverted.\n\nAre you sure you want to delete this measurement?"</string>
@@ -104,6 +106,9 @@
     <string name="graph_header_from_previous">Δ prev.</string>
     <string name="graph_header_name">Name</string>
     <string name="graph_header_value">Value</string>
+    <string name="last_brew_abv_header">"Last ABV"</string>
+    <string name="last_brew_time_footer">"ended on %s"</string>
+    <string name="last_brew_time_header">"Time since end"</string>
     <string name="location_services_disabled_btn">"Enable"</string>
     <string name="location_services_disabled_desc">"Please, enable them on the Settings screen."</string>
     <string name="location_services_disabled_title">"Location services disabled"</string>
@@ -121,8 +126,9 @@
     <string name="scan_section_action_current_brew_graph">"Brew data"</string>
     <string name="scan_section_action_current_device_graph">"All data"</string>
     <string name="scan_section_title_current_brew">"In current brew"</string>
+    <string name="scan_section_title_last_brew">"Last brew"</string>
     <string name="scan_section_title_last_measurements">"Last measurements"</string>
-    <string name="scan_troubleshooting_no_active_brew_desc">"Wait for your first scan result, then tap on the save button to start a new one.\n\nAlternatively, edit the previous data."</string>
+    <string name="scan_troubleshooting_no_active_brew_desc">"Wait for your first scan result, then tap on the save button to start a new one."</string>
     <string name="scan_troubleshooting_no_active_brew_title">"You don't have an active brew"</string>
     <string name="scan_troubleshooting_no_device_desc">"To configure your first device, go to the next screen and wait for your first scan result."</string>
     <string name="scan_troubleshooting_no_device_title">"You don't have an active device"</string>
