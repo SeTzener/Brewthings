@@ -116,10 +116,13 @@ class ScanViewModel : ViewModel(), KoinComponent {
                     LatestAndPrevious(latest = scanned.data, previous = data.lastOrNull())
                 }
             } else {
-                // No active scan: use the device's two most recent saved readings.
-                deviceData.map { data ->
+                // No active scan: use the latest saved reading. Only compare it against the
+                // previous one while a brew is in progress; outside a brew the previous reading
+                // is unrelated context, so we omit it.
+                combine(deviceData, currentBrew) { data, brew ->
                     data.lastOrNull()?.let { latest ->
-                        LatestAndPrevious(latest = latest, previous = data.dropLast(1).lastOrNull())
+                        val previous = if (brew != null) data.dropLast(1).lastOrNull() else null
+                        LatestAndPrevious(latest = latest, previous = previous)
                     }
                 }
             }
