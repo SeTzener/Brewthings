@@ -127,7 +127,7 @@
     <string name="scan_section_title_current_brew">"In current brew"</string>
     <string name="scan_section_title_last_brew">"Last brew"</string>
     <string name="scan_section_title_last_measurements">"Last measurements"</string>
-    <string name="scan_troubleshooting_no_active_brew_desc">"Wait for your first scan result, then tap on the save button to start a new one.\n\nAlternatively, edit the previous data."</string>
+    <string name="scan_troubleshooting_no_active_brew_desc">"Wait for your first scan result, then tap on the save button to start a new one."</string>
     <string name="scan_troubleshooting_no_active_brew_title">"You don't have an active brew"</string>
     <string name="scan_troubleshooting_no_device_desc">"To configure your first device, go to the next screen and wait for your first scan result."</string>
     <string name="scan_troubleshooting_no_device_title">"You don't have an active device"</string>
