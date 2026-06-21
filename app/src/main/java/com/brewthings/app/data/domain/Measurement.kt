@@ -11,6 +11,7 @@ typealias SensorMeasurements = List<Measurement>
 data class BrewWithMeasurements(
     val brew: Brew,
     val measurements: BrewMeasurements,
+    val isCurrent: Boolean,
 )
 
 data class BrewMeasurements(
