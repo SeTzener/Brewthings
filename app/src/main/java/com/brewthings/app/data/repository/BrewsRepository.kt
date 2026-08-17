@@ -1,7 +1,6 @@
 package com.brewthings.app.data.repository
 
 import com.brewthings.app.data.model.Brew
-import com.brewthings.app.data.model.Brews
 import com.brewthings.app.data.model.MacAddress
 import com.brewthings.app.data.model.RaptPillData
 import com.brewthings.app.data.storage.RaptPillDao
@@ -20,18 +19,8 @@ import kotlinx.datetime.Instant
 class BrewsRepository(
     private val dao: RaptPillDao,
 ) {
-    suspend fun observeBrews(): Flow<List<Brews>> = dao.observePills().map { pills ->
-        pills.mapNotNull { pill ->
-            getBrews(pill.macAddress)
-                .takeIf { it.isNotEmpty() }
-                ?.let {
-                    Brews(
-                        batchName = pill.name ?: pill.macAddress,
-                        data = it,
-                    )
-                }
-        }
-    }
+    fun observeBrews(macAddress: MacAddress): Flow<List<Brew>> =
+        dao.observeData(macAddress).map { getBrews(macAddress) }
 
     fun observeBrewData(brew: Brew): Flow<List<RaptPillData>> =
         dao.observeBrewData(
@@ -68,8 +57,7 @@ class BrewsRepository(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun observeLastBrew(macAddress: MacAddress): Flow<Brew?> =
-        dao.observeData(macAddress)
-            .map { getBrews(macAddress).lastOrNull() }
+        observeBrews(macAddress).map { it.lastOrNull() }
 
     @VisibleForTesting
     suspend fun getBrews(macAddress: MacAddress): List<Brew> {

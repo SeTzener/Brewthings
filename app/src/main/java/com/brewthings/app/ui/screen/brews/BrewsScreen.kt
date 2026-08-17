@@ -10,7 +10,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brewthings.app.R
 import com.brewthings.app.data.model.Brew
-import com.brewthings.app.ui.component.SectionTitle
 import com.brewthings.app.ui.component.TroubleshootingInfo
 import com.brewthings.app.ui.component.VerticalSpace
 import com.brewthings.app.ui.navigation.Router
@@ -50,20 +49,14 @@ fun BrewsScreen(
             .fillMaxSize()
             .padding(horizontal = 16.dp),
     ) {
-        lockedBrews.forEach { brews ->
-            item {
-                SectionTitle(title = brews.batchName)
-            }
-
-            val brewsList = brews.data.reversed()
-            items(brewsList, key = { "Brew_" + it.og.timestamp }) { brew ->
-                BrewCard(
-                    brew = brew,
-                    isExpanded = brew == brewsList.first(), // TODO(Tano): Add a remember
-                    openGraph = openGraph,
-                )
-                VerticalSpace()
-            }
+        val brews = lockedBrews.reversed()
+        items(brews, key = { "Brew_" + it.og.timestamp }) { brew ->
+            BrewCard(
+                brew = brew,
+                isExpanded = brew == brews.first(), // TODO(Tano): Add a remember
+                openGraph = openGraph,
+            )
+            VerticalSpace()
         }
     }
 }
