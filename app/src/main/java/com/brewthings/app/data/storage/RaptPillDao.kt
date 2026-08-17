@@ -68,8 +68,7 @@ interface RaptPillDao {
             SELECT * FROM RaptPillData
             JOIN RaptPill ON RaptPill.pillId = RaptPillData.pillId
             WHERE RaptPill.macAddress = :macAddress
-            AND RaptPillData.isOG == 1
-            OR RaptPillData.isFG == 1
+            AND (RaptPillData.isOG == 1 OR RaptPillData.isFG == 1)
             ORDER BY RaptPillData.timestamp ASC
         """,
     )
