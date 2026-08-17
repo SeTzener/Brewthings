@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -181,6 +182,12 @@ class ScanViewModel : ViewModel(), KoinComponent {
         .map { it != null }
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
+    val canStartBrew: StateFlow<Boolean> = latestUnsavedResult
+        .combine(deviceData) { unsavedResult, savedData ->
+            unsavedResult != null || savedData.lastOrNull()?.isUsableAsOg() == true
+        }
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
+
     val isAutosaveEnabled: StateFlow<Boolean> = settings
         .isAutosaveEnabled()
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
@@ -203,6 +210,24 @@ class ScanViewModel : ViewModel(), KoinComponent {
     fun save(isOg: Boolean) {
         viewModelScope.launch {
             suspendSave(isOg)
+        }
+    }
+
+    fun startBrew() {
+        viewModelScope.launch {
+            if (latestUnsavedResult.value != null) {
+                suspendSave(isOg = true)
+            } else {
+                val macAddress = selectedMacAddress.value ?: return@launch
+                val latestSavedReading = deviceData.first().lastOrNull()
+                    ?.takeIf { it.isUsableAsOg() }
+                    ?: return@launch
+                pills.setIsOG(
+                    macAddress = macAddress,
+                    timestamp = latestSavedReading.timestamp,
+                    isOg = true,
+                )
+            }
         }
     }
 
@@ -277,3 +302,5 @@ private fun createLastBrewMeasurements(brew: Brew, now: Instant): BrewMeasuremen
     )
 
 private data class LatestAndPrevious(val latest: SensorReadings, val previous: SensorReadings?)
+
+private fun RaptPillData.isUsableAsOg(): Boolean = !isOG && !isFG

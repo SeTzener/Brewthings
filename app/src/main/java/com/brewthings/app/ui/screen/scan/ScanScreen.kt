@@ -71,6 +71,7 @@ fun ScanScreen(
             val sensorMeasurements by viewModel.sensorMeasurements.collectAsState()
             val brewWithMeasurements by viewModel.brewWithMeasurements.collectAsState()
             val canSave by viewModel.canSave.collectAsState()
+            val canStartBrew by viewModel.canStartBrew.collectAsState()
             val isAutosaveEnabled by viewModel.isAutosaveEnabled.collectAsState()
             val now by viewModel.now.collectAsState()
             ScanScreen(
@@ -84,12 +85,14 @@ fun ScanScreen(
                 sensorMeasurements = sensorMeasurements,
                 brewWithMeasurements = brewWithMeasurements,
                 canSave = canSave,
+                canStartBrew = canStartBrew,
                 isAutosaveEnabled = isAutosaveEnabled,
                 onSelectDevice = viewModel::selectDevice,
                 onAddDevice = onAddDevice,
                 onStartScan = viewModel::startScan,
                 onStopScan = viewModel::stopScan,
                 onSave = viewModel::save,
+                onStartBrew = viewModel::startBrew,
                 onViewAllData = { device ->
                     router.goToPillGraph(
                         name = device.displayName,
@@ -137,12 +140,14 @@ private fun ScanScreen(
     sensorMeasurements: SensorMeasurements,
     brewWithMeasurements: BrewWithMeasurements?,
     canSave: Boolean,
+    canStartBrew: Boolean,
     isAutosaveEnabled: Boolean,
     onSelectDevice: (Device) -> Unit,
     onAddDevice: () -> Unit,
     onStartScan: () -> Unit,
     onStopScan: () -> Unit,
     onSave: (Boolean) -> Unit,
+    onStartBrew: () -> Unit,
     onViewAllData: (Device) -> Unit,
     onMeasurementClick: (DataType) -> Unit,
     onViewBrewData: (Brew) -> Unit,
@@ -256,7 +261,7 @@ private fun ScanScreen(
                                     horizontal = horizontalPadding,
                                     vertical = 24.dp,
                                 ),
-                                isEnabled = canSave,
+                                isEnabled = if (hasCurrentBrew) canSave else canStartBrew,
                                 text = stringResource(
                                     if (hasCurrentBrew) {
                                         R.string.button_save
@@ -298,7 +303,9 @@ private fun ScanScreen(
         if (showStartBrewDialog) {
             StartBrewDialog { isConfirmed ->
                 showStartBrewDialog = false
-                onSave(isConfirmed)
+                if (isConfirmed) {
+                    onStartBrew()
+                }
             }
         }
     }
